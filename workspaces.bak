@@ -1,0 +1,9 @@
+"workspaces": {
+  "packages": [
+    "./client",
+    "./server"
+  ],
+  "nohoist": [
+    "**/!(@coko/lint)"
+  ]
+}

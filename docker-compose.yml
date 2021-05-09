@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  client:
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile-development
+    command: ['node_modules/.bin/coko-client-dev']
+    ports:
+      - ${CLIENT_PORT:-4000}:${CLIENT_PORT:-4000}
+    environment:
+      - NODE_ENV=development
+      # - CLIENT_ENTRY_FILE_PATH=./app.js
+      - CLIENT_PORT=${CLIENT_PORT:-4000}
+      - SERVER_PROTOCOL=http
+      - SERVER_HOST=localhost
+      - SERVER_PORT=${SERVER_PORT:-3OOO}
+    volumes:
+      - ./client/app:/home/node/app/app

@@ -1,0 +1,33 @@
+{
+  "name": "hhmi",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Question database and submission application for HHMI",
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.coko.foundation:hhmi/hhmi.git"
+  },
+  "license": "MIT",
+  "author": "Yannis Barlas",
+  "main": "index.js",
+  "scripts": {
+    "clean": "sh clean.sh",
+    "cz": "git cz",
+    "storybook": "yarn workspace client storybook",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS && lint-staged"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-customizable"
+    }
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@coko/lint": "^1.4.0"
+  }
+}
