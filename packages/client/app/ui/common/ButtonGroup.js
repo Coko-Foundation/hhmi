@@ -1,11 +1,30 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 import { grid } from '@coko/client'
 
 const Wrapper = styled.div`
-  display: inline-block;
+  display: ${props => (props.inline ? 'inline-block' : 'flex')};
+  /* display: inline-block; */
+
+  ${props => {
+    const { inline, justify } = props
+    let justifyValue
+
+    if (inline) return null
+
+    if (justify === 'left') justifyValue = 'flex-start'
+    if (justify === 'right') justifyValue = 'flex-end'
+    if (justify === 'center') justifyValue = 'center'
+
+    if (justifyValue)
+      return css`
+        justify-content: ${justifyValue};
+      `
+
+    return null
+  }}
 
   > button {
     margin-right: ${grid(1)};
@@ -21,8 +40,13 @@ const Wrapper = styled.div`
 `
 
 const ButtonGroup = props => {
-  const { className, children } = props
-  return <Wrapper className={className}>{children}</Wrapper>
+  const { className, children, inline, justify } = props
+
+  return (
+    <Wrapper className={className} inline={inline} justify={justify}>
+      {children}
+    </Wrapper>
+  )
 }
 
 ButtonGroup.propTypes = {
@@ -37,8 +61,17 @@ ButtonGroup.propTypes = {
       return null
     },
   ).isRequired,
+
+  /** Sets display to `inline-block` */
+  inline: PropTypes.bool,
+
+  /** Sets position of buttons in the row. Only applies when `inline` is `false` */
+  justify: PropTypes.oneOf(['left', 'right', 'center']),
 }
 
-ButtonGroup.defaultProps = {}
+ButtonGroup.defaultProps = {
+  inline: false,
+  justify: 'left',
+}
 
 export default ButtonGroup

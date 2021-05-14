@@ -24,7 +24,7 @@ const Input = props => {
   return (
     <Wrapper className={className}>
       {/* <FormItem label="hello" name={name}> */}
-      {type === 'text' && (
+      {type !== 'password' && (
         <StyledInput
           // name={name}
           onChange={handleChange}
@@ -48,12 +48,13 @@ const Input = props => {
 
 Input.propTypes = {
   /** Handle change. First argument is the incoming `value`. */
-  onChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
   /** Define type of input. For other valid html input types, we have created separate components (eg. TextArea). */
-  type: PropTypes.oneOf(['text', 'password']),
+  type: PropTypes.string,
 }
 
 Input.defaultProps = {
+  onChange: null,
   type: 'text',
 }
 

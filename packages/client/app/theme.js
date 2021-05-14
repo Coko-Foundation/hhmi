@@ -6,6 +6,7 @@ module.exports = {
   colorError: 'red',
   colorWarning: 'yellow',
 
+  colorText: 'grey',
   colorTextReverse: 'white',
 
   gridUnit: '4px',
