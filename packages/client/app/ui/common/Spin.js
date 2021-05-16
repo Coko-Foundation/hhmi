@@ -4,8 +4,23 @@
 
 import React from 'react'
 // import PropTypes from 'prop-types'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { Spin as AntSpin } from 'antd'
+
+const StyledSpin = styled(AntSpin)`
+  ${props =>
+    props.isNested &&
+    css`
+      z-index: 4;
+
+      > div {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        margin: -20px;
+      }
+    `}
+`
 
 const bounce = keyframes`
    0%, 100% {
@@ -47,9 +62,19 @@ const Indicator = () => (
 )
 
 const Spin = props => {
-  const { className } = props
+  const { className, children, ...rest } = props
 
-  return <AntSpin className={className} indicator={<Indicator />} />
+  return (
+    <StyledSpin
+      className={className}
+      indicator={<Indicator />}
+      isNested={!!children}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
+    >
+      {children}
+    </StyledSpin>
+  )
 }
 
 Spin.propTypes = {}

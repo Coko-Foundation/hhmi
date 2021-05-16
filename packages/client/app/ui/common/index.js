@@ -8,6 +8,7 @@ export { default as Divider } from './Divider'
 export { default as Form } from './Form'
 export { default as FormSection } from './FormSection'
 export { default as Input } from './Input'
+export { default as List } from './List'
 export { default as Radio } from './Radio'
 export { default as Result } from './Result'
 export { default as Ribbon } from './Ribbon'
@@ -20,6 +21,3 @@ export { default as TextArea } from './TextArea'
 
 export * from './Headings'
 export * from './Typography'
-
-// Do not use directly. Only exported for storybook purposes. Use Form instead.
-export { ModifiedForm } from './Form'
