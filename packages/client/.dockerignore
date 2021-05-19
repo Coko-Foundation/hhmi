@@ -32,11 +32,14 @@ cypress/
 data/
 coverage/
 logs/
-stories/
 tmp/
 uploads/*
 !uploads/sample-image.jpg
 CONTRIBUTING.md
+
+# storybook
+# .storybook
+# stories/
 
 # development config files
 .eslintrc.js

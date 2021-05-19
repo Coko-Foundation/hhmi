@@ -1,18 +1,28 @@
+/* eslint-disable no-console */
+
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { lorem } from 'faker'
+import { lorem, image } from 'faker'
 import { range } from 'lodash'
 
 import { List } from 'ui'
+import { Avatar } from 'antd'
+import { createData } from '../_helpers'
 
 const Item = styled.div`
   background: ${props => props.theme.colorSecondary};
-  margin: 8px 0;
+  margin-bottom: 8px;
   padding: 8px;
 `
 
+// returns the position of the item in a paginated list (as a String)
+// eg. third item on page 2 will be 13
+const getItemListNumber = (i, currentPage) =>
+  String(i + 1 + (currentPage - 1) * 10)
+
 const makeData = n =>
   range(n).map(i => ({
+    id: String(i + 1),
     value: lorem.sentence(),
   }))
 
@@ -178,10 +188,92 @@ export const AsyncPagination = () => {
       }}
       renderItem={(item, i) => (
         <Item>
-          {i + 1 + (currentPage - 1) * 10}
+          {getItemListNumber(i, currentPage)}
           {'. '}
           {item.value}
         </Item>
+      )}
+    />
+  )
+}
+
+export const SelectableRows = () => {
+  const PAGE_SIZE = 10
+  const TOTAL = 20
+  const INITIAL_PAGE = 1
+
+  const allData = React.useMemo(() =>
+    createData(TOTAL, i => ({
+      id: String(i + 1),
+      value: lorem.sentences(2),
+    })),
+  )
+
+  const [dataSource, setDataSource] = useState(allData.slice(0, 10))
+  const [currentPage, setCurrentPage] = useState(INITIAL_PAGE)
+  const [loading, setLoading] = useState(false)
+
+  const handlePageChange = (pageNumber, pageSize) => {
+    setLoading(true)
+
+    setTimeout(() => {
+      const sliceFrom = (pageNumber - 1) * 10
+      const sliceTo = sliceFrom + PAGE_SIZE
+      const newData = allData.slice(sliceFrom, sliceTo)
+
+      setLoading(false)
+      setDataSource(newData)
+      setCurrentPage(pageNumber)
+    }, 1000)
+  }
+
+  const handleSelectionChange = selectedIds => {
+    console.log('handled', selectedIds)
+  }
+
+  return (
+    <List
+      dataSource={dataSource}
+      itemSelection={{
+        onChange: handleSelectionChange,
+      }}
+      loading={loading}
+      pagination={{
+        current: currentPage,
+        onChange: handlePageChange,
+        pageSize: PAGE_SIZE,
+        total: TOTAL,
+        showSizeChanger: false,
+      }}
+      renderItem={item => (
+        <Item>
+          {item.id}: {item.value}
+        </Item>
+      )}
+    />
+  )
+}
+
+export const DefaultAntItem = () => {
+  const N = 7
+
+  const dataSource = createData(N, i => ({
+    avatar: image.avatar(),
+    description: lorem.sentences(4),
+    title: lorem.words(6),
+  }))
+
+  return (
+    <List
+      dataSource={dataSource}
+      renderItem={item => (
+        <List.Item>
+          <List.Item.Meta
+            avatar={<Avatar src={item.avatar} />}
+            description={item.description}
+            title={item.title}
+          />
+        </List.Item>
       )}
     />
   )

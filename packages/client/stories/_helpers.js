@@ -3,6 +3,10 @@ import styled from 'styled-components'
 import { lorem } from 'faker'
 import { range } from 'lodash'
 
+/**
+ * Wrap components around this to show what they will look like
+ * with the grey body background
+ */
 export const Background = styled.div`
   background: ${props => props.theme.colorBody};
   padding: 40px;
@@ -25,6 +29,9 @@ const StyledFiller = styled.div`
   }
 `
 
+/**
+ * Just a block with some text in it
+ */
 export const Filler = () => {
   return (
     <StyledFiller>
@@ -34,7 +41,13 @@ export const Filler = () => {
   )
 }
 
+/**
+ * Picks a random item from any given array
+ */
 export const randomPick = array =>
   array[Math.floor(Math.random() * array.length)]
 
+/**
+ * Creates an array of length n of whatever the callback returns
+ */
 export const createData = (n, callback) => range(n).map(callback)

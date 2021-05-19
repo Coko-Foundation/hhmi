@@ -1,0 +1,9 @@
+version: '3'
+
+services:
+  storybook-static:
+    build:
+      context: ./packages/client
+      dockerfile: Dockerfile-storybook-deploy
+    ports:
+      - ${STORYBOOK_PORT:-5000}:80
