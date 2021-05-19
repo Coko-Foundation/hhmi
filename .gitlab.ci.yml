@@ -1,0 +1,18 @@
+stages:
+  - deploy-storybook
+
+deploy storybook static:
+  image: debian:stable-slim
+  stage: deploy-storybook
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} "cd /root/docs && bash ./scripts/storybook-deploy.sh"
+  only:
+    - master
