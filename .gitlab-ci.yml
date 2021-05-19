@@ -13,6 +13,6 @@ deploy storybook static:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} "cd /root/docs && bash ./scripts/storybook-deploy.sh"
+    - ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} "cd ${APP_ROOT_PATH} && bash ./scripts/storybook-deploy.sh"
   only:
     - master
