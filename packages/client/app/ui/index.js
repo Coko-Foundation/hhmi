@@ -1,6 +1,6 @@
 export * from './admin'
 export * from './authentication'
-// export * from './chat'
+export * from './chat'
 export * from './common'
 // export * from './dashboard'
 // export * from './discover'

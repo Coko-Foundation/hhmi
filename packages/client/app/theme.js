@@ -11,6 +11,9 @@ module.exports = {
   colorText: 'grey',
   colorTextReverse: 'white',
 
+  fontSizeBase: '14px',
+  fontSizeBaseSmall: '12px',
+
   gridUnit: '4px',
 
   borderRadius: '3px',

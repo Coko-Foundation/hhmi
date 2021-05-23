@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Input as AntInput } from 'antd'
-// import { FormItem, Input as AntInput } from 'formik-antd'
 
 const Wrapper = styled.div``
 
@@ -11,37 +10,17 @@ const StyledInput = styled(AntInput)``
 const StyledPassword = styled(AntInput.Password)``
 
 const Input = props => {
-  const {
-    className,
-    // name,
-    onChange,
-    type,
-    ...rest
-  } = props
+  const { className, onChange, type, ...rest } = props
 
-  const handleChange = e => onChange(e.target.value)
+  const handleChange = e => onChange && onChange(e.target.value)
 
   return (
     <Wrapper className={className}>
-      {/* <FormItem label="hello" name={name}> */}
-      {type !== 'password' && (
-        <StyledInput
-          // name={name}
-          onChange={handleChange}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...rest}
-        />
-      )}
+      {type !== 'password' && <StyledInput onChange={handleChange} {...rest} />}
 
       {type === 'password' && (
-        <StyledPassword
-          // name={name}
-          onChange={handleChange}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...rest}
-        />
+        <StyledPassword onChange={handleChange} {...rest} />
       )}
-      {/* </FormItem> */}
     </Wrapper>
   )
 }

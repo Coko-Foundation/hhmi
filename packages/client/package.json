@@ -20,8 +20,10 @@
     "webpack-virtual-modules": "^0.4.2"
   },
   "dependencies": {
+    "@ant-design/icons": "^4.6.2",
     "@apollo/client": "^3.3.16",
     "@coko/client": "^0.0.13",
+    "@pubsweet/ui": "^12.6.13",
     "antd": "^4.15.4",
     "lodash": "^4.17.21",
     "prop-types": "^15.7.2",

@@ -51,3 +51,9 @@ export const randomPick = array =>
  * Creates an array of length n of whatever the callback returns
  */
 export const createData = (n, callback) => range(n).map(callback)
+
+/**
+ * Just an empty function to use as a placeholder for required functions
+ */
+
+export const noop = () => {}
