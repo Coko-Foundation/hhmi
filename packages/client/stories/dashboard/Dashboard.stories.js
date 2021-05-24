@@ -1,0 +1,47 @@
+import React from 'react'
+import { lorem } from 'faker'
+
+import { Dashboard } from 'ui'
+import { createData, noop } from '../_helpers'
+
+const makeData = n =>
+  createData(n, i => ({
+    title: lorem.words(6),
+    subtitle: lorem.sentences(8),
+    metadata: [
+      {
+        label: 'unit',
+        value: lorem.words(2),
+      },
+      {
+        label: 'section',
+        value: lorem.words(2),
+      },
+      {
+        label: 'topic',
+        value: lorem.words(2),
+      },
+      {
+        label: 'category',
+        value: lorem.words(2),
+      },
+      {
+        label: 'published date',
+        value: lorem.words(2),
+      },
+    ],
+  }))
+
+export const Base = () => (
+  <Dashboard
+    authorItems={makeData(5)}
+    editorItems={makeData(5)}
+    onClickCreateQuestion={noop}
+    reviewerItems={makeData(5)}
+  />
+)
+
+export default {
+  component: Dashboard,
+  title: 'Dashboard/Dashboard',
+}
