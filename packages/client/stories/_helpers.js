@@ -48,6 +48,11 @@ export const randomPick = array =>
   array[Math.floor(Math.random() * array.length)]
 
 /**
+ * Randomly picks true or false
+ */
+export const randomBool = () => randomPick([true, false])
+
+/**
  * Creates an array of length n of whatever the callback returns
  */
 export const createData = (n, callback) => range(n).map(callback)
