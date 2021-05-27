@@ -48,6 +48,20 @@ export const randomPick = array =>
   array[Math.floor(Math.random() * array.length)]
 
 /**
+ * Picks n values randomly from given array
+ */
+export const randomArray = (array, n) => {
+  const res = []
+
+  while (res.length < n) {
+    const v = randomPick(array)
+    if (!res.includes(v)) res.push(v)
+  }
+
+  return res
+}
+
+/**
  * Randomly picks true or false
  */
 export const randomBool = () => randomPick([true, false])

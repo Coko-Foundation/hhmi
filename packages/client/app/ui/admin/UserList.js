@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { Button, ButtonGroup, H1, Layout, Table } from '../common'
+import { uuid } from '@coko/client'
+
+import { Button, ButtonGroup, H1, Layout, Tag, Table } from '../common'
 
 const Wrapper = styled.div``
 
@@ -13,7 +15,20 @@ const PageHeader = styled(H1)`
 // name, expertise, reviewer, sign up date
 const columns = [
   { title: 'Name', dataIndex: 'displayName', key: 'displayName' },
-  { title: 'Expertise', dataIndex: 'expertise', key: 'expertise' },
+  { title: 'Email', dataIndex: 'email', key: 'email' },
+  {
+    title: 'Expertise',
+    dataIndex: 'expertise',
+    key: 'expertise',
+    render: arrayOfStrings => (
+      <>
+        {/* eslint-disable-next-line react/destructuring-assignment */}
+        {arrayOfStrings.map(s => (
+          <Tag key={uuid()}>{s}</Tag>
+        ))}
+      </>
+    ),
+  },
   {
     title: 'Reviewer',
     dataIndex: 'isReviewer',

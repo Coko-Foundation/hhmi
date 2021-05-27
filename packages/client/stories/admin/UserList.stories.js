@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 
 import React, { useState } from 'react'
-import { datatype, name } from 'faker'
+import { datatype, internet, name } from 'faker'
 
 import { UserList } from 'ui'
-import { createData, randomPick } from '../_helpers'
+import { createData, randomArray } from '../_helpers'
 
 const PAGE_SIZE = 10
 const TOTAL = 100
@@ -14,7 +14,11 @@ const makeData = n =>
     return {
       id: datatype.uuid(),
       displayName: name.findName(),
-      expertise: randomPick(['Biology', 'Marine Biology']),
+      email: internet.email(),
+      expertise: randomArray(
+        ['Biology', 'Marine Biology', 'Molecular Biology', 'Immunology'],
+        2,
+      ),
       signUpDate: 'May 16, 2021',
       isReviewer: datatype.boolean(),
     }

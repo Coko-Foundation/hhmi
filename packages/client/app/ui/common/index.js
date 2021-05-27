@@ -25,4 +25,6 @@ export { default as TextArea } from './TextArea'
 export * from './Headings'
 export * from './Typography'
 
+export { Tag } from 'antd'
+
 export { DateParser } from '@pubsweet/ui'
