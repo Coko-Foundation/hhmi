@@ -42,7 +42,7 @@ const Select = props => {
       className={className}
       filterOption={async && !filterOption ? false : filterOption}
       notFoundContent={!notFoundContent && async ? null : notFoundContent}
-      onSearch={searchFunc}
+      onSearch={onSearch && searchFunc}
       showSearch={showSearch || !!searchFunc}
       {...rest}
     />
