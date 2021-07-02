@@ -7,7 +7,7 @@ lint js:
   image: node:12-alpine
   stage: lint
   script:
-    - yarn install && cd/packages/client && yarn install && cd ../..
+    - yarn install && cd packages/client && yarn install && cd ../..
     - yarn eslint .
 
 # deploy storybook static:
