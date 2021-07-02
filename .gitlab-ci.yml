@@ -2,6 +2,12 @@ stages:
   - lint
   - deploy-storybook
 
+cache:
+  key: root_node_modules
+  only:
+    changes:
+      - yarn.lock
+
 lint js:
   image: node:12-alpine
   stage: lint
