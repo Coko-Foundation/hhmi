@@ -14,7 +14,6 @@ lint js:
   image: node:12-alpine
   stage: lint
   script:
-    - yarn install
     - yarn eslint .
 
 deploy storybook static:
