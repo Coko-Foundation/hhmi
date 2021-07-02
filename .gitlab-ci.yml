@@ -15,11 +15,11 @@ install root dependencies:
     changes:
       - yarn.lock
 
-# lint js:
-#   image: node:12-alpine
-#   stage: lint
-#   script:
-#     - yarn eslint .
+lint js:
+  image: node:12-alpine
+  stage: lint
+  script:
+    - yarn eslint .
 
 # deploy storybook static:
 #   image: debian:stable-slim
