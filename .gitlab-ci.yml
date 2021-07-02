@@ -1,33 +1,38 @@
 stages:
+  - install
   - lint
   - deploy-storybook
 
-cache:
-  key:
-    files:
-      - package.json
-      - yarn.lock
-  paths:
-    - node_modules
-
-lint js:
-  image: node:12-alpine
-  stage: lint
+install root dependencies:
+  stage: install
+  cache: 
+    key: $CI_COMMIT_REF_SLUG-root-dependencies
+    paths:
+      - node_modules/
   script:
-    - yarn eslint .
-
-deploy storybook static:
-  image: debian:stable-slim
-  stage: deploy-storybook
-  before_script:
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} "cd ${APP_ROOT_PATH} && bash ./scripts/storybook-deploy.sh"
+    - yarn install
   only:
-    - master
+    changes:
+      - yarn.lock
+
+# lint js:
+#   image: node:12-alpine
+#   stage: lint
+#   script:
+#     - yarn eslint .
+
+# deploy storybook static:
+#   image: debian:stable-slim
+#   stage: deploy-storybook
+#   before_script:
+#     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+#     - eval $(ssh-agent -s)
+#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#     - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+#     - chmod 700 ~/.ssh
+#     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
+#   script:
+#     - ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} "cd ${APP_ROOT_PATH} && bash ./scripts/storybook-deploy.sh"
+#   only:
+#     - master
