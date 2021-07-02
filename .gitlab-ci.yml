@@ -7,7 +7,7 @@ lint js:
   stage: lint
   script:
     - yarn install
-    - eslint .
+    - yarn eslint .
 
 deploy storybook static:
   image: debian:stable-slim
