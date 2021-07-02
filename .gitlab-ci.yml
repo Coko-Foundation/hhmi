@@ -3,12 +3,12 @@ stages:
   - deploy-storybook
 
 cache:
-  key: root_node_modules
+  key:
+    files:
+      - package.json
+      - yarn.lock
   paths:
     - node_modules
-  only:
-    changes:
-      - yarn.lock
 
 lint js:
   image: node:12-alpine
