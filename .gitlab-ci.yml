@@ -4,7 +4,8 @@ stages:
 
 cache:
   key: root_node_modules
-  path: node_modules
+  paths:
+    - node_modules
   only:
     changes:
       - yarn.lock
