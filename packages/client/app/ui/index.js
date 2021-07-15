@@ -9,4 +9,6 @@ export * from './dashboard'
 export * from './production'
 // export * from './profile'
 export * from './question'
+export * from './editor'
+
 // export * from './review'
