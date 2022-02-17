@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import styled from 'styled-components'
 import { range } from 'lodash'
 import { lorem } from 'faker'
 import { Discover } from '../../app/ui/discover/Discover'
@@ -38,6 +39,15 @@ const sortOptions = [
   },
 ]
 
+const Wrapper = styled.div`
+  height: 90vh;
+`
+
+const Navigation = styled.nav`
+  height: 50px;
+  background-color: #444;
+`
+
 export const DiscoverPage = () => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
@@ -67,15 +77,18 @@ export const DiscoverPage = () => {
   const handleSelectionChange = e => console.log(e)
 
   return (
-    <Discover
-      handleSearch={handleSearch}
-      handleSelectionChange={handleSelectionChange}
-      handleSortOptionChange={handleSortOptionChange}
-      loading={loading}
-      searchFunction={searchFunction}
-      searchResults={searchResults}
-      sortOptions={sortOptions}
-    />
+    <Wrapper>
+      <Navigation />
+      <Discover
+        handleSearch={handleSearch}
+        handleSelectionChange={handleSelectionChange}
+        handleSortOptionChange={handleSortOptionChange}
+        loading={loading}
+        searchFunction={searchFunction}
+        searchResults={searchResults}
+        sortOptions={sortOptions}
+      />
+    </Wrapper>
   )
 }
 

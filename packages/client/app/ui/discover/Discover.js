@@ -6,7 +6,7 @@ import MainContent from './MainContent'
 
 const PageWrapper = styled.section`
   max-width: 100%;
-  height: 95vh;
+  height: 100%;
   margin: auto;
   display: grid;
   grid-template-columns: minmax(100px, 25%) auto;
