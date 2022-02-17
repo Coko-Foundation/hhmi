@@ -6,13 +6,19 @@ import { DashboardRow } from '../dashboard'
 
 const Wrapper = styled.main`
   overflow: auto;
+  .discover-item {
+    border-bottom: 1px solid ${props => props.theme.colorSecondary};
+    padding-left: 20px;
+    margin-left: -20px;
+  }
   .ant-list-pagination {
     position: sticky;
     bottom: 0;
     margin-top: 0;
     padding-top: 15px;
-    background-color: white;
-    border-top: 1px solid gray;
+    color: ${props => props.theme.colorText};
+    background-color: ${props => props.theme.colorBackground};
+    border-top: 1px solid ${props => props.theme.colorSecondary};
   }
 `
 
@@ -41,11 +47,14 @@ const MainContent = props => {
             pageSize: 10,
           }}
           renderItem={item => (
-            <DashboardRow
-              metadata={item.meta}
-              subtitle={item.description}
-              title={item.title}
-            />
+            <>
+              <DashboardRow
+                className="discover-item"
+                metadata={item.meta}
+                subtitle={item.description}
+                title={item.title}
+              />
+            </>
           )}
           searchPlaceholder="Search chat"
           showSearch
