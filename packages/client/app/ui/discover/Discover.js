@@ -14,21 +14,28 @@ const PageWrapper = styled.section`
 
 export const Discover = props => {
   const {
+    filters,
+    filterOptions,
+    applyFilters,
+    setFilters,
     loading,
     searchResults,
     sortOptions,
     handleSearch,
-    handleSelectionChange,
     handleSortOptionChange,
   } = props
 
   return (
     <PageWrapper>
-      <Sidebar />
+      <Sidebar
+        applyFilters={applyFilters}
+        filterOptions={filterOptions}
+        filters={filters}
+        setFilters={setFilters}
+      />
 
       <MainContent
         handleSearch={handleSearch}
-        handleSelectionChange={handleSelectionChange}
         handleSortOptionChange={handleSortOptionChange}
         loading={loading}
         searchResults={searchResults}
@@ -39,7 +46,28 @@ export const Discover = props => {
 }
 
 Discover.propTypes = {
+  applyFilters: PropTypes.func.isRequired,
+  /** Filter options for the sidebar. */
+  filterOptions: PropTypes.shape({
+    learningObjectives: PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
+  /** values of selected filters from the sidebar */
+  filters: PropTypes.shape({
+    learningObjectives: PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
+  /** dispatch function to update filters */
+  setFilters: PropTypes.func.isRequired,
+  /** Loading search results. */
   loading: PropTypes.bool,
+  /** Handle search */
+  handleSearch: PropTypes.func.isRequired,
+  /** list of search result to render */
   searchResults: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
@@ -56,6 +84,7 @@ Discover.propTypes = {
       ),
     }),
   ),
+  /** options for sorting results */
   sortOptions: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
@@ -63,9 +92,7 @@ Discover.propTypes = {
       isDefault: PropTypes.bool,
     }),
   ),
-  handleSearch: PropTypes.func.isRequired,
   handleSortOptionChange: PropTypes.func.isRequired,
-  handleSelectionChange: PropTypes.func.isRequired,
 }
 
 Discover.defaultProps = {

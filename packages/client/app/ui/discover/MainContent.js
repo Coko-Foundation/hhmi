@@ -5,11 +5,17 @@ import { List } from '../common'
 import { DashboardRow } from '../dashboard'
 
 const Wrapper = styled.main`
-  overflow: auto;
-  .discover-item {
-    border-bottom: 1px solid ${props => props.theme.colorSecondary};
-    padding-left: 20px;
-    margin-left: -20px;
+  overflow: hidden;
+  > div {
+    height: 100%;
+  }
+  .ant-spin-nested-loading {
+    height: calc(100% - 70px);
+  }
+  .ant-spin-container,
+  .ant-list {
+    overflow: auto;
+    height: 100%;
   }
   .ant-list-pagination {
     position: sticky;
@@ -20,6 +26,11 @@ const Wrapper = styled.main`
     background-color: ${props => props.theme.colorBackground};
     border-top: 1px solid ${props => props.theme.colorSecondary};
   }
+
+  .discover-item {
+    border-bottom: 1px solid ${props => props.theme.colorSecondary};
+    padding: 15px;
+  }
 `
 
 const MainContent = props => {
@@ -28,7 +39,6 @@ const MainContent = props => {
     searchResults,
     handleSearch,
     handleSortOptionChange,
-    handleSelectionChange,
     sortOptions,
   } = props
 
@@ -37,9 +47,6 @@ const MainContent = props => {
       {searchResults && (
         <List
           dataSource={searchResults}
-          itemSelection={{
-            onChange: handleSelectionChange,
-          }}
           loading={loading}
           onSearch={handleSearch}
           onSortOptionChange={handleSortOptionChange}
@@ -56,7 +63,6 @@ const MainContent = props => {
               />
             </>
           )}
-          searchPlaceholder="Search chat"
           showSearch
           showSort
           showTotalCount
@@ -88,7 +94,6 @@ MainContent.propTypes = {
   ),
   handleSearch: PropTypes.func.isRequired,
   handleSortOptionChange: PropTypes.func.isRequired,
-  handleSelectionChange: PropTypes.func.isRequired,
   sortOptions: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,

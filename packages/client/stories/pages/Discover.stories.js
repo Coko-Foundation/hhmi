@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useReducer } from 'react'
 import styled from 'styled-components'
 import { range } from 'lodash'
 import { lorem } from 'faker'
@@ -9,18 +9,18 @@ const makeData = n =>
     id: String(i + 1),
     title: lorem.sentence(),
     description: lorem.sentences(6),
-    meta: {
-      unit: 'Lorem ipsum',
-      section: 'Lorem ipsum',
-      topic: 'Lorem ipsum',
-      category: 'Lorem ipsum',
-      published: '20 Oct 2020',
-    },
+    meta: [
+      { label: 'unit', value: 'Lorem ipsum' },
+      { label: 'section', value: 'Lorem ipsum' },
+      { label: 'topic', value: 'Lorem ipsum' },
+      { label: 'category', value: 'Lorem ipsum' },
+      { label: 'published', value: '20 Oct 2020' },
+    ],
   }))
 
 const searchFunction = async params => {
   console.log(params)
-  const numResults = Math.floor(Math.random() * 100 + 10)
+  const numResults = 33
   // dummy api just to simulate wating for response
   let data = await fetch('https://dummyapi.io/data/v1/')
   data = makeData(numResults)
@@ -34,23 +34,52 @@ const sortOptions = [
     isDefault: true,
   },
   {
+    label: 'Unit',
+    value: 'unit',
+  },
+  {
+    label: 'Section',
+    value: 'section',
+  },
+  {
     label: 'Topic',
     value: 'topic',
   },
+  {
+    label: 'Category',
+    value: 'category',
+  },
 ]
+
+const filterOptions = {
+  learningObjectives: [
+    { label: 'learning objective A', value: 'learning objective A' },
+    { label: 'learning objective B', value: 'learning objective B' },
+  ],
+}
 
 const Wrapper = styled.div`
   height: 90vh;
 `
 
-const Navigation = styled.nav`
-  height: 50px;
-  background-color: #444;
-`
+const filtersReducer = (state, action) => {
+  switch (action.type) {
+    case 'LEARNING_OBJECTIVES':
+      return { ...state, learningObjectives: [...action.payload] }
+    case 'CLEAR':
+      return { learningObjectives: [], course: [] }
+    default:
+      return state
+  }
+}
 
 export const DiscoverPage = () => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
+
+  const [filters, updateFilters] = useReducer(filtersReducer, {
+    learningObjectives: [],
+  })
 
   useEffect(async () => {
     setLoading(true)
@@ -66,6 +95,14 @@ export const DiscoverPage = () => {
     setLoading(false)
   }
 
+  const applyFilters = async () => {
+    setLoading(true)
+    const params = { ...filters }
+    const data = await searchFunction(params)
+    setSearchResults(data)
+    setLoading(false)
+  }
+
   const handleSortOptionChange = async newValue => {
     setLoading(true)
     const params = { sortBy: newValue }
@@ -74,18 +111,17 @@ export const DiscoverPage = () => {
     setLoading(false)
   }
 
-  const handleSelectionChange = e => console.log(e)
-
   return (
     <Wrapper>
-      <Navigation />
       <Discover
+        applyFilters={applyFilters}
+        filterOptions={filterOptions}
+        filters={filters}
         handleSearch={handleSearch}
-        handleSelectionChange={handleSelectionChange}
         handleSortOptionChange={handleSortOptionChange}
         loading={loading}
-        searchFunction={searchFunction}
         searchResults={searchResults}
+        setFilters={updateFilters}
         sortOptions={sortOptions}
       />
     </Wrapper>
@@ -93,6 +129,6 @@ export const DiscoverPage = () => {
 }
 
 export default {
-  component: DiscoverPage,
+  component: Discover,
   title: 'Pages/Discover',
 }

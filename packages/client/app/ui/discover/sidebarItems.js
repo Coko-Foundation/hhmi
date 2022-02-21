@@ -24,12 +24,8 @@ const sidebarItems = [
     placeholder: 'Search by reading level',
   },
   {
-    title: 'Future Phisicians',
+    title: 'Future Physicians',
     placeholder: 'Search for future phisicians',
-  },
-  {
-    title: 'Learning Objectives',
-    placeholder: 'Search for learning objectives',
   },
 ]
 

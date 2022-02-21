@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 import { lorem } from 'faker'
 import styled from 'styled-components'
-import { Collapse, Search, Button } from '../common'
+import { Collapse, Search, Button, Select } from '../common'
 import sidebarItems from './sidebarItems'
 
 const SidebarWrapper = styled.aside`
@@ -26,25 +27,67 @@ const SidebarFooter = styled.div`
 
 const dummyText = lorem.sentences(7)
 
-const Sidebar = () => {
+const Sidebar = props => {
+  const { filters, setFilters, filterOptions, applyFilters } = props
+
   return (
     <SidebarWrapper>
       <div>
         <p>{dummyText}</p>
         <Collapse>
           {sidebarItems.map(s => (
-            <Collapse.Panel header={s.title} key={s.title}>
-              <Search placeholder={s.placeholder} />
-            </Collapse.Panel>
+            <Collapse.Panel header={s.title} key={s.title} />
           ))}
+        </Collapse>
+        <Collapse>
+          <Collapse.Panel header="Learning objectives">
+            <Select
+              mode="multiple"
+              onChange={values => {
+                setFilters({
+                  type: 'LEARNING_OBJECTIVES',
+                  payload: [...values],
+                })
+              }}
+              options={filterOptions.learningObjectives}
+              showSearch
+              value={filters.learningObjectives}
+            />
+          </Collapse.Panel>
         </Collapse>
       </div>
       <SidebarFooter>
-        <Button className="clear-section">Clear section</Button>
-        <Button type="primary">Update</Button>
+        <Button
+          className="clear-section"
+          onClick={() => {
+            setFilters({ type: 'CLEAR' })
+          }}
+        >
+          Clear section
+        </Button>
+        <Button onClick={applyFilters} type="primary">
+          Update
+        </Button>
       </SidebarFooter>
     </SidebarWrapper>
   )
+}
+
+Sidebar.propTypes = {
+  filterOptions: PropTypes.objectOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+  filters: PropTypes.objectOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+  setFilters: PropTypes.func.isRequired,
+  applyFilters: PropTypes.func.isRequired,
 }
 
 export default Sidebar
