@@ -1,0 +1,79 @@
+type Question {
+  id: ID!
+  versions(latestOnly: Boolean!): [QuestionVersion!]!
+  agreedTc: Boolean!
+}
+
+input UpdateQuestionInput {
+  agreedTc: Boolean
+  questionVersionId: ID!
+  topic: String
+  subTopic: String
+  submitted: Boolean!
+  content: String
+  keywords: [String]
+  biointeractiveResources: String
+  cognitiveLevel: String
+  affectiveLevel: String
+  psychomotorLevel: String
+  readingLevel: String
+  framework: String
+  frameworkMetadata: FrameworkMetadataInput
+  supplementaryFields: [SupplementaryFieldsInput]
+}
+# make it stricter when fix the autosave of the form
+input SubmitQuestionInput {
+  agreedTc: Boolean
+  questionVersionId: ID!
+  topic: String!
+  subTopic: String!
+  submitted: Boolean
+  content: String
+  keywords: [String]
+  biointeractiveResources: String
+  cognitiveLevel: String
+  affectiveLevel: String
+  psychomotorLevel: String
+  readingLevel: String
+  framework: String!
+  frameworkMetadata: FrameworkMetadataInput
+  supplementaryFields: [SupplementaryFieldsInput]
+}
+
+input AutoSaveQuestionInput {
+  questionVersionId: ID!
+  topic: String
+  subTopic: String
+  content: String
+  keywords: [String]
+  biointeractiveResources: String
+  cognitiveLevel: String
+  affectiveLevel: String
+  psychomotorLevel: String
+  readingLevel: String
+  framework: String
+  frameworkMetadata: FrameworkMetadataInput
+  supplementaryFields: [SupplementaryFieldsInput]
+}
+input QuestionWhereInput {
+  role: String
+  page: PageInput
+}
+
+type QuestionsResponse {
+  result: [Question!]!
+  totalCount: Int
+}
+
+extend type Query {
+  question(id: ID): Question!
+  questions(where: QuestionWhereInput): QuestionsResponse!
+}
+
+extend type Mutation {
+  createQuestion: Question!
+  updateQuestion(id: ID!, input: UpdateQuestionInput!): Question!
+  submitQuestion(id: ID!, input: SubmitQuestionInput!): Question!
+  autoSaveQuestion(id: ID!, input: AutoSaveQuestionInput!): Question!
+  deleteQuestion(id: ID!): ID!
+}

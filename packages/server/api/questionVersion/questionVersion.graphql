@@ -1,0 +1,50 @@
+type QuestionVersion {
+  id: ID!
+  questionId: ID!
+  submitted: Boolean!
+  content: String
+  keywords: [String]
+  topic: String
+  subTopic: String
+  created: DateTime
+  biointeractiveResources: String
+  cognitiveLevel: String
+  affectiveLevel: String
+  psychomotorLevel: String
+  readingLevel: String
+  framework: String
+  frameworkMetadata: FrameworkMetadata
+  supplementaryFields: [SupplementaryFields]!
+}
+
+type SupplementaryFields {
+  topic: String
+  subTopic: String
+  frameworkMetadata: FrameworkMetadata
+}
+
+input SupplementaryFieldsInput {
+  topic: String
+  subTopic: String
+  frameworkMetadata: FrameworkMetadataInput
+}
+
+type FrameworkMetadata {
+  unit: String
+  frameworkTopic: String
+  learningObjective: String
+  essentialKnowledge: String
+  coreConcept: String
+  statement: String
+  subDiscipline: String
+}
+
+input FrameworkMetadataInput {
+  unit: String
+  frameworkTopic: String
+  learningObjective: String
+  essentialKnowledge: String
+  coreConcept: String
+  statement: String
+  subDiscipline: String
+}

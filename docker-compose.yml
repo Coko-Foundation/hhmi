@@ -12,8 +12,71 @@ services:
       - NODE_ENV=development
       # - CLIENT_ENTRY_FILE_PATH=./app.js
       - CLIENT_PORT=${CLIENT_PORT:-4000}
-      - SERVER_PROTOCOL=http
-      - SERVER_HOST=localhost
-      - SERVER_PORT=${SERVER_PORT:-3OOO}
+      - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
+      - SERVER_HOST=${SERVER_HOST:-localhost}
+      - SERVER_PORT=${SERVER_PORT:-3000}
     volumes:
-      - ./client/app:/home/node/app/app
+      - ./packages/client/app:/home/node/app/app
+  server:
+    build:
+      context: ./packages/server
+      dockerfile: ./Dockerfile-development
+    depends_on:
+      - db
+    entrypoint:
+      [
+        'node_modules/.bin/wait-for-it',
+        'db:5432',
+        '--',
+        'sh',
+        'scripts/setupDevServer.sh',
+      ]
+    command:
+      [
+        'node_modules/.bin/nodemon',
+        'startServer.js',
+        '--watch',
+        'api',
+        '--watch',
+        'config',
+        '--watch',
+        'models',
+        '--watch',
+        'scripts',
+        '--ext',
+        'js,graphql',
+      ]
+    ports:
+      - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_HOST=${POSTGRES_HOST:-db}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_DB=${POSTGRES_DB:-hhmi_dev}
+      - POSTGRES_USER=${POSTGRES_USER:-hhmi_dev_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-hhmi_dev_user_password}
+      - PUBSWEET_SECRET=${PUBSWEET_SECRET:-superSecretThing}
+      - SERVER_PORT=${SERVER_PORT:-3000}
+      - CLIENT_PROTOCOL=${CLIENT_PROTOCOL:-http}
+      - CLIENT_HOST=${CLIENT_HOST:-0.0.0.0}
+      - CLIENT_PORT=${CLIENT_PORT:-4000}
+      - MAILER_USER=${MAILER_USER}
+      - MAILER_PASSWORD=${MAILER_PASSWORD}
+      - MAILER_SENDER=${MAILER_SENDER:-dev@example.com}
+      - MAILER_HOSTNAME=${MAILER_HOSTNAME}
+      - PASSWORD_RESET_PATH=${PASSWORD_RESET_PATH:-password-reset}
+    volumes:
+      - ./packages/server/config:/home/node/hhmi/config
+      - ./packages/server/api:/home/node/hhmi/api
+      - ./packages/server/scripts:/home/node/hhmi/scripts
+      - ./packages/server/models:/home/node/hhmi/models
+  db:
+    image: postgres:12
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-hhmi_dev}
+      - POSTGRES_USER=${POSTGRES_USER:-hhmi_dev_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-hhmi_dev_user_password}
+    volumes:
+      - ./scripts/init-pgboss.sql:/docker-entrypoint-initdb.d/init-pgboss.sql

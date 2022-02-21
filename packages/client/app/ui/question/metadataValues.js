@@ -5918,27 +5918,15 @@ const metadata = {
         {
           label: 'Evolution',
           value: 'evolution',
-          principles: [
-            {
-              label: 'Overarching Principles',
-              value: 'overarchingPrinciples',
-              subDisciplines: [
-                {
-                  label: 'All living organisms share a common ancestor.',
-                  value: 'allLivingOrganismsShareACommonAncestor',
-                },
-                {
-                  label:
-                    'Species evolve over time, and new species can arise, when allele frequencies change due to mutation, natural selection, gene flow, and genetic drift.',
-                  value:
-                    'speciesEvolveOverTimeAndNewSpeciesCanAriseWhenAlleleFrequenciesChangeDueToMutationNaturalSelectionGeneFlowAndGeneticDrift',
-                },
-              ],
-            },
+          explanatoryItems: [
+            'All living organisms share a common ancestor.',
+            'Species evolve over time, and new species can arise, when allele frequencies change due to mutation, natural selection, gene flow, and genetic drift.',
+          ],
+          subDisciplines: [
             {
               label: 'Molecular/Cellular/Developmental Biology',
               value: 'molecularCellularDevelopmentalBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Multiple molecular mechanisms, including DNA damage and errors in replication, lead to the generation of random mutations. These mutations create new alleles that can be inherited via mitosis, meiosis, or cell division.',
@@ -5956,7 +5944,7 @@ const metadata = {
             {
               label: 'Physiology',
               value: 'physiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Mutations that change protein structure and/or regulation can impact anatomy and physiological function at all levels of organization.',
@@ -5980,7 +5968,7 @@ const metadata = {
             {
               label: 'Ecology/Evolutionary Biology',
               value: 'ecologyEvolutionaryBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'The characteristics of populations change over time due to changes in allele frequencies. Changes in allele frequencies are caused by random and nonrandom processes – specifically mutation, natural selection, gene flow, and genetic drift. Not all of these changes are adaptive.',
@@ -6006,29 +5994,16 @@ const metadata = {
         {
           label: 'Structure and function',
           value: 'structureAndFunction',
-          principles: [
-            {
-              label: 'Overarching Principles',
-              value: 'overarchingPrinciples',
-              subDisciplines: [
-                {
-                  label:
-                    'Biological structures exist at all levels of organization, from molecules to ecosystems. A structure’s physical and chemical characteristics influence its interactions with other structures, and therefore its function.',
-                  value:
-                    'biologicalStructuresExistAtAllLevelsOfOrganizationFromMoleculesToEcosystemsAStructuresPhysicalAndChemicalCharacteristicsInfluenceItsInteractionsWithOtherStructuresAndThereforeItsFunction',
-                },
-                {
-                  label:
-                    'Natural selection leads to the evolution of structures that tend to increase fitness within the context of evolutionary, developmental, and environmental constraints.',
-                  value:
-                    'naturalSelectionLeadsToTheEvolutionOfStructuresThatTendToIncreaseFitnessWithinTheContextOfEvolutionaryDevelopmentalAndEnvironmentalConstraints',
-                },
-              ],
-            },
+          headding: 'Overarching Principles',
+          explanatoryItems: [
+            'Biological structures exist at all levels of organization, from molecules to ecosystems. A structure’s physical and chemical characteristics influence its interactions with other structures, and therefore its function.',
+            'Natural selection leads to the evolution of structures that tend to increase fitness within the context of evolutionary, developmental, and environmental constraints.',
+          ],
+          subDisciplines: [
             {
               label: 'Molecular/Cellular/Developmental Biology',
               value: 'molecularCellularDevelopmentalBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'The structure of a cell – its shape, membrane, organelles, cytoskeleton, and polarity – impacts its function.',
@@ -6052,7 +6027,7 @@ const metadata = {
             {
               label: 'Physiology',
               value: 'physiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Physiological functions are often compartmentalized into different cells, tissues, organs, and systems, which have structures that support specialized activities.',
@@ -6076,7 +6051,7 @@ const metadata = {
             {
               label: 'Ecology/Evolutionary Biology',
               value: 'ecologyEvolutionaryBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Natural selection has favored structures whose shape and composition contribute to their ecological function.',
@@ -6096,29 +6071,15 @@ const metadata = {
         {
           label: 'Information flow, exchange, and storage',
           value: 'informationFlowExchangeAndStorage',
-          principles: [
-            {
-              label: 'Overarching Principles',
-              value: 'overarchingPrinciples',
-              subDisciplines: [
-                {
-                  label:
-                    'Organisms inherit genetic and epigenetic information that influences the location, timing, and intensity of gene expression.',
-                  value:
-                    'organismsInheritGeneticAndEpigeneticInformationThatInfluencesTheLocationTimingAndIntensityOfGeneExpression',
-                },
-                {
-                  label:
-                    'Cells/organs/organisms have multiple mechanisms to perceive and respond to changing environmental conditions.',
-                  value:
-                    'cellsOrgansOrganismsHaveMultipleMechanismsToPerceiveAndRespondToChangingEnvironmentalConditions',
-                },
-              ],
-            },
+          explanatoryItems: [
+            'Organisms inherit genetic and epigenetic information that influences the location, timing, and intensity of gene expression.',
+            'Cells/organs/organisms have multiple mechanisms to perceive and respond to changing environmental conditions.',
+          ],
+          subDisciplines: [
             {
               label: 'Molecular/Cellular/Developmental Biology',
               value: 'molecularCellularDevelopmentalBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'In most cases, genetic information flows from DNA to mRNA to protein, but there are important exceptions.',
@@ -6142,7 +6103,7 @@ const metadata = {
             {
               label: 'Physiology',
               value: 'physiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Information stored in DNA is expressed as RNA and proteins. These gene products impact anatomical structures and physiological function.',
@@ -6160,7 +6121,7 @@ const metadata = {
             {
               label: 'Ecology/Evolutionary Biology',
               value: 'ecologyEvolutionaryBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Individuals transmit genetic information to their offspring; some alleles confer higher fitness than others in a particular environment.',
@@ -6180,35 +6141,16 @@ const metadata = {
         {
           label: 'Pathways and transformations of energy and matter',
           value: 'pathwaysAndTransformationsOfEnergyAndMatter',
-          principles: [
-            {
-              label: 'Overarching Principles',
-              value: 'overarchingPrinciples',
-              subDisciplines: [
-                {
-                  label:
-                    'Energy and matter cannot be created or destroyed, but can be changed from one form to another.',
-                  value:
-                    'energyAndMatterCannotBeCreatedOrDestroyedButCanBeChangedFromOneFormToAnother',
-                },
-                {
-                  label:
-                    'Energy captured by primary producers is necessary to support the maintenance, growth and reproduction of all organisms.',
-                  value:
-                    'energyCapturedByPrimaryProducersIsNecessaryToSupportTheMaintenanceGrowthAndReproductionOfAllOrganisms',
-                },
-                {
-                  label:
-                    'Natural selection leads to the evolution of efficient use of resources within constraints.',
-                  value:
-                    'naturalSelectionLeadsToTheEvolutionOfEfficientUseOfResourcesWithinConstraints',
-                },
-              ],
-            },
+          explanatoryItems: [
+            'Energy and matter cannot be created or destroyed, but can be changed from one form to another.',
+            'Energy captured by primary producers is necessary to support the maintenance, growth and reproduction of all organisms.',
+            'Natural selection leads to the evolution of efficient use of resources within constraints.',
+          ],
+          subDisciplines: [
             {
               label: 'Molecular/Cellular/Developmental Biology',
               value: 'molecularCellularDevelopmentalBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Energy captured by primary producers is stored as chemical energy. This stored energy can be converted through a series of biochemical reactions into ATP for immediate use in the cell.',
@@ -6232,7 +6174,7 @@ const metadata = {
             {
               label: 'Physiology',
               value: 'physiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Energy captured by primary producers is stored as chemical energy. This stored energy can be converted into ATP, which is required for energetically demanding activities necessary for life, including synthesis, transport, and movement.',
@@ -6256,7 +6198,7 @@ const metadata = {
             {
               label: 'Ecology/Evolutionary Biology',
               value: 'ecologyEvolutionaryBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Energy captured by primary producers is stored as chemical energy. At each trophic level, most of this energy is used for maintenance, with a relatively small fraction available for growth and reproduction. As a consequence, each trophic level in an ecosystem has less energy available than the preceding level.',
@@ -6276,29 +6218,15 @@ const metadata = {
         {
           label: 'Systems',
           value: 'systems',
-          principles: [
-            {
-              label: 'Overarching Principles',
-              value: 'overarchingPrinciples',
-              subDisciplines: [
-                {
-                  label:
-                    'Biological molecules, genes, cells, tissues, organs, individuals, and ecosystems interact to form complex networks. A change in one component of the network can affect many other components.',
-                  value:
-                    'biologicalMoleculesGenesCellsTissuesOrgansIndividualsAndEcosystemsInteractToFormComplexNetworksAChangeInOneComponentOfTheNetworkCanAffectManyOtherComponents',
-                },
-                {
-                  label:
-                    'Organisms have complex systems that integrate internal and external information, incorporate feedback control, and allow them to respond to changes in the environment.',
-                  value:
-                    'organismsHaveComplexSystemsThatIntegrateInternalAndExternalInformationIncorporateFeedbackControlAndAllowThemToRespondToChangesInTheEnvironment',
-                },
-              ],
-            },
+          explanatoryItems: [
+            'Biological molecules, genes, cells, tissues, organs, individuals, and ecosystems interact to form complex networks. A change in one component of the network can affect many other components.',
+            'Organisms have complex systems that integrate internal and external information, incorporate feedback control, and allow them to respond to changes in the environment.',
+          ],
+          subDisciplines: [
             {
               label: 'Molecular/Cellular/Developmental Biology',
               value: 'molecularCellularDevelopmentalBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Cells receive a complex array of chemical and physical signals that vary in time, location, and intensity over the lifespan of the organism; a cell’s response depends on integration and coordination of these various signals.',
@@ -6322,7 +6250,7 @@ const metadata = {
             {
               label: 'Physiology',
               value: 'physiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'Organ systems are not isolated, but interact with each other through chemical and physical signals at the level of cells, tissues, and organs.',
@@ -6346,7 +6274,7 @@ const metadata = {
             {
               label: 'Ecology/Evolutionary Biology',
               value: 'ecologyEvolutionaryBiology',
-              subDisciplines: [
+              statements: [
                 {
                   label:
                     'The size and structure of populations are dynamic. A species’ abundance and distribution is limited by available resources and by interactions between biotic and abiotic factors.',

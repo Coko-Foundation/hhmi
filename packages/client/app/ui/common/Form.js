@@ -130,6 +130,7 @@ Form.defaultProps = {
 /* Replicate exports from https://github.com/ant-design/ant-design/blob/master/components/form/index.tsx#L24-L35 */
 Form.render = Form
 Form.Item = FormItem
+Form.List = AntForm.List
 Form.ErrorList = AntForm.ErrorList
 Form.useForm = AntForm.useForm
 Form.Provider = AntForm.FormProvider

@@ -1,11 +1,23 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
+import { useHistory } from 'react-router-dom'
 import { grid, th } from '@coko/client'
-
 import DashboardRow from './DashboardRow'
 import { Button, Collapse, List } from '../common'
+
+const LinkWithoutStyles = styled.a`
+  color: inherit;
+  text-decoration: none;
+  width: 100%;
+
+  &:hover,
+  &:focus,
+  &:active {
+    color: inherit;
+    text-decoration: none;
+  }
+`
 
 const Wrapper = styled.div`
   > div.ant-collapse > div.ant-collapse-item > .ant-collapse-header {
@@ -37,9 +49,12 @@ const Dashboard = props => {
     authorItems,
     editorItems,
     reviewerItems,
-
+    withTotalCount,
+    authorTotalCountNumber,
     onClickCreateQuestion,
   } = props
+
+  const history = useHistory()
 
   const handleClickCreate = e => {
     e.stopPropagation()
@@ -48,9 +63,7 @@ const Dashboard = props => {
 
   return (
     <Wrapper className={className}>
-      <Collapse
-      // defaultActiveKey="author"
-      >
+      <Collapse defaultActiveKey="author">
         <Collapse.Panel
           extra={
             <Button onClick={handleClickCreate} type="primary">
@@ -63,10 +76,21 @@ const Dashboard = props => {
           <List
             dataSource={authorItems}
             renderItem={itemProps => (
-              <li>
-                <DashboardRow {...itemProps} />
-              </li>
+              <List.Item>
+                <LinkWithoutStyles
+                  href={`question/${itemProps.id}`}
+                  onClick={e => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    history.push(`question/${itemProps.id}`)
+                  }}
+                >
+                  <DashboardRow {...itemProps} />
+                </LinkWithoutStyles>
+              </List.Item>
             )}
+            showTotalCount={withTotalCount}
+            totalCount={authorTotalCountNumber}
           />
         </Collapse.Panel>
 
@@ -101,26 +125,29 @@ const itemProps = PropTypes.arrayOf(
     metadata: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string.isRequired,
-        value: PropTypes.string.isRequired,
+        value: PropTypes.string,
       }),
     ).isRequired,
-    subtitle: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
   }),
 )
 
 Dashboard.propTypes = {
   authorItems: itemProps,
+  authorTotalCountNumber: PropTypes.number,
   editorItems: itemProps,
   reviewerItems: itemProps,
+  withTotalCount: PropTypes.bool,
 
   onClickCreateQuestion: PropTypes.func.isRequired,
 }
 
 Dashboard.defaultProps = {
   authorItems: [],
+  authorTotalCountNumber: 0,
   editorItems: [],
   reviewerItems: [],
+  withTotalCount: false,
 }
 
 export default Dashboard

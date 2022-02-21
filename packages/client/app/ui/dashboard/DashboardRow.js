@@ -4,9 +4,14 @@ import styled from 'styled-components'
 
 import { uuid } from '@coko/client'
 
-import { H2, Paragraph } from '../common'
+import { H4 } from '../common'
+import WaxWrapper from '../wax/Wax'
+import { DashLayout } from '../wax/layout'
+import { dashConfig } from '../wax/config'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  width: 100%;
+`
 
 const SubtitleRow = styled.div``
 
@@ -17,6 +22,7 @@ const BottomRow = styled.div`
 
 const Metadata = styled.div`
   display: flex;
+  flex-basis: 20%;
   flex-direction: column;
 `
 
@@ -25,19 +31,24 @@ const MetadataLabel = styled.div`
   text-transform: uppercase;
 `
 
+const contentPlaceholder = `<p class="paragraph">-</p>`
+
 const MetadataValue = styled.div``
 
 const DashboardRow = props => {
-  const { className, metadata, subtitle, title } = props
+  const { className, metadata, content, title } = props
 
   return (
     <Wrapper className={className}>
-      <H2>{title}</H2>
+      <H4>{title}</H4>
 
       <SubtitleRow>
-        <Paragraph ellipsis={{ rows: 2 }} strong>
-          {subtitle}
-        </Paragraph>
+        <WaxWrapper
+          config={dashConfig}
+          content={content || contentPlaceholder}
+          layout={DashLayout}
+          readOnly
+        />
       </SubtitleRow>
 
       <BottomRow>
@@ -46,7 +57,7 @@ const DashboardRow = props => {
           metadata.map(item => (
             <Metadata key={uuid()}>
               <MetadataLabel>{item.label}</MetadataLabel>
-              <MetadataValue>{item.value}</MetadataValue>
+              <MetadataValue>{item.value || '-'}</MetadataValue>
             </Metadata>
           ))}
       </BottomRow>
@@ -58,13 +69,13 @@ DashboardRow.propTypes = {
   metadata: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
+      value: PropTypes.string,
     }),
   ).isRequired,
-  subtitle: PropTypes.string.isRequired,
+  content: PropTypes.string,
   title: PropTypes.string.isRequired,
 }
 
-DashboardRow.defaultProps = {}
+DashboardRow.defaultProps = { content: null }
 
 export default DashboardRow

@@ -7,29 +7,19 @@ import { Metadata } from 'ui'
 
 const options = [
   {
-    label: 'One',
-    value: 'one',
+    label: 'Topic',
+    value: 'Hello',
   },
   {
-    label: 'Two',
-    value: 'two',
+    label: 'Subtopic',
+    value: 'Wordl',
   },
 ]
 
 export const Base = () => (
   <Metadata
-    cognitiveLevelOptions={options}
-    coreCompetencyOptions={options}
-    coreConceptOptions={options}
-    frameworkOptions={options}
-    onAutoSave={vals => console.log(vals)}
-    principleOptions={options}
-    programLevelOutcomeOptions={options}
-    readingLevelOptions={options}
-    sectionOptions={options}
-    subDisciplineOptions={options}
-    topicOptions={options}
-    unitOptions={options}
+    initialValues={options}
+    onFormFinish={console.log('on form finish')}
   />
 )
 

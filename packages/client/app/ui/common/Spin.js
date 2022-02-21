@@ -3,11 +3,13 @@
  */
 
 import React from 'react'
-// import PropTypes from 'prop-types'
+import PropTypes from 'prop-types'
 import styled, { css, keyframes } from 'styled-components'
 import { Spin as AntSpin } from 'antd'
 
-const StyledSpin = styled(({ isNested, ...rest }) => <AntSpin {...rest} />)`
+const StyledSpin = styled(({ isNested, renderBackground, ...rest }) => (
+  <AntSpin {...rest} />
+))`
   ${props =>
     props.isNested &&
     css`
@@ -54,6 +56,18 @@ const BounceTwo = styled(BounceOne)`
   animation-delay: -1s;
 `
 
+const NestedWrapper = styled.div`
+  height: 100%;
+
+  .ant-spin-nested-loading {
+    height: 100%;
+
+    > div {
+      height: 100%;
+    }
+  }
+`
+
 const Indicator = () => (
   <IndicatorWrapper>
     <BounceOne />
@@ -62,23 +76,33 @@ const Indicator = () => (
 )
 
 const Spin = props => {
-  const { className, children, ...rest } = props
+  const { className, children, renderBackground, spinning, ...rest } = props
+  const showChildren = renderBackground || (!renderBackground && !spinning)
 
-  return (
+  const spin = (
     <StyledSpin
       className={className}
       indicator={<Indicator />}
       isNested={!!children}
+      renderBackground={renderBackground}
+      spinning={spinning}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...rest}
     >
-      {children}
+      {showChildren && children}
     </StyledSpin>
   )
+
+  if (!showChildren) return <NestedWrapper>{spin}</NestedWrapper>
+  return spin
 }
 
-Spin.propTypes = {}
+Spin.propTypes = {
+  renderBackground: PropTypes.bool,
+}
 
-Spin.defaultProps = {}
+Spin.defaultProps = {
+  renderBackground: true,
+}
 
 export default Spin

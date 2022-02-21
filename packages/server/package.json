@@ -8,7 +8,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@coko/server": "^1.12.2",
+    "@coko/server": "https://gitlab.coko.foundation/cokoapps/server.git#2ddd4a2395737eb20096e3a7270d255404ac4a35",
+    "config": "^3.3.6",
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "node-wait-for-it": "^0.2.0",
+    "nodemon": "^2.0.13"
   }
 }
