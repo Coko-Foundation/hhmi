@@ -58,7 +58,7 @@ const MainContent = props => {
               <DashboardRow
                 className="discover-item"
                 metadata={item.meta}
-                subtitle={item.description}
+                content={item.description}
                 title={item.title}
               />
             </>
