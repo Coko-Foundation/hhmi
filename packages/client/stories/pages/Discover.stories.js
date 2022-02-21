@@ -52,7 +52,7 @@ const sortOptions = [
 ]
 
 const filterOptions = {
-  learningObjectives: [
+  LEARNING_OBJECTIVES: [
     { label: 'learning objective A', value: 'learning objective A' },
     { label: 'learning objective B', value: 'learning objective B' },
   ],
@@ -65,9 +65,9 @@ const Wrapper = styled.div`
 const filtersReducer = (state, action) => {
   switch (action.type) {
     case 'LEARNING_OBJECTIVES':
-      return { ...state, learningObjectives: [...action.payload] }
+      return { ...state, LEARNING_OBJECTIVES: [...action.payload] }
     case 'CLEAR':
-      return { learningObjectives: [], course: [] }
+      return { LEARNING_OBJECTIVES: [] }
     default:
       return state
   }
@@ -78,7 +78,7 @@ export const DiscoverPage = () => {
   const [loading, setLoading] = useState(false)
 
   const [filters, updateFilters] = useReducer(filtersReducer, {
-    learningObjectives: [],
+    LEARNING_OBJECTIVES: [],
   })
 
   useEffect(async () => {

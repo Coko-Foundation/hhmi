@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { lorem } from 'faker'
 import styled from 'styled-components'
-import { Collapse, Search, Button, Select } from '../common'
+import { Collapse, Button, Select } from '../common'
 import sidebarItems from './sidebarItems'
 
 const SidebarWrapper = styled.aside`
@@ -36,24 +36,21 @@ const Sidebar = props => {
         <p>{dummyText}</p>
         <Collapse>
           {sidebarItems.map(s => (
-            <Collapse.Panel header={s.title} key={s.title} />
+            <Collapse.Panel header={s.title} key={s.title}>
+              <Select
+                mode="multiple"
+                onChange={values => {
+                  setFilters({
+                    type: s.actionType,
+                    payload: [...values],
+                  })
+                }}
+                options={filterOptions[s.actionType]}
+                showSearch
+                value={filters[s.actionType]}
+              />
+            </Collapse.Panel>
           ))}
-        </Collapse>
-        <Collapse>
-          <Collapse.Panel header="Learning objectives">
-            <Select
-              mode="multiple"
-              onChange={values => {
-                setFilters({
-                  type: 'LEARNING_OBJECTIVES',
-                  payload: [...values],
-                })
-              }}
-              options={filterOptions.learningObjectives}
-              showSearch
-              value={filters.learningObjectives}
-            />
-          </Collapse.Panel>
         </Collapse>
       </div>
       <SidebarFooter>
