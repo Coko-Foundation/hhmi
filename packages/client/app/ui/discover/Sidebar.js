@@ -1,6 +1,5 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { lorem } from 'faker'
 import styled from 'styled-components'
 import { Collapse, Button, Select } from '../common'
 import sidebarItems from './sidebarItems'
@@ -25,15 +24,13 @@ const SidebarFooter = styled.div`
   }
 `
 
-const dummyText = lorem.sentences(7)
-
 const Sidebar = props => {
-  const { filters, setFilters, filterOptions, applyFilters } = props
+  const { text, filters, setFilters, filterOptions, applyFilters } = props
 
   return (
     <SidebarWrapper>
       <div>
-        <p>{dummyText}</p>
+        <p>{text}</p>
         <Collapse>
           {sidebarItems.map(s => (
             <Collapse.Panel header={s.title} key={s.title}>
@@ -71,20 +68,30 @@ const Sidebar = props => {
 }
 
 Sidebar.propTypes = {
+  /** Object containing fitler options for each filter key */
   filterOptions: PropTypes.objectOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  /** selected filter values for each filter key */
   filters: PropTypes.objectOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  /** dispatch method to update filters */
   setFilters: PropTypes.func.isRequired,
+  /** method to query the server with the selected filters */
   applyFilters: PropTypes.func.isRequired,
+  /** text that goes to the top of the sidebar */
+  text: PropTypes.string,
+}
+
+Sidebar.defaultProps = {
+  text: '',
 }
 
 export default Sidebar

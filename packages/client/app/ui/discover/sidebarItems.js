@@ -16,7 +16,7 @@ const sidebarItems = [
   },
   {
     title: 'Unit',
-    actionType: 'Unit',
+    actionType: 'UNIT',
     placeholder: 'Search for unit',
   },
   {

@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Sidebar from './Sidebar'
-import MainContent from './MainContent'
+import QuestionList from '../common/QuestionList'
 
 const PageWrapper = styled.section`
   max-width: 100%;
@@ -19,10 +19,11 @@ export const Discover = props => {
     applyFilters,
     setFilters,
     loading,
-    searchResults,
+    questions,
     sortOptions,
-    handleSearch,
-    handleSortOptionChange,
+    sidebarText,
+    onSearch,
+    onSortOptionChange,
   } = props
 
   return (
@@ -32,13 +33,14 @@ export const Discover = props => {
         filterOptions={filterOptions}
         filters={filters}
         setFilters={setFilters}
+        text={sidebarText}
       />
-
-      <MainContent
-        handleSearch={handleSearch}
-        handleSortOptionChange={handleSortOptionChange}
+      <QuestionList
         loading={loading}
-        searchResults={searchResults}
+        onSearch={onSearch}
+        onSortOptionChange={onSortOptionChange}
+        questions={questions}
+        questionsPerPage={10}
         sortOptions={sortOptions}
       />
     </PageWrapper>
@@ -66,9 +68,9 @@ Discover.propTypes = {
   /** Loading search results. */
   loading: PropTypes.bool,
   /** Handle search */
-  handleSearch: PropTypes.func.isRequired,
+  onSearch: PropTypes.func.isRequired,
   /** list of search result to render */
-  searchResults: PropTypes.arrayOf(
+  questions: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
@@ -92,13 +94,15 @@ Discover.propTypes = {
       isDefault: PropTypes.bool,
     }),
   ),
-  handleSortOptionChange: PropTypes.func.isRequired,
+  sidebarText: PropTypes.string,
+  onSortOptionChange: PropTypes.func.isRequired,
 }
 
 Discover.defaultProps = {
   loading: false,
-  searchResults: [],
+  questions: [],
   sortOptions: [],
+  sidebarText: '',
 }
 
 export default Discover

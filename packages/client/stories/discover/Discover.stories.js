@@ -9,7 +9,7 @@ const makeData = n =>
     id: String(i + 1),
     title: lorem.sentence(),
     description: lorem.sentences(6),
-    meta: [
+    metadata: [
       { label: 'unit', value: 'Lorem ipsum' },
       { label: 'section', value: 'Lorem ipsum' },
       { label: 'topic', value: 'Lorem ipsum' },
@@ -19,6 +19,7 @@ const makeData = n =>
   }))
 
 const searchFunction = async params => {
+  // eslint-disable-next-line no-console
   console.log(params)
   const numResults = 33
   // dummy api just to simulate wating for response
@@ -73,6 +74,8 @@ const filtersReducer = (state, action) => {
   }
 }
 
+const sidebarText = lorem.sentences(7)
+
 export const DiscoverPage = () => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
@@ -117,11 +120,12 @@ export const DiscoverPage = () => {
         applyFilters={applyFilters}
         filterOptions={filterOptions}
         filters={filters}
-        handleSearch={handleSearch}
-        handleSortOptionChange={handleSortOptionChange}
         loading={loading}
-        searchResults={searchResults}
+        onSearch={handleSearch}
+        onSortOptionChange={handleSortOptionChange}
+        questions={searchResults}
         setFilters={updateFilters}
+        sidebarText={sidebarText}
         sortOptions={sortOptions}
       />
     </Wrapper>
@@ -130,5 +134,5 @@ export const DiscoverPage = () => {
 
 export default {
   component: Discover,
-  title: 'Pages/Discover',
+  title: 'Discover/Discover',
 }
