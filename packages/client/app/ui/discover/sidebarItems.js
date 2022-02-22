@@ -75,6 +75,10 @@ const sidebarItems = [
     title: 'Learning Objectives',
     actionType: 'LEARNING_OBJECTIVES',
     placeholder: 'Search for learning objectives',
+    options: [
+      { label: 'learning objective A', value: 'learning_objective_A' },
+      { label: 'learning objective B', value: 'learning_objective_B' },
+    ],
   },
 ]
 
