@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useReducer } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Collapse, Button, Select } from '../common'
@@ -24,8 +24,39 @@ const SidebarFooter = styled.div`
   }
 `
 
+const filterReducer = (state, action) => {
+  switch (action.type) {
+    case 'COURSE':
+      return { ...state, COURSE: action.payload }
+    case 'QUESTION_CHANGE':
+      return { ...state, QUESTION_CHANGE: action.payload }
+    case 'VISION_CHANGE':
+      return { ...state, VISION_CHANGE: action.payload }
+    case 'UNIT':
+      return { ...state, UNIT: action.payload }
+    case 'BLOOMS_LEVEL':
+      return { ...state, BLOOMS_LEVEL: action.payload }
+    case 'READING_LEVEL':
+      return { ...state, READING_LEVEL: action.payload }
+    case 'FUTURE_PHYSICIANS':
+      return { ...state, FUTURE_PHYSICIANS: action.payload }
+    case 'LEARNING_OBJECTIVES':
+      return { ...state, LEARNING_OBJECTIVES: action.payload }
+    case 'CLEAR':
+      return {}
+    default:
+      return state
+  }
+}
+
 const Sidebar = props => {
-  const { text, filters, setFilters, filterOptions, applyFilters } = props
+  const { text, setFilters, applyFilters } = props
+
+  const [selectedFilters, setSelectedFilters] = useReducer(filterReducer, {})
+
+  useEffect(() => {
+    setFilters(selectedFilters)
+  }, [selectedFilters])
 
   return (
     <SidebarWrapper>
@@ -37,14 +68,14 @@ const Sidebar = props => {
               <Select
                 mode="multiple"
                 onChange={values => {
-                  setFilters({
+                  setSelectedFilters({
                     type: s.actionType,
                     payload: [...values],
                   })
                 }}
-                options={filterOptions[s.actionType]}
+                options={s.options}
                 showSearch
-                value={filters[s.actionType]}
+                value={selectedFilters[s.actionType]}
               />
             </Collapse.Panel>
           ))}
@@ -54,7 +85,7 @@ const Sidebar = props => {
         <Button
           className="clear-section"
           onClick={() => {
-            setFilters({ type: 'CLEAR' })
+            setSelectedFilters({ type: 'CLEAR' })
           }}
         >
           Clear section
@@ -68,20 +99,6 @@ const Sidebar = props => {
 }
 
 Sidebar.propTypes = {
-  /** Object containing fitler options for each filter key */
-  filterOptions: PropTypes.objectOf(
-    PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-  /** selected filter values for each filter key */
-  filters: PropTypes.objectOf(
-    PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
   /** dispatch method to update filters */
   setFilters: PropTypes.func.isRequired,
   /** method to query the server with the selected filters */

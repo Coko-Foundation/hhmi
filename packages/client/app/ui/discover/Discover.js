@@ -14,8 +14,6 @@ const PageWrapper = styled.section`
 
 export const Discover = props => {
   const {
-    filters,
-    filterOptions,
     applyFilters,
     setFilters,
     loading,
@@ -30,8 +28,6 @@ export const Discover = props => {
     <PageWrapper>
       <Sidebar
         applyFilters={applyFilters}
-        filterOptions={filterOptions}
-        filters={filters}
         setFilters={setFilters}
         text={sidebarText}
       />
@@ -49,22 +45,10 @@ export const Discover = props => {
 
 Discover.propTypes = {
   applyFilters: PropTypes.func.isRequired,
-  /** Filter options for the sidebar. */
-  filterOptions: PropTypes.shape({
-    learningObjectives: PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
-    }),
-  }).isRequired,
-  /** values of selected filters from the sidebar */
-  filters: PropTypes.shape({
-    learningObjectives: PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
-    }),
-  }).isRequired,
   /** dispatch function to update filters */
   setFilters: PropTypes.func.isRequired,
+  /** text for the sidebar */
+  sidebarText: PropTypes.string,
   /** Loading search results. */
   loading: PropTypes.bool,
   /** Handle search */
@@ -94,7 +78,6 @@ Discover.propTypes = {
       isDefault: PropTypes.bool,
     }),
   ),
-  sidebarText: PropTypes.string,
   onSortOptionChange: PropTypes.func.isRequired,
 }
 

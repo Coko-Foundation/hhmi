@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { range } from 'lodash'
 import { lorem } from 'faker'
@@ -52,27 +52,9 @@ const sortOptions = [
   },
 ]
 
-const filterOptions = {
-  LEARNING_OBJECTIVES: [
-    { label: 'learning objective A', value: 'learning objective A' },
-    { label: 'learning objective B', value: 'learning objective B' },
-  ],
-}
-
 const Wrapper = styled.div`
   height: 90vh;
 `
-
-const filtersReducer = (state, action) => {
-  switch (action.type) {
-    case 'LEARNING_OBJECTIVES':
-      return { ...state, LEARNING_OBJECTIVES: [...action.payload] }
-    case 'CLEAR':
-      return { LEARNING_OBJECTIVES: [] }
-    default:
-      return state
-  }
-}
 
 const sidebarText = lorem.sentences(7)
 
@@ -80,9 +62,7 @@ export const DiscoverPage = () => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
 
-  const [filters, updateFilters] = useReducer(filtersReducer, {
-    LEARNING_OBJECTIVES: [],
-  })
+  const [filters, updateFilters] = useState({})
 
   useEffect(async () => {
     setLoading(true)
@@ -118,8 +98,6 @@ export const DiscoverPage = () => {
     <Wrapper>
       <Discover
         applyFilters={applyFilters}
-        filterOptions={filterOptions}
-        filters={filters}
         loading={loading}
         onSearch={handleSearch}
         onSortOptionChange={handleSortOptionChange}
