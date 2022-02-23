@@ -18,14 +18,19 @@ const makeData = n =>
     ],
   }))
 
-const searchFunction = async params => {
+const searchFunction = async (params = {}) => {
+  const { query = '', page = 1, filters } = params
   // eslint-disable-next-line no-console
-  console.log(params)
+  console.log(query)
+  // eslint-disable-next-line no-console
+  console.log(page)
+  // eslint-disable-next-line no-console
+  console.log(filters)
   const numResults = 33
   // dummy api just to simulate wating for response
   let data = await fetch('https://dummyapi.io/data/v1/')
   data = makeData(numResults)
-  return data
+  return data.slice(10 * (page - 1), 10 * page)
 }
 
 const sortOptions = [
@@ -70,9 +75,9 @@ export const DiscoverPage = () => {
     setLoading(false)
   }, [])
 
-  const handleSearch = async newValue => {
+  const handleSearch = async (query, page) => {
     setLoading(true)
-    const params = { searchQuery: newValue }
+    const params = { query, page, filters: { ...filters } }
     const data = await searchFunction(params)
     setSearchResults(data)
     setLoading(false)
@@ -80,7 +85,7 @@ export const DiscoverPage = () => {
 
   const applyFilters = async () => {
     setLoading(true)
-    const params = { ...filters }
+    const params = { filters: { ...filters } }
     const data = await searchFunction(params)
     setSearchResults(data)
     setLoading(false)
@@ -105,6 +110,7 @@ export const DiscoverPage = () => {
         setFilters={updateFilters}
         sidebarText={sidebarText}
         sortOptions={sortOptions}
+        totalCount={33}
       />
     </Wrapper>
   )

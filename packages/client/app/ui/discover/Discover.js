@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Sidebar from './Sidebar'
@@ -22,7 +22,23 @@ export const Discover = props => {
     sidebarText,
     onSearch,
     onSortOptionChange,
+    totalCount,
   } = props
+
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchPage, setSearchPage] = useState(1)
+
+  const handleSearch = ({ query, page }) => {
+    if (query) {
+      setSearchQuery(query)
+    } else if (page) {
+      setSearchPage(page)
+    }
+  }
+
+  useEffect(() => {
+    onSearch(searchQuery, searchPage)
+  }, [searchQuery, searchPage])
 
   return (
     <PageWrapper>
@@ -33,11 +49,12 @@ export const Discover = props => {
       />
       <QuestionList
         loading={loading}
-        onSearch={onSearch}
+        onSearch={handleSearch}
         onSortOptionChange={onSortOptionChange}
         questions={questions}
         questionsPerPage={10}
         sortOptions={sortOptions}
+        totalCount={totalCount}
       />
     </PageWrapper>
   )
@@ -79,6 +96,7 @@ Discover.propTypes = {
     }),
   ),
   onSortOptionChange: PropTypes.func.isRequired,
+  totalCount: PropTypes.number,
 }
 
 Discover.defaultProps = {
@@ -86,6 +104,7 @@ Discover.defaultProps = {
   questions: [],
   sortOptions: [],
   sidebarText: '',
+  totalCount: 0,
 }
 
 export default Discover
