@@ -4,7 +4,6 @@ import { Sidebar } from 'ui'
 import { lorem } from 'faker'
 
 const Wrapper = styled.section`
-  height: 70vh;
   display: grid;
   grid-template: 1fr / 1fr;
 `

@@ -18,6 +18,7 @@ const SidebarWrapper = styled.aside`
 const SidebarFooter = styled.div`
   display: flex;
   justify-content: space-between;
+  padding-top: 15px;
   .clear-section {
     color: ${props => props.theme.colorPrimary};
     border: none;
