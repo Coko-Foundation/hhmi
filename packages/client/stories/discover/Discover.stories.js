@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { range } from 'lodash'
 import { lorem } from 'faker'
+import { uuid } from '@coko/client'
 import { Discover } from '../../app/ui/discover/Discover'
 
 const makeData = n =>
@@ -16,6 +17,7 @@ const makeData = n =>
       { label: 'category', value: 'Lorem ipsum' },
       { label: 'published', value: '20 Oct 2020' },
     ],
+    href: `question/${uuid()}`,
   }))
 
 const searchFunction = async (params = {}) => {

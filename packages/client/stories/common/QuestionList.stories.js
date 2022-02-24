@@ -101,6 +101,26 @@ Base.args = {
   questionsPerPage: 5,
 }
 
+export const SelectableRows = () => {
+  const bulkAction = items => {
+    // eslint-disable-next-line no-console
+    console.log(items)
+  }
+
+  return (
+    <Wrapper>
+      <QuestionList
+        bulkAction={bulkAction}
+        questions={makeData(9)}
+        questionSelection
+        questionsPerPage={5}
+        sortOptions={sortOptions}
+        totalCount={9}
+      />
+    </Wrapper>
+  )
+}
+
 export default {
   component: QuestionList,
   title: 'Common/QuestionList',
