@@ -123,11 +123,8 @@ Dashboard.propTypes = {
       description: PropTypes.string,
       meta: PropTypes.arrayOf(
         PropTypes.shape({
-          unit: PropTypes.string,
-          section: PropTypes.string,
-          topic: PropTypes.string,
-          category: PropTypes.string,
-          published: PropTypes.string,
+          label: PropTypes.string,
+          value: PropTypes.string,
         }),
       ),
       status: PropTypes.string,
