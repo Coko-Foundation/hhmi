@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { th } from '@coko/client'
-import { Button, Divider, List } from '.'
+import { Divider, List } from '.'
 import { DashboardRow } from '../dashboard'
 
 const LinkWithoutStyles = styled.a`
@@ -57,23 +57,29 @@ const Wrapper = styled.main`
     position: sticky;
     bottom: 0;
     margin-top: 0;
-    padding-top: 15px;
     color: ${th('colorText')};
     background-color: ${th('colorBackground')};
     border-top: 1px solid ${th('colorSecondary')};
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    height: 50px;
   }
 
   .divider {
     border-bottom: 1px solid ${th('colorSecondary')};
     padding: 15px;
   }
-`
 
-const BulkActionBtn = styled(Button)`
-  position: absolute;
-  bottom: 10px;
-  left: 8px;
-  text-transform: uppercase;
+  .ant-list-footer {
+    position: absolute;
+    width: 50%;
+    height: 48px;
+    z-index: 2;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+  }
 `
 
 const QuestionList = props => {
@@ -92,11 +98,12 @@ const QuestionList = props => {
     showSort,
     showTotalCount,
     totalCount,
+    setSelectedQuestions,
   } = props
 
   const history = useHistory()
 
-  const [selectedQuestions, setSelectedQuestions] = useState([])
+  const BulkAction = bulkAction
 
   const itemSelection = questionSelection
     ? {
@@ -130,6 +137,7 @@ const QuestionList = props => {
         <>
           <List
             dataSource={questions}
+            footer={questionSelection && <BulkAction />}
             itemSelection={itemSelection}
             loading={loading}
             onSearch={onSearch}
@@ -163,15 +171,6 @@ const QuestionList = props => {
           />
         </>
       )}
-      {questionSelection && (
-        <BulkActionBtn
-          disabled={selectedQuestions.length === 0}
-          onClick={() => bulkAction(selectedQuestions)}
-          type="primary"
-        >
-          Assign handling editor
-        </BulkActionBtn>
-      )}
     </Wrapper>
   )
 }
@@ -186,11 +185,8 @@ QuestionList.propTypes = {
       description: PropTypes.string,
       metadata: PropTypes.arrayOf(
         PropTypes.shape({
-          unit: PropTypes.string,
-          section: PropTypes.string,
-          topic: PropTypes.string,
-          category: PropTypes.string,
-          published: PropTypes.string,
+          label: PropTypes.string,
+          value: PropTypes.string,
         }),
       ),
     }),
@@ -208,6 +204,7 @@ QuestionList.propTypes = {
       isDefault: PropTypes.bool,
     }),
   ),
+  setSelectedQuestions: PropTypes.func,
   showSearch: PropTypes.bool,
   showSort: PropTypes.bool,
   showTotalCount: PropTypes.bool,
@@ -225,6 +222,7 @@ QuestionList.defaultProps = {
   questions: [],
   questionsPerPage: 10,
   sortOptions: [],
+  setSelectedQuestions: () => {},
   showSearch: true,
   showSort: true,
   showTotalCount: true,
