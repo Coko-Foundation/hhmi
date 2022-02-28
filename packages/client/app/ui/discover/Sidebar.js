@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react'
+import React, { useReducer } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Collapse, Button, Select } from '../common'
@@ -51,13 +51,16 @@ const filterReducer = (state, action) => {
 }
 
 const Sidebar = props => {
-  const { text, setFilters, applyFilters } = props
+  const { text, setFilters } = props
 
   const [selectedFilters, setSelectedFilters] = useReducer(filterReducer, {})
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   setFilters(selectedFilters)
+  // }, [selectedFilters])
+  const applyFilters = () => {
     setFilters(selectedFilters)
-  }, [selectedFilters])
+  }
 
   return (
     <SidebarWrapper>
@@ -102,8 +105,6 @@ const Sidebar = props => {
 Sidebar.propTypes = {
   /** dispatch method to update filters */
   setFilters: PropTypes.func.isRequired,
-  /** method to query the server with the selected filters */
-  applyFilters: PropTypes.func.isRequired,
   /** text that goes to the top of the sidebar */
   text: PropTypes.string,
 }

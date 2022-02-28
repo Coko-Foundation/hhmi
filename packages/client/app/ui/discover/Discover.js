@@ -12,45 +12,82 @@ const PageWrapper = styled.section`
   grid-template-columns: minmax(100px, 25%) auto;
 `
 
+const sortOptions = [
+  {
+    label: 'Date',
+    value: 'date',
+    isDefault: true,
+  },
+  {
+    label: 'Unit',
+    value: 'unit',
+  },
+  {
+    label: 'Section',
+    value: 'section',
+  },
+  {
+    label: 'Topic',
+    value: 'topic',
+  },
+  {
+    label: 'Category',
+    value: 'category',
+  },
+]
+
 export const Discover = props => {
-  const {
-    applyFilters,
-    setFilters,
-    loading,
-    questions,
-    sortOptions,
-    sidebarText,
-    onSearch,
-    onSortOptionChange,
-    totalCount,
-  } = props
+  const { loading, questions, sidebarText, onSearch, totalCount } = props
 
-  const [searchQuery, setSearchQuery] = useState('')
-  const [searchPage, setSearchPage] = useState(1)
+  // key to force list to rerender and empty search box when filters change
+  const [listKey, setListKey] = useState(0)
 
-  const handleSearch = ({ query, page }) => {
-    if (query) {
-      setSearchQuery(query)
-    } else if (page) {
-      setSearchPage(page)
-    }
+  const [searchParams, setSearchParams] = useState({
+    query: '',
+    page: 1,
+    filters: {},
+    sortBy: 'date',
+  })
+
+  const setSearchPage = page => {
+    setSearchParams({ ...searchParams, page })
+  }
+
+  const setSearchQuery = query => {
+    setSearchParams({ ...searchParams, query, page: 1 })
+  }
+
+  const setFilters = filters => {
+    setListKey(listKey + 1)
+    setSearchParams({
+      filters,
+      page: 1,
+      query: '',
+      sortBy: searchParams.sortBy,
+    })
+  }
+
+  const setSortOption = sortBy => {
+    sortOptions.filter(opt => opt.isDefault)[0].isDefault = false
+    sortOptions.filter(opt => opt.value === sortBy)[0].isDefault = true
+
+    setSearchParams({ ...searchParams, sortBy, page: 1 })
   }
 
   useEffect(() => {
-    onSearch(searchQuery, searchPage)
-  }, [searchQuery, searchPage])
+    onSearch(searchParams)
+  }, [searchParams])
 
   return (
     <PageWrapper>
-      <Sidebar
-        applyFilters={applyFilters}
-        setFilters={setFilters}
-        text={sidebarText}
-      />
+      <Sidebar setFilters={setFilters} text={sidebarText} />
       <QuestionList
+        currentPage={searchParams.page}
+        key={listKey}
         loading={loading}
-        onSearch={handleSearch}
-        onSortOptionChange={onSortOptionChange}
+        onPageChange={setSearchPage}
+        onSearch={setSearchQuery}
+        onSortOptionChange={setSortOption}
         questions={questions}
         questionsPerPage={10}
         sortOptions={sortOptions}
@@ -61,9 +98,6 @@ export const Discover = props => {
 }
 
 Discover.propTypes = {
-  applyFilters: PropTypes.func.isRequired,
-  /** dispatch function to update filters */
-  setFilters: PropTypes.func.isRequired,
   /** text for the sidebar */
   sidebarText: PropTypes.string,
   /** Loading search results. */
@@ -87,22 +121,12 @@ Discover.propTypes = {
       ),
     }),
   ),
-  /** options for sorting results */
-  sortOptions: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string,
-      value: PropTypes.string,
-      isDefault: PropTypes.bool,
-    }),
-  ),
-  onSortOptionChange: PropTypes.func.isRequired,
   totalCount: PropTypes.number,
 }
 
 Discover.defaultProps = {
   loading: false,
   questions: [],
-  sortOptions: [],
   sidebarText: '',
   totalCount: 0,
 }

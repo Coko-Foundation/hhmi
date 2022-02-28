@@ -24,7 +24,18 @@ const Wrapper = styled.main`
   position: relative;
   height: 100%;
   .ant-input-search {
-    padding: 0 8px;
+    padding: 0 8px 4px;
+    border-bottom: 1px solid ${th('colorPrimary')};
+    .ant-input {
+      border: none;
+      &:focus {
+        /* box-shadow: 0 4px 2px -2px rgba(100, 149, 237, 0.2); */
+        box-shadow: none;
+      }
+    }
+    .ant-input-group-addon button.ant-input-search-button {
+      color: ${th('colorPrimary')} !important;
+    }
   }
   > div {
     height: 100%;
@@ -68,9 +79,11 @@ const BulkActionBtn = styled(Button)`
 const QuestionList = props => {
   const {
     bulkAction,
+    currentPage,
     loading,
     questions,
     onSearch,
+    onPageChange,
     questionSelection,
     onSortOptionChange,
     sortOptions,
@@ -103,8 +116,10 @@ const QuestionList = props => {
     paginationConfig.pageSize = questionsPerPage
 
     if (totalCount > questions.length) {
-      paginationConfig.onChange = page => onSearch({ page })
+      paginationConfig.onChange = onPageChange
     }
+
+    paginationConfig.current = currentPage
 
     return paginationConfig
   }
@@ -117,7 +132,7 @@ const QuestionList = props => {
             dataSource={questions}
             itemSelection={itemSelection}
             loading={loading}
-            onSearch={query => onSearch({ query })}
+            onSearch={onSearch}
             onSortOptionChange={onSortOptionChange}
             pagination={pagination()}
             renderItem={item => (
@@ -180,6 +195,8 @@ QuestionList.propTypes = {
       ),
     }),
   ),
+  currentPage: PropTypes.number,
+  onPageChange: PropTypes.func,
   onSearch: PropTypes.func,
   questionSelection: PropTypes.bool,
   onSortOptionChange: PropTypes.func,
@@ -200,6 +217,8 @@ QuestionList.propTypes = {
 QuestionList.defaultProps = {
   bulkAction: () => {},
   loading: false,
+  currentPage: 1,
+  onPageChange: () => {},
   onSearch: () => {},
   questionSelection: false,
   onSortOptionChange: () => {},
