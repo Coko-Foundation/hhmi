@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { lorem } from 'faker'
 import { uuid } from '@coko/client'
-import { Dashboard } from 'ui'
+import { Dashboard, Button } from 'ui'
 import styled from 'styled-components'
 import { createData, noop } from '../_helpers'
 
@@ -70,23 +70,8 @@ export const AuthorDashboard = () => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
 
-  useEffect(async () => {
+  const handleSearch = async params => {
     setLoading(true)
-    setSearchResults(await searchFunction())
-    setLoading(false)
-  }, [])
-
-  const handleSearch = async (query, page) => {
-    setLoading(true)
-    const params = { query, page }
-    const data = await searchFunction(params)
-    setSearchResults(data)
-    setLoading(false)
-  }
-
-  const handleSortOptionChange = async newValue => {
-    setLoading(true)
-    const params = { sortBy: newValue }
     const data = await searchFunction(params)
     setSearchResults(data)
     setLoading(false)
@@ -98,7 +83,6 @@ export const AuthorDashboard = () => {
         loading={loading}
         onClickCreateQuestion={noop}
         onSearch={handleSearch}
-        onSortOptionChange={handleSortOptionChange}
         questions={searchResults}
         totalCount={33}
         userRole="author"
@@ -110,37 +94,30 @@ export const AuthorDashboard = () => {
 export const EditorDashboard = () => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
+  const [selectedQuestions, setSelectedQuestions] = useState([])
 
-  useEffect(async () => {
+  const handleSearch = async params => {
     setLoading(true)
-    setSearchResults(await searchFunction())
-    setLoading(false)
-  }, [])
-
-  const handleSearch = async (query, page) => {
-    setLoading(true)
-    const params = { query, page }
     const data = await searchFunction(params)
     setSearchResults(data)
     setLoading(false)
   }
 
-  const handleSortOptionChange = async newValue => {
-    setLoading(true)
-    const params = { sortBy: newValue }
-    const data = await searchFunction(params)
-    setSearchResults(data)
-    setLoading(false)
-  }
+  const BulkAction = () => (
+    <Button disabled={selectedQuestions.length === 0} type="primary">
+      Assign handling editor
+    </Button>
+  )
 
   return (
     <Wraper>
       <Dashboard
         activePage="/editor"
+        bulkAction={BulkAction}
         loading={loading}
         onClickCreateQuestion={noop}
+        onQuestionSelected={setSelectedQuestions}
         onSearch={handleSearch}
-        onSortOptionChange={handleSortOptionChange}
         questions={searchResults}
         totalCount={33}
         userRole="editor"

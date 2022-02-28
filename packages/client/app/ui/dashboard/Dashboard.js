@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
@@ -29,6 +29,30 @@ const ListWrapper = styled.div`
   margin: auto;
 `
 
+const sortOptions = [
+  {
+    label: 'Date',
+    value: 'date',
+    isDefault: true,
+  },
+  {
+    label: 'Unit',
+    value: 'unit',
+  },
+  {
+    label: 'Section',
+    value: 'section',
+  },
+  {
+    label: 'Topic',
+    value: 'topic',
+  },
+  {
+    label: 'Category',
+    value: 'category',
+  },
+]
+
 // QUESTION how to handle search, filter and pagination with multiple sections
 const Dashboard = props => {
   const {
@@ -36,39 +60,58 @@ const Dashboard = props => {
     questions,
     totalCount,
     onClickCreateQuestion,
+    onQuestionSelected,
     onSearch,
-    onSortOptionChange,
     userRole,
     activePage,
+    bulkAction,
   } = props
 
-  const handleClickCreate = e => {
-    e.stopPropagation()
-    onClickCreateQuestion()
+  const [searchParams, setSearchParams] = useState({
+    query: '',
+    page: 1,
+    sortBy: 'date',
+  })
+
+  const setSearchPage = page => {
+    setSearchParams({ ...searchParams, page })
   }
 
-  const bulkAction = ids => {
-    // eslint-disable-next-line no-console
-    console.log(`assign questions: ${ids}`)
+  const setSearchQuery = query => {
+    setSearchParams({ ...searchParams, query, page: 1 })
   }
+
+  const setSortOption = sortBy => {
+    sortOptions.filter(opt => opt.isDefault)[0].isDefault = false
+    sortOptions.filter(opt => opt.value === sortBy)[0].isDefault = true
+
+    setSearchParams({ ...searchParams, sortBy, page: 1 })
+  }
+
+  useEffect(() => {
+    onSearch(searchParams)
+  }, [searchParams])
 
   return (
     <Wrapper>
       <DashboardNav
         activePage={activePage}
-        onClickCreate={handleClickCreate}
+        onClickCreate={onClickCreateQuestion}
         userRole={userRole}
       />
       <ListWrapper>
         <QuestionList
           bulkAction={bulkAction}
+          currentPage={searchParams.page}
           loading={loading}
-          onSearch={onSearch}
-          onSortOptionChange={onSortOptionChange}
+          onPageChange={setSearchPage}
+          onQuestionSelected={onQuestionSelected}
+          onSearch={setSearchQuery}
+          onSortOptionChange={setSortOption}
           questions={questions}
-          // questionSelection={userRole === 'editor'}
-          questionSelection
           questionsPerPage={20}
+          showRowCheckboxes={userRole === 'editor'}
+          sortOptions={sortOptions}
           test={userRole === 'editor'}
           totalCount={totalCount}
         />
@@ -79,11 +122,12 @@ const Dashboard = props => {
 
 Dashboard.propTypes = {
   activePage: PropTypes.string,
+  bulkAction: PropTypes.func,
   /** Loading results. */
   loading: PropTypes.bool,
   onClickCreateQuestion: PropTypes.func.isRequired,
+  onQuestionSelected: PropTypes.func,
   onSearch: PropTypes.func.isRequired,
-  onSortOptionChange: PropTypes.func.isRequired,
   questions: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
@@ -107,7 +151,9 @@ Dashboard.propTypes = {
 
 Dashboard.defaultProps = {
   activePage: '/authored',
+  bulkAction: () => {},
   loading: false,
+  onQuestionSelected: () => {},
   questions: [],
   totalCount: 0,
   userRole: 'author',
