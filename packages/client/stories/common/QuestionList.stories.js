@@ -102,20 +102,28 @@ Base.args = {
 }
 
 export const SelectableRows = () => {
-  const bulkAction = items => {
-    // eslint-disable-next-line no-console
-    console.log(items)
+  const BulkAction = () => {
+    return (
+      // eslint-disable-next-line no-console
+      <Button onClick={() => console.log('bulk action')} type="primary">
+        Assign handling editor
+      </Button>
+    )
   }
+
+  const [currentPage, setCurrentPage] = useState(1)
 
   return (
     <Wrapper>
       <QuestionList
-        bulkAction={bulkAction}
+        bulkAction={BulkAction}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
         questions={makeData(9)}
         questionSelection
         questionsPerPage={5}
         sortOptions={sortOptions}
-        totalCount={9}
+        totalCount={11}
       />
     </Wrapper>
   )
