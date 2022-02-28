@@ -119,11 +119,11 @@ export const SelectableRows = () => {
         bulkAction={BulkAction}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
-        questions={makeData(9)}
+        questions={makeData(11)}
         questionSelection
         questionsPerPage={5}
         sortOptions={sortOptions}
-        totalCount={11}
+        totalCount={13}
       />
     </Wrapper>
   )
