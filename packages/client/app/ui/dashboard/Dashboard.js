@@ -111,7 +111,6 @@ const Dashboard = props => {
           onSearch={setSearchQuery}
           onSortOptionChange={setSortOption}
           questions={questions}
-          questionsPerPage={20}
           showRowCheckboxes={userRole === 'editor'}
           sortOptions={sortOptions}
           test={userRole === 'editor'}

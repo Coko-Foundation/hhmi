@@ -37,17 +37,19 @@ const makeData = n =>
     ],
   }))
 
+const allData = makeData(33)
+
 const searchFunction = async (params = {}) => {
   const { query = '', page = 1 } = params
   // eslint-disable-next-line no-console
   console.log(query)
   // eslint-disable-next-line no-console
   console.log(page)
-  const numResults = 33
+  // const numResults = 33
   // dummy api just to simulate wating for response
-  let data = await fetch('https://dummyapi.io/data/v1/')
-  data = makeData(numResults)
-  return data.slice(10 * (page - 1), 10 * page)
+  await fetch('https://dummyapi.io/data/v1/')
+  // data = makeData(numResults)
+  return allData.slice(10 * (page - 1), 10 * page)
 }
 
 const Wraper = styled.div`
