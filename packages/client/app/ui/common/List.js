@@ -88,7 +88,8 @@ const CheckBox = styled(UICheckBox)`
 `
 
 const compareItem = (preProps, nextProps) => {
-  if (preProps.selected === nextProps.selected) return true
+  if (preProps.id === nextProps.id && preProps.selected === nextProps.selected)
+    return true
   return false
 }
 
