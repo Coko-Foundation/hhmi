@@ -1,42 +1,22 @@
 import React from 'react'
-import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { th } from '@coko/client'
-import { Divider, List } from '.'
+import { ConfigProvider } from 'antd'
+import List from './List'
+import LinkWithoutStyles from './LinkWithoutStyles'
 import { DashboardRow } from '../dashboard'
 
-const LinkWithoutStyles = styled.a`
-  color: inherit;
-  text-decoration: none;
-  width: 100%;
-
-  &:hover,
-  &:focus,
-  &:active {
-    color: inherit;
-    text-decoration: none;
-  }
+const ButtonWithoutStyles = styled.button`
+  border: none;
+  background-color: transparent;
 `
 
 const Wrapper = styled.main`
   overflow: hidden;
   position: relative;
   height: 100%;
-  .ant-input-search {
-    padding: 0 8px 4px;
-    border-bottom: 1px solid ${th('colorPrimary')};
-    .ant-input {
-      border: none;
-      &:focus {
-        /* box-shadow: 0 4px 2px -2px rgba(100, 149, 237, 0.2); */
-        box-shadow: none;
-      }
-    }
-    .ant-input-group-addon button.ant-input-search-button {
-      color: ${th('colorPrimary')} !important;
-    }
-  }
+  background-color: white;
   > div {
     height: 100%;
   }
@@ -60,6 +40,7 @@ const Wrapper = styled.main`
     color: ${th('colorText')};
     background-color: ${th('colorBackground')};
     border-top: 1px solid ${th('colorSecondary')};
+    border-bottom: 1px solid ${th('colorSecondary')};
     display: flex;
     align-items: center;
     justify-content: right;
@@ -82,32 +63,36 @@ const Wrapper = styled.main`
   }
 `
 
+const EmptyList = () => {
+  return 'no data'
+}
+
 const QuestionList = props => {
   const {
     bulkAction,
     currentPage,
+    className,
     loading,
     questions,
     onSearch,
     onPageChange,
     showRowCheckboxes,
     onSortOptionChange,
-    sortOptions,
     questionsPerPage,
+    sortOptions,
     showSearch,
     showSort,
     showTotalCount,
     totalCount,
-    setSelectedQuestions,
+    onQuestionSelected,
+    onClickRow,
   } = props
-
-  const history = useHistory()
 
   const BulkAction = bulkAction
 
   const itemSelection = showRowCheckboxes
     ? {
-        onChange: id => setSelectedQuestions(id),
+        onChange: id => onQuestionSelected(id),
       }
     : false
 
@@ -128,13 +113,39 @@ const QuestionList = props => {
 
     paginationConfig.current = currentPage
 
+    paginationConfig.itemRender = (page, type, originalElement) => {
+      if (type === 'prev') {
+        return <ButtonWithoutStyles>Previous</ButtonWithoutStyles>
+      }
+
+      if (type === 'next') {
+        return <ButtonWithoutStyles>Next</ButtonWithoutStyles>
+      }
+
+      return originalElement
+    }
+
     return paginationConfig
   }
 
+  const renderItem = item => (
+    <List.Item>
+      <LinkWithoutStyles href={item.href} onClick={() => onClickRow(item)}>
+        <DashboardRow
+          className="divider"
+          content={item.description}
+          metadata={item.metadata}
+          status={item.status}
+          title={item.title}
+        />
+      </LinkWithoutStyles>
+    </List.Item>
+  )
+
   return (
-    <Wrapper>
+    <Wrapper className={className}>
       {questions && (
-        <>
+        <ConfigProvider renderEmpty={EmptyList}>
           <List
             dataSource={questions}
             footer={showRowCheckboxes && <BulkAction />}
@@ -143,33 +154,14 @@ const QuestionList = props => {
             onSearch={onSearch}
             onSortOptionChange={onSortOptionChange}
             pagination={pagination()}
-            renderItem={item => (
-              <List.Item>
-                <LinkWithoutStyles
-                  href={item.href}
-                  onClick={e => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    history.push(`question/${item.id}`)
-                  }}
-                >
-                  <DashboardRow
-                    content={item.description}
-                    metadata={item.metadata}
-                    status={item.status}
-                    title={item.title}
-                  />
-                  <Divider />
-                </LinkWithoutStyles>
-              </List.Item>
-            )}
+            renderItem={renderItem}
             showSearch={showSearch}
             showSort={showSort}
             showTotalCount={showTotalCount}
             sortOptions={sortOptions}
             totalCount={totalCount}
           />
-        </>
+        </ConfigProvider>
       )}
     </Wrapper>
   )
@@ -196,14 +188,14 @@ QuestionList.propTypes = {
   onSearch: PropTypes.func,
   onSortOptionChange: PropTypes.func,
   questionsPerPage: PropTypes.number,
+  onQuestionSelected: PropTypes.func,
+  onClickRow: PropTypes.func,
   sortOptions: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
       value: PropTypes.string,
-      isDefault: PropTypes.bool,
     }),
   ),
-  setSelectedQuestions: PropTypes.func,
   showRowCheckboxes: PropTypes.bool,
   showSearch: PropTypes.bool,
   showSort: PropTypes.bool,
@@ -221,7 +213,8 @@ QuestionList.defaultProps = {
   questions: [],
   questionsPerPage: 10,
   sortOptions: [],
-  setSelectedQuestions: () => {},
+  onQuestionSelected: () => {},
+  onClickRow: () => {},
   showRowCheckboxes: false,
   showSearch: true,
   showSort: true,

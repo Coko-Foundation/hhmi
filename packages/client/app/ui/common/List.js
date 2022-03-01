@@ -34,7 +34,7 @@ const Select = styled(UISelect)`
   width: 150px;
 `
 
-const SelectableWrapper = styled.li`
+const SelectableWrapper = styled.div`
   align-items: center;
   display: flex;
 
