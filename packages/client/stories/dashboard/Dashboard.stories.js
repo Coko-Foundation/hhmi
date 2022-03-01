@@ -57,17 +57,6 @@ const Wraper = styled.div`
   background: linear-gradient(97.37deg, #058d96 -34.57%, #8ac341 93.86%);
 `
 
-export const Base = () => (
-  <Wraper>
-    <Dashboard
-      authorItems={makeData(5)}
-      editorItems={makeData(5)}
-      onClickCreateQuestion={noop}
-      reviewerItems={makeData(5)}
-    />
-  </Wraper>
-)
-
 export const AuthorDashboard = () => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
