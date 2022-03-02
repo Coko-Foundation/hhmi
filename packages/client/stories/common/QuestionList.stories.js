@@ -101,34 +101,6 @@ Base.args = {
   questionsPerPage: 5,
 }
 
-export const SelectableRows = () => {
-  const BulkAction = () => {
-    return (
-      // eslint-disable-next-line no-console
-      <Button onClick={() => console.log('bulk action')} type="primary">
-        Assign handling editor
-      </Button>
-    )
-  }
-
-  const [currentPage, setCurrentPage] = useState(1)
-
-  return (
-    <Wrapper>
-      <QuestionList
-        bulkAction={BulkAction}
-        currentPage={currentPage}
-        onPageChange={setCurrentPage}
-        questions={makeData(11)}
-        questionsPerPage={5}
-        showRowCheckboxes
-        sortOptions={sortOptions}
-        totalCount={13}
-      />
-    </Wrapper>
-  )
-}
-
 export default {
   component: QuestionList,
   title: 'Common/QuestionList',
