@@ -6,21 +6,6 @@ import { Input } from 'antd'
 const StyledSearch = styled(Input.Search)`
   position: relative;
   padding: 0 8px;
-  .ant-input {
-    padding-left: 35px;
-    border-radius: 3px !important;
-  }
-  .ant-input-group-addon {
-    position: absolute;
-    left: 0;
-    z-index: 2;
-    button.ant-input-search-button {
-      border: none;
-      height: 29px;
-      top: 2px;
-      left: 3px;
-    }
-  }
 `
 
 const Search = props => {
