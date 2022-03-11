@@ -11,6 +11,7 @@ import UICheckBox from './Checkbox'
 import Search from './Search'
 import UISelect from './Select'
 import Spin from './Spin'
+import Pagination from './Pagination'
 
 const Wrapper = styled.div`
   background-color: ${th('colorBackground')};
@@ -95,10 +96,11 @@ SelectableItem.propTypes = {
 
 const List = props => {
   const {
+    bulkAction,
     className,
-
     // disable prop types for props that exist on the ant component anyway
     /* eslint-disable react/prop-types */
+    dataSource,
     pagination,
     renderItem,
     /* eslint-enable react/prop-types */
@@ -141,12 +143,49 @@ const List = props => {
       )
     : renderItem
 
+  const [paginationCurrent, setPaginationCurrent] = useState(1)
+
+  const [paginationSize, setPaginationSize] = useState(10)
+
+  const passedPagination = {
+    current: paginationCurrent,
+    pageSize: paginationSize,
+    ...pagination,
+  }
+
+  let splitDataSource = [...dataSource]
+
   // `totalCount` prop exists only to display the count at the top of the list,
   // but since we have the value, might as well pass it to the pagination config.
   // If the pagination config has a `total` key, then use that.
-  const passedPagination = pagination
-  if (passedPagination && !passedPagination.total && totalCount)
-    passedPagination.total = totalCount
+  // if neither `total` key nor totalCount are present but pagination object still exist, use dataSource.length as total
+  if (passedPagination && !passedPagination.total) {
+    if (totalCount) {
+      passedPagination.total = totalCount
+    } else {
+      passedPagination.total = splitDataSource.length
+    }
+  }
+
+  if (itemSelection) {
+    passedPagination.bulkAction = bulkAction
+  }
+
+  const shouldShowPagination =
+    passedPagination.total > splitDataSource.length ||
+    splitDataSource.length > passedPagination.pageSize
+
+  if (pagination) {
+    if (
+      splitDataSource.length >
+      (passedPagination.current - 1) * passedPagination.pageSize
+    ) {
+      splitDataSource = [...dataSource].splice(
+        (passedPagination.current - 1) * passedPagination.pageSize,
+        passedPagination.pageSize,
+      )
+    }
+  }
 
   const showInternalHeaderRow = showSort || showTotalCount
   const defaultSortOption = sortOptions && sortOptions.find(o => o.isDefault)
@@ -191,10 +230,17 @@ const List = props => {
       <Spin spinning={loading}>
         {/* <ConfigProvider renderEmpty={EmptyList}> */}
         <AntList
-          pagination={passedPagination}
+          dataSource={splitDataSource}
           renderItem={listItemToRender}
           {...rest}
         />
+        {shouldShowPagination && (
+          <Pagination
+            {...passedPagination}
+            setPaginationCurrent={setPaginationCurrent}
+            setPaginationSize={setPaginationSize}
+          />
+        )}
         {/* </ConfigProvider> */}
       </Spin>
     </Wrapper>
@@ -202,6 +248,7 @@ const List = props => {
 }
 
 List.propTypes = {
+  bulkAction: PropTypes.func || PropTypes.bool,
   itemSelection: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
   }),
@@ -224,6 +271,7 @@ List.propTypes = {
 }
 
 List.defaultProps = {
+  bulkAction: () => null,
   itemSelection: null,
   loading: false,
   onSearch: null,

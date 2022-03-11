@@ -13,59 +13,32 @@ const ButtonWithoutStyles = styled.button`
 
 const StyledList = styled(List)`
   height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   > .ant-spin-nested-loading {
-    flex: 1 1 auto;
-    overflow: auto;
-    .ant-spin-container {
+    flex-grow: 1;
+    overflow: hidden;
+    > .ant-spin-container {
       height: 100%;
+      display: flex;
+      flex-direction: column;
       .ant-list {
-        display: flex;
-        flex-direction: column;
-        height: 100%;
+        overflow: auto;
+        flex-grow: 1;
         .ant-spin-nested-loading {
           flex-grow: 1;
           overflow-y: auto;
           .ant-list-items {
-            > div:last-child {
-              .ant-list-item {
-                border-bottom: none;
-              }
+            > div:last-child .ant-list-item,
+            > .ant-list-item:last-child {
+              border-bottom: none;
             }
           }
           .ant-list-item {
             border-bottom: 1px solid ${th('colorSecondary')};
             padding: 15px;
           }
-        }
-        .ant-list-footer {
-          position: absolute;
-          bottom: 0;
-          width: 100%;
-          height: 50px;
-          padding: 0 20px;
-          display: flex;
-          align-items: center;
-          background-color: ${th('colorBackground')};
-          border-top: 1px solid ${th('colorSecondary')};
-          border-bottom: 1px solid ${th('colorSecondary')};
-          > * {
-            z-index: 3;
-          }
-        }
-        .ant-list-pagination {
-          flex-shrink: 0;
-          margin-top: 0;
-          color: ${th('colorText')};
-          background-color: ${th('colorBackground')};
-          border-top: 1px solid ${th('colorSecondary')};
-          border-bottom: 1px solid ${th('colorSecondary')};
-          display: flex;
-          align-items: center;
-          justify-content: right;
-          height: 50px;
-          z-index: 2;
         }
       }
     }
@@ -113,8 +86,6 @@ const QuestionList = props => {
     onClickRow,
   } = props
 
-  const BulkAction = bulkAction
-
   const itemSelection = showRowCheckboxes
     ? {
         onChange: id => onQuestionSelected(id),
@@ -155,9 +126,9 @@ const QuestionList = props => {
 
   return (
     <StyledList
+      bulkAction={showRowCheckboxes && bulkAction}
       className={className}
       dataSource={questions}
-      footer={showRowCheckboxes && <BulkAction />}
       itemSelection={itemSelection}
       loading={loading}
       onSearch={onSearch}

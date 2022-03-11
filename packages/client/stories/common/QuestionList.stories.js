@@ -91,7 +91,6 @@ export const Base = args => {
         currentPage={currentPage}
         onPageChange={handlePageChange}
         questions={data}
-        questionsPerPage={5}
         sortOptions={sortOptions}
       />
     </Wrapper>
@@ -99,8 +98,9 @@ export const Base = args => {
 }
 
 Base.args = {
-  totalCount: 13,
+  totalCount: 15,
   showRowCheckboxes: true,
+  questionsPerPage: 5,
 }
 
 export default {

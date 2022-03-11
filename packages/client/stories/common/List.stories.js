@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { lorem, image } from 'faker'
 import { range } from 'lodash'
 
-import { List } from 'ui'
+import { List, Button } from 'ui'
 import { Avatar } from 'antd'
 import { createData } from '../_helpers'
 
@@ -30,7 +30,6 @@ const data = makeData(38)
 
 const Wrapper = styled.div`
   height: 700px;
-  border: 1px solid red;
 `
 
 export const Base = args => (
@@ -238,8 +237,18 @@ export const SelectableRows = () => {
     console.log('handled', selectedIds)
   }
 
+  const BulkAction = () => {
+    return (
+      // eslint-disable-next-line no-console
+      <Button onClick={() => console.log('bulk action')} type="primary">
+        Assign handling editor
+      </Button>
+    )
+  }
+
   return (
     <List
+      bulkAction={BulkAction}
       dataSource={dataSource}
       itemSelection={{
         onChange: handleSelectionChange,
