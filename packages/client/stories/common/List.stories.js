@@ -32,11 +32,6 @@ const Wrapper = styled.div`
   /* height: 700px; */
 `
 
-const Wrapper = styled.div`
-  height: 700px;
-  border: 1px solid red;
-`
-
 export const Base = args => (
   <Wrapper>
     <List
@@ -251,6 +246,7 @@ export const SelectableRows = () => {
 
   return (
     <List
+      bulkAction={BulkAction}
       dataSource={dataSource}
       footerContent={BulkAction}
       itemSelection={{
