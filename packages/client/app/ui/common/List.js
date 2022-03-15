@@ -247,6 +247,10 @@ const List = props => {
   const showInternalHeaderRow = showSort || showTotalCount
   const defaultSortOption = sortOptions && sortOptions.find(o => o.isDefault)
 
+  passedPagination.setPaginationCurrent = setPaginationCurrent
+  passedPagination.setPaginationSize = setPaginationSize
+  passedPagination.showPagination = shouldShowPagination
+
   // remove `isDefault` prop from sortOptions bcs it's unrecognized when spread onto an html <option>
   const sanitizedSortOptions = sortOptions.map(({ label, value }) => ({
     label,
