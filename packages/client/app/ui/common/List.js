@@ -60,6 +60,10 @@ const SelectableWrapper = styled.div`
     margin: 0 ${grid(4)};
   }
 
+  &:last-child > .ant-list-item {
+    border: none;
+  }
+
   > :last-child {
     flex-grow: 1;
   }

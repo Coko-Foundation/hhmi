@@ -11,22 +11,16 @@ const ButtonWithoutStyles = styled.button`
   background-color: transparent;
 `
 
-const StyledList = styled(List)`
-  .ant-list-items {
-    > div:last-child .ant-list-item,
-    > .ant-list-item:last-child {
-      border-bottom: none;
-    }
-    .ant-list-item {
-      border-bottom: 1px solid ${th('colorSecondary')};
-      padding: 15px;
-    }
+const StyledListItem = styled(List.Item)`
+  && {
+    border-bottom: 1px solid ${th('colorSecondary')};
+    padding: 15px;
   }
 `
 
 const RenderItem = ({ item, onClickRow }) => {
   return (
-    <List.Item>
+    <StyledListItem>
       <LinkWithoutStyles href={item.href} onClick={() => onClickRow(item)}>
         <QuestionItem
           content={item.description}
@@ -35,7 +29,7 @@ const RenderItem = ({ item, onClickRow }) => {
           title={item.title}
         />
       </LinkWithoutStyles>
-    </List.Item>
+    </StyledListItem>
   )
 }
 
@@ -104,7 +98,7 @@ const QuestionList = props => {
   }
 
   return (
-    <StyledList
+    <List
       bulkAction={bulkAction}
       className={className}
       dataSource={questions}
