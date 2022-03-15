@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Pagination as AntPagination } from 'antd'
+import { Pagination } from 'antd'
 import styled from 'styled-components'
 
 const Wrapper = styled.div`
@@ -9,16 +9,17 @@ const Wrapper = styled.div`
   padding: 5px;
 `
 
-const Pagination = props => {
+const ListFooter = props => {
+  const { bulkAction, pagination } = props
+
   const {
-    bulkAction,
     setPaginationCurrent,
     setPaginationSize,
-    ...pagination
-  } = props
+    ...paginationObj
+  } = pagination
 
-  const paginationObj =
-    pagination && typeof pagination === 'object' ? pagination : {}
+  const showPagination =
+    paginationObj.showPagination || paginationObj.total > paginationObj.pageSize
 
   const defaultPaginationProps = {
     current: 1,
@@ -54,24 +55,30 @@ const Pagination = props => {
 
   return (
     <Wrapper>
-      <div>{bulkAction()}</div>
-      <AntPagination
-        {...paginationProps}
-        onChange={onPaginationChange}
-        onShowSizeChange={onPaginationShowSizeChange}
-      />
+      {bulkAction}
+      {showPagination && (
+        <Pagination
+          {...paginationProps}
+          onChange={onPaginationChange}
+          onShowSizeChange={onPaginationShowSizeChange}
+        />
+      )}
     </Wrapper>
   )
 }
 
-Pagination.propTypes = {
-  bulkAction: PropTypes.func,
-  setPaginationCurrent: PropTypes.func.isRequired,
-  setPaginationSize: PropTypes.func.isRequired,
+ListFooter.propTypes = {
+  bulkAction: PropTypes.element,
+  pagination: PropTypes.shape({
+    setPaginationCurrent: PropTypes.func.isRequired,
+    setPaginationSize: PropTypes.func.isRequired,
+    showPagination: PropTypes.bool,
+  }),
 }
 
-Pagination.defaultProps = {
-  bulkAction: () => {},
+ListFooter.defaultProps = {
+  bulkAction: <div />,
+  pagination: {},
 }
 
-export default Pagination
+export default ListFooter

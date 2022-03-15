@@ -12,35 +12,14 @@ const ButtonWithoutStyles = styled.button`
 `
 
 const StyledList = styled(List)`
-  height: 100%;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  > .ant-spin-nested-loading {
-    flex-grow: 1;
-    overflow: hidden;
-    > .ant-spin-container {
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      .ant-list {
-        overflow: auto;
-        flex-grow: 1;
-        .ant-spin-nested-loading {
-          flex-grow: 1;
-          overflow-y: auto;
-          .ant-list-items {
-            > div:last-child .ant-list-item,
-            > .ant-list-item:last-child {
-              border-bottom: none;
-            }
-          }
-          .ant-list-item {
-            border-bottom: 1px solid ${th('colorSecondary')};
-            padding: 15px;
-          }
-        }
-      }
+  .ant-list-items {
+    > div:last-child .ant-list-item,
+    > .ant-list-item:last-child {
+      border-bottom: none;
+    }
+    .ant-list-item {
+      border-bottom: 1px solid ${th('colorSecondary')};
+      padding: 15px;
     }
   }
 `
@@ -126,7 +105,7 @@ const QuestionList = props => {
 
   return (
     <StyledList
-      bulkAction={showRowCheckboxes && bulkAction}
+      bulkAction={bulkAction}
       className={className}
       dataSource={questions}
       itemSelection={itemSelection}
@@ -145,7 +124,7 @@ const QuestionList = props => {
 }
 
 QuestionList.propTypes = {
-  bulkAction: PropTypes.func,
+  bulkAction: PropTypes.element,
   loading: PropTypes.bool,
   questions: PropTypes.arrayOf(
     PropTypes.shape({
@@ -181,7 +160,7 @@ QuestionList.propTypes = {
 }
 
 QuestionList.defaultProps = {
-  bulkAction: () => {},
+  bulkAction: <div />,
   loading: false,
   currentPage: 1,
   onPageChange: () => {},

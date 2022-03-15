@@ -11,10 +11,23 @@ import UICheckBox from './Checkbox'
 import Search from './Search'
 import UISelect from './Select'
 import Spin from './Spin'
-import Pagination from './Pagination'
+import ListFooter from './ListFooter'
 
 const Wrapper = styled.div`
   background-color: ${th('colorBackground')};
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  > .ant-spin-nested-loading {
+    flex-grow: 1;
+    overflow: hidden;
+    > .ant-spin-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
 `
 
 const InternalHeader = styled.div`
@@ -50,6 +63,11 @@ const SelectableWrapper = styled.div`
   > :last-child {
     flex-grow: 1;
   }
+`
+
+const StyledList = styled(AntList)`
+  overflow: auto;
+  flex-grow: 1;
 `
 
 const CheckBox = styled(UICheckBox)`
@@ -167,14 +185,6 @@ const List = props => {
     }
   }
 
-  if (itemSelection) {
-    passedPagination.bulkAction = bulkAction
-  }
-
-  const shouldShowPagination =
-    passedPagination.total > splitDataSource.length ||
-    splitDataSource.length > passedPagination.pageSize
-
   if (pagination) {
     if (
       splitDataSource.length >
@@ -187,8 +197,16 @@ const List = props => {
     }
   }
 
+  const shouldShowPagination =
+    passedPagination.total > splitDataSource.length ||
+    splitDataSource.length > passedPagination.pageSize
+
   const showInternalHeaderRow = showSort || showTotalCount
   const defaultSortOption = sortOptions && sortOptions.find(o => o.isDefault)
+
+  passedPagination.setPaginationCurrent = setPaginationCurrent
+  passedPagination.setPaginationSize = setPaginationSize
+  passedPagination.showPagination = shouldShowPagination
 
   // remove `isDefault` prop from sortOptions bcs it's unrecognized when spread onto an html <option>
   const sanitizedSortOptions = sortOptions.map(({ label, value }) => ({
@@ -229,18 +247,12 @@ const List = props => {
 
       <Spin spinning={loading}>
         {/* <ConfigProvider renderEmpty={EmptyList}> */}
-        <AntList
+        <StyledList
           dataSource={splitDataSource}
           renderItem={listItemToRender}
           {...rest}
         />
-        {shouldShowPagination && (
-          <Pagination
-            {...passedPagination}
-            setPaginationCurrent={setPaginationCurrent}
-            setPaginationSize={setPaginationSize}
-          />
-        )}
+        <ListFooter bulkAction={bulkAction} pagination={passedPagination} />
         {/* </ConfigProvider> */}
       </Spin>
     </Wrapper>
@@ -248,7 +260,7 @@ const List = props => {
 }
 
 List.propTypes = {
-  bulkAction: PropTypes.func || PropTypes.bool,
+  bulkAction: PropTypes.element,
   itemSelection: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
   }),
@@ -271,7 +283,7 @@ List.propTypes = {
 }
 
 List.defaultProps = {
-  bulkAction: () => null,
+  bulkAction: <div />,
   itemSelection: null,
   loading: false,
   onSearch: null,

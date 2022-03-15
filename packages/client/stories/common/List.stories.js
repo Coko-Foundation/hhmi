@@ -29,7 +29,7 @@ const makeData = n =>
 const data = makeData(38)
 
 const Wrapper = styled.div`
-  height: 700px;
+  /* height: 700px; */
 `
 
 export const Base = args => (
@@ -237,14 +237,12 @@ export const SelectableRows = () => {
     console.log('handled', selectedIds)
   }
 
-  const BulkAction = () => {
-    return (
-      // eslint-disable-next-line no-console
-      <Button onClick={() => console.log('bulk action')} type="primary">
-        Assign handling editor
-      </Button>
-    )
-  }
+  const BulkAction = (
+    // eslint-disable-next-line no-console
+    <Button onClick={() => console.log('bulk action')} type="primary">
+      Assign handling editor
+    </Button>
+  )
 
   return (
     <List

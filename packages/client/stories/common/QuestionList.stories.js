@@ -74,14 +74,12 @@ export const Base = args => {
     setCurrentPage(p)
   }
 
-  const BulkAction = () => {
-    return (
-      // eslint-disable-next-line no-console
-      <Button onClick={() => console.log('bulk action')} type="primary">
-        Assign handling editor
-      </Button>
-    )
-  }
+  const BulkAction = (
+    // eslint-disable-next-line no-console
+    <Button onClick={() => console.log('bulk action')} type="primary">
+      Assign handling editor
+    </Button>
+  )
 
   return (
     <Wrapper>
