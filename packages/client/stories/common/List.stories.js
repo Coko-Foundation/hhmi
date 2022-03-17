@@ -246,7 +246,6 @@ export const SelectableRows = () => {
 
   return (
     <List
-      bulkAction={BulkAction}
       dataSource={dataSource}
       footerContent={BulkAction}
       itemSelection={{

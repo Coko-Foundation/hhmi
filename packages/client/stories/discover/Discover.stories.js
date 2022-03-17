@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { range } from 'lodash'
 import { lorem } from 'faker'
 import { uuid } from '@coko/client'
-import { Discover } from '../../app/ui/discover/Discover'
+import { Discover } from 'ui'
 
 const makeData = n =>
   range(n).map(i => ({
