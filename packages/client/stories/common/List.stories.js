@@ -5,7 +5,7 @@ import styled from 'styled-components'
 import { lorem, image } from 'faker'
 import { range } from 'lodash'
 
-import { List } from 'ui'
+import { List, Button } from 'ui'
 import { Avatar } from 'antd'
 import { createData } from '../_helpers'
 
@@ -26,18 +26,24 @@ const makeData = n =>
     value: lorem.sentence(),
   }))
 
-const data = makeData(38)
+const data = makeData(33)
+
+const Wrapper = styled.div`
+  /* height: 700px; */
+`
 
 export const Base = args => (
-  <List
-    dataSource={data}
-    pagination={{
-      pageSize: 10,
-    }}
-    renderItem={item => <Item>{item.value}</Item>}
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...args}
-  />
+  <Wrapper>
+    <List
+      dataSource={data}
+      pagination={{
+        pageSize: 10,
+      }}
+      renderItem={item => <Item>{item.value}</Item>}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...args}
+    />
+  </Wrapper>
 )
 
 Base.args = {
@@ -231,9 +237,17 @@ export const SelectableRows = () => {
     console.log('handled', selectedIds)
   }
 
+  const BulkAction = (
+    // eslint-disable-next-line no-console
+    <Button onClick={() => console.log('bulk action')} type="primary">
+      Assign handling editor
+    </Button>
+  )
+
   return (
     <List
       dataSource={dataSource}
+      footerContent={BulkAction}
       itemSelection={{
         onChange: handleSelectionChange,
       }}
@@ -278,6 +292,8 @@ export const DefaultAntItem = () => {
     />
   )
 }
+
+export const EmptyList = () => <List dataSource={[]} />
 
 export default {
   component: List,

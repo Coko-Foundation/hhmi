@@ -3,8 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useHistory } from 'react-router-dom'
 import { grid, th } from '@coko/client'
-import DashboardRow from './DashboardRow'
-import { Button, Collapse, List } from '../common'
+import { Button, Collapse, List, QuestionItem } from '../common'
 
 const LinkWithoutStyles = styled.a`
   color: inherit;
@@ -85,7 +84,7 @@ const Dashboard = props => {
                     history.push(`question/${itemProps.id}`)
                   }}
                 >
-                  <DashboardRow {...itemProps} />
+                  <QuestionItem {...itemProps} />
                 </LinkWithoutStyles>
               </List.Item>
             )}
@@ -99,7 +98,7 @@ const Dashboard = props => {
             dataSource={reviewerItems}
             renderItem={itemProps => (
               <li>
-                <DashboardRow {...itemProps} />
+                <QuestionItem {...itemProps} />
               </li>
             )}
           />
@@ -110,7 +109,7 @@ const Dashboard = props => {
             dataSource={editorItems}
             renderItem={itemProps => (
               <li>
-                <DashboardRow {...itemProps} />
+                <QuestionItem {...itemProps} />
               </li>
             )}
           />

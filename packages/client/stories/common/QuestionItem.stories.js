@@ -1,7 +1,7 @@
 import React from 'react'
 import { lorem } from 'faker'
 
-import { DashboardRow } from 'ui'
+import { QuestionItem } from 'ui'
 
 const meta = [
   {
@@ -26,15 +26,22 @@ const meta = [
   },
 ]
 
-export const Base = () => (
-  <DashboardRow
+export const Base = args => (
+  <QuestionItem
+    {...args}
+    content={lorem.sentences(8)}
     metadata={meta}
-    subtitle={lorem.sentences(8)}
     title={lorem.words(6)}
   />
 )
 
 export default {
-  component: DashboardRow,
-  title: 'Dashboard/Dashboard Row',
+  component: QuestionItem,
+  title: 'Common/QuestionItem',
+  argTypes: {
+    status: {
+      control: 'select',
+      options: ['Published', 'Submitted', 'Under review', 'Rejected'],
+    },
+  },
 }

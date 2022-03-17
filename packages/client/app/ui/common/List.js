@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { without } from 'lodash'
 
-import { List as AntList } from 'antd'
+import { List as AntList, Pagination /* ConfigProvider */ } from 'antd'
+
 import { grid, th } from '@coko/client'
 
 import UICheckBox from './Checkbox'
@@ -11,7 +12,26 @@ import Search from './Search'
 import UISelect from './Select'
 import Spin from './Spin'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  background-color: ${th('colorBackground')};
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  > .ant-spin-nested-loading {
+    flex-grow: 1;
+    overflow: hidden;
+    > .ant-spin-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+`
+
+const SearchWrapper = styled.div`
+  padding: 0 ${grid(2)};
+`
 
 const InternalHeader = styled.div`
   border-bottom: 1px solid ${th('colorBorder')};
@@ -34,7 +54,7 @@ const Select = styled(UISelect)`
   width: 150px;
 `
 
-const SelectableWrapper = styled.li`
+const SelectableWrapper = styled.div`
   align-items: center;
   display: flex;
 
@@ -43,9 +63,24 @@ const SelectableWrapper = styled.li`
     margin: 0 ${grid(4)};
   }
 
+  &:last-child > .ant-list-item {
+    border: none;
+  }
+
   > :last-child {
     flex-grow: 1;
   }
+`
+
+const StyledList = styled(AntList)`
+  overflow: auto;
+  flex-grow: 1;
+`
+
+const FooterWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
 `
 
 const CheckBox = styled(UICheckBox)`
@@ -86,12 +121,17 @@ SelectableItem.propTypes = {
   selected: PropTypes.bool.isRequired,
 }
 
+// const EmptyList = () => {
+//   return 'no data'
+// }
+
 const List = props => {
   const {
+    footerContent,
     className,
-
     // disable prop types for props that exist on the ant component anyway
     /* eslint-disable react/prop-types */
+    dataSource,
     pagination,
     renderItem,
     /* eslint-enable react/prop-types */
@@ -134,24 +174,95 @@ const List = props => {
       )
     : renderItem
 
+  // creating temporary object because it asks for prop validation if we read pagination.current
+  // same implementation as in antd List
+  const paginationObj =
+    pagination && typeof pagination === 'object' ? pagination : {}
+
+  const [paginationCurrent, setPaginationCurrent] = useState(
+    paginationObj.current || 1,
+  )
+
+  const [paginationSize, setPaginationSize] = useState(
+    paginationObj.pageSize || 10,
+  )
+
+  const passedPagination = {
+    ...pagination,
+    current: paginationCurrent,
+    pageSize: paginationSize,
+  }
+
+  const triggerPaginationEvent = eventName => (page, pageSize) => {
+    setPaginationCurrent(page)
+    setPaginationSize(pageSize)
+
+    if (pagination && pagination[eventName]) {
+      pagination[eventName](page, pageSize)
+    }
+  }
+
+  const onPaginationChange = triggerPaginationEvent('onChange')
+
+  const onPaginationShowSizeChange = triggerPaginationEvent('onShowSizeChange')
+
+  let splitDataSource = [...dataSource]
+
   // `totalCount` prop exists only to display the count at the top of the list,
   // but since we have the value, might as well pass it to the pagination config.
   // If the pagination config has a `total` key, then use that.
-  const passedPagination = pagination
-  if (passedPagination && !passedPagination.total && totalCount)
-    passedPagination.total = totalCount
+  // if neither `total` key nor totalCount are present but pagination object still exist, use dataSource.length as total
+  if (passedPagination && !passedPagination.total) {
+    if (totalCount) {
+      passedPagination.total = totalCount
+    } else {
+      passedPagination.total = splitDataSource.length
+    }
+  }
+
+  if (pagination) {
+    if (
+      splitDataSource.length >
+      (passedPagination.current - 1) * passedPagination.pageSize
+    ) {
+      splitDataSource = [...dataSource].splice(
+        (passedPagination.current - 1) * passedPagination.pageSize,
+        passedPagination.pageSize,
+      )
+    }
+  }
+
+  const largestPage = Math.ceil(
+    passedPagination.total / passedPagination.pageSize,
+  )
+
+  if (passedPagination.current > largestPage) {
+    passedPagination.current = largestPage
+  }
+
+  const shouldShowPagination =
+    passedPagination.total > splitDataSource.length ||
+    splitDataSource.length > 10 // hardcoded 10 for pageSize, bcs if we set pageSize > data.length pagination will disapear with no chance of getting it back
 
   const showInternalHeaderRow = showSort || showTotalCount
   const defaultSortOption = sortOptions && sortOptions.find(o => o.isDefault)
 
+  // remove `isDefault` prop from sortOptions bcs it's unrecognized when spread onto an html <option>
+  const sanitizedSortOptions = sortOptions.map(({ label, value }) => ({
+    label,
+    value,
+  }))
+
   return (
     <Wrapper className={className}>
       {showSearch && (
-        <Search
-          loading={searchLoading}
-          onSearch={onSearch}
-          placeholder={searchPlaceholder}
-        />
+        <SearchWrapper>
+          <Search
+            loading={searchLoading}
+            onSearch={onSearch}
+            placeholder={searchPlaceholder}
+          />
+        </SearchWrapper>
       )}
 
       {showInternalHeaderRow && (
@@ -168,7 +279,7 @@ const List = props => {
               <Select
                 defaultValue={defaultSortOption && defaultSortOption.value}
                 onChange={onSortOptionChange}
-                options={sortOptions}
+                options={sanitizedSortOptions}
               />
             </SortWrapper>
           )}
@@ -176,17 +287,30 @@ const List = props => {
       )}
 
       <Spin spinning={loading}>
-        <AntList
-          pagination={passedPagination}
+        {/* <ConfigProvider renderEmpty={EmptyList}> */}
+        <StyledList
+          dataSource={splitDataSource}
           renderItem={listItemToRender}
           {...rest}
         />
+        <FooterWrapper className={className}>
+          {footerContent}
+          {shouldShowPagination && (
+            <Pagination
+              {...passedPagination}
+              onChange={onPaginationChange}
+              onShowSizeChange={onPaginationShowSizeChange}
+            />
+          )}
+        </FooterWrapper>
+        {/* </ConfigProvider> */}
       </Spin>
     </Wrapper>
   )
 }
 
 List.propTypes = {
+  footerContent: PropTypes.element,
   itemSelection: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
   }),
@@ -209,6 +333,7 @@ List.propTypes = {
 }
 
 List.defaultProps = {
+  footerContent: <div />,
   itemSelection: null,
   loading: false,
   onSearch: null,

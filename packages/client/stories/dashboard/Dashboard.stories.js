@@ -1,13 +1,13 @@
 import React from 'react'
 import { lorem } from 'faker'
-
+import { uuid } from '@coko/client'
 import { Dashboard } from 'ui'
 import { createData, noop } from '../_helpers'
 
 const makeData = n =>
   createData(n, i => ({
     title: lorem.words(6),
-    subtitle: lorem.sentences(8),
+    content: lorem.sentences(8),
     metadata: [
       {
         label: 'unit',
@@ -30,6 +30,7 @@ const makeData = n =>
         value: lorem.words(2),
       },
     ],
+    href: `question/${uuid()}`,
   }))
 
 export const Base = () => (
