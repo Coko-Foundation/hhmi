@@ -2,15 +2,38 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { uuid } from '@coko/client'
+import { uuid, th } from '@coko/client'
 
-import { H4 } from '../common'
+import { H4 } from './Headings'
 import WaxWrapper from '../wax/Wax'
 import { DashLayout } from '../wax/layout'
 import { dashConfig } from '../wax/config'
 
 const Wrapper = styled.div`
   width: 100%;
+  position: relative;
+`
+
+const Status = styled.span`
+  color: ${({ status }) => {
+    switch (status) {
+      case 'Published':
+        return th('colorSuccess')
+      case 'Submitted':
+        return th('colorPrimary')
+      case 'Under review':
+        return th('colorWarning')
+      case 'Rejected':
+        return th('colorError')
+      default:
+        return th('colorBackground')
+    }
+  }};
+  border-radius: 20px;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  padding: 3px 10px;
 `
 
 const SubtitleRow = styled.div``
@@ -35,12 +58,13 @@ const contentPlaceholder = `<p class="paragraph">-</p>`
 
 const MetadataValue = styled.div``
 
-const DashboardRow = props => {
-  const { className, metadata, content, title } = props
+const QuestionItem = props => {
+  const { className, metadata, content, title, status } = props
 
   return (
     <Wrapper className={className}>
       <H4>{title}</H4>
+      <Status status={status}>{status}</Status>
 
       <SubtitleRow>
         <WaxWrapper
@@ -65,7 +89,7 @@ const DashboardRow = props => {
   )
 }
 
-DashboardRow.propTypes = {
+QuestionItem.propTypes = {
   metadata: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
@@ -73,9 +97,10 @@ DashboardRow.propTypes = {
     }),
   ).isRequired,
   content: PropTypes.string,
+  status: PropTypes.string,
   title: PropTypes.string.isRequired,
 }
 
-DashboardRow.defaultProps = { content: null }
+QuestionItem.defaultProps = { content: null, status: '' }
 
-export default DashboardRow
+export default QuestionItem
