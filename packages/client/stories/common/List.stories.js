@@ -32,10 +32,6 @@ const Wrapper = styled.div`
   /* height: 700px; */
 `
 
-const Wrapper = styled.div`
-  /* height: 700px; */
-`
-
 export const Base = args => (
   <Wrapper>
     <List

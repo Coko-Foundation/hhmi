@@ -82,7 +82,7 @@ export const Base = args => {
     console.log(selectedQuestions)
   }
 
-  const BulkAction = () => (
+  const BulkAction = (
     <Button
       disabled={selectedQuestions.length === 0}
       onClick={handleBulkAction}

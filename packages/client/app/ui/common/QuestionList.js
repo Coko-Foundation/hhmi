@@ -23,7 +23,7 @@ const RenderItem = ({ item, onClickRow }) => {
     <StyledListItem>
       <LinkWithoutStyles href={item.href} onClick={() => onClickRow(item)}>
         <QuestionItem
-          content={item.description}
+          content={item.content}
           metadata={item.metadata}
           status={item.status}
           title={item.title}
