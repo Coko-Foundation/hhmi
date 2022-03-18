@@ -87,14 +87,15 @@ const CheckBox = styled(UICheckBox)`
   padding: ${grid(2)};
 `
 
-const compareItem = (preProps, nextProps) => {
-  if (preProps.id === nextProps.id && preProps.selected === nextProps.selected)
-    return true
-  return false
-}
+// const compareItem = (preProps, nextProps) => {
+//   if (preProps.id === nextProps.id && preProps.selected === nextProps.selected)
+//     return true
+//   return false
+// }
 
 // memoize Selectable item to avoid unecessary rerendering every time an item is selected/deselected
-const SelectableItem = memo(props => {
+// const SelectableItem = memo(props => {
+const SelectableItem = props => {
   const {
     id,
     renderItem: RenderItem,
@@ -118,7 +119,8 @@ const SelectableItem = memo(props => {
       <RenderItem id={id} {...rest} />
     </SelectableWrapper>
   )
-}, compareItem)
+}
+// }, compareItem)
 
 SelectableItem.propTypes = {
   id: PropTypes.string.isRequired,
@@ -130,22 +132,22 @@ SelectableItem.propTypes = {
 
 // memoized SelectableItem would use old value of selectedItems when handleSelect and handleDeselect are passed as they are
 // when you wrap them with the below function, they always refer to the List's updated selectedItems
-function useFunction(callback) {
-  const ref = React.useRef()
-  ref.current = callback
+// function useFunction(callback) {
+//   const ref = React.useRef()
+//   ref.current = callback
 
-  function callbackFunction(...args) {
-    const cb = ref.current
+//   function callbackFunction(...args) {
+//     const cb = ref.current
 
-    if (typeof callback === 'function') {
-      return cb.apply(this, args)
-    }
+//     if (typeof callback === 'function') {
+//       return cb.apply(this, args)
+//     }
 
-    return false
-  }
+//     return false
+//   }
 
-  return useCallback(callbackFunction, [])
-}
+//   return useCallback(callbackFunction, [])
+// }
 
 // const EmptyList = () => {
 //   return 'no data'
@@ -185,13 +187,19 @@ const List = props => {
       itemSelection.onChange(selectedItems)
   }, [selectedItems])
 
-  const handleSelect = useFunction(id => {
+  // const handleSelect = useFunction(id => {
+  //   setSelectedItems([...selectedItems, id])
+  // })
+  const handleSelect = id => {
     setSelectedItems([...selectedItems, id])
-  })
+  }
 
-  const handleDeselect = useFunction(id => {
+  // const handleDeselect = useFunction(id => {
+  //   setSelectedItems(without(selectedItems, id))
+  // })
+  const handleDeselect = id => {
     setSelectedItems(without(selectedItems, id))
-  })
+  }
 
   const listItemToRender = itemSelection
     ? itemProps => (
