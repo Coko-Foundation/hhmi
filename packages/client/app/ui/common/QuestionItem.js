@@ -10,11 +10,12 @@ import { DashLayout } from '../wax/layout'
 import { dashConfig } from '../wax/config'
 
 const Wrapper = styled.div`
-  width: 100%;
   position: relative;
+  width: 100%;
 `
 
 const Status = styled.span`
+  border-radius: 20px;
   color: ${({ status }) => {
     switch (status) {
       case 'Published':
@@ -29,11 +30,10 @@ const Status = styled.span`
         return th('colorBackground')
     }
   }};
-  border-radius: 20px;
+  padding: 3px 10px;
   position: absolute;
   right: 10px;
   top: 0;
-  padding: 3px 10px;
 `
 
 const SubtitleRow = styled.div``

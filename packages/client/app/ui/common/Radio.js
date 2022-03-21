@@ -12,10 +12,10 @@ const StyledRadioGroup = styled(AntRadio.Group)`
     `}
 
   .ant-radio-inner,
-  .ant-radio-inner:after,
+  .ant-radio-inner::after,
   .ant-radio-checked,
   .ant-radio-button-wrapper,
-  .ant-radio-button-wrapper:before {
+  .ant-radio-button-wrapper::before {
     transition-duration: 0.1s;
   }
 `

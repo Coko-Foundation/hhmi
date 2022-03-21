@@ -8866,10 +8866,10 @@ prelude-ls@~1.1.2:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
   integrity sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=
 
-prettier@~2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
-  integrity sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
+prettier@2.6.0, prettier@~2.2.1:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.6.0.tgz#12f8f504c4d8ddb76475f441337542fa799207d4"
+  integrity sha512-m2FgJibYrBGGgQXNzfd0PuDGShJgRavjUoRCw1mZERIWVSXF0iLzLm+aOqTAbLnC3n6JzUhAA8uZnFVghHJ86A==
 
 pretty-error@^2.1.1:
   version "2.1.2"
@@ -11818,7 +11818,7 @@ watchpack@^2.0.0:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
 
-wax-prosemirror-components@0.2.6, wax-prosemirror-components@^0.2.6:
+wax-prosemirror-components@^0.2.6:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/wax-prosemirror-components/-/wax-prosemirror-components-0.2.6.tgz#0e438e14c3859a356007505d6296385bcf732fe1"
   integrity sha512-YDfkms+rLWhSsVgVX116XVuUqT9dQhz/ezhcWkBxLi+YHm/8kA+NiHkpXLf44O7YtPTuypEtalRn1mfjgjRNLA==
@@ -11840,7 +11840,7 @@ wax-prosemirror-components@0.2.6, wax-prosemirror-components@^0.2.6:
     wax-prosemirror-core "^0.2.6"
     wax-prosemirror-utilities "^0.2.6"
 
-wax-prosemirror-core@0.2.6, wax-prosemirror-core@^0.2.6:
+wax-prosemirror-core@^0.2.6:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/wax-prosemirror-core/-/wax-prosemirror-core-0.2.6.tgz#81e8af863f0cac6861ca0dc4819d11b6c6eb1581"
   integrity sha512-4p1Js1sgsQlu9xvtvcKZMJbhvaekQxZ1rX1ztdNQcVvCK+4Vy9URj3881ElSWf8gUU6zWco3ms++bmax1ZImBg==
@@ -11866,7 +11866,7 @@ wax-prosemirror-core@0.2.6, wax-prosemirror-core@^0.2.6:
     wax-prosemirror-services "^0.2.6"
     wax-prosemirror-utilities "^0.2.6"
 
-wax-prosemirror-plugins@0.2.6, wax-prosemirror-plugins@^0.2.6:
+wax-prosemirror-plugins@^0.2.6:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/wax-prosemirror-plugins/-/wax-prosemirror-plugins-0.2.6.tgz#729d373b901d6202f1733df2382d365a103878da"
   integrity sha512-eDc1DY0BUf2y3ZqDKG4GICTcVjInA3YchZK8x/O9qJd4AOeu89+foR4mjG9QNjqHyFhRUoIDnMxvOWacDp0Ucg==
@@ -11884,7 +11884,7 @@ wax-prosemirror-plugins@0.2.6, wax-prosemirror-plugins@^0.2.6:
     wax-prosemirror-core "^0.2.6"
     wax-prosemirror-utilities "^0.2.6"
 
-wax-prosemirror-schema@0.2.6, wax-prosemirror-schema@^0.2.6:
+wax-prosemirror-schema@^0.2.6:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/wax-prosemirror-schema/-/wax-prosemirror-schema-0.2.6.tgz#8fb2fc63531f012bdc1f856c3ad4ce9bc0a4e2b4"
   integrity sha512-mLN5bT0d9/N3L+FdSca91Fr6Y/58Tfb1qXT0/azbKmTPdeAVKB3xtOcaKNqC/aDUCsKq1/4CjR0qR5/53/n7hQ==
@@ -11893,7 +11893,7 @@ wax-prosemirror-schema@0.2.6, wax-prosemirror-schema@^0.2.6:
     prosemirror-tables "^1.1.1"
     wax-prosemirror-utilities "^0.2.6"
 
-wax-prosemirror-services@0.2.6, wax-prosemirror-services@^0.2.6:
+wax-prosemirror-services@^0.2.6:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/wax-prosemirror-services/-/wax-prosemirror-services-0.2.6.tgz#d5fefd2542627c5a1f27ec8ac3c2c6a86c266244"
   integrity sha512-Hgbog75Xe7D1Gk5j4Cd8W4ckM6fe+H/it5pvraeevFbsIN1CL6kxGPqhjTiPjbRWBtgEjBv9g68LtpiHpsqglQ==
@@ -11921,7 +11921,7 @@ wax-prosemirror-services@0.2.6, wax-prosemirror-services@^0.2.6:
     wax-prosemirror-schema "^0.2.6"
     wax-prosemirror-utilities "^0.2.6"
 
-wax-prosemirror-utilities@0.2.6, wax-prosemirror-utilities@^0.2.6:
+wax-prosemirror-utilities@^0.2.6:
   version "0.2.6"
   resolved "https://registry.yarnpkg.com/wax-prosemirror-utilities/-/wax-prosemirror-utilities-0.2.6.tgz#a243d4f9620a5ae1922c46eac904b0fc7a2f2da7"
   integrity sha512-nPU3d7t2t0/dueIZLShaNy7KnLYskjIvPH308ck5fU0vPa9r9TlG0xly34LjU1LL/xn4ygjozYDMEyQMjteSNQ==

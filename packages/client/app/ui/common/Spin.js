@@ -25,13 +25,14 @@ const StyledSpin = styled(({ isNested, renderBackground, ...rest }) => (
 `
 
 const bounce = keyframes`
-   0%, 100% {
-     transform: scale(0.0);
-   } 
-   
-   50% {
-     transform: scale(1.0);
-   }
+  0%,
+  100% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1);
+  }
 `
 
 const IndicatorWrapper = styled.div`
@@ -98,6 +99,7 @@ const Spin = props => {
 }
 
 Spin.propTypes = {
+  spinning: PropTypes.bool.isRequired,
   renderBackground: PropTypes.bool,
 }
 

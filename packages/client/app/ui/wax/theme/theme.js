@@ -1,10 +1,3 @@
-export { default as cokoTheme } from './theme'
-/* eslint-disable import/extensions */
-// import 'typeface-fira-sans-condensed'
-// import 'fontsource-merriweather'
-// import 'typeface-vollkorn'
-// import 'typeface-inter'
-
 import { css } from 'styled-components'
 
 const cokoTheme = {

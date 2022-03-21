@@ -43,14 +43,8 @@ const RequestPasswordResetForm = props => {
 }
 
 const RequestPasswordReset = props => {
-  const {
-    className,
-    hasError,
-    hasSuccess,
-    loading,
-    onSubmit,
-    userEmail,
-  } = props
+  const { className, hasError, hasSuccess, loading, onSubmit, userEmail } =
+    props
 
   return (
     <AuthenticationWrapper className={className}>

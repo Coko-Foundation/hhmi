@@ -1,11 +1,10 @@
 const { eslint } = require('@coko/lint')
 
-eslint.ignorePatterns.push('**/node_modules')
-
-eslint.rules['react/jsx-props-no-spreading'] = 0
-
 eslint.settings = {
   'import/core-modules': ['ui'],
+  jest: {
+    version: '27',
+  },
 }
 
 module.exports = eslint

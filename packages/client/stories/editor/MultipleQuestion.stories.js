@@ -15,22 +15,22 @@ export const SingleEmptyAnswer = () => {
     setData(data.filter(element => element.id !== id))
   }
 
-  const answerGroup = data.map((element, index) => {
-    return (
-      <MultipleQuestion
-        addOption={addOption}
-        feedBackText=""
-        key={element.id}
-        questionNumber={parseInt(index, 10)}
-        questionText=""
-        removeOption={() => removeOption(element.id)}
-        showAddIcon={data.length === index + 1}
-        showRemoveIcon={data.length !== 1}
-      />
-    )
-  })
-
-  return <>{answerGroup}</>
+  return (
+    <>
+      {data.map((element, index) => (
+        <MultipleQuestion
+          addOption={addOption}
+          feedBackText=""
+          key={element.id}
+          questionNumber={parseInt(index, 10)}
+          questionText=""
+          removeOption={() => removeOption(element.id)}
+          showAddIcon={data.length === index + 1}
+          showRemoveIcon={data.length !== 1}
+        />
+      ))}
+    </>
+  )
 }
 
 export const SingleAnswerWithText = () => {
@@ -44,42 +44,42 @@ export const SingleAnswerWithText = () => {
     setData(data.filter(element => element.id !== id))
   }
 
-  const answerGroup = data.map((element, index) => {
-    return (
-      <MultipleQuestion
-        addOption={addOption}
-        feedBackText={data.length > 1 ? '' : lorem.sentences(1)}
-        key={element.id}
-        questionNumber={parseInt(index, 10)}
-        questionText={data.length > 1 ? '' : lorem.sentences(3)}
-        removeOption={() => removeOption(element.id)}
-        showAddIcon={data.length === index + 1}
-        showRemoveIcon={data.length !== 1}
-      />
-    )
-  })
-
-  return <>{answerGroup}</>
+  return (
+    <>
+      {data.map((element, index) => (
+        <MultipleQuestion
+          addOption={addOption}
+          feedBackText={data.length > 1 ? '' : lorem.sentences(1)}
+          key={element.id}
+          questionNumber={parseInt(index, 10)}
+          questionText={data.length > 1 ? '' : lorem.sentences(3)}
+          removeOption={() => removeOption(element.id)}
+          showAddIcon={data.length === index + 1}
+          showRemoveIcon={data.length !== 1}
+        />
+      ))}
+    </>
+  )
 }
 
 export const AnswerGroupReadOnly = () => {
   const data = [{ id: uuid() }, { id: uuid() }, { id: uuid() }, { id: uuid() }]
 
-  const answerGroup = data.map((element, index) => {
-    return (
-      <MultipleQuestion
-        feedBackText={lorem.sentences(1)}
-        key={element.id}
-        questionNumber={parseInt(index, 10)}
-        questionText={lorem.sentences(3)}
-        readOnly
-        showAddIcon={last(data) === index}
-        showRemoveIcon={data.length !== 1}
-      />
-    )
-  })
-
-  return <>{answerGroup}</>
+  return (
+    <>
+      {data.map((element, index) => (
+        <MultipleQuestion
+          feedBackText={lorem.sentences(1)}
+          key={element.id}
+          questionNumber={parseInt(index, 10)}
+          questionText={lorem.sentences(3)}
+          readOnly
+          showAddIcon={last(data) === index}
+          showRemoveIcon={data.length !== 1}
+        />
+      ))}
+    </>
+  )
 }
 
 export default {

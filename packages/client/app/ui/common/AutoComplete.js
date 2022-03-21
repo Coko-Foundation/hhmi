@@ -9,14 +9,8 @@ const StyledAutoComplete = styled(AntAutoComplete)`
 `
 
 const AutoComplete = props => {
-  const {
-    className,
-    children,
-    debounce,
-    debounceTimeout,
-    onSearch,
-    ...rest
-  } = props
+  const { className, children, debounce, debounceTimeout, onSearch, ...rest } =
+    props
 
   const handleSearch = searchValue => onSearch(searchValue)
 

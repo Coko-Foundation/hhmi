@@ -16,7 +16,7 @@ const InfoRow = styled.div`
   color: black;
   display: flex;
   flex-direction: row;
-  padding: 10px 0px 4px 0px;
+  padding: 10px 0 4px;
 `
 
 const QuestionNunber = styled.span``

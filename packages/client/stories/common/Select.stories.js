@@ -5,12 +5,10 @@ import { range } from 'lodash'
 import { Select } from 'ui'
 
 const makeOptions = n =>
-  range(n).map(i => {
-    return {
-      label: name.findName(),
-      value: datatype.uuid(),
-    }
-  })
+  range(n).map(i => ({
+    label: name.findName(),
+    value: datatype.uuid(),
+  }))
 
 const options = makeOptions(10)
 
@@ -25,19 +23,17 @@ const groupedOptions = [
   },
 ]
 
-export const Base = () => {
-  return <Select options={options} placeholder={lorem.words(4)} />
-}
+export const Base = () => (
+  <Select options={options} placeholder={lorem.words(4)} />
+)
 
 export const WithGroups = () => (
   <Select options={groupedOptions} placeholder={lorem.words(4)} />
 )
 
-export const Multi = () => {
-  return (
-    <Select mode="multiple" options={options} placeholder={lorem.words(4)} />
-  )
-}
+export const Multi = () => (
+  <Select mode="multiple" options={options} placeholder={lorem.words(4)} />
+)
 
 export const Async = () => {
   const [loading, setLoading] = useState(false)

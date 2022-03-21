@@ -11,16 +11,13 @@ const Wrapper = styled.div`
     if (status === 'error' || status === 'danger') return props.theme.colorError
     return props.theme.colorSecondary
   }};
-
   border-radius: ${props => props.theme.borderRadius};
-
   color: ${props => {
     const { status } = props
     if (status === 'success' || status === 'error' || status === 'danger')
       return props.theme.colorTextReverse
     return props.theme.colorText
   }};
-
   padding: ${grid(0.5)} ${grid(2)};
   text-align: center;
 

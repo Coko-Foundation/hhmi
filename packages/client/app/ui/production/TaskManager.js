@@ -70,6 +70,7 @@ TaskManager.propTypes = {
   onComplete: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   onToggleHide: PropTypes.func.isRequired,
+  /* eslint-disable-next-line react/forbid-prop-types */
   tasks: PropTypes.arrayOf(PropTypes.object),
 }
 

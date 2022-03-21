@@ -24,5 +24,3 @@
 ## Possible solution
 
 [Not required. Suggest a fix for the bug]
-
-

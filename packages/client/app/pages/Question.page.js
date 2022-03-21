@@ -13,10 +13,8 @@ const QuestionPage = () => {
 
   const { data, loading, error } = useQuery(QUESTION, { variables: { id } })
 
-  const [
-    submitQuestion,
-    { loading: submitting, error: mutationError },
-  ] = useMutation(SUBMIT_QUESTION)
+  const [submitQuestion, { loading: submitting, error: mutationError }] =
+    useMutation(SUBMIT_QUESTION)
 
   const [autoSaveQuestion] = useMutation(AUTO_SAVE_QUESTION)
 

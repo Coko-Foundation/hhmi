@@ -14,17 +14,19 @@ import Spin from './Spin'
 
 const Wrapper = styled.div`
   background-color: ${th('colorBackground')};
-  height: 100%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
   > .ant-spin-nested-loading {
     flex-grow: 1;
     overflow: hidden;
+
     > .ant-spin-container {
-      height: 100%;
       display: flex;
       flex-direction: column;
+      height: 100%;
     }
   }
 `
@@ -73,8 +75,8 @@ const SelectableWrapper = styled.div`
 `
 
 const StyledList = styled(AntList)`
-  overflow: auto;
   flex-grow: 1;
+  overflow: auto;
 `
 
 const FooterWrapper = styled.div`

@@ -7,8 +7,8 @@ import LinkWithoutStyles from './LinkWithoutStyles'
 import QuestionItem from './QuestionItem'
 
 const ButtonWithoutStyles = styled.button`
-  border: none;
   background-color: transparent;
+  border: none;
 `
 
 const StyledListItem = styled(List.Item)`

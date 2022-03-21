@@ -14,12 +14,8 @@
     "clean": "sh clean.sh",
     "cz": "git cz",
     "storybook": "docker-compose -f docker-compose.storybook.yml up",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "husky": {
-    "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS && lint-staged"
-    }
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
   },
   "config": {
     "commitizen": {
@@ -28,6 +24,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@coko/lint": "^1.4.0"
+    "@coko/lint": "^2.0.0"
   }
 }

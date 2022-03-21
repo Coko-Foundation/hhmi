@@ -10,7 +10,7 @@ const StyledSwitch = styled(Switch)`
     bottom: 36px;
     left: 4px;
     position: relative;
-    width: 0px;
+    width: 0;
   }
 
   .ant-switch-checked {

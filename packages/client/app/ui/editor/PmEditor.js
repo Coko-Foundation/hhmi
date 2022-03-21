@@ -58,10 +58,10 @@ const EditorWrapper = styled.div`
     }
 
     .empty-node::before {
-      color: rgb(170, 170, 170);
+      color: rgb(170 170 170);
       float: left;
       font-style: italic;
-      height: 0px;
+      height: 0;
       pointer-events: none;
     }
   }

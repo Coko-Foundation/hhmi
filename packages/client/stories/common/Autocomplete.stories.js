@@ -17,9 +17,7 @@ export const Base = () => {
   const onSearch = searchValue => {
     const regex = new RegExp(searchValue, 'i')
 
-    const newOptions = originalOptions.filter(o => {
-      return o.value.match(regex)
-    })
+    const newOptions = originalOptions.filter(o => o.value.match(regex))
 
     setOptions(newOptions)
   }
