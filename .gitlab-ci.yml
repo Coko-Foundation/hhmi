@@ -4,7 +4,7 @@ stages:
   - deploy-storybook
 
 lint js:
-  image: node:12-alpine
+  image: node:16-bullseye-slim
   stage: lint
   script:
     - yarn install && cd packages/client && yarn install && cd ../.. && cd packages/server && yarn install && cd ../..
