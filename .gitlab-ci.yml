@@ -1,6 +1,6 @@
 stages:
-  - install
-  - lint
+  # - install
+  # - lint
   - deploy-storybook
 
 # lint js:
