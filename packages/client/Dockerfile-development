@@ -12,6 +12,6 @@ COPY yarn.lock .
 RUN chown -R node:node .
 USER node
 
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY --chown=node:node . .

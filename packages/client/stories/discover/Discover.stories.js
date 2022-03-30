@@ -9,7 +9,20 @@ const makeData = n =>
   range(n).map(i => ({
     id: String(i + 1),
     title: lorem.sentence(),
-    description: lorem.sentences(6),
+    description: {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: lorem.sentences(8),
+            },
+          ],
+        },
+      ],
+    },
     metadata: [
       { label: 'unit', value: 'Lorem ipsum' },
       { label: 'section', value: 'Lorem ipsum' },
@@ -20,20 +33,15 @@ const makeData = n =>
     href: `question/${uuid()}`,
   }))
 
-const searchFunction = async (params = {}) => {
+const searchFunction = (params = {}) => {
+  /* eslint-disable-next-line no-unused-vars */
   const { query = '', page = 1, filters, sortBy = 'date' } = params
-  // eslint-disable-next-line no-console
-  console.log(query)
-  // eslint-disable-next-line no-console
-  console.log(page)
-  // eslint-disable-next-line no-console
-  console.log(filters)
-  // eslint-disable-next-line no-console
-  console.log(sortBy)
+
+  /* eslint-disable-next-line no-console */
+  console.log(params)
+
   const numResults = 33
-  // dummy api just to simulate wating for response
-  let data = await fetch('https://dummyapi.io/data/v1/')
-  data = makeData(numResults)
+  const data = makeData(numResults)
   return data.slice(10 * (page - 1), 10 * page)
 }
 
@@ -49,9 +57,12 @@ export const DiscoverPage = () => {
 
   const handleSearch = async params => {
     setLoading(true)
-    const data = await searchFunction(params)
-    setSearchResults(data)
-    setLoading(false)
+
+    setTimeout(() => {
+      const data = searchFunction(params)
+      setSearchResults(data)
+      setLoading(false)
+    }, 500)
   }
 
   return (

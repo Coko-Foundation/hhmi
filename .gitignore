@@ -51,6 +51,7 @@ config/local*
 .out
 .storybook-out
 storybook-static
+_build-storybook
 
 # Bundles
 _build/

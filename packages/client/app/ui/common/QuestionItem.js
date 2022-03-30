@@ -96,7 +96,8 @@ QuestionItem.propTypes = {
       value: PropTypes.string,
     }),
   ).isRequired,
-  content: PropTypes.string,
+  /* eslint-disable-next-line react/forbid-prop-types */
+  content: PropTypes.object,
   status: PropTypes.string,
   title: PropTypes.string.isRequired,
 }

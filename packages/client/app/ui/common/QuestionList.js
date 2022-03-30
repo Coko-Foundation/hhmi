@@ -124,7 +124,8 @@ QuestionList.propTypes = {
     PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
-      description: PropTypes.string,
+      /* eslint-disable-next-line react/forbid-prop-types */
+      description: PropTypes.object,
       metadata: PropTypes.arrayOf(
         PropTypes.shape({
           label: PropTypes.string,

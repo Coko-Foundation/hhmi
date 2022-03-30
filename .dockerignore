@@ -39,6 +39,7 @@ tmp/
 uploads/*
 !uploads/sample-image.jpg
 CONTRIBUTING.md
+_build-storybook
 
 # development config files
 .eslintrc.js

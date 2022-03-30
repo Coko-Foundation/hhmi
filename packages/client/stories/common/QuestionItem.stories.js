@@ -26,10 +26,25 @@ const meta = [
   },
 ]
 
+const content = {
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: lorem.sentences(8),
+        },
+      ],
+    },
+  ],
+}
+
 export const Base = args => (
   <QuestionItem
     {...args}
-    content={lorem.sentences(8)}
+    content={content}
     metadata={meta}
     title={lorem.words(6)}
   />

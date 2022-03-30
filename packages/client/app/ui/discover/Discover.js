@@ -39,14 +39,8 @@ const sortOptions = [
 ]
 
 export const Discover = props => {
-  const {
-    className,
-    loading,
-    questions,
-    sidebarText,
-    onSearch,
-    totalCount,
-  } = props
+  const { className, loading, questions, sidebarText, onSearch, totalCount } =
+    props
 
   // key to force list to rerender and empty search box when filters change
   const [listKey, setListKey] = useState(0)
@@ -118,7 +112,8 @@ Discover.propTypes = {
     PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
-      description: PropTypes.string,
+      /* eslint-disable-next-line react/forbid-prop-types */
+      description: PropTypes.object,
       meta: PropTypes.arrayOf(
         PropTypes.shape({
           unit: PropTypes.string,

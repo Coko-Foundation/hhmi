@@ -9,7 +9,20 @@ const makeData = n =>
   createData(n, i => ({
     id: uuid(),
     title: lorem.words(6),
-    description: lorem.sentences(8),
+    description: {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: lorem.sentences(8),
+            },
+          ],
+        },
+      ],
+    },
     metadata: [
       {
         label: 'unit',

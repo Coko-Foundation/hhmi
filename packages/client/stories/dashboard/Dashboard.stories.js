@@ -7,7 +7,20 @@ import { createData, noop } from '../_helpers'
 const makeData = n =>
   createData(n, i => ({
     title: lorem.words(6),
-    content: lorem.sentences(8),
+    content: {
+      type: 'doc',
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            {
+              type: 'text',
+              text: lorem.sentences(8),
+            },
+          ],
+        },
+      ],
+    },
     metadata: [
       {
         label: 'unit',
