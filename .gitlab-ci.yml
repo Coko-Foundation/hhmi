@@ -5,6 +5,7 @@ variables:
 
 stages:
   - build
+  - deploy
   # - install
   # - lint
   # - deploy-storybook
@@ -48,5 +49,21 @@ build storybook image:
     - docker build --cache-from $IMAGE_ORG/hhmi-storybook:latest --tag $IMAGE_ORG/hhmi-storybook:$CI_COMMIT_SHA --tag $IMAGE_ORG/hhmi-storybook:latest . -f Dockerfile-storybook-deploy
     - docker push $IMAGE_ORG/hhmi-storybook:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/hhmi-storybook:latest
+  only:
+    - master
+
+deploy storybook:
+  image: debian:stable-slim
+  stage: deploy
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$STORYBOOK_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+    - chmod 700 ~/.ssh
+    - echo "$STORYBOOK_SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh ${STORYBOOK_SSH_USER}@${STORYBOOK_SSH_URL} -p ${STORYBOOK_SSH_PORT} "docker pull cokoapps/hhmi-storybook:latest && docker stop hhmi-storybook && docker rm hhmi-storybook && docker run -d -p 5410:80 --name hhmi-storybook cokoapps/hhmi-storybook"
   only:
     - master
