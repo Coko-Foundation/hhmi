@@ -7,7 +7,7 @@ module.exports = {
 
   colorSuccess: 'green',
   colorError: 'red',
-  colorWarning: 'yellow',
+  colorWarning: '#ffc300',
 
   colorText: 'grey',
   colorTextReverse: 'white',

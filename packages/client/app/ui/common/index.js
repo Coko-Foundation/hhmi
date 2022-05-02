@@ -23,6 +23,7 @@ export { default as Split } from './Split'
 export { default as Switch } from './Switch'
 export { default as Table } from './Table'
 export { default as Tabs } from './Tabs'
+export { default as TabsStyled } from './TabsStyled'
 export { default as TextArea } from './TextArea'
 
 export * from './Headings'

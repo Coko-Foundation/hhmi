@@ -11,25 +11,25 @@ const ButtonWithoutStyles = styled.button`
   border: none;
 `
 
-const StyledListItem = styled(List.Item)`
-  && {
-    border-bottom: 1px solid ${th('colorSecondary')};
-    padding: 15px;
-  }
+const ListItemContent = styled(LinkWithoutStyles)`
+  padding: 10px 15px;
 `
 
 const RenderItem = ({ item, onClickRow }) => {
   return (
-    <StyledListItem>
-      <LinkWithoutStyles href={item.href} onClick={() => onClickRow(item)}>
-        <QuestionItem
-          content={item.description}
-          metadata={item.metadata}
-          status={item.status}
-          title={item.title}
-        />
-      </LinkWithoutStyles>
-    </StyledListItem>
+    <ListItemContent
+      aria-label={item.title}
+      href={item.href}
+      id={item.id}
+      onClick={() => onClickRow(item)}
+    >
+      <QuestionItem
+        content={item.description}
+        metadata={item.metadata}
+        status={item.status}
+        title={item.title}
+      />
+    </ListItemContent>
   )
 }
 
@@ -37,6 +37,16 @@ RenderItem.propTypes = {
   item: PropTypes.shape().isRequired,
   onClickRow: PropTypes.func.isRequired,
 }
+
+const StyledList = styled(List)`
+  .ant-list-items {
+    padding: 0 10px;
+
+    > li:not(:last-child) {
+      border-bottom: 1px solid ${th('colorSecondary')};
+    }
+  }
+`
 
 const QuestionList = props => {
   const {
@@ -84,11 +94,17 @@ const QuestionList = props => {
 
     paginationConfig.itemRender = (_page, type, originalElement) => {
       if (type === 'prev') {
-        return <ButtonWithoutStyles>Previous</ButtonWithoutStyles>
+        return (
+          <ButtonWithoutStyles aria-label="Previous page">
+            Previous
+          </ButtonWithoutStyles>
+        )
       }
 
       if (type === 'next') {
-        return <ButtonWithoutStyles>Next</ButtonWithoutStyles>
+        return (
+          <ButtonWithoutStyles aria-label="Next page">Next</ButtonWithoutStyles>
+        )
       }
 
       return originalElement
@@ -98,7 +114,7 @@ const QuestionList = props => {
   }
 
   return (
-    <List
+    <StyledList
       className={className}
       dataSource={questions}
       footerContent={bulkAction}

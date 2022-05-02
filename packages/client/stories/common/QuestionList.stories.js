@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react'
 import { QuestionList, Button } from 'ui'
 import { lorem } from 'faker'
@@ -94,11 +95,13 @@ export const Base = args => {
     </Button>
   )
 
+  const { showRowCheckboxes } = args
+
   return (
     <Wrapper>
       <QuestionList
         {...args}
-        bulkAction={BulkAction}
+        bulkActions={showRowCheckboxes ? BulkAction : null}
         currentPage={currentPage}
         onPageChange={handlePageChange}
         questions={data}

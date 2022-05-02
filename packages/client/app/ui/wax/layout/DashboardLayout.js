@@ -46,7 +46,7 @@ const WaxSurfaceScroll = styled.div`
   display: flex;
   width: 100%;
   /* PM styles  for main content*/
-  ${EditorElements};
+  ${EditorElements}
 `
 
 const EditorContainer = styled.div`
@@ -87,7 +87,7 @@ const DashboardLayout = ({ editor }) => {
 
   return (
     // <ThemeProvider theme={cokoTheme}>
-    <Wrapper id="wax-container" style={fullScreenStyles}>
+    <Wrapper style={fullScreenStyles}>
       <Main>
         <EditorArea>
           <WaxSurfaceScroll>

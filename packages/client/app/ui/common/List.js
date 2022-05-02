@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useEffect, useState, useRef, memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { without } from 'lodash'
@@ -56,19 +57,13 @@ const Select = styled(UISelect)`
   width: 150px;
 `
 
-const SelectableWrapper = styled.div`
+const ListItemWrapper = styled.li`
   align-items: center;
   display: flex;
+  justify-content: stretch;
+`
 
-  .ant-list-item-meta-avatar {
-    align-self: center;
-    margin: 0 ${grid(4)};
-  }
-
-  &:last-child > .ant-list-item {
-    border: none;
-  }
-
+const SelectableWrapper = styled(ListItemWrapper)`
   > :last-child {
     flex-grow: 1;
   }
@@ -89,10 +84,18 @@ const CheckBox = styled(UICheckBox)`
   padding: ${grid(2)};
 `
 
-const SelectableItem = props => {
+const compareItem = (preProps, nextProps) => {
+  if (preProps.id === nextProps.id && preProps.selected === nextProps.selected)
+    return true
+  return false
+}
+
+// memoize Selectable item to avoid unecessary rerendering every time an item is selected/deselected
+const SelectableItem = memo(props => {
   const {
     id,
-    renderItem: RenderItem,
+    index,
+    renderItem,
     onDeselect,
     onSelect,
     selected,
@@ -109,18 +112,42 @@ const SelectableItem = props => {
 
   return (
     <SelectableWrapper key={id}>
-      <CheckBox checked={selected} onChange={handleChange} />
-      <RenderItem id={id} {...rest} />
+      <CheckBox
+        aria-labelledby={id}
+        checked={selected}
+        onChange={handleChange}
+      />
+      {renderItem({ id, ...rest }, index)}
     </SelectableWrapper>
   )
-}
+}, compareItem)
 
 SelectableItem.propTypes = {
   id: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
   renderItem: PropTypes.func.isRequired,
   onDeselect: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
+}
+
+// memoized SelectableItem would use old value of selectedItems when handleSelect and handleDeselect are passed as they are
+// when you wrap them with the below function, they always refer to the List's updated selectedItems
+function useFunction(callback) {
+  const ref = React.useRef()
+  ref.current = callback
+
+  function callbackFunction(...args) {
+    const cb = ref.current
+
+    if (typeof callback === 'function') {
+      return cb.apply(this, args)
+    }
+
+    return false
+  }
+
+  return useCallback(callbackFunction, [])
 }
 
 // const EmptyList = () => {
@@ -137,7 +164,6 @@ const List = props => {
     pagination,
     renderItem,
     /* eslint-enable react/prop-types */
-
     itemSelection,
     loading,
     onSearch,
@@ -161,12 +187,18 @@ const List = props => {
       itemSelection.onChange(selectedItems)
   }, [selectedItems])
 
-  const handleSelect = id => setSelectedItems([...selectedItems, id])
-  const handleDeselect = id => setSelectedItems(without(selectedItems, id))
+  const handleSelect = useFunction(id => {
+    setSelectedItems([...selectedItems, id])
+  })
+
+  const handleDeselect = useFunction(id => {
+    setSelectedItems(without(selectedItems, id))
+  })
 
   const listItemToRender = itemSelection
-    ? itemProps => (
+    ? (itemProps, i) => (
         <SelectableItem
+          index={i}
           onDeselect={handleDeselect}
           onSelect={handleSelect}
           renderItem={renderItem}
@@ -174,7 +206,11 @@ const List = props => {
           {...itemProps}
         />
       )
-    : renderItem
+    : (itemProps, i) => {
+        return <ListItemWrapper>{renderItem(itemProps, i)}</ListItemWrapper>
+      }
+
+  const paginationRef = useRef(null)
 
   const paginationObj = {
     current: 1,
@@ -259,11 +295,33 @@ const List = props => {
     value,
   }))
 
+  useEffect(() => {
+    // enhance accessibility of pagination
+    if (shouldShowPagination) {
+      const pageItems = paginationRef.current.querySelectorAll(
+        '.ant-pagination-item',
+      )
+
+      pageItems.forEach((page, index) => {
+        const counter = index + 1
+        let label = `Go to page ${counter}`
+
+        if (page.classList.contains('ant-pagination-item-active')) {
+          page.setAttribute('aria-current', 'page')
+          label = `Page ${counter} , Current Page`
+        }
+
+        page.setAttribute('aria-label', label)
+      })
+    }
+  }, [paginationCurrent, paginationSize, shouldShowPagination])
+
   return (
     <Wrapper className={className}>
       {showSearch && (
         <SearchWrapper>
           <Search
+            aria-label="Enter text to search in list"
             loading={searchLoading}
             onSearch={onSearch}
             placeholder={searchPlaceholder}
@@ -281,12 +339,17 @@ const List = props => {
 
           {showSort && (
             <SortWrapper>
-              Sort by{' '}
-              <Select
-                defaultValue={defaultSortOption && defaultSortOption.value}
-                onChange={onSortOptionChange}
-                options={sanitizedSortOptions}
-              />
+              {/* disableing linter for this line because the label is indeed associated with the select input */}
+              {/* alternatively: add a label prop to Select and render it from within the component */}
+              {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+              <label>
+                Sort by
+                <Select
+                  defaultValue={defaultSortOption && defaultSortOption.value}
+                  onChange={onSortOptionChange}
+                  options={sanitizedSortOptions}
+                />
+              </label>
             </SortWrapper>
           )}
         </InternalHeader>
@@ -302,11 +365,13 @@ const List = props => {
         <FooterWrapper className={className}>
           {footerContent}
           {shouldShowPagination && (
-            <Pagination
-              {...passedPagination}
-              onChange={onPaginationChange}
-              onShowSizeChange={onPaginationShowSizeChange}
-            />
+            <nav aria-label="Pagination" ref={paginationRef} role="navigation">
+              <Pagination
+                {...passedPagination}
+                onChange={onPaginationChange}
+                onShowSizeChange={onPaginationShowSizeChange}
+              />
+            </nav>
           )}
         </FooterWrapper>
         {/* </ConfigProvider> */}

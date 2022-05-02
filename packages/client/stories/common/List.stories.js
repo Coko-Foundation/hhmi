@@ -2,17 +2,18 @@
 
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { lorem, image } from 'faker'
+import { lorem } from 'faker'
 import { range } from 'lodash'
 
 import { List, Button } from 'ui'
-import { Avatar } from 'antd'
+// import { Avatar } from 'antd'
 import { createData } from '../_helpers'
 
 const Item = styled.div`
   background: ${props => props.theme.colorSecondary};
   margin-bottom: 8px;
   padding: 8px;
+  width: 100%;
 `
 
 // returns the position of the item in a paginated list (as a String)
@@ -259,7 +260,7 @@ export const SelectableRows = () => {
         total: TOTAL,
         showSizeChanger: false,
       }}
-      renderItem={item => (
+      renderItem={(item, i) => (
         <Item>
           {item.id}: {item.value}
         </Item>
@@ -268,30 +269,31 @@ export const SelectableRows = () => {
   )
 }
 
-export const DefaultAntItem = () => {
-  const N = 7
+// commenting out DefaultAntItem because it is not usable anymore
+// export const DefaultAntItem = () => {
+//   const N = 7
 
-  const dataSource = createData(N, i => ({
-    avatar: image.avatar(),
-    description: lorem.sentences(4),
-    title: lorem.words(6),
-  }))
+//   const dataSource = createData(N, i => ({
+//     avatar: image.avatar(),
+//     description: lorem.sentences(4),
+//     title: lorem.words(6),
+//   }))
 
-  return (
-    <List
-      dataSource={dataSource}
-      renderItem={item => (
-        <List.Item>
-          <List.Item.Meta
-            avatar={<Avatar src={item.avatar} />}
-            description={item.description}
-            title={item.title}
-          />
-        </List.Item>
-      )}
-    />
-  )
-}
+//   return (
+//     <List
+//       dataSource={dataSource}
+//       renderItem={item => (
+//         <List.Item>
+//           <List.Item.Meta
+//             avatar={<Avatar src={item.avatar} />}
+//             description={item.description}
+//             title={item.title}
+//           />
+//         </List.Item>
+//       )}
+//     />
+//   )
+// }
 
 export const EmptyList = () => <List dataSource={[]} />
 

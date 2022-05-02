@@ -1,152 +1,142 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { useHistory } from 'react-router-dom'
-import { grid, th } from '@coko/client'
-import { Button, Collapse, List, QuestionItem } from '../common'
+import { QuestionList, TabsStyled as Tabs } from '../common'
 
-const LinkWithoutStyles = styled.a`
-  color: inherit;
-  text-decoration: none;
-  width: 100%;
+const StyledTabs = styled(Tabs)`
+  height: 100%;
 
-  &:hover,
-  &:focus,
-  &:active {
-    color: inherit;
-    text-decoration: none;
+  .ant-tabs-content {
+    height: 100%;
   }
 `
 
-const Wrapper = styled.div`
-  > div.ant-collapse > div.ant-collapse-item > .ant-collapse-header {
-    align-items: center;
-    display: flex;
-    padding-left: ${grid(4)};
-
-    > .anticon.ant-collapse-arrow {
-      padding: 0 ${grid(3)} 0 0;
-      position: initial;
-    }
-
-    > .ant-collapse-extra {
-      margin-left: auto;
-    }
-  }
-
-  ul > li:not(:last-child) {
-    border-bottom: 1px solid ${th('colorSecondary')};
-    padding: ${grid(3)} 0;
-  }
+const StyledTabPane = styled(Tabs.TabPane)`
+  height: 100%;
+  margin: auto;
+  max-width: 1170px;
 `
+
+const sortOptions = [
+  {
+    label: 'Date',
+    value: 'date',
+    isDefault: true,
+  },
+  {
+    label: 'Unit',
+    value: 'unit',
+  },
+  {
+    label: 'Section',
+    value: 'section',
+  },
+  {
+    label: 'Topic',
+    value: 'topic',
+  },
+  {
+    label: 'Category',
+    value: 'category',
+  },
+]
 
 // QUESTION how to handle search, filter and pagination with multiple sections
 const Dashboard = props => {
   const {
+    bulkActions,
     className,
-
-    authorItems,
-    editorItems,
-    reviewerItems,
-    withTotalCount,
-    authorTotalCountNumber,
-    onClickCreateQuestion,
+    loading,
+    createQuestionButton,
+    onQuestionSelected,
+    onSearch,
+    tabsContent,
   } = props
 
-  const history = useHistory()
+  const [searchParams, setSearchParams] = useState({
+    query: '',
+    page: 1,
+    sortBy: 'date',
+    role: 'author',
+  })
 
-  const handleClickCreate = e => {
-    e.stopPropagation()
-    onClickCreateQuestion()
+  const setSearchPage = page => {
+    setSearchParams({ ...searchParams, page })
   }
 
+  const setSearchQuery = query => {
+    setSearchParams({ ...searchParams, query, page: 1 })
+  }
+
+  const setSortOption = sortBy => {
+    setSearchParams({ ...searchParams, sortBy, page: 1 })
+  }
+
+  const setRole = role => {
+    setSearchParams({ query: '', sortBy: 'date', page: 1, role })
+  }
+
+  useEffect(() => {
+    onSearch(searchParams)
+  }, [searchParams])
+
   return (
-    <Wrapper className={className}>
-      <Collapse defaultActiveKey="author">
-        <Collapse.Panel
-          extra={
-            <Button onClick={handleClickCreate} type="primary">
-              Create question
-            </Button>
-          }
-          header="Author items"
-          key="author"
-        >
-          <List
-            dataSource={authorItems}
-            renderItem={itemProps => (
-              <List.Item>
-                <LinkWithoutStyles
-                  href={`question/${itemProps.id}`}
-                  onClick={e => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    history.push(`question/${itemProps.id}`)
-                  }}
-                >
-                  <QuestionItem {...itemProps} />
-                </LinkWithoutStyles>
-              </List.Item>
-            )}
-            showTotalCount={withTotalCount}
-            totalCount={authorTotalCountNumber}
-          />
-        </Collapse.Panel>
-
-        <Collapse.Panel header="Reviewer items" key="reviewer">
-          <List
-            dataSource={reviewerItems}
-            renderItem={itemProps => (
-              <li>
-                <QuestionItem {...itemProps} />
-              </li>
-            )}
-          />
-        </Collapse.Panel>
-
-        <Collapse.Panel header="Editor items" key="editor">
-          <List
-            dataSource={editorItems}
-            renderItem={itemProps => (
-              <li>
-                <QuestionItem {...itemProps} />
-              </li>
-            )}
-          />
-        </Collapse.Panel>
-      </Collapse>
-    </Wrapper>
+    <StyledTabs
+      className={className}
+      onChange={setRole}
+      tabBarExtraContent={createQuestionButton}
+    >
+      {tabsContent.map(
+        ({ value, label, questions, totalCount, showBulkActions }) => (
+          <StyledTabPane className="test" key={value} tab={label}>
+            <QuestionList
+              bulkActions={showBulkActions && bulkActions}
+              currentPage={searchParams.page}
+              key={searchParams.role}
+              loading={loading}
+              onPageChange={setSearchPage}
+              onQuestionSelected={onQuestionSelected}
+              onSearch={setSearchQuery}
+              onSortOptionChange={setSortOption}
+              questions={questions}
+              showRowCheckboxes={!!showBulkActions}
+              sortOptions={sortOptions}
+              totalCount={totalCount}
+            />
+          </StyledTabPane>
+        ),
+      )}
+    </StyledTabs>
   )
 }
 
-const itemProps = PropTypes.arrayOf(
-  PropTypes.shape({
-    metadata: PropTypes.arrayOf(
-      PropTypes.shape({
-        label: PropTypes.string.isRequired,
-        value: PropTypes.string,
-      }),
-    ).isRequired,
-    title: PropTypes.string.isRequired,
-  }),
-)
-
 Dashboard.propTypes = {
-  authorItems: itemProps,
-  authorTotalCountNumber: PropTypes.number,
-  editorItems: itemProps,
-  reviewerItems: itemProps,
-  withTotalCount: PropTypes.bool,
-
-  onClickCreateQuestion: PropTypes.func.isRequired,
+  /** custom component for bulk actions on selected questions */
+  bulkActions: PropTypes.shape(),
+  /** custom component for create question */
+  createQuestionButton: PropTypes.shape(),
+  /** Loading results. */
+  loading: PropTypes.bool,
+  /** handele selection and deselection of questions */
+  onQuestionSelected: PropTypes.func,
+  onSearch: PropTypes.func.isRequired,
+  tabsContent: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+      quesitons: PropTypes.arrayOf(PropTypes.shape()),
+      totalCount: PropTypes.number,
+      showBulkActions: PropTypes.bool,
+    }),
+  ),
 }
 
 Dashboard.defaultProps = {
-  authorItems: [],
-  authorTotalCountNumber: 0,
-  editorItems: [],
-  reviewerItems: [],
-  withTotalCount: false,
+  bulkActions: null,
+  createQuestionButton: null,
+  loading: false,
+  onQuestionSelected: () => {},
+  tabsContent: [],
 }
 
 export default Dashboard
