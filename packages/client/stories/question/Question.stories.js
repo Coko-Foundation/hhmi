@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 import styled from 'styled-components'
 import { lorem } from 'faker'
@@ -31,14 +32,22 @@ const content = {
   ],
 }
 
-export const Base = () => (
+const emptyNavigationFunction = e => {
+  e.preventDefault()
+  console.log('link clicked')
+}
+
+export const Base = args => (
   <Wrapper>
     <Question
+      {...args}
       editorContent={content}
       initialMetadataValues={options}
       loading={false}
-      onClickBackButton={() => console.log('back')}
-      onEditorContentAutoSave={s => console.log('editor auto save', s)}
+      onClickBackButton={emptyNavigationFunction}
+      onClickNextButton={emptyNavigationFunction}
+      onClickPreviousButton={emptyNavigationFunction}
+      onEditorContentAutoSave={() => console.log('editor auto save')}
       onQuestionSubmit={console.log('submit question')}
       questionAgreedTc={false}
       submitting={false}

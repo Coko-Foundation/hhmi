@@ -946,7 +946,7 @@ const Metadata = React.forwardRef((props, ref) => {
             }))}
           />
         </Form.Item>
-        <Form.Item dependencies={['framework']} noStyle>
+        <Form.Item dependencies={['framework']} noStyle shouldUpdate>
           {({ getFieldValue }) => renderFrameworkFields(getFieldValue)}
         </Form.Item>
         <Form.List

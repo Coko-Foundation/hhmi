@@ -22,6 +22,12 @@ export const PrimarySuccess = () => (
   </Button>
 )
 
+export const Link = () => (
+  <Button ghost href="#" type="primary">
+    Link that looks like a button
+  </Button>
+)
+
 export default {
   component: Button,
   title: 'Common/Button',

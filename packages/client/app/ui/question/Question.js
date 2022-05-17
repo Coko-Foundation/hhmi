@@ -2,17 +2,14 @@ import React, { useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import {
-  grid,
-  // th
-} from '@coko/client'
-import { LeftOutlined } from '@ant-design/icons'
+import { grid, th } from '@coko/client'
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 import { HhmiLayout } from '../wax/layout'
 import { config } from '../wax/config'
 
 import Metadata from './Metadata'
-import { Button, Checkbox, Spin, Split, Tabs } from '../common'
+import { Button, Checkbox, Spin, TabsStyled as Tabs } from '../common'
 import WaxWrapper from '../wax/Wax'
 
 const Wrapper = styled.div`
@@ -20,6 +17,7 @@ const Wrapper = styled.div`
 
   .ant-spin-nested-loading,
   .ant-spin-container {
+    background-color: ${th('colorBackground')};
     height: 100%;
   }
 
@@ -45,16 +43,47 @@ const Wrapper = styled.div`
     margin: 0;
     padding: 0 ${grid(2)};
   }
+
+  .ant-tabs-nav-operations {
+    display: none;
+  }
 `
 
-const StyledBackButton = styled(Button)`
+const StyledButton = styled(Button)`
   margin-right: ${grid(2)};
+  text-transform: uppercase;
 `
 
 const RightAreaWrapper = styled.div`
   > label {
     margin-right: ${grid(2)};
   }
+`
+
+const FacultyHeaderWrapper = styled.div`
+  align-items: center;
+  background-color: ${th('colorSecondary')};
+  display: flex;
+  flex: none;
+  height: 46px;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0 ${grid(3)};
+  text-transform: uppercase;
+`
+
+const StyledTabItem = styled.div`
+  padding: 0 ${grid(3)};
+`
+
+const QuestionWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+`
+
+const StyledTabPane = styled(Tabs.TabPane)`
+  flex: 1;
+  overflow: auto;
 `
 
 // QUESTION submit button here seems to be outside the form
@@ -65,14 +94,21 @@ const Question = props => {
   const {
     submitting,
     editorContent,
+    editorView,
+    facultyView,
     initialMetadataValues,
     isSubmitted,
     loading,
     onClickBackButton,
+    onClickPreviousButton,
+    onClickNextButton,
     onEditorContentAutoSave,
     onMetadataAutoSave,
     onQuestionSubmit,
     questionAgreedTc,
+    showAssignHEButton,
+    showNextQuestionLink,
+    underReview,
   } = props
 
   const formRef = useRef()
@@ -110,18 +146,48 @@ const Question = props => {
   }
 
   const BackButton = (
-    <StyledBackButton icon={<LeftOutlined />} onClick={onClickBackButton}>
+    <StyledButton
+      ghost
+      href="#"
+      icon={<LeftOutlined />}
+      onClick={onClickBackButton}
+      type="primary"
+    >
       Back
-    </StyledBackButton>
+    </StyledButton>
   )
 
-  const RightArea = (
+  const QuestionTab = <StyledTabItem>Question</StyledTabItem>
+
+  const PreviousQuestion = (
+    <StyledButton
+      href="#"
+      icon={<LeftOutlined />}
+      onClick={onClickPreviousButton}
+      type="primary"
+    >
+      Previous Question
+    </StyledButton>
+  )
+
+  const NextQuestion = (
+    <StyledButton
+      href="#"
+      icon={<RightOutlined />}
+      onClick={onClickNextButton}
+      type="primary"
+    >
+      Next Question
+    </StyledButton>
+  )
+
+  const RightAreaAuthor = isSubmitted ? null : (
     <RightAreaWrapper>
       <Checkbox checked={agreedTc} onChange={handleAgreeTcChange}>
         Accept terms and conditions
       </Checkbox>
 
-      <Button
+      <StyledButton
         disabled={
           // !formRef.current.isFieldsTouched(true) ||
           submitting ||
@@ -133,8 +199,39 @@ const Question = props => {
         type="primary"
       >
         Submit
-      </Button>
+      </StyledButton>
     </RightAreaWrapper>
+  )
+
+  const RightAreaEditor = (
+    <>
+      {showAssignHEButton && (
+        <StyledButton ghost type="primary">
+          Assign HE
+        </StyledButton>
+      )}
+      <StyledButton type="danger">Do not accept</StyledButton>
+      <StyledButton type="primary">
+        {underReview ? 'Publish' : 'Move to Review'}
+      </StyledButton>
+      {showNextQuestionLink && NextQuestion}
+    </>
+  )
+
+  const RightArea = editorView ? RightAreaEditor : RightAreaAuthor
+
+  const FacultyHeader = (
+    <FacultyHeaderWrapper>
+      <div>
+        {BackButton}
+        {PreviousQuestion}
+      </div>
+      <div>
+        <StyledButton type="primary">Export to Word</StyledButton>
+        <StyledButton type="primary">Export to Scorm</StyledButton>
+        {NextQuestion}
+      </div>
+    </FacultyHeaderWrapper>
   )
 
   if (loading) return null
@@ -142,14 +239,23 @@ const Question = props => {
   return (
     <Wrapper>
       <Spin renderBackground={false} spinning={loading}>
+        {/* <Wrapper className={className}> */}
         <Tabs
+          renderTabBar={(tabProps, DefaultTabBar) => {
+            return facultyView ? (
+              FacultyHeader
+            ) : (
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              <DefaultTabBar {...tabProps} />
+            )
+          }}
           tabBarExtraContent={{
             left: BackButton,
-            right: isSubmitted ? null : RightArea,
+            right: RightArea,
           }}
         >
-          <Tabs.TabPane key={0} tab="Question">
-            <Split gutter={8} splitAt={16}>
+          <StyledTabPane key={0} tab={QuestionTab}>
+            <QuestionWrapper>
               <WaxWrapper
                 config={config}
                 content={editorContent}
@@ -166,9 +272,10 @@ const Question = props => {
                 onFormFinish={onFormFinish}
                 readOnly={isSubmitted}
               />
-            </Split>
-          </Tabs.TabPane>
+            </QuestionWrapper>
+          </StyledTabPane>
         </Tabs>
+        {/* </Wrapper> */}
       </Spin>
     </Wrapper>
   )
@@ -177,6 +284,8 @@ const Question = props => {
 Question.propTypes = {
   loading: PropTypes.bool.isRequired,
   onClickBackButton: PropTypes.func.isRequired,
+  onClickPreviousButton: PropTypes.func,
+  onClickNextButton: PropTypes.func,
   onEditorContentAutoSave: PropTypes.func.isRequired,
   onQuestionSubmit: PropTypes.func.isRequired,
   onMetadataAutoSave: PropTypes.func.isRequired,
@@ -185,14 +294,26 @@ Question.propTypes = {
   questionAgreedTc: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   isSubmitted: PropTypes.bool.isRequired,
+  editorView: PropTypes.bool,
+  showAssignHEButton: PropTypes.bool,
+  showNextQuestionLink: PropTypes.bool,
+  facultyView: PropTypes.bool,
   // TO DO - provide valid shape
   /* eslint-disable-next-line react/forbid-prop-types */
   initialMetadataValues: PropTypes.object,
+  underReview: PropTypes.bool,
 }
 
 Question.defaultProps = {
   editorContent: '',
   initialMetadataValues: null,
+  onClickPreviousButton: () => {},
+  onClickNextButton: () => {},
+  editorView: false,
+  showAssignHEButton: true,
+  showNextQuestionLink: false,
+  facultyView: false,
+  underReview: false,
 }
 
 export default Question
