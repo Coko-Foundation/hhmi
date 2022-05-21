@@ -17,6 +17,7 @@ services:
       - SERVER_PORT=${SERVER_PORT:-3000}
     volumes:
       - ./packages/client/app:/home/node/app/app
+
   server:
     build:
       context: ./packages/server
@@ -40,6 +41,8 @@ services:
         '--watch',
         'config',
         '--watch',
+        'controllers',
+        '--watch',
         'models',
         '--watch',
         'scripts',
@@ -50,7 +53,7 @@ services:
       - ${SERVER_PORT:-3000}:${SERVER_PORT:-3000}
     environment:
       - NODE_ENV=development
-      - POSTGRES_HOST=${POSTGRES_HOST:-db}
+      - POSTGRES_HOST=db
       - POSTGRES_PORT=${POSTGRES_PORT:-5432}
       - POSTGRES_DB=${POSTGRES_DB:-hhmi_dev}
       - POSTGRES_USER=${POSTGRES_USER:-hhmi_dev_user}
@@ -66,14 +69,17 @@ services:
       - MAILER_HOSTNAME=${MAILER_HOSTNAME}
       - PASSWORD_RESET_PATH=${PASSWORD_RESET_PATH:-password-reset}
     volumes:
-      - ./packages/server/config:/home/node/hhmi/config
       - ./packages/server/api:/home/node/hhmi/api
-      - ./packages/server/scripts:/home/node/hhmi/scripts
+      - ./packages/server/config:/home/node/hhmi/config
+      - ./packages/server/controllers:/home/node/hhmi/controllers
       - ./packages/server/models:/home/node/hhmi/models
+      - ./packages/server/scripts:/home/node/hhmi/scripts
+      - ./packages/server/services:/home/node/hhmi/services
+
   db:
     image: postgres:12
     ports:
-      - 5432:5432
+      - ${POSTGRES_PORT:-5432}:5432
     environment:
       - POSTGRES_DB=${POSTGRES_DB:-hhmi_dev}
       - POSTGRES_USER=${POSTGRES_USER:-hhmi_dev_user}

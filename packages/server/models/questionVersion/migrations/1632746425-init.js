@@ -9,7 +9,7 @@ exports.up = knex => {
         .notNullable()
         .defaultTo(knex.fn.now())
       table.timestamp('updated', { useTz: true })
-      table.boolean('submitted').defaultTo(false).notNullable()
+
       table
         .uuid('question_id')
         .notNullable()
@@ -17,6 +17,11 @@ exports.up = knex => {
         .inTable('questions')
 
       table.text('content').nullable()
+
+      table.boolean('submitted').defaultTo(false).notNullable()
+      table.boolean('underReview').defaultTo(false).notNullable()
+      table.boolean('published').defaultTo(false).notNullable()
+
       table.string('topic').nullable()
       table.string('subTopic').nullable()
       table.jsonb('keywords')
@@ -28,6 +33,7 @@ exports.up = knex => {
       table.string('framework').nullable()
       table.jsonb('frameworkMetadata')
       table.jsonb('supplementaryFields').defaultTo([])
+
       table.text('type')
     })
   } catch (e) {

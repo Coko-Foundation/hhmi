@@ -1,19 +1,24 @@
 type QuestionVersion {
   id: ID!
-  questionId: ID!
-  submitted: Boolean!
+  created: DateTime!
+  updated: DateTime!
+  question: Question!
   content: String
-  keywords: [String]
+
+  submitted: Boolean!
+  underReview: Boolean!
+  published: Boolean!
+
   topic: String
   subTopic: String
-  created: DateTime
+  framework: String
+  frameworkMetadata: FrameworkMetadata
+  keywords: [String]
   biointeractiveResources: String
   cognitiveLevel: String
   affectiveLevel: String
   psychomotorLevel: String
   readingLevel: String
-  framework: String
-  frameworkMetadata: FrameworkMetadata
   supplementaryFields: [SupplementaryFields]!
 }
 

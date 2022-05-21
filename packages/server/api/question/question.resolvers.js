@@ -1,91 +1,110 @@
-const { logger } = require('@coko/server')
-
-const {
-  labels: { QUESTION_RESOLVER },
-} = require('./constants')
-
 const {
   getQuestion,
-  getQuestions,
-  // getQuestionVersions,
+  getQuestionVersions,
+  getPublishedQuestions,
+  getAuthorDashboard,
+  getReviewerDashboard,
+  getManagingEditorDashboard,
+
   createQuestion,
   updateQuestion,
-  deleteQuestion,
-} = require('./question.controller')
+  submitQuestion,
+  rejectQuestion,
+  moveQuestionVersionToReview,
+  publishQuestionVersion,
+} = require('../../controllers/question.controllers')
 
-const questionResolver = async (_, { id }, ctx) => {
-  try {
-    logger.error(`${QUESTION_RESOLVER} question`)
-    return getQuestion(id)
-  } catch (e) {
-    logger.error(`${QUESTION_RESOLVER} question: ${e.message}`)
-    throw new Error(e)
-  }
+const questionResolver = async (_, { id }) => {
+  return getQuestion(id)
 }
 
-const questionsResolver = async (_, { where }, ctx) => {
-  try {
-    // const {
-    //   page: { pageNumber, pageSize },
-    // } = where
-    logger.info(`${QUESTION_RESOLVER} questions`)
-    // return getQuestions(where, { page: pageNumber, pageSize })
-    return getQuestions(where)
-  } catch (e) {
-    logger.error(`${QUESTION_RESOLVER} questions: ${e.message}`)
-    throw new Error(e)
-  }
+const getPublishedQuestionsResolver = async (_, args) => {
+  return getPublishedQuestions()
 }
 
-const createQuestionResolver = async (_, { input }, ctx) => {
-  try {
-    logger.info(`${QUESTION_RESOLVER} createQuestion`)
-    return createQuestion(input)
-  } catch (e) {
-    logger.error(`${QUESTION_RESOLVER} createQuestion: ${e.message}`)
-    throw new Error(e)
-  }
+const getAuthorDashboardResolver = async (_, args, ctx) => {
+  return getAuthorDashboard(ctx.user, args)
 }
 
-const updateQuestionResolver = async (_, { id, input }, ctx) => {
-  try {
-    logger.info(`${QUESTION_RESOLVER} updateQuestion`)
-    return updateQuestion(id, input)
-  } catch (e) {
-    logger.error(`${QUESTION_RESOLVER} updateQuestion: ${e.message}`)
-    throw new Error(e)
-  }
+const getReviewerDashboardResolver = async (_, args, ctx) => {
+  return getReviewerDashboard(ctx.user, args)
 }
 
-const deleteQuestionResolver = async (_, { id }, ctx) => {
-  try {
-    logger.info(`${QUESTION_RESOLVER} deleteQuestion`)
-    return deleteQuestion(id)
-  } catch (e) {
-    logger.error(`${QUESTION_RESOLVER} deleteQuestion: ${e.message}`)
-    throw new Error(e)
-  }
+const getManagingEditorDashboardResolver = async (_, args, ctx) => {
+  return getManagingEditorDashboard(ctx.user, args)
+}
+
+const createQuestionResolver = async (_, __, ctx) => {
+  return createQuestion(ctx.user)
+}
+
+const updateQuestionResolver = async (
+  _,
+  { questionId, questionVersionId, input },
+  ctx,
+) => {
+  return updateQuestion(questionId, questionVersionId, input)
+}
+
+const submitQuestionResolver = async (
+  _,
+  { questionId, questionVersionId, input },
+  ctx,
+) => {
+  return submitQuestion(questionId, questionVersionId, input)
+}
+
+const rejectQuestionResolver = async (_, { questionId }, ctx) => {
+  return rejectQuestion(questionId)
+}
+
+const moveQuestionVersionToReviewResolver = async (
+  _,
+  { questionVersionId },
+) => {
+  return moveQuestionVersionToReview(questionVersionId)
+}
+
+const publishQuestionVersionResolver = async (_, { questionVersionId }) => {
+  return publishQuestionVersion(questionVersionId)
+}
+
+const versionsResolver = async (
+  question,
+  { latestOnly, publishedOnly },
+  ctx,
+) => {
+  // return ctx.loaders.Question.questionVersionsBasedOnQuestionIdsLoader.load(
+  //   question.id,
+  //   latestOnly,
+  // )
+  return getQuestionVersions(question.id, { latestOnly, publishedOnly })
+}
+
+const versionQuestionResolver = async version => {
+  return getQuestion(version.questionId)
 }
 
 module.exports = {
   Query: {
     question: questionResolver,
-    questions: questionsResolver,
+    getPublishedQuestions: getPublishedQuestionsResolver,
+    getAuthorDashboard: getAuthorDashboardResolver,
+    getReviewerDashboard: getReviewerDashboardResolver,
+    getManagingEditorDashboard: getManagingEditorDashboardResolver,
   },
   Mutation: {
     createQuestion: createQuestionResolver,
     updateQuestion: updateQuestionResolver,
-    submitQuestion: updateQuestionResolver,
-    autoSaveQuestion: updateQuestionResolver,
-    deleteQuestion: deleteQuestionResolver,
+    submitQuestion: submitQuestionResolver,
+    rejectQuestion: rejectQuestionResolver,
+    moveQuestionVersionToReview: moveQuestionVersionToReviewResolver,
+    publishQuestionVersion: publishQuestionVersionResolver,
   },
   Question: {
-    async versions(question, { latestOnly }, ctx) {
-      return ctx.loaders.Question.questionVersionsBasedOnQuestionIdsLoader.load(
-        question.id,
-        latestOnly,
-      )
-      // return getQuestionVersions(question.id, latestOnly)
-    },
+    versions: versionsResolver,
+  },
+  QuestionVersion: {
+    question: versionQuestionResolver,
   },
 }

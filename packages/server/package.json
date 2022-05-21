@@ -7,8 +7,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "resolutions": {
+    "pg": "8"
+  },
   "dependencies": {
-    "@coko/server": "https://gitlab.coko.foundation/cokoapps/server.git#2ddd4a2395737eb20096e3a7270d255404ac4a35",
+    "@coko/server": "https://gitlab.coko.foundation/cokoapps/server.git#039dcd48c9f755b53c7b99a7177b0a87a42972d9",
     "axios": "^0.26.1",
     "config": "^3.3.6",
     "docx": "^7.3.0",

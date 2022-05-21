@@ -10,6 +10,7 @@ exports.up = knex => {
         .defaultTo(knex.fn.now())
       table.timestamp('updated', { useTz: true })
       table.boolean('agreedTc').defaultTo(false).notNullable()
+      table.boolean('rejected').defaultTo(false).notNullable()
       table.text('type')
     })
   } catch (e) {
