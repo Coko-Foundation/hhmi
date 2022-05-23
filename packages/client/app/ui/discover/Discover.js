@@ -39,8 +39,15 @@ const sortOptions = [
 ]
 
 export const Discover = props => {
-  const { className, loading, questions, sidebarText, onSearch, totalCount } =
-    props
+  const {
+    className,
+    loading,
+    questions,
+    sidebarText,
+    onSearch,
+    sidebarMetadata,
+    totalCount,
+  } = props
 
   // key to force list to rerender and empty search box when filters change
   const [listKey, setListKey] = useState(0)
@@ -83,7 +90,11 @@ export const Discover = props => {
 
   return (
     <Wrapper className={className}>
-      <Sidebar setFilters={setFilters} text={sidebarText} />
+      <Sidebar
+        metadata={sidebarMetadata}
+        setFilters={setFilters}
+        text={sidebarText}
+      />
       <QuestionList
         currentPage={searchParams.page}
         key={listKey}
@@ -125,12 +136,14 @@ Discover.propTypes = {
       ),
     }),
   ),
+  sidebarMetadata: PropTypes.shape(),
   totalCount: PropTypes.number,
 }
 
 Discover.defaultProps = {
   loading: false,
   questions: [],
+  sidebarMetadata: {},
   sidebarText: '',
   totalCount: 0,
 }

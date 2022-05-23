@@ -99,6 +99,7 @@ const Question = props => {
     initialMetadataValues,
     isSubmitted,
     loading,
+    metadata,
     onClickBackButton,
     onClickPreviousButton,
     onClickNextButton,
@@ -268,6 +269,7 @@ const Question = props => {
               <Metadata
                 initialValues={initialMetadataValues}
                 innerRef={formRef}
+                metadata={metadata}
                 onAutoSave={onMetadataAutoSave}
                 onFormFinish={onFormFinish}
                 readOnly={isSubmitted}
@@ -298,6 +300,7 @@ Question.propTypes = {
   showAssignHEButton: PropTypes.bool,
   showNextQuestionLink: PropTypes.bool,
   facultyView: PropTypes.bool,
+  metadata: PropTypes.shape().isRequired,
   // TO DO - provide valid shape
   /* eslint-disable-next-line react/forbid-prop-types */
   initialMetadataValues: PropTypes.object,

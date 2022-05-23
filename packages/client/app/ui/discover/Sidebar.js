@@ -114,7 +114,7 @@ const Sidebar = props => {
       // return 2 mystery fields, vision and change and AAMC future physicians if `introductoryBiologyForMajors`
       return (
         <>
-          {/** mistry fields go here */}
+          {/** mistery fields go here */}
           <VisionAndChangeMetadata
             conceptsAndCompetencies={metadata.introToBioMeta.find(
               f => f.value === 'visionAndChange',
