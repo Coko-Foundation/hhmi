@@ -50,7 +50,7 @@ const FormItem = props => {
 }
 
 // Disable the prop types that are the same as the underlying component
-export const Form = props => {
+const Form = props => {
   const {
     autoSave,
     autoSaveDebounceDelay,

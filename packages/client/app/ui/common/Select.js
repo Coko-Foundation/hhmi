@@ -1,12 +1,23 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { debounce as lodashDebounceFunc } from 'lodash'
 
 import { Select as AntSelect } from 'antd'
 
 const StyledSelect = styled(AntSelect)`
   width: 100%;
+`
+
+const StyledDropdown = styled.div`
+  .ant-select-item-option-content {
+    ${props =>
+      props.wrapOptionText &&
+      css`
+        white-space: normal;
+      `}
+  }
 `
 
 const Select = props => {
@@ -24,6 +35,7 @@ const Select = props => {
     showSearch,
     /* eslint-enable react/prop-types */
 
+    wrapOptionText,
     ...rest
   } = props
 
@@ -40,6 +52,13 @@ const Select = props => {
   return (
     <StyledSelect
       className={className}
+      dropdownRender={menu => {
+        return (
+          <StyledDropdown wrapOptionText={wrapOptionText}>
+            {menu}
+          </StyledDropdown>
+        )
+      }}
       filterOption={async && !filterOption ? false : filterOption}
       notFoundContent={!notFoundContent && async ? null : notFoundContent}
       onSearch={onSearch && searchFunc}
@@ -53,12 +72,14 @@ Select.propTypes = {
   async: PropTypes.bool,
   // debounce: PropTypes.bool,
   debounceTimeout: PropTypes.number,
+  wrapOptionText: PropTypes.bool,
 }
 
 Select.defaultProps = {
   async: false,
   // debounce: false,
   debounceTimeout: 500,
+  wrapOptionText: false,
 }
 
 export default Select

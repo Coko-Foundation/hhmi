@@ -26,6 +26,12 @@ export { default as Tabs } from './Tabs'
 export { default as TabsStyled } from './TabsStyled'
 export { default as TextArea } from './TextArea'
 
+export { default as TopicAndSubtopic } from './TopicAndSubtopic'
+export { default as APCourseMetadata } from './APCourseMetadata'
+export { default as IBCourseMetadata } from './IBCourseMetadata'
+export { default as VisionAndChangeMetadata } from './VisionAndChangeMetadata'
+export { default as AAMCFuturePhysiciansMetadata } from './AAMCFuturePhysiciansMetadata'
+
 export * from './Headings'
 export * from './Typography'
 
