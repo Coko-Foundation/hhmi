@@ -326,6 +326,7 @@ const Metadata = React.forwardRef((props, ref) => {
           name="cognitiveLevel"
           rules={[
             {
+              required: true,
               message: "Bloom's cognitive level is required",
             },
           ]}
@@ -361,10 +362,6 @@ const Metadata = React.forwardRef((props, ref) => {
           <Select disabled={readOnly} options={[]} />
         </Form.Item>
       </Form>
-      {/* eslint-disable-next-line no-console */}
-      <button onClick={() => console.log(form.getFieldsValue())} type="button">
-        Submit
-      </button>
     </Wrapper>
   )
 })

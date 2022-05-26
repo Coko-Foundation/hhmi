@@ -81,7 +81,7 @@ const AAMCFuturePhysiciansMetadata = props => {
 
   return (
     <>
-      <p>AAMC Future Physicians</p>
+      <p>AAMC Future Physicians Framework</p>
       <Form.Item
         label="Concept"
         name={conceptName}

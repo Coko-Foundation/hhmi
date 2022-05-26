@@ -25,11 +25,26 @@ const makeData = n =>
       ],
     },
     metadata: [
-      { label: 'unit', value: 'Lorem ipsum' },
-      { label: 'section', value: 'Lorem ipsum' },
-      { label: 'topic', value: 'Lorem ipsum' },
-      { label: 'category', value: 'Lorem ipsum' },
-      { label: 'published', value: '20 Oct 2020' },
+      {
+        label: 'topic',
+        value: lorem.words(2),
+      },
+      {
+        label: 'subtopic',
+        value: lorem.words(2),
+      },
+      {
+        label: 'question type',
+        value: lorem.words(2),
+      },
+      {
+        label: "boom's level",
+        value: lorem.words(2),
+      },
+      {
+        label: 'published date',
+        value: lorem.words(2),
+      },
     ],
     href: `question/${uuid()}`,
   }))

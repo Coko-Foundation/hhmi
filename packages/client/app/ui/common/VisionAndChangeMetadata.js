@@ -261,7 +261,7 @@ const VisionAndChangeMetadata = props => {
 
   return (
     <>
-      <p>Vision and Change</p>
+      <p>Vision and Change Framework</p>
       <Form.Item label="Core concept" name={coreConceptName}>
         <Select
           allowClear

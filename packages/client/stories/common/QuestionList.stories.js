@@ -26,19 +26,19 @@ const makeData = n =>
     },
     metadata: [
       {
-        label: 'unit',
-        value: lorem.words(2),
-      },
-      {
-        label: 'section',
-        value: lorem.words(2),
-      },
-      {
         label: 'topic',
         value: lorem.words(2),
       },
       {
-        label: 'category',
+        label: 'subtopic',
+        value: lorem.words(2),
+      },
+      {
+        label: 'question type',
+        value: lorem.words(2),
+      },
+      {
+        label: "boom's level",
         value: lorem.words(2),
       },
       {
