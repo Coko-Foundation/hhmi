@@ -230,7 +230,7 @@ const IBCourseMetadata = props => {
 
   return (
     <>
-      <p>{courseData.label}</p>
+      <p>{courseData.label}: College Board Curriculum</p>
       <Form.Item
         label="Course Unit"
         name={unitName}
