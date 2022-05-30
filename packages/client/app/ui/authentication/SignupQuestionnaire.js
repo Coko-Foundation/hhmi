@@ -17,22 +17,36 @@ const SignupQuestionnaire = props => {
     onSubmit,
     secondaryButtonAction,
     submissionStatus,
+    countries,
+    courses,
+    institutionLevels,
+    institutionalSetting,
+    states,
+    topics,
+    onCountryChange,
   } = props
 
   return (
     <Wrapper>
       <AuthenticationHeader>{headingText}</AuthenticationHeader>
       <ProfileInfo
+        countries={countries}
+        courses={courses}
         form={form}
         initialValues={initialValues}
+        institutionalSetting={institutionalSetting}
+        institutionLevels={institutionLevels}
         loading={loading}
         message={message}
+        onCountryChange={onCountryChange}
         onSubmit={onSubmit}
         secondaryButtonAction={secondaryButtonAction}
         secondaryButtonLabel="Clear"
         showSecondaryButton
+        states={states}
         submissionStatus={submissionStatus}
         submitButtonLabel="Submit"
+        topics={topics}
       />
     </Wrapper>
   )
@@ -47,6 +61,13 @@ SignupQuestionnaire.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   secondaryButtonAction: PropTypes.func.isRequired,
   submissionStatus: PropTypes.string,
+  countries: PropTypes.arrayOf(PropTypes.shape()),
+  courses: PropTypes.arrayOf(PropTypes.shape()),
+  institutionLevels: PropTypes.arrayOf(PropTypes.shape()),
+  institutionalSetting: PropTypes.arrayOf(PropTypes.shape()),
+  states: PropTypes.arrayOf(PropTypes.shape()),
+  topics: PropTypes.arrayOf(PropTypes.shape()),
+  onCountryChange: PropTypes.func.isRequired,
 }
 
 SignupQuestionnaire.defaultProps = {
@@ -56,6 +77,12 @@ SignupQuestionnaire.defaultProps = {
   loading: false,
   message: '',
   submissionStatus: null,
+  countries: [],
+  courses: [],
+  institutionLevels: [],
+  institutionalSetting: [],
+  states: [],
+  topics: [],
 }
 
 export default SignupQuestionnaire
