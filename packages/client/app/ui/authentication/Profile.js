@@ -22,6 +22,13 @@ const Profile = props => {
     onPasswordUpdate,
     onProfileUpdate,
     submissionStatus,
+    countries,
+    courses,
+    institutionLevels,
+    institutionalSetting,
+    states,
+    topics,
+    onCountryChange,
   } = props
 
   const [unsavedChanges, setUnsavedChanges] = useState(false)
@@ -66,15 +73,22 @@ const Profile = props => {
       <TabsStyled activeKey={activeKey} onTabClick={checkForUnsavedChanges}>
         <StyledTabPane key="profileInfo" tab="Profile info">
           <ProfileInfo
+            countries={countries}
+            courses={courses}
             initialValues={initialValues}
+            institutionalSetting={institutionalSetting}
+            institutionLevels={institutionLevels}
             loading={loading}
             message={message}
             onAutoSave={onAutoSave}
+            onCountryChange={onCountryChange}
             onSubmit={handleProfileInfoSubmit}
             onValuesChange={handleValuesChange}
             secondaryButtonLabel="Cancel"
+            states={states}
             submissionStatus={submissionStatus}
             submitButtonLabel="Save"
+            topics={topics}
           />
         </StyledTabPane>
         <StyledTabPane key="changePassword" tab="Password">
@@ -99,6 +113,13 @@ Profile.propTypes = {
   onPasswordUpdate: PropTypes.func.isRequired,
   onProfileUpdate: PropTypes.func.isRequired,
   submissionStatus: PropTypes.string,
+  countries: PropTypes.arrayOf(PropTypes.shape()),
+  courses: PropTypes.arrayOf(PropTypes.shape()),
+  institutionLevels: PropTypes.arrayOf(PropTypes.shape()),
+  institutionalSetting: PropTypes.arrayOf(PropTypes.shape()),
+  states: PropTypes.arrayOf(PropTypes.shape()),
+  topics: PropTypes.arrayOf(PropTypes.shape()),
+  onCountryChange: PropTypes.func.isRequired,
 }
 
 Profile.defaultProps = {
@@ -107,6 +128,12 @@ Profile.defaultProps = {
   message: '',
   onAutoSave: () => {},
   submissionStatus: null,
+  countries: [],
+  courses: [],
+  institutionLevels: [],
+  institutionalSetting: [],
+  states: [],
+  topics: [],
 }
 
 export default Profile

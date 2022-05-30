@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { SignupQuestionnaire, Form, Checkbox } from 'ui'
+import { profileOptions } from '../../app/utilities/utilities'
 
 const initialValues = {
   firstName: 'Filan',
@@ -16,6 +17,45 @@ export const Base = () => {
   const [error, setError] = useState(false)
 
   const [form] = Form.useForm()
+
+  const [stateOptions, setStates] = useState([])
+  const [countryOptions, setCountries] = useState([])
+
+  useEffect(async () => {
+    const response = await fetch(
+      'https://web.cvent.com/event_guest/v1/lookups/v1/countries?locale=en',
+    )
+
+    if (response.status === 200) {
+      const countries = await response.json()
+
+      const formattedCountries = Object.values(countries.countries).map(c => ({
+        label: c.name,
+        value: c.code,
+      }))
+
+      setCountries(formattedCountries.sort((a, b) => a.label > b.label))
+    }
+  }, [])
+
+  const onCountryChange = async selectedCountry => {
+    const response = await fetch(
+      `https://web.cvent.com/event_guest/v1/lookups/v1/states?countryCode=${selectedCountry}`,
+    )
+
+    if (response.status === 200) {
+      const states = await response.json()
+
+      const formattedStates = Object.values(states.states).map(s => ({
+        label: s.name,
+        value: s.code,
+      }))
+
+      setStates(formattedStates)
+    } else {
+      setStates([])
+    }
+  }
 
   const clearFormFields = () => {
     form.resetFields()
@@ -45,13 +85,20 @@ export const Base = () => {
         </Checkbox>
       </p>
       <SignupQuestionnaire
+        countries={countryOptions}
+        courses={profileOptions.courses}
         form={form}
         initialValues={initialValues}
+        institutionalSetting={profileOptions.institutionalSetting}
+        institutionLevels={profileOptions.institutionLevels}
         loading={loading}
         message={message}
+        onCountryChange={onCountryChange}
         onSubmit={handleSubmit}
         secondaryButtonAction={clearFormFields}
+        states={stateOptions}
         submissionStatus={submissionStatus}
+        topics={profileOptions.topics}
       />
     </>
   )

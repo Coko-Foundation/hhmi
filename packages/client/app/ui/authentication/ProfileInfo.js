@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Row as AntRow, Col } from 'antd'
@@ -36,8 +36,37 @@ const ProfileInfo = props => {
     showSecondaryButton,
     submitButtonLabel,
     submissionStatus,
+    institutionalSetting,
+    institutionLevels,
+    courses,
+    topics,
+    countries,
+    states,
+    onCountryChange,
     ...rest
   } = props
+
+  const [hideStates, setHideStates] = useState(true)
+
+  // console.log(initialValues)
+  useEffect(() => {
+    if (!initialValues.country) {
+      form.setFieldsValue({
+        country: 'US',
+      })
+      onCountryChange('US')
+    } else {
+      onCountryChange(initialValues.country)
+    }
+  }, [initialValues])
+
+  useEffect(() => {
+    if (states.length > 0) {
+      setHideStates(false)
+    } else {
+      setHideStates(true)
+    }
+  }, [states])
 
   return (
     <Wrapper className={className}>
@@ -109,16 +138,7 @@ const ProfileInfo = props => {
 
           <Row>
             <Col span={12}>
-              <Form.Item
-                label="Middle name"
-                name="middleName"
-                rules={[
-                  {
-                    required: true,
-                    message: 'You have to fill in your middle name',
-                  },
-                ]}
-              >
+              <Form.Item label="Middle name" name="middleName">
                 <Input placeholder="Fill in your middle name" />
               </Form.Item>
             </Col>
@@ -136,22 +156,6 @@ const ProfileInfo = props => {
                 ]}
               >
                 <Input placeholder="Fill in your display name" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col span={24}>
-              {/* QUESTION what is this? */}
-              <Form.Item
-                label="Please select the group(s) with which you most closely personally identify"
-                name="groupID"
-              >
-                <Select
-                  mode="multiple"
-                  options={[]}
-                  placeholder="Check all that apply"
-                />
               </Form.Item>
             </Col>
           </Row>
@@ -201,9 +205,56 @@ const ProfileInfo = props => {
           <Row>
             <Col span={12}>
               <Form.Item
+                label="Country"
+                name="country"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      'Please select the country where your institution is located',
+                  },
+                ]}
+              >
+                <Select
+                  onChange={onCountryChange}
+                  optionFilterProp="label"
+                  options={countries}
+                  placeholder="Select the country where your institution is located"
+                  showSearch
+                />
+              </Form.Item>
+            </Col>
+
+            <Col span={12}>
+              <Form.Item
+                dependencies={['country']}
+                hidden={hideStates}
+                label="State / Province"
+                name="state"
+                rules={[
+                  {
+                    required: true,
+                    message:
+                      'Please select the state where your institution is located',
+                  },
+                ]}
+              >
+                <Select
+                  optionFilterProp="label"
+                  options={states}
+                  placeholder="Select the state where your institution is located"
+                  showSearch
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col span={12}>
+              <Form.Item
                 label="City"
                 name="city"
-                rule={[
+                rules={[
                   {
                     required: true,
                     message:
@@ -216,24 +267,16 @@ const ProfileInfo = props => {
             </Col>
 
             <Col span={12}>
-              {/* QUESTION what if it is outside the US */}
-              {/* QUESTION required? */}
-              <Form.Item label="State / Territory (US)" name="state">
-                <Input placeholder="Select the State where your institution is located" />
+              <Form.Item label="Work / Home Address" name="address">
+                <Input placeholder="Type your work/home address" />
               </Form.Item>
             </Col>
           </Row>
 
           <Row>
             <Col span={12}>
-              <Form.Item label="Country" name="country">
-                <Input placeholder="Select the country where your institution is located is located" />
-              </Form.Item>
-            </Col>
-
-            <Col span={12}>
-              <Form.Item label="Work / Home Address" name="address">
-                <Input placeholder="Type your work/home address" />
+              <Form.Item label="ZIP code" name="zipCode">
+                <Input placeholder="Enter your ZIP code" />
               </Form.Item>
             </Col>
           </Row>
@@ -277,21 +320,18 @@ const ProfileInfo = props => {
             <Col span={12}>
               {/* QUESTION need the types */}
               <Form.Item
-                label="Type of School"
-                name="typeOfSchool"
+                label="Institutional Setting"
+                name="institutionalSetting"
                 rules={[
                   {
                     required: true,
-                    message: 'You have to select your Type of School',
+                    message: 'You have to select your Type of Institution',
                   },
                 ]}
               >
                 <Select
-                  options={[
-                    { label: 'Type 1', value: 'type1' },
-                    { label: 'Type 2', value: 'type2' },
-                  ]}
-                  placeholder="Select your type of school"
+                  options={institutionalSetting}
+                  placeholder="Select your type of institution"
                 />
               </Form.Item>
             </Col>
@@ -323,24 +363,93 @@ const ProfileInfo = props => {
           <Row>
             <Col span={12}>
               {/* QUESTION what is this sorcery? */}
-              <Form.Item label="Type of Institution" name="typeOfInstitution">
+              <Form.Item
+                label="Primary Institution Type"
+                name="typeOfInstitution"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please select an option',
+                  },
+                ]}
+              >
                 <Select
-                  options={[]}
-                  placeholder="Select you type of Institution"
+                  options={institutionLevels}
+                  placeholder="What level do you primarily teach?"
                 />
               </Form.Item>
             </Col>
 
             <Col span={12}>
-              {/* QUESTION need options */}
-              <Form.Item
-                label="Number of students enrolled at your school"
-                name="nrOfStudents"
-              >
-                <Select
-                  options={[]}
-                  placeholder="Select Number of students enrolled at your school/institution"
-                />
+              <Form.Item dependencies={['typeOfInstitution']} noStyle>
+                {({ getFieldValue }) => {
+                  if (getFieldValue('typeOfInstitution') === 'highSchool') {
+                    return (
+                      <Form.Item
+                        label="Do you teach AP/IB courses?"
+                        name="ap-ib-courses"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please select an option',
+                          },
+                        ]}
+                      >
+                        <Radio options={yesOrNoOptions} />
+                      </Form.Item>
+                    )
+                  }
+
+                  if (
+                    getFieldValue('typeOfInstitution') === '2-year-college' ||
+                    getFieldValue('typeOfInstitution') === '4-year-college'
+                  ) {
+                    return (
+                      <Form.Item
+                        label="Which best describes your position?"
+                        name="employmentStatus"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Please select an option',
+                          },
+                        ]}
+                      >
+                        <Radio
+                          options={[
+                            {
+                              label: 'Full time faculty',
+                              value: 'fullTimeFaculty',
+                            },
+                            {
+                              label: 'Part-time/adjunct faculty',
+                              value: 'partTimeAdjunctFaculty',
+                            },
+                          ]}
+                        />
+                      </Form.Item>
+                    )
+                  }
+
+                  if (getFieldValue('typeOfInstitution') === 'other') {
+                    return (
+                      <Form.Item
+                        label="Please specify the level you primarily teach:"
+                        name="otherLevel"
+                        rules={[
+                          {
+                            required: true,
+                            message: 'This information is required',
+                          },
+                        ]}
+                      >
+                        <Input placeholder="What level do you primarily teach?" />
+                      </Form.Item>
+                    )
+                  }
+
+                  return null
+                }}
               </Form.Item>
             </Col>
           </Row>
@@ -365,10 +474,10 @@ const ProfileInfo = props => {
 
             <Col span={12}>
               {/* QUESTION need options */}
-              <Form.Item label="What course(s) do you teach?" name="course">
+              <Form.Item label="What course(s) do you teach?" name="courses">
                 <Select
                   mode="multiple"
-                  options={[]}
+                  options={courses}
                   placeholder="Select courses"
                 />
               </Form.Item>
@@ -383,7 +492,7 @@ const ProfileInfo = props => {
               >
                 <Select
                   mode="multiple"
-                  options={[]}
+                  options={topics}
                   placeholder="Select three topics"
                 />
               </Form.Item>
@@ -439,6 +548,13 @@ ProfileInfo.propTypes = {
   showSecondaryButton: PropTypes.bool,
   submitButtonLabel: PropTypes.string,
   submissionStatus: PropTypes.string,
+  institutionalSetting: PropTypes.arrayOf(PropTypes.shape()),
+  institutionLevels: PropTypes.arrayOf(PropTypes.shape()),
+  courses: PropTypes.arrayOf(PropTypes.shape()),
+  topics: PropTypes.arrayOf(PropTypes.shape()),
+  countries: PropTypes.arrayOf(PropTypes.shape()),
+  states: PropTypes.arrayOf(PropTypes.shape()),
+  onCountryChange: PropTypes.func.isRequired,
 }
 
 ProfileInfo.defaultProps = {
@@ -454,6 +570,12 @@ ProfileInfo.defaultProps = {
   showSecondaryButton: true,
   submitButtonLabel: 'Submit',
   submissionStatus: null,
+  institutionalSetting: [],
+  institutionLevels: [],
+  courses: [],
+  topics: [],
+  countries: [],
+  states: [],
 }
 
 export default ProfileInfo

@@ -282,9 +282,141 @@ const dashboardDataMapper = data => {
   })
 }
 
+const profileOptions = {
+  institutionalSetting: [
+    {
+      label: 'Urban',
+      value: 'urban',
+    },
+    {
+      label: 'Rural',
+      value: 'rural',
+    },
+    {
+      label: 'Online Institution',
+      value: 'online',
+    },
+    {
+      label: 'Other',
+      value: 'other',
+    },
+  ],
+  institutionLevels: [
+    {
+      label: 'Middle School',
+      value: 'middleSchool',
+    },
+    {
+      label: 'High School',
+      value: 'highSchool',
+    },
+    {
+      label: '2-year college',
+      value: '2-year-college',
+    },
+    {
+      label: '2-year college',
+      value: '4-year-college',
+    },
+    {
+      label: 'Other',
+      value: 'other',
+    },
+  ],
+  courses: [
+    {
+      label: 'Biology',
+      value: 'biology',
+    },
+    {
+      label: 'Biochemistry & Molecular Biology',
+      value: 'biochemistryMolecularBiology',
+    },
+    {
+      label: 'Genetics',
+      value: 'genetics',
+    },
+    {
+      label: 'Cell Biology',
+      value: 'cellBiology',
+    },
+    {
+      label: 'Microbiology',
+      value: 'microbiology',
+    },
+    {
+      label: 'Anatomy & Physiology',
+      value: 'anatomyPhysiology',
+    },
+    {
+      label: 'Evolutionary Biology',
+      value: 'evolutionaryBiology',
+    },
+    {
+      label: 'Ecology',
+      value: 'ecology',
+    },
+    {
+      label: 'Environmental Science',
+      value: 'environmentalScience',
+    },
+    {
+      label: 'Earth Science',
+      value: 'earthScience',
+    },
+    {
+      label: 'Other',
+      value: 'other',
+    },
+  ],
+  topics: [
+    {
+      label: 'Biochemistry & Molecular Biology',
+      value: 'biochemistryMolecularBiology',
+    },
+    {
+      label: 'Genetics',
+      value: 'genetics',
+    },
+    {
+      label: 'Cell biology',
+      value: 'cellBiology',
+    },
+    {
+      label: 'Diversity of life',
+      value: 'diversityOfLife',
+    },
+    {
+      label: 'Anatomy & Physiology',
+      value: 'anatomyPhysiology',
+    },
+    {
+      label: 'Evolution',
+      value: 'evolution',
+    },
+    {
+      label: 'Ecology',
+      value: 'ecology',
+    },
+    {
+      label: 'Environmental science',
+      value: 'environmentalScience',
+    },
+    {
+      label: 'Earth science',
+      value: 'earthScience',
+    },
+    {
+      label: 'Science practices',
+      value: 'sciencePractices',
+    },
+  ],
+}
+
 export {
   objectCleaner,
   questionDataTransformer,
   questionDataMapper,
   dashboardDataMapper,
+  profileOptions,
 }
