@@ -107,6 +107,9 @@ const Question = props => {
     onEditorContentAutoSave,
     onMetadataAutoSave,
     onQuestionSubmit,
+    onReject,
+    onPublish,
+    onMoveToReview,
     questionAgreedTc,
     showAssignHEButton,
     showNextQuestionLink,
@@ -208,14 +211,23 @@ const Question = props => {
   const RightAreaEditor = (
     <>
       {showAssignHEButton && (
-        <StyledButton ghost type="primary">
+        <StyledButton aria-label="Assign Handling Editor" ghost type="primary ">
           Assign HE
         </StyledButton>
       )}
-      <StyledButton type="danger">Do not accept</StyledButton>
-      <StyledButton type="primary">
-        {underReview ? 'Publish' : 'Move to Review'}
+      <StyledButton onClick={onReject} type="danger">
+        Do not accept
       </StyledButton>
+      {underReview ? (
+        <StyledButton onClick={onPublish} type="primary">
+          Publish
+        </StyledButton>
+      ) : (
+        <StyledButton onClick={onMoveToReview} type="primary">
+          Move to Review
+        </StyledButton>
+      )}
+
       {showNextQuestionLink && NextQuestion}
     </>
   )
@@ -264,7 +276,7 @@ const Question = props => {
                 innerRef={waxRef}
                 layout={HhmiLayout}
                 onContentChange={handleQuestionContentChange}
-                readOnly={isSubmitted}
+                readOnly={isSubmitted && !underReview}
               />
 
               <Metadata
@@ -274,7 +286,7 @@ const Question = props => {
                 metadata={metadata}
                 onAutoSave={onMetadataAutoSave}
                 onFormFinish={onFormFinish}
-                readOnly={isSubmitted}
+                readOnly={isSubmitted && !underReview}
               />
             </QuestionWrapper>
           </StyledTabPane>
@@ -287,14 +299,18 @@ const Question = props => {
 
 Question.propTypes = {
   loading: PropTypes.bool.isRequired,
+  // don't think we need this, the back "button" should be a link to dashboard I guess?
   onClickBackButton: PropTypes.func.isRequired,
   onClickPreviousButton: PropTypes.func,
   onClickNextButton: PropTypes.func,
   onEditorContentAutoSave: PropTypes.func.isRequired,
   onQuestionSubmit: PropTypes.func.isRequired,
   onMetadataAutoSave: PropTypes.func.isRequired,
+  onMoveToReview: PropTypes.func,
+  onPublish: PropTypes.func,
+  onReject: PropTypes.func,
 
-  editorContent: PropTypes.string,
+  editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   isSubmitted: PropTypes.bool.isRequired,
@@ -488,13 +504,15 @@ Question.propTypes = {
     ),
   }).isRequired,
   // TO DO - provide valid shape
-  /* eslint-disable-next-line react/forbid-prop-types */
-  initialMetadataValues: PropTypes.object,
+  initialMetadataValues: PropTypes.shape(),
   underReview: PropTypes.bool,
 }
 
 Question.defaultProps = {
-  editorContent: '',
+  onMoveToReview: () => {},
+  onPublish: () => {},
+  onReject: () => {},
+  editorContent: {},
   initialMetadataValues: null,
   onClickPreviousButton: () => {},
   onClickNextButton: () => {},

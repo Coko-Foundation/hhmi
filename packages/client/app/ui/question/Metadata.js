@@ -381,7 +381,7 @@ const Metadata = React.forwardRef((props, ref) => {
                         }}
                         type="primary"
                       >
-                        Link to another course
+                        Add course
                       </Button>
                     </Tooltip>
                     {supplementaryCurricula.length > 0 && (
