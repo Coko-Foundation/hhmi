@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 
 import React, { useState, useEffect } from 'react'
-import { Metadata, Checkbox, metadata } from 'ui'
+import { Metadata, Checkbox, metadata, resources } from 'ui'
 import {
   flatAPCoursesMetadata,
   flatIBCourseMetadata,
@@ -99,6 +99,7 @@ export const Author = () => {
       metadata={flatMetadata}
       // readOnly
       onFormFinish={console.log('on form finish')}
+      resources={resources}
     />
   )
 }

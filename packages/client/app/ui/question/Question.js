@@ -111,6 +111,7 @@ const Question = props => {
     onPublish,
     onMoveToReview,
     questionAgreedTc,
+    resources,
     showAssignHEButton,
     showNextQuestionLink,
     underReview,
@@ -287,6 +288,7 @@ const Question = props => {
                 onAutoSave={onMetadataAutoSave}
                 onFormFinish={onFormFinish}
                 readOnly={isSubmitted && !underReview}
+                resources={resources}
               />
             </QuestionWrapper>
           </StyledTabPane>
@@ -503,6 +505,7 @@ Question.propTypes = {
       ]),
     ),
   }).isRequired,
+  resources: PropTypes.arrayOf(PropTypes.shape()),
   // TO DO - provide valid shape
   initialMetadataValues: PropTypes.shape(),
   underReview: PropTypes.bool,
@@ -521,6 +524,7 @@ Question.defaultProps = {
   showNextQuestionLink: false,
   facultyView: false,
   underReview: false,
+  resources: [],
 }
 
 export default Question

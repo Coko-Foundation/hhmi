@@ -6,7 +6,7 @@ import { lorem } from 'faker'
 
 import { th } from '@coko/client'
 
-import { Question, metadata } from 'ui'
+import { Question, metadata, resources } from 'ui'
 import {
   flatAPCoursesMetadata,
   flatIBCourseMetadata,
@@ -153,6 +153,7 @@ export const Base = args => {
         onMetadataAutoSave={() => console.log('metadata auto save')}
         onQuestionSubmit={onSubmit}
         questionAgreedTc={false}
+        resources={resources}
         submitting={false}
       />
     </Wrapper>
@@ -190,6 +191,7 @@ export const EditorView = () => {
       onQuestionSubmit={data => console.log(data)}
       onReject={reject}
       questionAgreedTc={false}
+      resources={resources}
       submitting={false}
       underReview={reviewing}
     />
