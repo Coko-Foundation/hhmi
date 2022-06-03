@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import styled, { css, keyframes } from 'styled-components'
 import { Spin as AntSpin } from 'antd'
 
+import { grid } from '@coko/client'
+
 const StyledSpin = styled(({ isNested, renderBackground, ...rest }) => (
   <AntSpin {...rest} />
 ))`
@@ -36,9 +38,9 @@ const bounce = keyframes`
 `
 
 const IndicatorWrapper = styled.div`
-  height: 40px;
+  height: ${props => grid(props.size)};
   position: relative;
-  width: 40px;
+  width: ${props => grid(props.size)};
 `
 
 const BounceOne = styled.div`
@@ -69,21 +71,24 @@ const NestedWrapper = styled.div`
   }
 `
 
-const Indicator = () => (
-  <IndicatorWrapper>
+/* eslint-disable-next-line react/prop-types */
+const Indicator = ({ size }) => (
+  <IndicatorWrapper size={size}>
     <BounceOne />
     <BounceTwo />
   </IndicatorWrapper>
 )
 
 const Spin = props => {
-  const { className, children, renderBackground, spinning, ...rest } = props
+  const { className, children, renderBackground, size, spinning, ...rest } =
+    props
+
   const showChildren = renderBackground || (!renderBackground && !spinning)
 
   const spin = (
     <StyledSpin
       className={className}
-      indicator={<Indicator />}
+      indicator={<Indicator size={size} />}
       isNested={!!children}
       renderBackground={renderBackground}
       spinning={spinning}
@@ -99,11 +104,13 @@ const Spin = props => {
 }
 
 Spin.propTypes = {
+  size: PropTypes.number,
   spinning: PropTypes.bool.isRequired,
   renderBackground: PropTypes.bool,
 }
 
 Spin.defaultProps = {
+  size: 10,
   renderBackground: true,
 }
 

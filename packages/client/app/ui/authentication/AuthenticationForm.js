@@ -106,7 +106,7 @@ AuthenticationForm.defaultProps = {
   alternativeActionLabel: null,
   alternativeActionLink: null,
   errorMessage: null,
-  forgotPasswordUrl: '/password-reset',
+  forgotPasswordUrl: '/request-password-reset',
   hasError: false,
   loading: false,
   showForgotPassword: false,

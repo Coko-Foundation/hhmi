@@ -25,11 +25,12 @@ const ProfileInfo = props => {
   const {
     autoSave,
     className,
-    message,
     form,
     initialValues,
     loading,
+    message,
     onAutoSave,
+    onCountryChange,
     onSubmit,
     secondaryButtonAction,
     secondaryButtonLabel,
@@ -38,27 +39,16 @@ const ProfileInfo = props => {
     submissionStatus,
     institutionalSetting,
     institutionLevels,
+
     courses,
     topics,
+
     countries,
     states,
-    onCountryChange,
     ...rest
   } = props
 
   const [hideStates, setHideStates] = useState(true)
-
-  // console.log(initialValues)
-  useEffect(() => {
-    if (!initialValues.country) {
-      form.setFieldsValue({
-        country: 'US',
-      })
-      onCountryChange('US')
-    } else {
-      onCountryChange(initialValues.country)
-    }
-  }, [initialValues])
 
   useEffect(() => {
     if (states.length > 0) {
@@ -302,7 +292,7 @@ const ProfileInfo = props => {
             <Col span={12}>
               <Form.Item
                 label="Institution/Organization"
-                name="organizaion"
+                name="organization"
                 rules={[
                   {
                     required: true,
@@ -488,7 +478,7 @@ const ProfileInfo = props => {
             <Col span={24}>
               <Form.Item
                 label="Select the three topics you are most comfortable reviewing for scientific accuracy"
-                name="courses-review"
+                name="coursesReview"
               >
                 <Select
                   mode="multiple"

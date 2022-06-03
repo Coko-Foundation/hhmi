@@ -1351,10 +1351,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@coko/client@^0.0.23":
-  version "0.0.23"
-  resolved "https://registry.yarnpkg.com/@coko/client/-/client-0.0.23.tgz#9fecb57069664c27d682eb7366daf520a98a574e"
-  integrity sha512-Rdl+9kl5sPA+S6pIzXC50v72DiJWOjgzbFST0ISzz7u+IwX1KR4aicYaPv2Z8XOBVIWWBUov3lNpuajLxWhkQw==
+"@coko/client@0.0.26":
+  version "0.0.26"
+  resolved "https://registry.yarnpkg.com/@coko/client/-/client-0.0.26.tgz#410736f57f61e705d8edb511d46ef82e6c0dfff9"
+  integrity sha512-lgBTnRyv6WggvN6/5IM/j9kMYdNv/Mp3QUOoUw489p4j70a8H1vgLqRR3buihqxdr1MrkxYTW5hQB3SzW6Zf3A==
   dependencies:
     "@babel/cli" "^7.13.14"
     "@babel/core" "^7.13.14"

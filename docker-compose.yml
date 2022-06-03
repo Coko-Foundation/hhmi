@@ -12,6 +12,7 @@ services:
       - NODE_ENV=development
       # - CLIENT_ENTRY_FILE_PATH=./app.js
       - CLIENT_PORT=${CLIENT_PORT:-4000}
+      # - CLIENT_FAST_REFRESH=1
       - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
       - SERVER_HOST=${SERVER_HOST:-localhost}
       - SERVER_PORT=${SERVER_PORT:-3000}
@@ -63,10 +64,11 @@ services:
       - CLIENT_PROTOCOL=${CLIENT_PROTOCOL:-http}
       - CLIENT_HOST=${CLIENT_HOST:-0.0.0.0}
       - CLIENT_PORT=${CLIENT_PORT:-4000}
-      - MAILER_USER=${MAILER_USER}
-      - MAILER_PASSWORD=${MAILER_PASSWORD}
       - MAILER_SENDER=${MAILER_SENDER:-dev@example.com}
       - MAILER_HOSTNAME=${MAILER_HOSTNAME}
+      - MAILER_PORT=${MAILER_PORT}
+      - MAILER_USER=${MAILER_USER}
+      - MAILER_PASSWORD=${MAILER_PASSWORD}
       - PASSWORD_RESET_PATH=${PASSWORD_RESET_PATH:-password-reset}
     volumes:
       - ./packages/server/api:/home/node/hhmi/api

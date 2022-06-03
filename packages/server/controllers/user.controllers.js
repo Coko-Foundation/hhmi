@@ -1,7 +1,11 @@
-const { useTransaction } = require('@coko/server')
+const { logger, useTransaction } = require('@coko/server')
 
-const { roles } = require('../constants')
-const { Team, User } = require('../models')
+// const { roles } = require('../constants')
+const {
+  // Team,
+  User,
+  Identity,
+} = require('../models')
 
 const submitQuestionnaire = async (userId, profileData) => {
   const data = {
@@ -9,32 +13,50 @@ const submitQuestionnaire = async (userId, profileData) => {
     profileSubmitted: true,
   }
 
-  return updateProfile(userId, data)
+  return updateUserProfile(userId, data)
 }
 
-const updateProfile = async (userId, profileData) => {
-  const { isReviewer: shouldBeReviewer, ...userData } = profileData
+const updateUserProfile = async (userId, profileData) => {
+  try {
+    const {
+      reviewerInterest: shouldBeReviewer,
+      email,
+      ...userData
+    } = profileData
 
-  if (typeof shouldBeReviewer !== 'boolean') {
-    throw new Error('isReviewer value needs to be a boolean and defined')
-  }
+    return useTransaction(async trx => {
+      // const isAlreadyReviewer = await User.hasGlobalRole(userId, 'reviewer', {
+      //   trx,
+      // })
 
-  return useTransaction(async trx => {
-    const isAlreadyReviewer = await User.hasGlobalRole(userId, 'reviewer', {
-      trx,
+      // if (!isAlreadyReviewer && shouldBeReviewer) {
+      //   await Team.addMemberToGlobalTeam(userId, roles.REVIEWER, { trx })
+      // }
+
+      // if (isAlreadyReviewer && !shouldBeReviewer) {
+      //   await Team.removeMemberFromGlobalTeam(userId, roles.REVIEWER, { trx })
+      // }
+
+      const defaultIdentity = await Identity.findOne(
+        {
+          userId,
+          isDefault: true,
+        },
+        { trx },
+      )
+
+      await defaultIdentity.patch({ email }, { trx })
+
+      const updatedUser = await User.patchAndFetchById(userId, userData, {
+        trx,
+      })
+
+      return updatedUser
     })
-
-    if (!isAlreadyReviewer && shouldBeReviewer) {
-      await Team.addMemberToGlobalTeam(userId, roles.REVIEWER, { trx })
-    }
-
-    if (isAlreadyReviewer && !shouldBeReviewer) {
-      await Team.removeMemberFromGlobalTeam(userId, roles.REVIEWER, { trx })
-    }
-
-    const updatedUser = await User.patchAndFetchById(userId, userData, { trx })
-    return updatedUser
-  })
+  } catch (e) {
+    logger.error(e)
+    throw new Error(e)
+  }
 }
 
-module.exports = { submitQuestionnaire, updateProfile }
+module.exports = { submitQuestionnaire, updateUserProfile }

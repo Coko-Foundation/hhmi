@@ -7,7 +7,7 @@ import AuthenticationForm from './AuthenticationForm'
 import AuthenticationHeader from './AuthenticationHeader'
 import AuthenticationWrapper from './AuthenticationWrapper'
 import SuccessSubTitle from './SuccessSubTitle'
-import { Button, Form, Input, Paragraph, Result } from '../common'
+import { Button, Form, Input, Paragraph, Result, Page } from '../common'
 
 const RequestPasswordResetForm = props => {
   // disable prop types that will be checked in the exported component anyway
@@ -47,30 +47,32 @@ const RequestPasswordReset = props => {
     props
 
   return (
-    <AuthenticationWrapper className={className}>
-      <AuthenticationHeader>Request password reset</AuthenticationHeader>
+    <Page maxWidth={600}>
+      <AuthenticationWrapper className={className}>
+        <AuthenticationHeader>Request password reset</AuthenticationHeader>
 
-      {hasSuccess && (
-        <Result
-          extra={[
-            <Button key={1} type="link">
-              Return to the login form
-            </Button>,
-          ]}
-          status="success"
-          subTitle={<SuccessSubTitle userEmail={userEmail} />}
-          title="Request successful!"
-        />
-      )}
+        {hasSuccess && (
+          <Result
+            extra={[
+              <Button key={1} type="link">
+                Return to the login form
+              </Button>,
+            ]}
+            status="success"
+            subTitle={<SuccessSubTitle userEmail={userEmail} />}
+            title="Request successful!"
+          />
+        )}
 
-      {!hasSuccess && (
-        <RequestPasswordResetForm
-          hasError={hasError}
-          loading={loading}
-          onSubmit={onSubmit}
-        />
-      )}
-    </AuthenticationWrapper>
+        {!hasSuccess && (
+          <RequestPasswordResetForm
+            hasError={hasError}
+            loading={loading}
+            onSubmit={onSubmit}
+          />
+        )}
+      </AuthenticationWrapper>
+    </Page>
   )
 }
 

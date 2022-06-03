@@ -1,0 +1,69 @@
+extend type User {
+  middleName: String
+  pronouns: String
+
+  phone: String
+
+  country: String
+  state: String
+  city: String
+  address: String
+  zipCode: String
+
+  position: String
+  organization: String
+  institutionalSetting: String
+  teachingExperience: String
+  typeOfInstitution: String
+
+  # TO DO -- make these not nullable when the coko server user model issue is solved
+  # coursesTeaching: [String!]!
+  # topicsReviewing: [String!]!
+  coursesTeaching: [String!]
+  topicsReviewing: [String!]
+
+  receivedTraining: Boolean
+  receivedInclusiveLanguageTraining: Boolean
+
+  source: String
+
+  profileSubmitted: Boolean!
+}
+
+input UserProfileInput {
+  givenNames: String!
+  surname: String!
+  middleName: String
+  displayName: String!
+  pronouns: String!
+
+  email: String!
+  phone: String!
+
+  country: String!
+  state: String!
+  city: String!
+  address: String
+  zipCode: String
+
+  position: String!
+  organization: String!
+  institutionalSetting: String!
+  teachingExperience: String!
+  typeOfInstitution: String!
+
+  reviewerInterest: Boolean!
+
+  coursesTeaching: [String!]!
+  topicsReviewing: [String!]!
+
+  receivedTraining: Boolean!
+  receivedInclusiveLanguageTraining: Boolean!
+
+  source: String
+}
+
+extend type Mutation {
+  submitQuestionnaire(input: UserProfileInput!): User!
+  updateUserProfile(input: UserProfileInput!): User!
+}
