@@ -48,13 +48,13 @@ const ProfileInfo = props => {
     ...rest
   } = props
 
-  const [hideStates, setHideStates] = useState(true)
+  const [showStates, setShowStates] = useState(false)
 
   useEffect(() => {
     if (states.length > 0) {
-      setHideStates(false)
+      setShowStates(true)
     } else {
-      setHideStates(true)
+      setShowStates(false)
     }
   }, [states])
 
@@ -216,26 +216,27 @@ const ProfileInfo = props => {
             </Col>
 
             <Col span={12}>
-              <Form.Item
-                dependencies={['country']}
-                hidden={hideStates}
-                label="State / Province"
-                name="state"
-                rules={[
-                  {
-                    required: true,
-                    message:
-                      'Please select the state where your institution is located',
-                  },
-                ]}
-              >
-                <Select
-                  optionFilterProp="label"
-                  options={states}
-                  placeholder="Select the state where your institution is located"
-                  showSearch
-                />
-              </Form.Item>
+              {showStates && (
+                <Form.Item
+                  dependencies={['country']}
+                  label="State / Province"
+                  name="state"
+                  rules={[
+                    {
+                      required: true,
+                      message:
+                        'Please select the state where your institution is located',
+                    },
+                  ]}
+                >
+                  <Select
+                    optionFilterProp="label"
+                    options={states}
+                    placeholder="Select the state where your institution is located"
+                    showSearch
+                  />
+                </Form.Item>
+              )}
             </Col>
           </Row>
 
@@ -248,7 +249,7 @@ const ProfileInfo = props => {
                   {
                     required: true,
                     message:
-                      'You have to fill in the coty where your Institution is located',
+                      'You have to fill in the city where your Institution is located',
                   },
                 ]}
               >
