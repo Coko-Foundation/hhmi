@@ -76,6 +76,10 @@ const Placeholder = () => {
 
 // const Loader = () => <Spin spinning />
 
+// const currentUserHasGlobalRole = (user, role) => {
+//   user.teams.find(t => t.global && t.role === role)
+// }
+
 const RequireProfile = ({ children }) => {
   const { pathname } = useLocation()
   // const { currentUser } = useCurrentUser()

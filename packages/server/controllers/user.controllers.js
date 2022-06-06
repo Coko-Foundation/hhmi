@@ -1,11 +1,8 @@
 const { logger, useTransaction } = require('@coko/server')
 
-// const { roles } = require('../constants')
-const {
-  // Team,
-  User,
-  Identity,
-} = require('../models')
+const { roles } = require('../constants')
+
+const { Team, User, Identity } = require('../models')
 
 const submitQuestionnaire = async (userId, profileData) => {
   const data = {
@@ -25,17 +22,21 @@ const updateUserProfile = async (userId, profileData) => {
     } = profileData
 
     return useTransaction(async trx => {
-      // const isAlreadyReviewer = await User.hasGlobalRole(userId, 'reviewer', {
-      //   trx,
-      // })
+      const isAlreadyReviewer = await User.hasGlobalRole(
+        userId,
+        roles.REVIEWER,
+        {
+          trx,
+        },
+      )
 
-      // if (!isAlreadyReviewer && shouldBeReviewer) {
-      //   await Team.addMemberToGlobalTeam(userId, roles.REVIEWER, { trx })
-      // }
+      if (!isAlreadyReviewer && shouldBeReviewer) {
+        await Team.addMemberToGlobalTeam(userId, roles.REVIEWER, { trx })
+      }
 
-      // if (isAlreadyReviewer && !shouldBeReviewer) {
-      //   await Team.removeMemberFromGlobalTeam(userId, roles.REVIEWER, { trx })
-      // }
+      if (isAlreadyReviewer && !shouldBeReviewer) {
+        await Team.removeMemberFromGlobalTeam(userId, roles.REVIEWER, { trx })
+      }
 
       const defaultIdentity = await Identity.findOne(
         {
