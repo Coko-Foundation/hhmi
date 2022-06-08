@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react'
+/* stylelint-disable string-quotes */
+import React, { memo, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
@@ -34,7 +35,6 @@ const Wrapper = styled.div`
     padding: 0 !important;
   }
 
-  /* stylelint-disable-next-line string-quotes */
   div[role='tabpanel'] > .ant-row {
     margin: 0 !important;
   }
@@ -87,6 +87,48 @@ const StyledTabPane = styled(Tabs.TabPane)`
   overflow: auto;
 `
 
+// need to memoize Wax to prevent rerendering on state change (e.g. after accepting T&C)
+const MemoizedWax = memo(
+  props => {
+    const { content, innerRef, onContentChange, readOnly } = props
+
+    return (
+      <WaxWrapper
+        config={config}
+        content={content}
+        innerRef={innerRef}
+        layout={HhmiLayout}
+        onContentChange={onContentChange}
+        readOnly={readOnly}
+      />
+    )
+  }, // add a comparison function for when we want the editor to rerender
+  // returning true means the component doesn't rerender when parent rerenders
+  (prevProps, nextProps) =>
+    prevProps.readOnly === nextProps.readOnly &&
+    prevProps.content === nextProps.content,
+)
+
+MemoizedWax.propTypes = {
+  content: PropTypes.shape(),
+  innerRef: PropTypes.oneOfType([
+    // Either a function
+    PropTypes.func,
+    // Or the instance of a DOM native element (see the note about SSR)
+    PropTypes.shape({
+      current: PropTypes.shape(),
+    }),
+  ]),
+  onContentChange: PropTypes.func.isRequired,
+  readOnly: PropTypes.bool,
+}
+
+MemoizedWax.defaultProps = {
+  content: {},
+  readOnly: false,
+  innerRef: null,
+}
+
 // QUESTION submit button here seems to be outside the form
 // submit also refers to wax
 // does all this pose an accessibility problem?
@@ -107,7 +149,12 @@ const Question = props => {
     onEditorContentAutoSave,
     onMetadataAutoSave,
     onQuestionSubmit,
+    onReject,
+    onPublish,
+    onClickAssignHE,
+    onMoveToReview,
     questionAgreedTc,
+    resources,
     showAssignHEButton,
     showNextQuestionLink,
     underReview,
@@ -116,13 +163,9 @@ const Question = props => {
   const formRef = useRef()
   const waxRef = useRef()
 
-  // const contentF = () => [console.log(WaxRef.current.getContent())]
-
   const [agreedTc, setAgreedTc] = useState(questionAgreedTc)
-  // const [questionContent, setQuestionContent] = useState(editorContent)
 
   const handleQuestionContentChange = content => {
-    // setQuestionContent(content)
     onEditorContentAutoSave(content)
   }
 
@@ -131,11 +174,6 @@ const Question = props => {
   }
 
   const handleSubmit = () => {
-    // onQuestionSubmit({
-    //   agreedTc,
-    //   metadata: formRef.current.getFormValues(),
-    //   editorContent: questionContent,
-    // })
     formRef.current.submit()
   }
 
@@ -208,14 +246,28 @@ const Question = props => {
   const RightAreaEditor = (
     <>
       {showAssignHEButton && (
-        <StyledButton ghost type="primary">
+        <StyledButton
+          aria-label="Assign Handling Editor"
+          ghost
+          onClick={onClickAssignHE}
+          type="primary "
+        >
           Assign HE
         </StyledButton>
       )}
-      <StyledButton type="danger">Do not accept</StyledButton>
-      <StyledButton type="primary">
-        {underReview ? 'Publish' : 'Move to Review'}
+      <StyledButton onClick={onReject} type="danger">
+        Do not accept
       </StyledButton>
+      {underReview ? (
+        <StyledButton onClick={onPublish} type="primary">
+          Publish
+        </StyledButton>
+      ) : (
+        <StyledButton onClick={onMoveToReview} type="primary">
+          Move to Review
+        </StyledButton>
+      )}
+
       {showNextQuestionLink && NextQuestion}
     </>
   )
@@ -258,22 +310,22 @@ const Question = props => {
         >
           <StyledTabPane key={0} tab={QuestionTab}>
             <QuestionWrapper>
-              <WaxWrapper
-                config={config}
+              <MemoizedWax
                 content={editorContent}
                 innerRef={waxRef}
-                layout={HhmiLayout}
                 onContentChange={handleQuestionContentChange}
-                readOnly={isSubmitted}
+                readOnly={isSubmitted && !underReview}
               />
 
               <Metadata
+                editorView={editorView}
                 initialValues={initialMetadataValues}
                 innerRef={formRef}
                 metadata={metadata}
                 onAutoSave={onMetadataAutoSave}
                 onFormFinish={onFormFinish}
-                readOnly={isSubmitted}
+                readOnly={isSubmitted && !underReview}
+                resources={resources}
               />
             </QuestionWrapper>
           </StyledTabPane>
@@ -286,14 +338,19 @@ const Question = props => {
 
 Question.propTypes = {
   loading: PropTypes.bool.isRequired,
+  // don't think we need this, the back "button" should be a link to dashboard I guess?
   onClickBackButton: PropTypes.func.isRequired,
   onClickPreviousButton: PropTypes.func,
   onClickNextButton: PropTypes.func,
   onEditorContentAutoSave: PropTypes.func.isRequired,
   onQuestionSubmit: PropTypes.func.isRequired,
   onMetadataAutoSave: PropTypes.func.isRequired,
+  onMoveToReview: PropTypes.func,
+  onPublish: PropTypes.func,
+  onReject: PropTypes.func,
+  onClickAssignHE: PropTypes.func,
 
-  editorContent: PropTypes.string,
+  editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
   isSubmitted: PropTypes.bool.isRequired,
@@ -486,15 +543,27 @@ Question.propTypes = {
       ]),
     ),
   }).isRequired,
+  resources: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.string,
+      url: PropTypes.string,
+      topics: PropTypes.arrayOf(PropTypes.string),
+      subtopics: PropTypes.arrayOf(PropTypes.string),
+    }),
+  ),
   // TO DO - provide valid shape
-  /* eslint-disable-next-line react/forbid-prop-types */
-  initialMetadataValues: PropTypes.object,
+  initialMetadataValues: PropTypes.shape(),
   underReview: PropTypes.bool,
 }
 
 Question.defaultProps = {
-  editorContent: '',
-  initialMetadataValues: null,
+  onMoveToReview: () => {},
+  onPublish: () => {},
+  onReject: () => {},
+  onClickAssignHE: () => {},
+  editorContent: {},
+  initialMetadataValues: {},
   onClickPreviousButton: () => {},
   onClickNextButton: () => {},
   editorView: false,
@@ -502,6 +571,7 @@ Question.defaultProps = {
   showNextQuestionLink: false,
   facultyView: false,
   underReview: false,
+  resources: [],
 }
 
 export default Question

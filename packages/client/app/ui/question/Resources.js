@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Form, Select } from '../common'
@@ -16,12 +16,25 @@ const LabelWrapper = styled.div`
 `
 
 const Resources = props => {
-  const { readOnly, resources } = props
+  const { readOnly, resources, selectedTopics } = props
 
-  const [selectedResourse, setSelectedResource] = useState([])
+  const [availableResourses, setAvailableResources] = useState([])
+  const [selectedResourses, setSelectedResources] = useState([])
+
+  useEffect(() => {
+    if (selectedTopics.length) {
+      const relevantResources = resources.filter(r =>
+        r.topics.some(t => selectedTopics.includes(t)),
+      )
+
+      setAvailableResources(relevantResources)
+    } else {
+      setAvailableResources(resources)
+    }
+  }, [selectedTopics])
 
   const renderSelectedResourseLink = () => {
-    return selectedResourse.map(resource => {
+    return selectedResourses.map(resource => {
       const resourceObject = resources.find(r => r.value === resource)
 
       return (
@@ -55,9 +68,10 @@ const Resources = props => {
           allowClear
           disabled={readOnly}
           mode="multiple"
-          onChange={setSelectedResource}
+          onChange={setSelectedResources}
           optionFilterProp="label"
-          options={resources}
+          options={availableResourses}
+          showSearch
           wrapOptionText
         />
       </StyledFormItem>
@@ -69,11 +83,13 @@ const Resources = props => {
 Resources.propTypes = {
   readOnly: PropTypes.bool,
   resources: PropTypes.arrayOf(PropTypes.shape()),
+  selectedTopics: PropTypes.arrayOf(PropTypes.string),
 }
 
 Resources.defaultProps = {
   readOnly: false,
   resources: [],
+  selectedTopics: [],
 }
 
 export default Resources

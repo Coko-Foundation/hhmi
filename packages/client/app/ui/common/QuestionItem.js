@@ -1,17 +1,41 @@
+/* stylelint-disable string-quotes */
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { uuid, th } from '@coko/client'
+import { uuid, th, grid } from '@coko/client'
 
-import { H4 } from './Headings'
 import WaxWrapper from '../wax/Wax'
 import { DashLayout } from '../wax/layout'
 import { dashConfig } from '../wax/config'
 
 const Wrapper = styled.div`
+  padding: ${grid(1)} 0;
   position: relative;
   width: 100%;
+`
+
+const FirstRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${grid(2)};
+`
+
+const WaxContainer = styled.a`
+  flex-grow: 1;
+  height: 45px;
+  overflow: hidden;
+  padding-left: ${grid(1)};
+  transition: outline ease 200ms;
+
+  &:hover,
+  &:focus {
+    outline: 1px solid ${th('colorPrimary')};
+  }
+
+  * {
+    overflow: hidden;
+  }
 `
 
 const Status = styled.span`
@@ -30,17 +54,52 @@ const Status = styled.span`
         return th('colorBackground')
     }
   }};
-  padding: 3px 10px;
-  position: absolute;
-  right: 10px;
-  top: 0;
+  flex: 0 0 110px;
+  padding: ${grid(1)} ${grid(2)};
+  text-align: right;
 `
 
-const SubtitleRow = styled.div``
+const SecondRow = styled.div`
+  justify-content: space-evenly;
+  margin-bottom: ${grid(2)};
+  padding: 0 ${grid(1)};
+
+  details {
+    summary {
+      cursor: pointer;
+      padding-right: ${grid(1)};
+      width: fit-content;
+
+      &:hover,
+      &:focus {
+        outline: 1px solid ${th('colorPrimary')};
+      }
+
+      > * {
+        display: inline;
+      }
+    }
+
+    ul {
+      padding: 0;
+
+      li {
+        list-style-type: none;
+
+        &::before {
+          content: '-';
+          margin-right: ${grid(2)};
+        }
+      }
+    }
+  }
+`
 
 const BottomRow = styled.div`
   display: flex;
+  gap: ${grid(2)};
   justify-content: space-between;
+  padding: 0 ${grid(1)};
 `
 
 const Metadata = styled.div`
@@ -54,26 +113,41 @@ const MetadataLabel = styled.div`
   text-transform: uppercase;
 `
 
-const contentPlaceholder = `<p class="paragraph">-</p>`
-
 const MetadataValue = styled.div``
 
 const QuestionItem = props => {
-  const { className, metadata, content, title, status } = props
+  const { className, metadata, content, status, href, id, courses } = props
 
   return (
-    <Wrapper className={className}>
-      <H4>{title}</H4>
-      <Status status={status}>{status}</Status>
+    <Wrapper className={className} id={id}>
+      <FirstRow>
+        <WaxContainer href={href}>
+          <WaxWrapper
+            config={dashConfig}
+            content={content}
+            layout={DashLayout}
+            readOnly
+          />
+        </WaxContainer>
+        {status ? <Status status={status}>{status}</Status> : null}
+      </FirstRow>
 
-      <SubtitleRow>
-        <WaxWrapper
-          config={dashConfig}
-          content={content || contentPlaceholder}
-          layout={DashLayout}
-          readOnly
-        />
-      </SubtitleRow>
+      <SecondRow>
+        {courses.map(c => {
+          return (
+            <details key={uuid()}>
+              <summary>
+                <MetadataLabel>{`${c.label} for ${c.course.label}`}</MetadataLabel>
+              </summary>
+              <ul>
+                {c.objectives.map(o => (
+                  <li key={uuid()}>{o.label}</li>
+                ))}
+              </ul>
+            </details>
+          )
+        })}
+      </SecondRow>
 
       <BottomRow>
         {metadata &&
@@ -96,12 +170,32 @@ QuestionItem.propTypes = {
       value: PropTypes.string,
     }),
   ).isRequired,
-  /* eslint-disable-next-line react/forbid-prop-types */
-  content: PropTypes.object,
+  content: PropTypes.shape({
+    type: PropTypes.string,
+    content: PropTypes.arrayOf(PropTypes.shape()),
+  }),
   status: PropTypes.string,
-  title: PropTypes.string.isRequired,
+  href: PropTypes.string,
+  id: PropTypes.string,
+  courses: PropTypes.arrayOf(
+    PropTypes.shape({
+      course: PropTypes.shape({
+        label: PropTypes.string,
+      }),
+      label: PropTypes.string,
+      objectives: PropTypes.arrayOf(
+        PropTypes.shape({ label: PropTypes.string }),
+      ),
+    }),
+  ),
 }
 
-QuestionItem.defaultProps = { content: null, status: '' }
+QuestionItem.defaultProps = {
+  content: null,
+  status: '',
+  href: '#',
+  id: uuid(),
+  courses: [],
+}
 
 export default QuestionItem

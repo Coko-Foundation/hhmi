@@ -17,30 +17,6 @@ const StyledTabPane = styled(Tabs.TabPane)`
   max-width: 1170px;
 `
 
-const sortOptions = [
-  {
-    label: 'Date',
-    value: 'date',
-    isDefault: true,
-  },
-  {
-    label: 'Unit',
-    value: 'unit',
-  },
-  {
-    label: 'Section',
-    value: 'section',
-  },
-  {
-    label: 'Topic',
-    value: 'topic',
-  },
-  {
-    label: 'Category',
-    value: 'category',
-  },
-]
-
 // QUESTION how to handle search, filter and pagination with multiple sections
 const Dashboard = props => {
   const {
@@ -51,6 +27,8 @@ const Dashboard = props => {
     onQuestionSelected,
     onSearch,
     tabsContent,
+    showSort,
+    sortOptions,
   } = props
 
   const [searchParams, setSearchParams] = useState({
@@ -100,6 +78,7 @@ const Dashboard = props => {
               onSortOptionChange={setSortOption}
               questions={questions}
               showRowCheckboxes={!!showBulkActions}
+              showSort={showSort}
               sortOptions={sortOptions}
               totalCount={totalCount}
             />
@@ -124,11 +103,40 @@ Dashboard.propTypes = {
     PropTypes.shape({
       label: PropTypes.string.isRequired,
       value: PropTypes.string.isRequired,
-      quesitons: PropTypes.arrayOf(PropTypes.shape()),
+      questions: PropTypes.arrayOf(
+        PropTypes.shape({
+          metadata: PropTypes.arrayOf(
+            PropTypes.shape({
+              label: PropTypes.string,
+              value: PropTypes.string,
+            }),
+          ),
+          content: PropTypes.shape({
+            type: PropTypes.string,
+            content: PropTypes.arrayOf(PropTypes.shape()),
+          }),
+          status: PropTypes.string,
+          href: PropTypes.string,
+          id: PropTypes.string,
+          courses: PropTypes.arrayOf(
+            PropTypes.shape({
+              course: PropTypes.shape({
+                label: PropTypes.string,
+              }),
+              label: PropTypes.string,
+              objectives: PropTypes.arrayOf(
+                PropTypes.shape({ label: PropTypes.string }),
+              ),
+            }),
+          ),
+        }),
+      ),
       totalCount: PropTypes.number,
       showBulkActions: PropTypes.bool,
     }),
   ),
+  showSort: PropTypes.bool,
+  sortOptions: PropTypes.arrayOf(PropTypes.shape()),
 }
 
 Dashboard.defaultProps = {
@@ -137,6 +145,8 @@ Dashboard.defaultProps = {
   loading: false,
   onQuestionSelected: () => {},
   tabsContent: [],
+  showSort: false,
+  sortOptions: [],
 }
 
 export default Dashboard

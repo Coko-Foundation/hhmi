@@ -5,12 +5,33 @@ import { lorem } from 'faker'
 import { uuid } from '@coko/client'
 import styled from 'styled-components'
 import { createData } from '../_helpers'
+import {
+  generateMetadata,
+  getRandomCourse,
+  getRandomObjectivesForCourse,
+} from '../_utilities'
+
+const courseData = () => {
+  const courses = []
+  const nrOfCourses = Math.floor(Math.random() * 2 + 1) // 1-2
+
+  for (let i = 0; i < nrOfCourses; i += 1) {
+    const course = getRandomCourse()
+    const objectives = getRandomObjectivesForCourse(course)
+    courses.push({
+      course,
+      objectives: objectives.list,
+      label: objectives.label,
+    })
+  }
+
+  return courses
+}
 
 const makeData = n =>
   createData(n, i => ({
     id: uuid(),
-    title: lorem.words(6),
-    description: {
+    content: {
       type: 'doc',
       content: [
         {
@@ -24,28 +45,8 @@ const makeData = n =>
         },
       ],
     },
-    metadata: [
-      {
-        label: 'unit',
-        value: lorem.words(2),
-      },
-      {
-        label: 'section',
-        value: lorem.words(2),
-      },
-      {
-        label: 'topic',
-        value: lorem.words(2),
-      },
-      {
-        label: 'category',
-        value: lorem.words(2),
-      },
-      {
-        label: 'published date',
-        value: lorem.words(2),
-      },
-    ],
+    metadata: generateMetadata(),
+    courses: courseData(),
     status: ['Published', 'Submitted', 'Under review', 'Rejected'][
       Math.floor(Math.random() * 4)
     ],
@@ -101,7 +102,7 @@ export const Base = args => {
     <Wrapper>
       <QuestionList
         {...args}
-        bulkActions={showRowCheckboxes ? BulkAction : null}
+        bulkAction={showRowCheckboxes ? BulkAction : undefined}
         currentPage={currentPage}
         onPageChange={handlePageChange}
         questions={data}

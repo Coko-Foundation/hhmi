@@ -5,12 +5,35 @@ import { uuid } from '@coko/client'
 import { Dashboard, Button } from 'ui'
 import styled from 'styled-components'
 import { createData } from '../_helpers'
+import {
+  generateMetadata,
+  getRandomCourse,
+  getRandomObjectivesForCourse,
+  getRandomStatus,
+} from '../_utilities'
+
+const generateCoursesForQuestion = () => {
+  const courses = []
+  const nrOfCourses = Math.floor(Math.random() * 2 + 1) // 1-2
+
+  for (let i = 0; i < nrOfCourses; i += 1) {
+    const course = getRandomCourse()
+    const objectives = getRandomObjectivesForCourse(course)
+    courses.push({
+      course,
+      objectives: objectives.list,
+      label: objectives.label,
+    })
+  }
+
+  return courses
+}
 
 const makeData = n =>
   createData(n, i => ({
     id: uuid(),
     title: lorem.words(6),
-    description: {
+    content: {
       type: 'doc',
       content: [
         {
@@ -24,33 +47,24 @@ const makeData = n =>
         },
       ],
     },
-    metadata: [
-      {
-        label: 'unit',
-        value: lorem.words(2),
-      },
-      {
-        label: 'section',
-        value: lorem.words(2),
-      },
-      {
-        label: 'topic',
-        value: lorem.words(2),
-      },
-      {
-        label: 'category',
-        value: lorem.words(2),
-      },
-      {
-        label: 'published date',
-        value: lorem.words(2),
-      },
-    ],
-    status: ['Published', 'Submitted', 'Under review', 'Rejected'][
-      Math.floor(Math.random() * 4)
-    ],
+    metadata: generateMetadata(),
+    courses: generateCoursesForQuestion(),
+    status: getRandomStatus(),
     href: '#',
   }))
+
+const sortOptions = [
+  {
+    label: 'Date (ascending)',
+    value: 'date-asc',
+    isDefault: true,
+  },
+  {
+    label: 'Date (descending)',
+    value: 'date-des',
+    isDefault: true,
+  },
+]
 
 const totalResults = 33
 
@@ -114,6 +128,8 @@ export const AuthorDashboard = args => {
         onSearch={handleSearch}
         tabsContent={tabs}
         {...args}
+        showSort
+        sortOptions={sortOptions}
       />
     </Wraper>
   )
@@ -195,6 +211,8 @@ export const EditorDashboard = args => {
         onSearch={handleSearch}
         tabsContent={tabs}
         {...args}
+        showSort
+        sortOptions={sortOptions}
       />
     </Wraper>
   )

@@ -2,223 +2,37 @@
 /* eslint-disable no-console */
 
 import React, { useState, useEffect } from 'react'
-import { uniqBy } from 'lodash'
-// import { lorem } from 'faker'
-
-import { Metadata, Checkbox, metadata } from 'ui'
-
-const flatAPCoursesMetadata = data => {
-  const units = []
-  const topics = []
-  const learningObjectives = []
-  const essentialKnowledge = []
-
-  data.units.forEach(unit => {
-    units.push({
-      label: unit.label,
-      value: unit.value,
-    })
-
-    unit.topics.forEach(topic => {
-      topics.push({
-        label: topic.label,
-        value: topic.value,
-        unit: unit.value,
-      })
-
-      topic.learningObjectives.forEach(lo => {
-        learningObjectives.push({
-          label: lo.label,
-          value: lo.value,
-          unit: unit.value,
-          topic: topic.value,
-        })
-
-        lo.essentialKnowledge.forEach(ek => {
-          essentialKnowledge.push({
-            label: ek.label,
-            value: ek.value,
-            unit: unit.value,
-            topic: topic.value,
-            learningObjective: lo.value,
-          })
-        })
-      })
-    })
-  })
-
-  return {
-    units,
-    topics,
-    learningObjectives,
-    essentialKnowledge,
-  }
-}
-
-const flatIBCourseMetadata = data => {
-  const units = []
-  const topics = []
-  const applications = []
-  const skills = []
-  const understandings = []
-
-  data.units.forEach(unit => {
-    units.push({
-      label: unit.label,
-      value: unit.value,
-    })
-
-    unit.topics.forEach(topic => {
-      topics.push({
-        label: topic.label,
-        value: topic.value,
-        unit: unit.value,
-      })
-
-      topic.applications.forEach(application => {
-        applications.push({
-          label: application.label,
-          value: application.value,
-          unit: unit.value,
-          topic: topic.value,
-        })
-      })
-
-      if (topic.skills) {
-        topic.skills.forEach(skill => {
-          skills.push({
-            label: skill.label,
-            value: skill.value,
-            unit: unit.value,
-            topic: topic.value,
-          })
-        })
-      }
-
-      topic.understandings.forEach(understanding => {
-        understandings.push({
-          label: understanding.label,
-          value: understanding.value,
-          unit: unit.value,
-          topic: topic.value,
-        })
-      })
-    })
-  })
-
-  return {
-    units,
-    topics,
-    applications,
-    skills,
-    understandings,
-  }
-}
-
-const flatVisionAndChangeMetadata = data => {
-  const coreConcepts = []
-  const subdisciplines = []
-  const subdisciplineStatements = []
-
-  const coreCompetencies = []
-  const subcompetencies = []
-  const subcompetenceStatements = []
-
-  data.coreConcepts.forEach(coreConcept => {
-    coreConcepts.push({
-      label: coreConcept.label,
-      value: coreConcept.value,
-      explanatoryItems: coreConcept.explanatoryItems,
-    })
-
-    coreConcept.subdisciplines.forEach(subdiscipline => {
-      subdisciplines.push({
-        label: subdiscipline.label,
-        value: subdiscipline.value,
-        // coreConcept: they all share the same subdisciplines,
-      })
-
-      subdiscipline.statements.forEach(statement => {
-        subdisciplineStatements.push({
-          label: statement.label,
-          value: statement.value,
-          coreConcept: coreConcept.value,
-          subdiscipline: subdiscipline.value,
-        })
-      })
-    })
-  })
-
-  data.coreCompetencies.forEach(coreCompetence => {
-    coreCompetencies.push({
-      label: coreCompetence.label,
-      value: coreCompetence.value,
-    })
-
-    coreCompetence.subcompetencies.forEach(subcompetence => {
-      subcompetencies.push({
-        label: subcompetence.label,
-        value: subcompetence.value,
-        explanation: subcompetence.explanation,
-        coreCompetence: coreCompetence.value,
-      })
-
-      subcompetence.statements.forEach(statement => {
-        subcompetenceStatements.push({
-          label: statement.label,
-          value: statement.value,
-          subcompetence: subcompetence.value,
-          coreCompetence: coreCompetence.value,
-        })
-      })
-    })
-  })
-
-  return {
-    coreConcepts,
-    subdisciplines: uniqBy(subdisciplines, 'value'),
-    subdisciplineStatements,
-    coreCompetencies,
-    subcompetencies,
-    subcompetenceStatements,
-  }
-}
-
-const flatAAMCMetadata = data => {
-  const concepts = []
-  const categories = []
-
-  data.concepts.forEach(concept => {
-    concepts.push({
-      label: concept.label,
-      value: concept.value,
-    })
-
-    concept.categories.forEach(category => {
-      categories.push({
-        label: category.label,
-        value: category.value,
-        explanation: category.explanation,
-        concept: concept.value,
-      })
-    })
-  })
-
-  return {
-    concepts,
-    categories,
-  }
-}
+import { Metadata, Checkbox, metadata, resources } from 'ui'
+import {
+  flatAPCoursesMetadata,
+  flatIBCourseMetadata,
+  flatVisionAndChangeMetadata,
+  flatAAMCMetadata,
+} from '../../app/utilities'
 
 const initialValues = {
-  framework: 'biEnvironmentalScience',
-  unit: 'climateChangeAndEnergyProduction',
-  courseTopic: 'climateChangeCausesAndImpacts',
-  application: 'IBES-A7.2.1',
-  understanding: 'IBES-U7.2.7',
+  topic: 'genetics',
+  subtopic: 'patternsOfInheritance',
+  framework: 'apEnvironmentalScience',
+  supplementaryTopics: [
+    {
+      topic: 'genetics',
+      subtopic: 'bioinformatics',
+      unit: 'theLivingWorldEcosystems',
+      courseTopic: 'thePhosphorusCycle',
+      learningObjective: 'ERT-1.F',
+      essentialKnowledge: 'ERT-1.F.2',
+    },
+  ],
+  biointeractiveResources: ['hIVReverseTranscriptionAndAZT'],
+  cognitiveLevel: 'higher-understand',
+  unit: 'theLivingWorldBiodiversity',
+  courseTopic: 'ecosystemServices',
+  learningObjective: 'ERT-2.B',
+  essentialKnowledge: 'ERT-2.B.1',
 }
 
-export const Base = () => {
+export const Author = () => {
   const [flatMetadata, setFlatMetadata] = useState(metadata)
 
   useEffect(() => {
@@ -282,17 +96,18 @@ export const Base = () => {
 
   return (
     <Metadata
-      // initialValues={options}
       metadata={flatMetadata}
       // readOnly
       onFormFinish={console.log('on form finish')}
+      resources={resources}
     />
   )
 }
 
-export const WithInitialData = args => {
+export const Editor = args => {
   const [editable, setEditable] = useState(false)
   const [flatMetadata, setFlatMetadata] = useState(metadata)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const frameworks = metadata.frameworks.map(framework => {
@@ -351,17 +166,24 @@ export const WithInitialData = args => {
       frameworks,
       introToBioMeta,
     })
+
+    setReady(true)
   }, [])
+
+  console.log(flatMetadata)
   return (
     <>
       <Checkbox onChange={() => setEditable(!editable)}>Editable</Checkbox>
-      <Metadata
-        {...args}
-        initialValues={initialValues}
-        metadata={flatMetadata}
-        onFormFinish={console.log('on form finish')}
-        readOnly={!editable}
-      />
+      {ready && (
+        <Metadata
+          {...args}
+          editorView
+          initialValues={initialValues}
+          metadata={flatMetadata}
+          onFormFinish={console.log('on form finish')}
+          readOnly={!editable}
+        />
+      )}
     </>
   )
 }

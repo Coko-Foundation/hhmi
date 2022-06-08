@@ -14,30 +14,6 @@ const Wrapper = styled.section`
   }
 `
 
-const sortOptions = [
-  {
-    label: 'Date',
-    value: 'date',
-    isDefault: true,
-  },
-  {
-    label: 'Unit',
-    value: 'unit',
-  },
-  {
-    label: 'Section',
-    value: 'section',
-  },
-  {
-    label: 'Topic',
-    value: 'topic',
-  },
-  {
-    label: 'Category',
-    value: 'category',
-  },
-]
-
 export const Discover = props => {
   const {
     className,
@@ -47,6 +23,8 @@ export const Discover = props => {
     onSearch,
     sidebarMetadata,
     totalCount,
+    showSort,
+    sortOptions,
   } = props
 
   // key to force list to rerender and empty search box when filters change
@@ -104,6 +82,7 @@ export const Discover = props => {
         onSortOptionChange={setSortOption}
         questions={questions}
         questionsPerPage={10}
+        showSort={showSort}
         sortOptions={sortOptions}
         totalCount={totalCount}
       />
@@ -121,17 +100,28 @@ Discover.propTypes = {
   /** list of search result to render */
   questions: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string,
-      title: PropTypes.string,
-      /* eslint-disable-next-line react/forbid-prop-types */
-      description: PropTypes.object,
-      meta: PropTypes.arrayOf(
+      metadata: PropTypes.arrayOf(
         PropTypes.shape({
-          unit: PropTypes.string,
-          section: PropTypes.string,
-          topic: PropTypes.string,
-          category: PropTypes.string,
-          published: PropTypes.string,
+          label: PropTypes.string,
+          value: PropTypes.string,
+        }),
+      ),
+      content: PropTypes.shape({
+        type: PropTypes.string,
+        content: PropTypes.arrayOf(PropTypes.shape()),
+      }),
+      status: PropTypes.string,
+      href: PropTypes.string,
+      id: PropTypes.string,
+      courses: PropTypes.arrayOf(
+        PropTypes.shape({
+          course: PropTypes.shape({
+            label: PropTypes.string,
+          }),
+          label: PropTypes.string,
+          objectives: PropTypes.arrayOf(
+            PropTypes.shape({ label: PropTypes.string }),
+          ),
         }),
       ),
     }),
@@ -322,6 +312,8 @@ Discover.propTypes = {
     ),
   }).isRequired,
   totalCount: PropTypes.number,
+  sortOptions: PropTypes.arrayOf(PropTypes.shape()),
+  showSort: PropTypes.bool,
 }
 
 Discover.defaultProps = {
@@ -329,6 +321,8 @@ Discover.defaultProps = {
   questions: [],
   sidebarText: '',
   totalCount: 0,
+  sortOptions: [],
+  showSort: false,
 }
 
 export default Discover

@@ -1,52 +1,37 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
-import { lorem } from 'faker'
 
 import { QuestionItem } from 'ui'
+import {
+  generateMetadata,
+  getRandomStatus,
+  questionContentExample3,
+  getRandomCourse,
+  getRandomObjectivesForCourse,
+} from '../_utilities'
 
-const meta = [
-  {
-    label: 'unit',
-    value: lorem.words(2),
-  },
-  {
-    label: 'section',
-    value: lorem.words(2),
-  },
-  {
-    label: 'topic',
-    value: lorem.words(2),
-  },
-  {
-    label: 'category',
-    value: lorem.words(2),
-  },
-  {
-    label: 'published date',
-    value: lorem.words(2),
-  },
-]
+const meta = generateMetadata()
 
-const content = {
-  type: 'doc',
-  content: [
-    {
-      type: 'paragraph',
-      content: [
-        {
-          type: 'text',
-          text: lorem.sentences(8),
-        },
-      ],
-    },
-  ],
+const courses = []
+const nrOfCourses = Math.floor(Math.random() * 2 + 1) // 1-3
+
+for (let i = 0; i < nrOfCourses; i += 1) {
+  const course = getRandomCourse()
+  const objectives = getRandomObjectivesForCourse(course)
+  courses.push({
+    course,
+    objectives: objectives.list,
+    label: objectives.label,
+  })
 }
 
 export const Base = args => (
   <QuestionItem
+    status={getRandomStatus()}
     {...args}
-    content={content}
+    content={questionContentExample3}
+    courses={courses}
     metadata={meta}
-    title={lorem.words(6)}
   />
 )
 

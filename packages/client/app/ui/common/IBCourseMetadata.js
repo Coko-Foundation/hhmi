@@ -230,6 +230,7 @@ const IBCourseMetadata = props => {
 
   return (
     <>
+      <p>{courseData.label}: College Board Curriculum</p>
       <Form.Item
         label="Course Unit"
         name={unitName}
@@ -273,61 +274,63 @@ const IBCourseMetadata = props => {
         )}
       </Form.Item>
       <Form.Item dependencies={[unitField, topicField]} noStyle>
-        {() => (
-          <Form.Item
-            hidden={
-              !filterApplicationOptions()?.length &&
-              (filterMode || !!getFieldValue(topicField))
-            }
-            label={
-              courseData.value === 'biEnvironmentalScience'
-                ? 'Application & Skill'
-                : 'Application'
-            }
-            name={applicationName}
-            rules={[
-              isRequired
-                ? { required: true, message: 'Application is required' }
-                : {},
-            ]}
-          >
-            <Select
-              allowClear
-              disabled={readOnly || (!filterMode && !getFieldValue(topicField))}
-              optionFilterProp="label"
-              options={filterApplicationOptions()}
-              showSearch
-              wrapOptionText
-            />
-          </Form.Item>
-        )}
+        {() =>
+          !filterApplicationOptions()?.length &&
+          (filterMode || !!getFieldValue(topicField)) ? null : (
+            <Form.Item
+              label={
+                courseData.value === 'biEnvironmentalScience'
+                  ? 'Application & Skill'
+                  : 'Application'
+              }
+              name={applicationName}
+              rules={[
+                isRequired
+                  ? { required: true, message: 'Application is required' }
+                  : {},
+              ]}
+            >
+              <Select
+                allowClear
+                disabled={
+                  readOnly || (!filterMode && !getFieldValue(topicField))
+                }
+                optionFilterProp="label"
+                options={filterApplicationOptions()}
+                showSearch
+                wrapOptionText
+              />
+            </Form.Item>
+          )
+        }
       </Form.Item>
       <Form.Item dependencies={[unitField, topicField]} noStyle>
-        {() => (
-          <Form.Item
-            hidden={
-              courseData.value === 'biEnvironmentalScience' ||
-              (!filterSkillOptions()?.length &&
-                (filterMode || !!getFieldValue(topicField)))
-            }
-            label="Skill"
-            name={skillName}
-            rules={[
-              isRequired
-                ? { required: true, message: 'Skill is required' }
-                : {},
-            ]}
-          >
-            <Select
-              allowClear
-              disabled={readOnly || (!filterMode && !getFieldValue(topicField))}
-              optionFilterProp="label"
-              options={filterSkillOptions()}
-              showSearch
-              wrapOptionText
-            />
-          </Form.Item>
-        )}
+        {() =>
+          courseData.value === 'biEnvironmentalScience' ||
+          (!filterSkillOptions()?.length &&
+            (filterMode || !!getFieldValue(topicField))) ? null : (
+            <Form.Item
+              label="Skill"
+              name={skillName}
+              rules={[
+                isRequired
+                  ? { required: true, message: 'Skill is required' }
+                  : {},
+              ]}
+            >
+              <Select
+                allowClear
+                disabled={
+                  readOnly || (!filterMode && !getFieldValue(topicField))
+                }
+                optionFilterProp="label"
+                options={filterSkillOptions()}
+                showSearch
+                wrapOptionText
+              />
+            </Form.Item>
+          )
+        }
       </Form.Item>
       <Form.Item dependencies={[unitField, topicField]} noStyle>
         {() => (

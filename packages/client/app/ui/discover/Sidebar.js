@@ -61,6 +61,23 @@ const questionTypes = [
     value: 'trueFalseSingleCorrect',
     label: 'True / False (single correct)',
   },
+  {
+    value: 'fillInTheBlank',
+    label: 'Fill in the blank',
+  },
+  {
+    value: 'essay',
+    label: 'Essay',
+  },
+  {
+    value: 'matching',
+    label: 'Matching',
+  },
+  {
+    value: 'multipleDropdowns',
+    label: 'Multiple dropdowns',
+  },
+  // fill in the blank, essay, matching, multiple dropdowns
 ]
 
 const Sidebar = props => {

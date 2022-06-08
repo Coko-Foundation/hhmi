@@ -99,6 +99,7 @@ const SelectableItem = memo(props => {
     onDeselect,
     onSelect,
     selected,
+    checkboxLabel,
     ...rest
   } = props
 
@@ -113,7 +114,7 @@ const SelectableItem = memo(props => {
   return (
     <SelectableWrapper key={id}>
       <CheckBox
-        aria-labelledby={id}
+        aria-label={checkboxLabel}
         checked={selected}
         onChange={handleChange}
       />
@@ -129,6 +130,11 @@ SelectableItem.propTypes = {
   onDeselect: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
+  checkboxLabel: PropTypes.string,
+}
+
+SelectableItem.defaultProps = {
+  checkboxLabel: 'Select item',
 }
 
 // memoized SelectableItem would use old value of selectedItems when handleSelect and handleDeselect are passed as they are
