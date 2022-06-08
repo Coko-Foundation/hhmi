@@ -11,9 +11,9 @@ import {
   flatIBCourseMetadata,
   flatVisionAndChangeMetadata,
   flatAAMCMetadata,
-  editorInitialContent,
-  initialMetadataValues,
 } from '../../app/utilities'
+
+import { editorInitialContent, initialMetadataValues } from '../_utilities'
 
 const Wrapper = styled.div`
   border: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};

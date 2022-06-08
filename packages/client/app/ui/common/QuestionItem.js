@@ -3,14 +3,14 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { uuid, th } from '@coko/client'
+import { uuid, th, grid } from '@coko/client'
 
 import WaxWrapper from '../wax/Wax'
 import { DashLayout } from '../wax/layout'
 import { dashConfig } from '../wax/config'
 
 const Wrapper = styled.div`
-  padding: 5px 0;
+  padding: ${grid(1)} 0;
   position: relative;
   width: 100%;
 `
@@ -18,14 +18,14 @@ const Wrapper = styled.div`
 const FirstRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: ${grid(2)};
 `
 
 const WaxContainer = styled.a`
   flex-grow: 1;
   height: 45px;
   overflow: hidden;
-  padding-left: 5px;
+  padding-left: ${grid(1)};
   transition: outline ease 200ms;
 
   &:hover,
@@ -55,21 +55,19 @@ const Status = styled.span`
     }
   }};
   flex: 0 0 110px;
-  padding: 3px 10px;
+  padding: ${grid(1)} ${grid(2)};
   text-align: right;
 `
 
 const SecondRow = styled.div`
   justify-content: space-evenly;
-  margin-bottom: 10px;
-  padding: 0 5px;
+  margin-bottom: ${grid(2)};
+  padding: 0 ${grid(1)};
 
   details {
-    /* flex: 1 1 0px; */
-
     summary {
       cursor: pointer;
-      padding-right: 5px;
+      padding-right: ${grid(1)};
       width: fit-content;
 
       &:hover,
@@ -90,7 +88,7 @@ const SecondRow = styled.div`
 
         &::before {
           content: '-';
-          margin-right: 10px;
+          margin-right: ${grid(2)};
         }
       }
     }
@@ -99,9 +97,9 @@ const SecondRow = styled.div`
 
 const BottomRow = styled.div`
   display: flex;
-  gap: 10px;
+  gap: ${grid(2)};
   justify-content: space-between;
-  padding: 0 5px;
+  padding: 0 ${grid(1)};
 `
 
 const Metadata = styled.div`
@@ -117,8 +115,6 @@ const MetadataLabel = styled.div`
 
 const MetadataValue = styled.div``
 
-const contentPlaceholder = `<p class="paragraph">-</p>`
-
 const QuestionItem = props => {
   const { className, metadata, content, status, href, id, courses } = props
 
@@ -128,7 +124,7 @@ const QuestionItem = props => {
         <WaxContainer href={href}>
           <WaxWrapper
             config={dashConfig}
-            content={content || contentPlaceholder}
+            content={content}
             layout={DashLayout}
             readOnly
           />

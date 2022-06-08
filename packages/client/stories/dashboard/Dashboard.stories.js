@@ -9,7 +9,8 @@ import {
   generateMetadata,
   getRandomCourse,
   getRandomObjectivesForCourse,
-} from '../../app/utilities'
+  getRandomStatus,
+} from '../_utilities'
 
 const generateCoursesForQuestion = () => {
   const courses = []
@@ -48,10 +49,7 @@ const makeData = n =>
     },
     metadata: generateMetadata(),
     courses: generateCoursesForQuestion(),
-    // additionalMetadata: learningObjectivesAndUnderstandings(),
-    status: ['Published', 'Submitted', 'Under review', 'Rejected'][
-      Math.floor(Math.random() * 4)
-    ],
+    status: getRandomStatus(),
     href: '#',
   }))
 

@@ -7,33 +7,9 @@ import styled from 'styled-components'
 import { createData } from '../_helpers'
 import {
   generateMetadata,
-  getRandomLearningObjective,
-  getRandomUnderstanding,
   getRandomCourse,
   getRandomObjectivesForCourse,
-} from '../../app/utilities'
-
-const learningObjectivesAndUnderstandings = () => {
-  const total = Math.floor(Math.random() * 4) + 1
-  const numberOfLOs = Math.floor(Math.random() * total)
-  const numberOfUs = total - numberOfLOs
-
-  const learningObjectives = []
-  const understandings = []
-
-  for (let i = 0; i < numberOfLOs; i += 1) {
-    learningObjectives.push(getRandomLearningObjective().label)
-  }
-
-  for (let i = 0; i < numberOfUs; i += 1) {
-    understandings.push(getRandomUnderstanding().label)
-  }
-
-  return {
-    learningObjectives,
-    understandings,
-  }
-}
+} from '../_utilities'
 
 const courseData = () => {
   const courses = []
@@ -55,8 +31,7 @@ const courseData = () => {
 const makeData = n =>
   createData(n, i => ({
     id: uuid(),
-    title: getRandomUnderstanding().label,
-    description: {
+    content: {
       type: 'doc',
       content: [
         {
@@ -71,7 +46,6 @@ const makeData = n =>
       ],
     },
     metadata: generateMetadata(),
-    additionalMetadata: learningObjectivesAndUnderstandings(),
     courses: courseData(),
     status: ['Published', 'Submitted', 'Under review', 'Rejected'][
       Math.floor(Math.random() * 4)
@@ -128,7 +102,7 @@ export const Base = args => {
     <Wrapper>
       <QuestionList
         {...args}
-        bulkActions={showRowCheckboxes ? BulkAction : null}
+        bulkAction={showRowCheckboxes ? BulkAction : undefined}
         currentPage={currentPage}
         onPageChange={handlePageChange}
         questions={data}

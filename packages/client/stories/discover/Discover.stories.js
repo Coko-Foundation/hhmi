@@ -10,10 +10,13 @@ import {
   flatIBCourseMetadata,
   flatVisionAndChangeMetadata,
   flatAAMCMetadata,
+} from '../../app/utilities'
+
+import {
   generateMetadata,
   getRandomCourse,
   getRandomObjectivesForCourse,
-} from '../../app/utilities'
+} from '../_utilities'
 
 const sortOptions = [
   {

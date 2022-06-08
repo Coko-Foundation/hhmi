@@ -1,26 +1,16 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
 
 import { QuestionItem } from 'ui'
 import {
   generateMetadata,
-  getRandomLearningObjective,
-  getRandomUnderstanding,
   getRandomStatus,
-  questionContentExample,
-  questionContentExample2,
   questionContentExample3,
   getRandomCourse,
   getRandomObjectivesForCourse,
-} from '../../app/utilities'
+} from '../_utilities'
 
 const meta = generateMetadata()
-
-const extraMeta = {
-  learningObjectives: [getRandomLearningObjective().label],
-  understandings: [getRandomUnderstanding().label],
-}
 
 const courses = []
 const nrOfCourses = Math.floor(Math.random() * 2 + 1) // 1-3

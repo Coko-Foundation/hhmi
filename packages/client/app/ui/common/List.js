@@ -64,8 +64,6 @@ const ListItemWrapper = styled.li`
 `
 
 const SelectableWrapper = styled(ListItemWrapper)`
-  flex-direction: row-reverse;
-
   > :last-child {
     flex-grow: 1;
   }
@@ -101,6 +99,7 @@ const SelectableItem = memo(props => {
     onDeselect,
     onSelect,
     selected,
+    checkboxLabel,
     ...rest
   } = props
 
@@ -114,12 +113,12 @@ const SelectableItem = memo(props => {
 
   return (
     <SelectableWrapper key={id}>
-      {renderItem({ id, ...rest }, index)}
       <CheckBox
-        aria-label="Select this question"
+        aria-label={checkboxLabel}
         checked={selected}
         onChange={handleChange}
       />
+      {renderItem({ id, ...rest }, index)}
     </SelectableWrapper>
   )
 }, compareItem)
@@ -131,6 +130,11 @@ SelectableItem.propTypes = {
   onDeselect: PropTypes.func.isRequired,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
+  checkboxLabel: PropTypes.string,
+}
+
+SelectableItem.defaultProps = {
+  checkboxLabel: 'Select item',
 }
 
 // memoized SelectableItem would use old value of selectedItems when handleSelect and handleDeselect are passed as they are
