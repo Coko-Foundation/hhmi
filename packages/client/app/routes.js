@@ -189,6 +189,8 @@ const routes = (
         />
         <Route component={ResetPassword} exact path="/password-reset/:token" />
         <Route component={VerifyCheck} exact path="/ensure-verified-login" />
+
+        <Route component={() => <Redirect to="/dashboard" />} path="*" />
       </Switch>
     </StyledPage>
 
