@@ -1,12 +1,11 @@
 import React from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useLocation, Redirect } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
 
 import { Login } from 'ui'
 import { LOGIN } from '../graphql'
 
 const LoginPage = props => {
-  const history = useHistory()
   const { search } = useLocation()
 
   const [loginMutation, { data, loading, error }] = useMutation(LOGIN)
@@ -20,27 +19,23 @@ const LoginPage = props => {
       },
     }
 
-    loginMutation(mutationData)
+    loginMutation(mutationData).catch(e => console.error(e))
   }
 
   const existingToken = localStorage.getItem('token')
-  if (existingToken) history.push(redirectUrl)
+  if (existingToken) return <Redirect to={redirectUrl} />
 
   let errorMessage = 'Something went wrong!'
 
-  if (error) {
-    console.error(error)
-
-    if (error.message.includes('username or password'))
-      errorMessage = 'Invalid credentials'
-  }
+  if (error?.message.includes('username or password'))
+    errorMessage = 'Invalid credentials'
 
   if (data) {
     const token = data.login?.token
 
     if (token) {
       localStorage.setItem('token', token)
-      history.push(redirectUrl)
+      return <Redirect to={redirectUrl} />
     }
 
     console.error('No token returned from mutation!')
