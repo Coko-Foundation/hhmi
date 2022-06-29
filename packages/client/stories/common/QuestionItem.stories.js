@@ -13,11 +13,14 @@ import {
 const meta = generateMetadata()
 
 const courses = []
-const nrOfCourses = Math.floor(Math.random() * 2 + 1) // 1-3
+const nrOfCourses = Math.floor(Math.random() * 3 + 1) // 1-3
+
+const previousCourses = []
 
 for (let i = 0; i < nrOfCourses; i += 1) {
-  const course = getRandomCourse()
+  const course = getRandomCourse(previousCourses)
   const objectives = getRandomObjectivesForCourse(course)
+  previousCourses.push(course)
   courses.push({
     course,
     objectives: objectives.list,

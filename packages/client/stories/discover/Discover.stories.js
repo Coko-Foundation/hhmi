@@ -35,8 +35,11 @@ const generateCoursesForQuestion = () => {
   const courses = []
   const nrOfCourses = Math.floor(Math.random() * 2 + 1) // 1-2
 
+  const previousCourses = []
+
   for (let i = 0; i < nrOfCourses; i += 1) {
-    const course = getRandomCourse()
+    const course = getRandomCourse(previousCourses)
+    previousCourses.push(course)
     const objectives = getRandomObjectivesForCourse(course)
     courses.push({
       course,

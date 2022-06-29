@@ -122,6 +122,18 @@ const MetadataLabel = styled.div`
 
 const MetadataValue = styled.div``
 
+const courseOrder = [
+  'Introductory Biology for Majors',
+  'AP Biology',
+  'Introductory Biology for non-Majors',
+  'IB Biology',
+  'AP Environmental Science',
+  'IB Environmental Science',
+]
+
+const sortFunction = (a, b) =>
+  courseOrder.indexOf(a.course.label) - courseOrder.indexOf(b.course.label)
+
 const QuestionItem = props => {
   const { className, metadata, content, status, href, id, courses } = props
 
@@ -140,11 +152,13 @@ const QuestionItem = props => {
       </FirstRow>
 
       <SecondRow>
-        {courses.map(c => {
+        {courses.sort(sortFunction).map(c => {
           return (
             <details key={uuid()}>
               <summary>
-                <MetadataLabel>{`${c.label} for ${c.course.label}`}</MetadataLabel>
+                <MetadataLabel>
+                  {c.course.label}: {c.label}
+                </MetadataLabel>
               </summary>
               <ul>
                 {c.objectives.map(o => (

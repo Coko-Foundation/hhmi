@@ -157,8 +157,10 @@ const getRandomCourseWithLearningObjectives = () => {
   ]
 }
 
-const getRandomCourse = () => {
-  return frameworksMeta[Math.floor(Math.random() * 4)]
+const getRandomCourse = except => {
+  return frameworksMeta.filter(f => !except.find(e => e.value === f.value))[
+    Math.floor(Math.random() * (4 - except.length))
+  ]
 }
 
 const getRandomObjectivesForCourse = course => {
