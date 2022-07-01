@@ -41,7 +41,7 @@ input UserProfileInput {
   phone: String!
 
   country: String!
-  state: String!
+  state: String
   city: String!
   address: String
   zipCode: String
