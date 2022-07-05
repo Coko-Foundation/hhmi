@@ -21,26 +21,40 @@ import {
   EditorInfoToolGroupServices,
   BottomInfoService,
   MultipleChoiceQuestionService,
-  MultipleChoiceToolGroupService,
   FillTheGapQuestionService,
   FillTheGapToolGroupService,
+  MatchingService,
+  MatchingToolGroupService,
+  MultipleChoiceDropDownToolGroupService,
+  MultipleDropDownToolGroupService,
+  MultipleDropDownService,
+  EssayService,
+  EssayToolGroupService,
 } from 'wax-prosemirror-services'
 
 import { DefaultSchema } from 'wax-prosemirror-utilities'
-import { WaxSelectionPlugin } from 'wax-prosemirror-plugins'
+// import { WaxSelectionPlugin } from 'wax-prosemirror-plugins'
 // import invisibles, { hardBreak } from '@guardian/prosemirror-invisibles'
 
 export default {
   SchemaService: DefaultSchema,
   // RulesService: [emDash, ellipsis],
 
-  PmPlugins: [columnResizing(), tableEditing(), WaxSelectionPlugin],
+  // PmPlugins: [columnResizing(), tableEditing(), WaxSelectionPlugin],
+  PmPlugins: [columnResizing(), tableEditing()],
 
   services: [
-    new MultipleChoiceQuestionService(),
-    new MultipleChoiceToolGroupService(),
     new FillTheGapQuestionService(),
     new FillTheGapToolGroupService(),
+    new MatchingService(),
+    new MatchingToolGroupService(),
+    new MultipleChoiceDropDownToolGroupService(),
+    new MultipleChoiceQuestionService(),
+    new MultipleDropDownService(),
+    new MultipleDropDownToolGroupService(),
+    new EssayService(),
+    new EssayToolGroupService(),
+
     new ListsService(),
     new LinkService(),
     new InlineAnnotationsService(),
