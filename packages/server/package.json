@@ -11,7 +11,7 @@
     "pg": "8"
   },
   "dependencies": {
-    "@coko/server": "https://gitlab.coko.foundation/cokoapps/server.git#fafdcf16cb7c7833ff01232cfbb5a131afd2bb95",
+    "@coko/server": "https://gitlab.coko.foundation/cokoapps/server.git#09894cb96806f95916644816ab37e2c6c930f143",
     "axios": "^0.26.1",
     "config": "^3.3.6",
     "docx": "^7.3.0",
