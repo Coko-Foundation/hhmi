@@ -31,7 +31,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "@apollo/client": "^3.6.8",
-    "@coko/client": "0.0.29",
+    "@coko/client": "0.0.30",
     "@pubsweet/ui": "^12.6.13",
     "antd": "^4.15.4",
     "lodash": "^4.17.21",

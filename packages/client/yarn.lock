@@ -1350,10 +1350,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@coko/client@0.0.29":
-  version "0.0.29"
-  resolved "https://registry.yarnpkg.com/@coko/client/-/client-0.0.29.tgz#11fa91dca78d11648322482ba57bc922ac01b50d"
-  integrity sha512-1zfZMdbh6ZanOlJcnQ5cG4W6dIj8Ei7WhhPUkVqHO9Qsf5VDo5vQ8zdqUbJzRmqvuIQHBNfGxbzuGcK4b1cc1g==
+"@coko/client@0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@coko/client/-/client-0.0.30.tgz#2218030f2ae1e9e5d8f17479e459e3b9ac933be1"
+  integrity sha512-LEKL7iBRQSQ6+Vk10vCGwsjQ1GPprd7QPA+gjeJBAw1Hdz9VYtJ4jdvXx/DuBXp+y0xuTXKD0RVbURB47MCajQ==
   dependencies:
     "@babel/cli" "^7.13.14"
     "@babel/core" "^7.13.14"
@@ -1370,6 +1370,7 @@
     babel-loader "^8.2.2"
     babel-plugin-styled-components "^1.12.0"
     babel-preset-minify "^0.5.1"
+    colors "^1.4.0"
     compression-webpack-plugin "^7.1.2"
     copy-webpack-plugin "^8.1.0"
     css-loader "^5.2.0"
@@ -5095,7 +5096,7 @@ colorette@^1.2.1, colorette@^1.2.2:
   resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.2.2.tgz#cbcc79d5e99caea2dbf10eb3a26fd8b3e6acfa94"
   integrity sha512-MKGMzyfeuutC/ZJ1cba9NqcNpfeqMUcYmyF1ZFY6/Cn7CNSAKx6a+s48sqLqyAiZuaP2TcqMhoo+dlwFnVxT9w==
 
-colors@^1.1.2:
+colors@^1.1.2, colors@^1.4.0:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.4.0.tgz#c50491479d4c1bdaed2c9ced32cf7c7dc2360f78"
   integrity sha512-a+UqTh4kgZg/SlGvfbzDHpgRu7AAQOmmqRHJnxhRZICKFUT91brVhNNt58CMWU9PsBbv3PDCZUHbVxuDiH2mtA==
