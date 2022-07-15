@@ -31,6 +31,7 @@ import {
   VerifyCheck,
   Dashboard,
   Question,
+  ManageUsers,
 } from './pages'
 
 import { CURRENT_USER } from './graphql'
@@ -171,6 +172,16 @@ const routes = (
           render={() => (
             <Authenticated>
               <Question />
+            </Authenticated>
+          )}
+        />
+
+        <Route
+          exact
+          path="/manage-users"
+          render={() => (
+            <Authenticated>
+              <ManageUsers />
             </Authenticated>
           )}
         />

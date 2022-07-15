@@ -60,4 +60,24 @@ const updateUserProfile = async (userId, profileData) => {
   }
 }
 
-module.exports = { submitQuestionnaire, updateUserProfile }
+const filterUsers = async (params, options = {}) => {
+  try {
+    const { trx, ...restOptions } = options
+
+    return useTransaction(
+      async tr => {
+        logger.info(`filter users by query params`)
+        return User.filter(params, {
+          trx: tr,
+          ...restOptions,
+        })
+      },
+      { trx, passedTrxOnly: true },
+    )
+  } catch (e) {
+    logger.error(`error filterUsers: ${e.message}`)
+    throw new Error(e)
+  }
+}
+
+module.exports = { submitQuestionnaire, updateUserProfile, filterUsers }

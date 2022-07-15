@@ -1,5 +1,5 @@
 import { isEmpty, uniqBy } from 'lodash'
-import { metadata } from 'ui'
+import { metadata } from '../ui/question'
 import flatMetadataValues from '../ui/_helpers/flatMetadataValues'
 
 const apDictionary = [

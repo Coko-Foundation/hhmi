@@ -53,7 +53,7 @@ ButtonGroup.propTypes = {
   /** Must be multiple Button components */
   children: PropTypes.arrayOf(
     (propValue, key, componentName, location, propFullName) => {
-      const notButton = propValue.find(el => el.type.displayName !== 'Button')
+      const notButton = propValue.find(el => el.type.name !== 'Button')
 
       if (notButton)
         return new Error('ButtonGroup children should be instances of Button!')
