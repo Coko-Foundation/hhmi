@@ -12,11 +12,15 @@ services:
       - NODE_ENV=development
       - CLIENT_PORT=${CLIENT_PORT:-4000}
       - CLIENT_FAST_REFRESH=1
+      - CLIENT_PAGE_TITLE=${CLIENT_PAGE_TITLE:-"HHMI Assessment Builder"}
+      - CLIENT_LANGUAGE=${CLIENT_LANGUAGE:-"en-US"}
+      # - CLIENT_FAST_REFRESH=1
       - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
       - SERVER_HOST=${SERVER_HOST:-localhost}
       - SERVER_PORT=${SERVER_PORT:-3000}
     volumes:
       - ./packages/client/app:/home/node/app/app
+    tty: true
 
   server:
     build:

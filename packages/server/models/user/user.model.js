@@ -1,6 +1,7 @@
+const { logger, modelTypes, useTransaction } = require('@coko/server')
 const UserModel = require('@coko/server/src/models/user/user.model')
 
-const { modelTypes } = require('@coko/server')
+const { applyListQueryOptions } = require('../helpers')
 
 const { arrayOfStrings, boolean, booleanNullable, stringNullable } = modelTypes
 
@@ -48,6 +49,37 @@ class User extends UserModel {
   async getDisplayName() {
     if (this.displayName) return this.displayName
     return super.getDisplayName()
+  }
+
+  static async filter(data = {}, options = {}) {
+    try {
+      const { trx, ...otherOptions } = options
+      const { search = '', ...params } = data
+
+      return useTransaction(
+        async tr => {
+          let queryBuilder = this.query(tr)
+
+          if (search) {
+            queryBuilder = queryBuilder
+              .withGraphJoined('defaultIdentity')
+              .where('defaultIdentity.email', 'ilike', `%${search}%`)
+              .orWhere('displayName', 'ilike', `%${search}%`)
+          }
+
+          queryBuilder = queryBuilder.where(params)
+
+          return applyListQueryOptions(queryBuilder, otherOptions)
+        },
+        {
+          trx,
+          passedTrxOnly: true,
+        },
+      )
+    } catch (e) {
+      logger.error('Base model: find failed', e)
+      throw new Error(e)
+    }
   }
 }
 

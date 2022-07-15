@@ -1,0 +1,191 @@
+/* eslint-disable no-unused-vars */
+import React, { useState } from 'react'
+import { UserList, Modal } from 'ui'
+// import { useHistory } from 'react-router-dom'
+import { useQuery, useMutation } from '@apollo/client'
+import { FILTER_USERS, DELETE_USERS, DEACTIVATE_USERS } from '../graphql'
+
+const { confirm, error } = Modal
+
+const usersApiToUi = users => {
+  if (!users) return []
+
+  return users.map(user => {
+    let isReviewer = false
+
+    if (user.teams && user.teams.length) {
+      user.teams.forEach(team => {
+        if (team.role === 'reviewer') isReviewer = true
+      })
+    }
+
+    return {
+      id: user.id,
+      displayName: user.displayName,
+      email: user.defaultIdentity.email,
+      expertise: user.coursesTeaching,
+      isReviewer,
+      signUpDate: user.created,
+    }
+  })
+}
+
+const PAGE_SIZE = 10
+
+const ManageUsers = () => {
+  const [currentPage, setCurrentPage] = useState(0)
+  const [selectedRows, setSelectedRows] = useState([])
+  const [search, setSearch] = useState('')
+
+  const { loading: usersLoading, data: usersData } = useQuery(FILTER_USERS, {
+    variables: {
+      params: {
+        isActive: true,
+        search,
+      },
+      options: {
+        page: currentPage,
+        pageSize: PAGE_SIZE,
+      },
+    },
+  })
+
+  const [deleteUsersMutation] = useMutation(DELETE_USERS, {
+    update(cache) {
+      cache.modify({
+        fields: {
+          filterUsers() {},
+        },
+      })
+    },
+    onCompleted({ deleteUsers }) {
+      const total = usersData?.filterUsers.totalCount
+      const nrOfPages = Math.ceil(total / PAGE_SIZE)
+      const usersInCurrentPage = usersData?.filterUsers.result.length
+
+      // if current page is the last page && you delete all users in that page, load currentPage - 1
+      if (
+        currentPage === nrOfPages - 1 &&
+        usersInCurrentPage === deleteUsers.length
+      ) {
+        setCurrentPage(currentPage - 1)
+      }
+    },
+  })
+
+  const [deactivateUsersMutation] = useMutation(DEACTIVATE_USERS, {
+    update(cache) {
+      cache.modify({
+        fields: {
+          filterUsers() {},
+        },
+      })
+    },
+    onCompleted({ deactivateUsers }) {
+      const total = usersData?.filterUsers.totalCount
+      const nrOfPages = Math.ceil(total / PAGE_SIZE)
+      const usersInCurrentPage = usersData?.filterUsers.result.length
+
+      // if current page is the last page && you deactivate all users in that page, load currentPage - 1
+      if (
+        currentPage === nrOfPages - 1 &&
+        usersInCurrentPage === deactivateUsers.length
+      ) {
+        setCurrentPage(currentPage - 1)
+      }
+    },
+  })
+
+  // const history = useHistory()
+
+  const handlePageChange = page => {
+    setCurrentPage(page - 1)
+  }
+
+  const handleSearch = query => {
+    setCurrentPage(0)
+    setSearch(query)
+  }
+
+  const showDeactivateModal = () => {
+    confirm({
+      title: `Deactivate User${selectedRows.length > 1 ? 's' : ''}`,
+      content: `Are you sure you want to deactivate the selected user${
+        selectedRows.length > 1 ? 's' : ''
+      }?`,
+
+      okText: 'Deactivate',
+      okType: 'danger',
+      onOk() {
+        return deactivateUsersMutation({
+          variables: { ids: selectedRows },
+        })
+          .then(() => {
+            setSelectedRows([])
+          })
+          .catch(() => {
+            showErrorModal(
+              'Deactivate error',
+              'There was an error trying to deactivate the user(s)',
+            )
+          })
+      },
+      onCancel() {},
+    })
+  }
+
+  const showDeleteModal = () => {
+    confirm({
+      title: `Delete User${selectedRows.length > 1 ? 's' : ''}`,
+      content: `Are you sure you want to delete the selected user${
+        selectedRows.length > 1 ? 's' : ''
+      }?`,
+      okText: 'Delete',
+      okType: 'danger',
+      onOk() {
+        return deleteUsersMutation({
+          variables: { ids: selectedRows },
+        })
+          .then(() => {
+            setSelectedRows([])
+          })
+          .catch(() => {
+            showErrorModal(
+              'Delete error',
+              'There was an error trying to delete the user(s)',
+            )
+          })
+      },
+      onCancel() {},
+    })
+  }
+
+  const showErrorModal = (title, content) => {
+    error({
+      title,
+      content,
+    })
+  }
+
+  return (
+    <UserList
+      currentPage={currentPage + 1}
+      data={usersApiToUi(usersData?.filterUsers.result)}
+      loading={usersLoading}
+      onBulkDeactivate={showDeactivateModal}
+      onBulkDelete={showDeleteModal}
+      onPageChange={handlePageChange}
+      onSearch={handleSearch}
+      pageSize={PAGE_SIZE}
+      selectedRows={selectedRows}
+      setSelectedRows={setSelectedRows}
+      totalUserCount={usersData?.filterUsers.totalCount}
+    />
+  )
+}
+
+ManageUsers.propTypes = {}
+
+ManageUsers.defaultProps = {}
+
+export default ManageUsers

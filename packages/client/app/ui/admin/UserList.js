@@ -1,18 +1,38 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { uuid } from '@coko/client'
+import { uuid, grid, th } from '@coko/client'
 
-import { Button, ButtonGroup, H1, Layout, Tag, Table } from '../common'
+import {
+  Button,
+  ButtonGroup,
+  Checkbox,
+  H1,
+  Tag,
+  Table,
+  DateParser,
+} from '../common'
+import { profileOptions } from '../../utilities'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  height: 100%;
+
+  > section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    > div:nth-child(2) {
+      flex-grow: 1;
+    }
+  }
+`
 
 const PageHeader = styled(H1)`
   text-align: center;
 `
 
-// name, expertise, reviewer, sign up date
 const columns = [
   { title: 'Name', dataIndex: 'displayName', key: 'displayName' },
   { title: 'Email', dataIndex: 'email', key: 'email' },
@@ -23,9 +43,12 @@ const columns = [
     render: arrayOfStrings => (
       <>
         {/* eslint-disable-next-line react/destructuring-assignment */}
-        {arrayOfStrings.map(s => (
-          <Tag key={uuid()}>{s}</Tag>
-        ))}
+        {arrayOfStrings &&
+          arrayOfStrings.map(course => (
+            <Tag key={uuid()}>
+              {profileOptions.courses.find(c => c.value === course)?.label}
+            </Tag>
+          ))}
       </>
     ),
   },
@@ -35,13 +58,22 @@ const columns = [
     key: 'isReviewer',
     render: isReviewer => (isReviewer ? 'Yes' : 'No'),
   },
-  { title: 'Sign up Date', dataIndex: 'signUpDate', key: 'signUpDate' },
+  {
+    title: 'Sign up Date',
+    dataIndex: 'signUpDate',
+    key: 'signUpDate',
+    render: date => (
+      <DateParser dateFormat="MMMM DD, YYYY" timestamp={date}>
+        {timestamp => timestamp}
+      </DateParser>
+    ),
+  },
 ]
 
-const PAGE_SIZE = 10
-
-// TO DO -- need to use DateParser from pubsweet ui here
-// TO DO -- buttons should open a warning modal
+const StyledSection = styled.section`
+  background: ${th('colorBackground')};
+  padding: ${grid(4)};
+`
 
 // QUESTION results placement seems a bit odd here
 const UserList = props => {
@@ -54,8 +86,11 @@ const UserList = props => {
     onBulkDelete,
     onPageChange,
     onSearch,
+    pageSize,
     searchLoading,
     totalUserCount,
+    selectedRows,
+    setSelectedRows,
   } = props
 
   const dataSource = data.map(i => {
@@ -63,61 +98,94 @@ const UserList = props => {
     return { key: id, ...rest }
   })
 
-  const [rowSelection, setRowSelection] = useState([])
-
   const handleSelectionChange = selectedRowKeys => {
-    setRowSelection(selectedRowKeys)
+    setSelectedRows(selectedRowKeys)
   }
 
-  const handleBulkDeactivateClick = () => {
-    onBulkDeactivate(rowSelection)
+  const handlePageChange = page => {
+    setSelectedRows([])
+    onPageChange(page)
   }
 
-  const handleBulkDeleteClick = () => {
-    onBulkDelete(rowSelection)
+  const toggleSelectAll = () => {
+    setSelectedRows(keys =>
+      keys.length === dataSource.length ? [] : dataSource.map(r => r.key),
+    )
+  }
+
+  const isCheckboxChecked = () => {
+    if (selectedRows.length === 0) {
+      return false
+    }
+
+    if (selectedRows.length < dataSource.length) {
+      return 'mixed'
+    }
+
+    return true
   }
 
   return (
     <Wrapper className={className}>
-      <Layout>
-        <Layout.Header>
-          <PageHeader>Manage Users</PageHeader>
-        </Layout.Header>
-
-        <Layout.Content>
-          <Table
-            columns={columns}
-            dataSource={dataSource}
-            loading={loading}
-            onSearch={onSearch}
-            pagination={{
-              current: currentPage,
-              onChange: onPageChange,
-              pageSize: PAGE_SIZE,
-              showSizeChanger: false,
-              total: totalUserCount,
-            }}
-            rowSelection={{
-              onChange: handleSelectionChange,
-            }}
-            searchLoading={searchLoading}
-            searchPlaceholder="Search for users"
-            showSearch
-          />
-        </Layout.Content>
-
-        <Layout.Footer>
+      <StyledSection>
+        <PageHeader>Manage Users</PageHeader>
+        <Table
+          columns={columns}
+          dataSource={dataSource}
+          loading={loading}
+          onSearch={onSearch}
+          pagination={{
+            current: currentPage,
+            onChange: handlePageChange,
+            pageSize,
+            showSizeChanger: false,
+            total: totalUserCount,
+          }}
+          rowSelection={{
+            onChange: handleSelectionChange,
+            selectedRowKeys: selectedRows,
+            columnTitle: (
+              <Checkbox
+                aria-checked={isCheckboxChecked()}
+                aria-label="Select all users"
+                checked={selectedRows.length}
+                indeterminate={
+                  selectedRows.length > 0 && selectedRows.length < data.length
+                  // or typeof isCheckboxChecked() === string
+                }
+                onChange={toggleSelectAll}
+              />
+            ),
+            renderCell: (_checked, record, _index, originNode) => {
+              return React.cloneElement(originNode, {
+                'aria-label': `Select user ${record.displayName}`,
+              })
+            },
+          }}
+          searchLoading={searchLoading}
+          searchPlaceholder="Search for users"
+          showSearch
+        />
+        <div>
           <ButtonGroup justify="right">
-            <Button onClick={handleBulkDeactivateClick} type="primary">
+            <Button
+              disabled={selectedRows.length === 0}
+              onClick={onBulkDeactivate}
+              type="primary"
+            >
               Deactivate
             </Button>
 
-            <Button onClick={handleBulkDeleteClick} type="danger">
+            <Button
+              disabled={selectedRows.length === 0}
+              onClick={onBulkDelete}
+              type="danger"
+            >
               Delete
             </Button>
           </ButtonGroup>
-        </Layout.Footer>
-      </Layout>
+        </div>
+      </StyledSection>
     </Wrapper>
   )
 }
@@ -128,7 +196,7 @@ UserList.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       displayName: PropTypes.string.isRequired,
-      expertise: PropTypes.string,
+      expertise: PropTypes.arrayOf(PropTypes.string),
       signUpDate: PropTypes.string.isRequired,
       isReviewer: PropTypes.bool.isRequired,
     }),
@@ -138,14 +206,19 @@ UserList.propTypes = {
   onBulkDelete: PropTypes.func.isRequired,
   onPageChange: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
+  pageSize: PropTypes.number,
+  selectedRows: PropTypes.arrayOf(PropTypes.string).isRequired,
+  setSelectedRows: PropTypes.func.isRequired,
   searchLoading: PropTypes.bool,
-  totalUserCount: PropTypes.number.isRequired,
+  totalUserCount: PropTypes.number,
 }
 
 UserList.defaultProps = {
   data: [],
   loading: false,
+  pageSize: 10,
   searchLoading: false,
+  totalUserCount: 0,
 }
 
 export default UserList

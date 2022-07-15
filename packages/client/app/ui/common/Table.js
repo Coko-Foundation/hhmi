@@ -1,13 +1,41 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
 import { Table as AntTable } from 'antd'
+
+import { grid } from '@coko/client'
 
 import Search from './Search'
 import Spin from './Spin'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  > div:last-child {
+    flex-grow: 1;
+
+    .ant-spin-nested-loading,
+    .ant-spin-container,
+    .ant-table-wrapper {
+      height: 100%;
+    }
+
+    .ant-table {
+      height: calc(100% - ${grid(16)});
+    }
+  }
+`
+
+const SearchWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: ${grid(3)};
+
+  > span {
+    max-width: 1200px;
+  }
+`
 
 const Table = props => {
   const {
@@ -24,11 +52,13 @@ const Table = props => {
   return (
     <Wrapper className={className}>
       {showSearch && (
-        <Search
-          loading={searchLoading}
-          onSearch={onSearch}
-          placeholder={searchPlaceholder}
-        />
+        <SearchWrapper>
+          <Search
+            loading={searchLoading}
+            onSearch={onSearch}
+            placeholder={searchPlaceholder}
+          />
+        </SearchWrapper>
       )}
 
       <Spin spinning={loading}>
