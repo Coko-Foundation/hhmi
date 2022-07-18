@@ -16,7 +16,7 @@ const VeriryCheckPage = props => {
   if (error) console.error(error)
 
   const resend = () => {
-    resendMutation()
+    resendMutation().catch(e => console.error(e))
     setVerifyingLoader(true)
     setTimeout(() => setVerifyingLoader(false), loaderDelay)
   }

@@ -22,7 +22,7 @@ const SignupPage = props => {
       },
     }
 
-    signupMutation(mutationData)
+    signupMutation(mutationData).catch(e => console.error(e))
   }
 
   return (
