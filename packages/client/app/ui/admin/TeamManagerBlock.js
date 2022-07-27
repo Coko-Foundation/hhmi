@@ -2,43 +2,55 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { grid } from '@coko/client'
+import { grid, th } from '@coko/client'
 
-import { Button as UIButton, List, Select } from '../common'
+import { Button as UIButton, H4, List, Select } from '../common'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  /* width: 100%; */
+`
 
 const SearchWrapper = styled.div`
   display: flex;
-  margin-bottom: ${grid(3)};
 `
 
-const Button = styled(UIButton)`
-  margin-left: ${grid(3)};
-`
+const AddButton = styled(UIButton)``
+const RemoveButton = styled(UIButton)``
+const Member = styled.div``
 
-const Member = styled.div`
-  padding: ${grid(2)};
+const StyledList = styled(List)`
+  .ant-list-items {
+    padding: ${grid(2)} 0;
+
+    > li:not(:last-child) {
+      border-bottom: 1px solid ${th('colorSecondary')};
+    }
+  }
 `
 
 // QUESTION: reviewers should probably be handled differently given the length of the list
 // QUESTION: should we also have a delete button on each row?
 const TeamManagerBlock = props => {
   const {
+    displayName,
     className,
     members,
     onAdd,
+    onRemove,
     onSearch,
     onRowSelectionChange,
     searchLoading,
     searchOptions,
+    teamId,
   } = props
 
   const [selectData, setSelectData] = useState([])
   const [selectUserCount, setSelectUserCount] = useState(0)
+  const [selectTeamMember, setSelectTeamMember] = useState([])
 
   const handleRowSelectionChange = userIds => {
-    onRowSelectionChange(userIds)
+    onRowSelectionChange(teamId, userIds)
+    setSelectTeamMember(userIds)
   }
 
   const handleSelectChange = (userIds, options) => {
@@ -47,14 +59,22 @@ const TeamManagerBlock = props => {
   }
 
   const handleAdd = () => {
-    Promise.resolve(onAdd(selectData)).then(() => {
+    Promise.resolve(onAdd(teamId, selectData)).then(() => {
       setSelectData([])
       setSelectUserCount(0)
     })
   }
 
+  const handleRemove = () => {
+    Promise.resolve(onRemove(teamId, selectTeamMember)).then(() => {
+      onRowSelectionChange(teamId, [])
+      setSelectTeamMember([])
+    })
+  }
+
   return (
     <Wrapper className={className}>
+      <H4>{displayName}</H4>
       <SearchWrapper>
         <Select
           async
@@ -69,27 +89,39 @@ const TeamManagerBlock = props => {
           value={selectData}
         />
 
-        <Button
+        <AddButton
           disabled={selectUserCount === 0}
           onClick={handleAdd}
           type="primary"
         >
           Add User{selectUserCount > 1 && 's'}
-        </Button>
+        </AddButton>
       </SearchWrapper>
 
-      <List
+      <StyledList
         dataSource={members}
         itemSelection={{
           onChange: handleRowSelectionChange,
         }}
         renderItem={member => <Member>{member.displayName}</Member>}
+        showPagination={false}
       />
+
+      {!!members?.length && (
+        <RemoveButton
+          disabled={selectTeamMember.length === 0}
+          onClick={handleRemove}
+          type="danger"
+        >
+          Remove Selected User{selectTeamMember.length > 1 ? 's' : ''} from Team
+        </RemoveButton>
+      )}
     </Wrapper>
   )
 }
 
 TeamManagerBlock.propTypes = {
+  displayName: PropTypes.string.isRequired,
   members: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -97,6 +129,7 @@ TeamManagerBlock.propTypes = {
     }),
   ),
   onAdd: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
   onRowSelectionChange: PropTypes.func.isRequired,
   searchLoading: PropTypes.bool,
@@ -106,6 +139,7 @@ TeamManagerBlock.propTypes = {
       value: PropTypes.string,
     }),
   ),
+  teamId: PropTypes.string.isRequired,
 }
 
 TeamManagerBlock.defaultProps = {

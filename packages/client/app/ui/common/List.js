@@ -13,6 +13,7 @@ import Search from './Search'
 import UISelect from './Select'
 import Spin from './Spin'
 
+// #region styled
 const Wrapper = styled.div`
   background-color: ${th('colorBackground')};
   display: flex;
@@ -87,6 +88,7 @@ const FooterWrapper = styled.div`
 const CheckBox = styled(UICheckBox)`
   padding: ${grid(2)};
 `
+// #endregion styled
 
 const compareItem = (preProps, nextProps) => {
   if (preProps.id === nextProps.id && preProps.selected === nextProps.selected)
@@ -180,6 +182,7 @@ const List = props => {
     onSortOptionChange,
     searchLoading,
     searchPlaceholder,
+    showPagination,
     showSearch,
     showSort,
     showTotalCount,
@@ -196,6 +199,14 @@ const List = props => {
       itemSelection.onChange &&
       itemSelection.onChange(selectedItems)
   }, [selectedItems])
+
+  // Clears selection when new data comes in
+  // Necessary to clear the state after delete operations, otherwise the
+  // selection will now keep rows that no longer exist
+  // What we lose here is the ability to retain the selected rows if the data changes
+  useEffect(() => {
+    setSelectedItems([])
+  }, [dataSource])
 
   const handleSelect = useFunction(id => {
     setSelectedItems([...selectedItems, id])
@@ -292,12 +303,6 @@ const List = props => {
     passedPagination.current = largestPage
   }
 
-  // should be optional when we move to common libs?
-  // const shouldShowPagination =
-  //   passedPagination.total > splitDataSource.length ||
-  //   splitDataSource.length > 10 // hardcoded 10 for pageSize, bcs if we set pageSize > data.length pagination will disapear with no chance of getting it back
-  const shouldShowPagination = true
-
   const showInternalHeaderRow = showSort || showTotalCount
   const defaultSortOption = sortOptions && sortOptions.find(o => o.isDefault)
 
@@ -309,7 +314,7 @@ const List = props => {
 
   useEffect(() => {
     // enhance accessibility of pagination
-    if (shouldShowPagination) {
+    if (showPagination) {
       const pageItems = paginationRef.current.querySelectorAll(
         '.ant-pagination-item',
       )
@@ -326,7 +331,7 @@ const List = props => {
         page.setAttribute('aria-label', label)
       })
     }
-  }, [paginationCurrent, paginationSize, shouldShowPagination])
+  }, [paginationCurrent, paginationSize, showPagination])
 
   return (
     <Wrapper className={className}>
@@ -376,19 +381,25 @@ const List = props => {
           {...rest}
         />
 
-        <FooterWrapper>
-          {footerContent || <div />}
+        {(footerContent || showPagination) && (
+          <FooterWrapper>
+            {footerContent || <div />}
 
-          {shouldShowPagination && (
-            <nav aria-label="Pagination" ref={paginationRef} role="navigation">
-              <Pagination
-                {...passedPagination}
-                onChange={onPaginationChange}
-                onShowSizeChange={onPaginationShowSizeChange}
-              />
-            </nav>
-          )}
-        </FooterWrapper>
+            {showPagination && (
+              <nav
+                aria-label="Pagination"
+                ref={paginationRef}
+                role="navigation"
+              >
+                <Pagination
+                  {...passedPagination}
+                  onChange={onPaginationChange}
+                  onShowSizeChange={onPaginationShowSizeChange}
+                />
+              </nav>
+            )}
+          </FooterWrapper>
+        )}
         {/* </ConfigProvider> */}
       </Spin>
     </Wrapper>
@@ -405,6 +416,7 @@ List.propTypes = {
   onSortOptionChange: PropTypes.func,
   searchLoading: PropTypes.bool,
   searchPlaceholder: PropTypes.string,
+  showPagination: PropTypes.bool,
   showSearch: PropTypes.bool,
   showSort: PropTypes.bool,
   showTotalCount: PropTypes.bool,
@@ -419,12 +431,13 @@ List.propTypes = {
 }
 
 List.defaultProps = {
-  footerContent: <div />,
+  footerContent: null,
   itemSelection: null,
   loading: false,
   onSearch: null,
   onSortOptionChange: null,
   searchLoading: false,
+  showPagination: true,
   searchPlaceholder: null,
   showSearch: false,
   showSort: false,

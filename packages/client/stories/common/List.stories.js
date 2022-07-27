@@ -297,6 +297,42 @@ export const SelectableRows = () => {
 
 export const EmptyList = () => <List dataSource={[]} />
 
+export const HidePagination = () => {
+  const N = 9
+
+  return (
+    <List
+      dataSource={makeData(N)}
+      renderItem={item => <Item>{item.value}</Item>}
+      showPagination={false}
+      showTotalCount
+      totalCount={N}
+    />
+  )
+}
+
+export const HidePaginationButUseAction = () => {
+  const N = 19
+
+  const BulkAction = (
+    // eslint-disable-next-line no-console
+    <Button onClick={() => console.log('bulk action')} type="primary">
+      Assign handling editor
+    </Button>
+  )
+
+  return (
+    <List
+      dataSource={makeData(N)}
+      footerContent={BulkAction}
+      renderItem={item => <Item>{item.value}</Item>}
+      showPagination={false}
+      showTotalCount
+      totalCount={N}
+    />
+  )
+}
+
 export default {
   component: List,
   title: 'Common/List',
