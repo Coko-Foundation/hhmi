@@ -14,6 +14,12 @@ module.exports = {
       globalSetup: '<rootDir>/models/__tests__/_setup.js',
       // globalTeardown: '<rootDir>/src/models/__tests__/_teardown.js',
     },
+    {
+      displayName: 'controllers',
+      testEnvironment: 'node',
+      testRegex: 'controllers/__tests__/.+test.js$',
+      globalSetup: '<rootDir>/models/__tests__/_setup.js',
+    },
   ],
   maxWorkers: 1,
 }

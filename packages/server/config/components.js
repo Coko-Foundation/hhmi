@@ -10,6 +10,7 @@ module.exports = [
   // local models
   './models/question',
   './models/questionVersion',
+  './models/team',
   './models/user',
 
   // local graphql api

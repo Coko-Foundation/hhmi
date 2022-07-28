@@ -2,6 +2,10 @@ const { useTransaction } = require('@coko/server')
 
 const { Team } = require('../models')
 
+const getNonTeamMemberUsers = async (teamId, searchValue) => {
+  return Team.searchForNonTeamMemberUsers(teamId, searchValue)
+}
+
 const updateGlobalTeams = async teams => {
   return useTransaction(async trx => {
     const result = []
@@ -20,4 +24,4 @@ const updateGlobalTeams = async teams => {
   })
 }
 
-module.exports = { updateGlobalTeams }
+module.exports = { updateGlobalTeams, getNonTeamMemberUsers }

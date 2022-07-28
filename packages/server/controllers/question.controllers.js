@@ -1,9 +1,8 @@
 const config = require('config')
 
 const { logger, useTransaction } = require('@coko/server')
-const Team = require('@coko/server/src/models/team/team.model')
 
-const { Question, QuestionVersion } = require('../models')
+const { Question, QuestionVersion, Team } = require('../models')
 const { labels } = require('./constants')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author

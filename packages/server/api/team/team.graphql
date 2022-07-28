@@ -1,0 +1,12 @@
+input UpdateGlobalTeamsInput {
+  id: ID!
+  members: [ID!]!
+}
+
+extend type Query {
+  getNonTeamMemberUsers(teamId: ID!, term: String!): [User!]!
+}
+
+extend type Mutation {
+  updateGlobalTeams(input: [UpdateGlobalTeamsInput!]!): [Team!]!
+}
