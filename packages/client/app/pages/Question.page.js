@@ -16,11 +16,7 @@ import {
   MOVE_QUESTION_VERSION_TO_REVIEW,
   PUBLISH_QUESTION_VERSION,
 } from '../graphql'
-import {
-  metadataForQuestionPage,
-  // hasRole,
-  hasGlobalRole,
-} from '../utilities'
+import { metadataForQuestionPage, hasRole, hasGlobalRole } from '../utilities'
 
 const AUTOSAVE_DELAY = 500
 
@@ -182,7 +178,7 @@ const QuestionPage = () => {
 
   const user = currentUserData?.currentUser
   const isEditor = hasGlobalRole(user, 'editor')
-  // const isAuthor = hasRole(user, 'author', id)
+  const isAuthor = hasRole(user, 'author', id)
 
   // const isEditor = true
 
@@ -272,7 +268,7 @@ const QuestionPage = () => {
   return (
     <Question
       editorContent={editorContent}
-      editorView={isEditor}
+      editorView={isEditor && !isAuthor}
       facultyView={false} //
       initialMetadataValues={initialMetadata}
       isSubmitted={version.submitted}

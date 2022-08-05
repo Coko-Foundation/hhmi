@@ -167,7 +167,9 @@ const DashboardPage = () => {
     queryMapper.query[currentTabKey](queryVariables)
   }
 
-  const [createQuestionMutation] = useMutation(CREATE_QUESTION)
+  const [createQuestionMutation] = useMutation(CREATE_QUESTION, {
+    refetchQueries: [{ query: CURRENT_USER }],
+  })
   // #endregion hooks
 
   // #region handlers
