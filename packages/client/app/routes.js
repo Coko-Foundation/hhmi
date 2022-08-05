@@ -106,12 +106,16 @@ const Header = () => {
         <StyledLink to="/dashboard">HHMI</StyledLink>
       </div>
       <div>
-        <div>
-          <StyledLink to="/manage-users">User Manager</StyledLink>
-        </div>
-        <div>
-          <StyledLink to="/manage-teams">Team Manager</StyledLink>
-        </div>
+        {currentUser && (
+          <>
+            <div>
+              <StyledLink to="/manage-users">User Manager</StyledLink>
+            </div>
+            <div>
+              <StyledLink to="/manage-teams">Team Manager</StyledLink>
+            </div>
+          </>
+        )}
         <div>{currentUser?.displayName}</div>
         <div>{currentUser && <LogoutButton />}</div>
       </div>
