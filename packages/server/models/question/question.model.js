@@ -120,17 +120,20 @@ class Question extends BaseModel {
   static async findByExcludingRole(userId, role, options = {}) {
     const { submittedOnly } = options
 
-    let query = Question.query(options.trx).whereNotIn('id', builder => {
-      return builder
-        .select('questions.id')
-        .from('questions')
-        .leftJoin('teams', 'teams.objectId', 'questions.id')
-        .leftJoin('team_members', 'team_members.team_id', 'teams.id')
-        .where({
-          role,
-          userId,
-        })
-    })
+    let query = Question.query(options.trx).whereNotIn(
+      'questions.id',
+      builder => {
+        return builder
+          .select('questions.id')
+          .from('questions')
+          .leftJoin('teams', 'teams.objectId', 'questions.id')
+          .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+          .where({
+            role,
+            userId,
+          })
+      },
+    )
 
     if (options.searchQuery) {
       query
@@ -143,7 +146,7 @@ class Question extends BaseModel {
     }
 
     if (submittedOnly)
-      query = query.whereIn('id', builder => {
+      query = query.whereIn('questions.id', builder => {
         return builder
           .select('questions.id')
           .from('questions')
