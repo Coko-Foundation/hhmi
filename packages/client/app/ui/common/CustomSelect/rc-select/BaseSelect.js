@@ -86,6 +86,7 @@ const BaseSelect = React.forwardRef((props, ref) => {
     emptyOptions,
     notFoundContent = 'Not Found',
     onClear,
+    hasOptionList,
 
     // Mode
     mode,
@@ -653,6 +654,7 @@ const BaseSelect = React.forwardRef((props, ref) => {
           activeDescendantId={activeDescendantId}
           activeValue={activeValue}
           domRef={selectorDomRef}
+          hasOptionList={hasOptionList}
           id={id}
           inputElement={customizeInputElement}
           mode={mode}

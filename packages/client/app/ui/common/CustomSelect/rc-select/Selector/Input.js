@@ -47,6 +47,7 @@ const Input = (
     activeDescendantId,
     value,
     maxLength,
+    hasOptionList,
     onKeyDown,
     onMouseDown,
     onChange,
@@ -77,7 +78,6 @@ const Input = (
   )
 
   inputNode = React.cloneElement(inputNode, {
-    type: 'search',
     ...originProps,
 
     // Override over origin props
@@ -93,13 +93,18 @@ const Input = (
       inputNode?.props?.className,
     ),
 
-    role: 'combobox',
-    'aria-expanded': open,
-    'aria-haspopup': 'listbox',
-    'aria-owns': `${id}_list`,
-    'aria-autocomplete': 'list',
-    'aria-controls': `${id}_list`,
-    'aria-activedescendant': activeDescendantId,
+    ...(hasOptionList
+      ? {
+          type: 'search',
+          role: 'combobox',
+          'aria-expanded': open,
+          'aria-haspopup': 'listbox',
+          'aria-owns': `${id}_list`,
+          'aria-autocomplete': 'list',
+          'aria-controls': `${id}_list`,
+          'aria-activedescendant': activeDescendantId,
+        }
+      : { type: 'text' }),
     ...attrs,
     value: editable ? value : '',
     maxLength,

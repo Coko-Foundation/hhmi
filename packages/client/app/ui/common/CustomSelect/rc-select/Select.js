@@ -559,17 +559,18 @@ const Select = React.forwardRef((props, ref) => {
         // >>> Values
         emptyOptions={!displayOptions.length}
         forceRender={preRenderOptionList}
+        hasOptionList={mode !== 'tags' || parsedOptions.options.length > 0}
         // >>> Search
         id={mergedId}
         mode={mode}
         omitDomProps={OMIT_DOM_PROPS}
-        onDisplayValuesChange={onDisplayValuesChange}
         // >>> OptionList
+        onDisplayValuesChange={onDisplayValuesChange}
         onSearch={onInternalSearch}
         onSearchSplit={onInternalSearchSplit}
         OptionList={OptionList}
-        prefixCls={prefixCls}
         // >>> Accessibility
+        prefixCls={prefixCls}
         ref={ref}
         searchValue={mergedSearchValue}
       />

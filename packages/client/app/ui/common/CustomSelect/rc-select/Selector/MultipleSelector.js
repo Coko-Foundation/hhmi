@@ -65,6 +65,7 @@ const SelectSelector = props => {
     maxTagPlaceholder = omittedValues => `+ ${omittedValues.length} ...`,
     tagRender,
     onToggleOpen,
+    hasOptionList,
 
     onRemove,
     onInputChange,
@@ -217,6 +218,7 @@ const SelectSelector = props => {
         autoFocus={autoFocus}
         disabled={disabled}
         editable={inputEditable}
+        hasOptionList={hasOptionList}
         id={id}
         inputElement={null}
         onChange={onInputChange}
