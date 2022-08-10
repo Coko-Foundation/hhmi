@@ -4,22 +4,16 @@
 /* eslint-disable no-case-declarations */
 import * as React from 'react'
 import { useEffect } from 'react'
-// import type { ScrollConfig } from 'rc-virtual-list/lib/List';
 import KeyCode from 'rc-util/lib/KeyCode'
 import omit from 'rc-util/lib/omit'
 import pickAttrs from 'rc-util/lib/pickAttrs'
 import useMemo from 'rc-util/lib/hooks/useMemo'
 import classNames from 'classnames'
-// import type { ListRef } from 'rc-virtual-list';
 import List from 'rc-virtual-list'
 import TransBtn from './TransBtn'
 import isPlatformMac from './utils/platformUtil'
 import useBaseProps from './hooks/useBaseProps'
 import SelectContext from './SelectContext'
-// import type { BaseOptionType, RawValueType } from './Select';
-// import type { FlattenOptionData } from './interface';
-
-// export interface OptionListProps<OptionsType extends object[]> {
 
 function isTitleType(content) {
   return typeof content === 'string' || typeof content === 'number'

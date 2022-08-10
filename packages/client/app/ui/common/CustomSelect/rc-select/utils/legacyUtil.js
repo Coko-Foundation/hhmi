@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as React from 'react'
 import toArray from 'rc-util/lib/Children/toArray'
-// import type { BaseOptionType, DefaultOptionType } from '../Select';
 
 function convertNodeToOption(node) {
   const {

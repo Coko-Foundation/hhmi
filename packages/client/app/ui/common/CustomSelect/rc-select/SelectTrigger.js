@@ -2,9 +2,7 @@
 /* eslint-disable react/prop-types */
 import * as React from 'react'
 import Trigger from 'rc-trigger'
-// import type { AlignType } from 'rc-trigger/lib/interface';
 import classNames from 'classnames'
-// import type { Placement, RenderDOMFunc } from './BaseSelect';
 
 const getBuiltInPlacements = dropdownMatchSelectWidth => {
   // Enable horizontal overflow auto-adjustment when a custom dropdown width is provided
@@ -45,37 +43,6 @@ const getBuiltInPlacements = dropdownMatchSelectWidth => {
   }
 }
 
-// export interface RefTriggerProps {
-//   getPopupElement: () => HTMLDivElement;
-// }
-
-// export interface SelectTriggerProps {
-//   prefixCls: string;
-//   children: React.ReactElement;
-//   disabled: boolean;
-//   visible: boolean;
-//   popupElement: React.ReactElement;
-//   forceRender: boolean;
-
-//   animation?: string;
-//   transitionName?: string;
-//   containerWidth: number;
-//   placement?: Placement;
-//   dropdownStyle: React.CSSProperties;
-//   dropdownClassName: string;
-//   direction: string;
-//   dropdownMatchSelectWidth?: boolean | number;
-//   dropdownRender?: (menu: React.ReactElement) => React.ReactElement;
-//   getPopupContainer?: RenderDOMFunc;
-//   dropdownAlign: AlignType;
-//   empty: boolean;
-
-//   getTriggerDOMNode: () => HTMLElement;
-//   onPopupVisibleChange?: (visible: boolean) => void;
-
-//   onPopupMouseEnter: () => void;
-// }
-
 const SelectTrigger = (props, ref) => {
   const {
     prefixCls,
@@ -98,7 +65,6 @@ const SelectTrigger = (props, ref) => {
     getTriggerDOMNode,
     onPopupVisibleChange,
     onPopupMouseEnter,
-    // forceRender,
     ...restProps
   } = props
 
@@ -142,7 +108,6 @@ const SelectTrigger = (props, ref) => {
     <Trigger
       {...restProps}
       builtinPlacements={builtInPlacements}
-      // forceRender={forceRender}
       getPopupContainer={getPopupContainer}
       getTriggerDOMNode={getTriggerDOMNode}
       hideAction={onPopupVisibleChange ? ['click'] : []}

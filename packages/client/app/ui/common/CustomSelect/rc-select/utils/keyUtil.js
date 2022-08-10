@@ -2,7 +2,6 @@
 import KeyCode from 'rc-util/lib/KeyCode'
 
 /** keyCode Judgment function */
-// export function isValidateOpenKey(currentKeyCode) {
 export default currentKeyCode => {
   return ![
     // System function button

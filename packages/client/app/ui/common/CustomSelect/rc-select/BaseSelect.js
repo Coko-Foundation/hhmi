@@ -3,17 +3,12 @@
 /* eslint-disable react/prop-types */
 import * as React from 'react'
 import classNames from 'classnames'
-// import type { AlignType } from 'rc-trigger/lib/interface';
 import KeyCode from 'rc-util/lib/KeyCode'
 import isMobile from 'rc-util/lib/isMobile'
-// import { useComposeRef } from 'rc-util/lib/ref'
-// import type { ScrollTo, ScrollConfig } from 'rc-virtual-list/lib/List';
 import useMergedState from 'rc-util/lib/hooks/useMergedState'
-// import useLayoutEffect from 'rc-util/lib/hooks/useLayoutEffect'
+// import { useLayoutEffect } from 'rc-util/lib/hooks/useLayoutEffect'
 import { getSeparatedContent } from './utils/valueUtil'
-// import type { RefTriggerProps } from './SelectTrigger';
 import SelectTrigger from './SelectTrigger'
-// import type { RefSelectorProps } from './Selector';
 import Selector from './Selector'
 import useSelectTriggerControl from './hooks/useSelectTriggerControl'
 import useDelayReset from './hooks/useDelayReset'
@@ -70,172 +65,6 @@ const DEFAULT_OMIT_PROPS = [
   'onPopupScroll',
   'tabIndex',
 ]
-
-// export type RenderNode = React.ReactNode | ((props: any) => React.ReactNode);
-
-// export type RenderDOMFunc = (props: any) => HTMLElement;
-
-// export type Mode = 'multiple' | 'tags' | 'combobox';
-
-// export type Placement = 'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight';
-
-// export type RawValueType = string | number;
-
-// export interface RefOptionListProps {
-//   onKeyDown: React.KeyboardEventHandler;
-//   onKeyUp: React.KeyboardEventHandler;
-//   scrollTo?: (args: number | ScrollConfig) => void;
-// }
-
-// export type CustomTagProps = {
-//   label: React.ReactNode;
-//   value: any;
-//   disabled: boolean;
-//   onClose: (event?: React.MouseEvent<HTMLElement, MouseEvent>) => void;
-//   closable: boolean;
-// };
-
-// export interface DisplayValueType {
-//   key?: React.Key;
-//   value?: RawValueType;
-//   label?: React.ReactNode;
-//   disabled?: boolean;
-// }
-
-// export interface BaseSelectRef {
-//   focus: () => void;
-//   blur: () => void;
-//   scrollTo: ScrollTo;
-// }
-
-// export interface BaseSelectPrivateProps {
-//   // >>> MISC
-//   id: string;
-//   prefixCls: string;
-//   omitDomProps?: string[];
-
-//   // >>> Value
-//   displayValues: DisplayValueType[];
-//   onDisplayValuesChange: (
-//     values: DisplayValueType[],
-//     info: {
-//       type: 'add' | 'remove' | 'clear';
-//       values: DisplayValueType[];
-//     },
-//   ) => void;
-
-//   // >>> Active
-//   /** Current dropdown list active item string value */
-//   activeValue?: string;
-//   /** Link search input with target element */
-//   activeDescendantId?: string;
-//   onActiveValueChange?: (value: string | null) => void;
-
-//   // >>> Search
-//   searchValue: string;
-//   /** Trigger onSearch, return false to prevent trigger open event */
-//   onSearch: (
-//     searchValue: string,
-//     info: {
-//       source:
-//         | 'typing' //User typing
-//         | 'effect' // Code logic trigger
-//         | 'submit' // tag mode only
-//         | 'blur'; // Not trigger event
-//     },
-//   ) => void;
-//   /** Trigger when search text match the `tokenSeparators`. Will provide split content */
-//   onSearchSplit?: (words: string[]) => void;
-
-//   // >>> Dropdown
-//   OptionList: React.ForwardRefExoticComponent<
-//     React.PropsWithoutRef<any> & React.RefAttributes<RefOptionListProps>
-//   >;
-//   /** Tell if provided `options` is empty */
-//   emptyOptions: boolean;
-// }
-
-// export type BaseSelectPropsWithoutPrivate = Omit<BaseSelectProps, keyof BaseSelectPrivateProps>;
-
-// export interface BaseSelectProps extends BaseSelectPrivateProps, React.AriaAttributes {
-//   className?: string;
-//   style?: React.CSSProperties;
-//   showSearch?: boolean;
-//   tagRender?: (props: CustomTagProps) => React.ReactElement;
-//   direction?: 'ltr' | 'rtl';
-//   maxLength?: number;
-
-//   // MISC
-//   tabIndex?: number;
-//   autoFocus?: boolean;
-//   notFoundContent?: React.ReactNode;
-//   placeholder?: React.ReactNode;
-//   onClear?: () => void;
-
-//   choiceTransitionName?: string;
-
-//   // >>> Mode
-//   mode?: Mode;
-
-//   // >>> Status
-//   disabled?: boolean;
-//   loading?: boolean;
-
-//   // >>> Open
-//   open?: boolean;
-//   defaultOpen?: boolean;
-//   onDropdownVisibleChange?: (open: boolean) => void;
-
-//   // >>> Customize Input
-//   /** @private Internal usage. Do not use in your production. */
-//   getInputElement?: () => JSX.Element;
-//   /** @private Internal usage. Do not use in your production. */
-//   getRawInputElement?: () => JSX.Element;
-
-//   // >>> Selector
-//   maxTagTextLength?: number;
-//   maxTagCount?: number | 'responsive';
-//   maxTagPlaceholder?: React.ReactNode | ((omittedValues: DisplayValueType[]) => React.ReactNode);
-
-//   // >>> Search
-//   tokenSeparators?: string[];
-
-//   // >>> Icons
-//   allowClear?: boolean;
-//   showArrow?: boolean;
-//   inputIcon?: RenderNode;
-//   /** Clear all icon */
-//   clearIcon?: RenderNode;
-//   /** Selector remove icon */
-//   removeIcon?: RenderNode;
-
-//   // >>> Dropdown
-//   animation?: string;
-//   transitionName?: string;
-//   dropdownStyle?: React.CSSProperties;
-//   dropdownClassName?: string;
-//   dropdownMatchSelectWidth?: boolean | number;
-//   dropdownRender?: (menu: React.ReactElement) => React.ReactElement;
-//   dropdownAlign?: AlignType;
-//   placement?: Placement;
-//   getPopupContainer?: RenderDOMFunc;
-//   forceRender?: boolean
-
-//   // >>> Focus
-//   showAction?: ('focus' | 'click')[];
-//   onBlur?: React.FocusEventHandler<HTMLElement>;
-//   onFocus?: React.FocusEventHandler<HTMLElement>;
-
-//   // >>> Rest Events
-//   onKeyUp?: React.KeyboardEventHandler<HTMLDivElement>;
-//   onKeyDown?: React.KeyboardEventHandler<HTMLDivElement>;
-//   onMouseDown?: React.MouseEventHandler<HTMLDivElement>;
-//   onPopupScroll?: React.UIEventHandler<HTMLDivElement>;
-//   onInputKeyDown?: React.KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-//   onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
-//   onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
-//   onClick?: React.MouseEventHandler<HTMLDivElement>;
-// }
 
 export function isMultiple(mode) {
   return mode === 'tags' || mode === 'multiple'

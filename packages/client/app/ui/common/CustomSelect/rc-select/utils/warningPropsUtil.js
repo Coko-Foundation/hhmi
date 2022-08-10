@@ -3,14 +3,6 @@ import toNodeArray from 'rc-util/lib/Children/toArray'
 import warning, { noteOnce } from 'rc-util/lib/warning'
 import * as React from 'react'
 import { isMultiple } from '../BaseSelect'
-// import type {
-//   BaseOptionType,
-//   DefaultOptionType,
-//   FieldNames,
-//   LabelInValueType,
-//   RawValueType,
-//   SelectProps,
-// } from '../Select';
 import { toArray } from './commonUtil'
 import convertChildrenToData from './legacyUtil'
 

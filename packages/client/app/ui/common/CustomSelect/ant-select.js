@@ -3,43 +3,15 @@
 // TODO: 4.0 - codemod should help to change `filterOption` to support node props.
 
 import classNames from 'classnames'
-// import type { SelectProps as RcSelectProps } from 'rc-select';
 import omit from 'rc-util/lib/omit'
 import * as React from 'react'
 import { useContext } from 'react'
-import {
-  //   ConfigContext,
-  ConfigProvider,
-  Empty,
-} from 'antd'
+import { ConfigProvider, Empty } from 'antd'
 import { FormItemContext } from 'antd/lib/form/context'
 import RcSelect, { OptGroup, Option } from './rc-select'
-// import { OptionProps } from './rc-select/lib/Option';
-// import type { BaseOptionType, DefaultOptionType } from 'rc-select/lib/Select';
-// import { ConfigContext } from '../config-provider';
-// import defaultRenderEmpty from '../config-provider/defaultRenderEmpty' // NOT AVAILABLE
-// import DisabledContext from 'antd/config-provider/DisabledContext' // NOT AVAILABLE
-// import type { SizeType } from '../config-provider/SizeContext';
-// import SizeContext from '../config-provider/SizeContext' // above as ConfigProvider.SizeContext
-// import type { SelectCommonPlacement } from '../_util/motion';
-// import { getTransitionDirection, getTransitionName } from '../_util/motion'
-// import type { InputStatus } from '../_util/statusUtils';
-// import { getMergedStatus, getStatusClassNames } from '../_util/statusUtils'
 import getIcons from './iconUtil'
 
-// type RawValue = string | number;
-
-// export { BaseOptionType, DefaultOptionType };
 const DisabledContext = React.createContext(false)
-
-// const DisabledContextProvider = ({ children, disabled }) => {
-//   const originDisabled = React.useContext(DisabledContext);
-//   return (
-//     <DisabledContext.Provider value={disabled || originDisabled}>
-//       {children}
-//     </DisabledContext.Provider>
-//   );
-// };
 
 const SECRET_COMBOBOX_MODE_DO_NOT_USE = 'SECRET_COMBOBOX_MODE_DO_NOT_USE'
 
@@ -177,7 +149,6 @@ const InternalSelect = (
 
   // ===================== Disabled =====================
   const disabled = React.useContext(DisabledContext)
-  // const disabled = React.createContext(false)
   const mergedDisabled = customDisabled || disabled
 
   const mergedClassName = classNames(

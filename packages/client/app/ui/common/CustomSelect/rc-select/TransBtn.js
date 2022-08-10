@@ -2,16 +2,6 @@
 /* eslint-disable react/prop-types */
 import * as React from 'react'
 import classNames from 'classnames'
-// import type { RenderNode } from './BaseSelect';
-
-// export interface TransBtnProps {
-//   className: string;
-//   customizeIcon: RenderNode;
-//   customizeIconProps?: any;
-//   onMouseDown?: React.MouseEventHandler<HTMLSpanElement>;
-//   onClick?: React.MouseEventHandler<HTMLSpanElement>;
-//   children?: React.ReactNode;
-// }
 
 const TransBtn = ({
   className,

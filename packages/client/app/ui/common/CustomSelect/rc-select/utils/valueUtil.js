@@ -1,8 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-// import type { BaseOptionType, DefaultOptionType } from '../Select';
 import warning from 'rc-util/lib/warning'
-// import type { RawValueType, FieldNames } from '../Select';
-// import type { FlattenOptionData } from '../interface';
 
 function getKey(data, index) {
   const { key } = data
