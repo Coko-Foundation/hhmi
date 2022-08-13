@@ -667,7 +667,43 @@ const introToBioMeta = metadata.introToBioMeta.map(data => {
   }
 })
 
+const questionTypes = [
+  {
+    value: 'multipleChoice',
+    label: 'Multiple choice',
+  },
+  {
+    value: 'multipleChoiceSingleCorrect',
+    label: 'Multiple choice (single correct)',
+  },
+  {
+    value: 'trueFalse',
+    label: 'True / False',
+  },
+  {
+    value: 'trueFalseSingleCorrect',
+    label: 'True / False (single correct)',
+  },
+  {
+    value: 'fillInTheBlank',
+    label: 'Fill in the blank',
+  },
+  {
+    value: 'essay',
+    label: 'Essay',
+  },
+  {
+    value: 'matching',
+    label: 'Matching',
+  },
+  {
+    value: 'multipleDropdowns',
+    label: 'Multiple dropdowns',
+  },
+]
+
 const metadataForQuestionPage = {
+  questionTypes,
   topics: metadata.topics,
   blooms: metadata.blooms,
   frameworks,
@@ -685,4 +721,5 @@ export {
   profileOptions,
   questionDataMapper,
   questionDataTransformer,
+  questionTypes,
 }

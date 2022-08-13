@@ -11,6 +11,7 @@ import {
   flatIBCourseMetadata,
   flatVisionAndChangeMetadata,
   flatAAMCMetadata,
+  questionTypes,
 } from '../../app/utilities'
 
 const Wrapper = styled.div`
@@ -252,6 +253,7 @@ const introToBioMeta = metadata.introToBioMeta.map(data => {
 })
 
 const flatMeta = {
+  questionTypes,
   topics: metadata.topics,
   blooms: metadata.blooms,
   frameworks,

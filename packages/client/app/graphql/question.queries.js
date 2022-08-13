@@ -155,6 +155,8 @@ export const QUESTION = gql`
         affectiveLevel
         psychomotorLevel
         readingLevel
+
+        questionType
       }
     }
   }
@@ -179,6 +181,8 @@ export const UPDATE_QUESTION = gql`
         submitted
         underReview
         published
+
+        questionType
 
         topics {
           topic

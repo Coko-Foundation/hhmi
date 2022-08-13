@@ -140,6 +140,8 @@ class QuestionVersion extends BaseModel {
         affectiveLevel: stringNullable,
         psychomotorLevel: stringNullable,
         readingLevel: stringNullable,
+
+        questionType: stringNullable,
       },
     }
   }

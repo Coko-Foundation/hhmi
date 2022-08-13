@@ -8,6 +8,7 @@ import {
   flatIBCourseMetadata,
   flatVisionAndChangeMetadata,
   flatAAMCMetadata,
+  questionTypes,
 } from '../../app/utilities'
 
 const initialValues = {
@@ -113,6 +114,7 @@ export const Author = () => {
     })
 
     setFlatMetadata({
+      questionTypes,
       topics: metadata.topics,
       blooms: metadata.blooms,
       frameworks,
@@ -187,6 +189,7 @@ export const Editor = args => {
     })
 
     setFlatMetadata({
+      questionTypes,
       topics: metadata.topics,
       blooms: metadata.blooms,
       frameworks,

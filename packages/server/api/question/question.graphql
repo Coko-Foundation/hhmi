@@ -31,6 +31,8 @@ type QuestionVersion {
   affectiveLevel: String
   psychomotorLevel: String
   readingLevel: String
+
+  questionType: String
 }
 
 type Topic {
@@ -69,6 +71,8 @@ type QuestionsResponse {
 input UpdateQuestionInput {
   agreedTc: Boolean
   content: String
+
+  questionType: String
 
   topics: [TopicInput!]
   courses: [CourseInput!]

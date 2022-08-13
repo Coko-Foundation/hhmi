@@ -232,6 +232,17 @@ const Metadata = React.forwardRef((props, ref) => {
         onAutoSave={onAutoSave}
         onFinish={onFormFinish}
       >
+        <Form.Item
+          label="Question Type"
+          name="questionType"
+          rules={[{ required: true, message: 'Question type is required' }]}
+        >
+          <Select
+            // allowClear
+            disabled={readOnly}
+            options={metadata.questionTypes}
+          />
+        </Form.Item>
         <Form.List name={topicsKey} noStyle>
           {(_, { add, remove }) => (
             <StyledSupplementaryFieldsContainer key={uuid()}>
@@ -422,6 +433,12 @@ Metadata.propTypes = {
   onFormFinish: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
   metadata: PropTypes.shape({
+    questionTypes: PropTypes.arrayOf(
+      PropTypes.shape({
+        label: PropTypes.string,
+        value: PropTypes.string,
+      }),
+    ),
     topics: PropTypes.arrayOf(
       PropTypes.shape({
         label: PropTypes.string,
