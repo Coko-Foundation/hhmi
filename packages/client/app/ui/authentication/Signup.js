@@ -1,12 +1,19 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-// import styled from 'styled-components'
 
 import AuthenticationForm from './AuthenticationForm'
 import AuthenticationHeader from './AuthenticationHeader'
 import AuthenticationWrapper from './AuthenticationWrapper'
 // import SuccessSubTitle from './SuccessSubTitle'
-import { Form, Input, Result, Checkbox, Paragraph, Page } from '../common'
+import {
+  Form,
+  Input,
+  Modal,
+  Result,
+  Checkbox,
+  Paragraph,
+  Page,
+} from '../common'
 
 const Signup = props => {
   const {
@@ -18,6 +25,45 @@ const Signup = props => {
     onSubmit,
     // userEmail,
   } = props
+
+  const showTermsAndConditions = e => {
+    e.preventDefault()
+    Modal.info({
+      title: 'Agreeing to Terms and Conditions',
+      content: (
+        <Paragraph>
+          By checking “I agree” and selecting “Sign up” below, I accept the{' '}
+          <a
+            href="https://www.biointeractive.org/hhmi-biointeractive-online-community-terms-use"
+            rel="noreferrer"
+            target="_blank"
+          >
+            HHMI BioInteractive Online Community Terms of Use
+          </a>
+          ,{' '}
+          <a
+            href="https://www.hhmi.org/terms-of-use"
+            rel="noreferrer"
+            target="_blank"
+          >
+            HHMI Terms of Use
+          </a>
+          , and{' '}
+          <a
+            href="https://www.hhmi.org/privacy-policy"
+            rel="noreferrer"
+            target="_blank"
+          >
+            HHMI Privacy Policy and Cookie Notice
+          </a>
+          .
+        </Paragraph>
+      ),
+      maskClosable: true,
+      afterClose: () =>
+        document.body.querySelector('#termsAndConditions').focus(),
+    })
+  }
 
   return (
     <Page maxWidth={600}>
@@ -131,7 +177,16 @@ const Signup = props => {
               ]}
               valuePropName="checked"
             >
-              <Checkbox>I agree to the terms and conditions</Checkbox>
+              <Checkbox>
+                I agree to the{' '}
+                <a
+                  href="#termsAndCondition"
+                  id="termsAndConditions"
+                  onClick={showTermsAndConditions}
+                >
+                  terms and conditions
+                </a>
+              </Checkbox>
             </Form.Item>
           </AuthenticationForm>
         )}
