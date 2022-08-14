@@ -20,6 +20,7 @@ import {
 } from '../common'
 import WaxWrapper from '../wax/Wax'
 
+// #region styled
 const Wrapper = styled.div`
   height: 100%;
 
@@ -94,7 +95,9 @@ const StyledTabPane = styled(Tabs.TabPane)`
   flex: 1;
   overflow: auto;
 `
+// #endregion styled
 
+// #region wax
 // need to memoize Wax to prevent rerendering on state change (e.g. after accepting T&C)
 const MemoizedWax = memo(
   props => {
@@ -136,6 +139,7 @@ MemoizedWax.defaultProps = {
   readOnly: false,
   innerRef: null,
 }
+// #endregion wax
 
 // QUESTION submit button here seems to be outside the form
 // submit also refers to wax
@@ -143,29 +147,30 @@ MemoizedWax.defaultProps = {
 
 const Question = props => {
   const {
-    submitting,
     editorContent,
     editorView,
     facultyView,
     initialMetadataValues,
+    isPublished,
     isSubmitted,
+    isUnderReview,
     loading,
     metadata,
+    onClickAssignHE,
     onClickBackButton,
-    onClickPreviousButton,
     onClickNextButton,
+    onClickPreviousButton,
     onEditorContentAutoSave,
     onMetadataAutoSave,
+    onMoveToReview,
+    onPublish,
     onQuestionSubmit,
     onReject,
-    onPublish,
-    onClickAssignHE,
-    onMoveToReview,
     questionAgreedTc,
     resources,
     showAssignHEButton,
     showNextQuestionLink,
-    underReview,
+    submitting,
   } = props
 
   const formRef = useRef()
@@ -173,6 +178,11 @@ const Question = props => {
 
   const [agreedTc, setAgreedTc] = useState(questionAgreedTc)
 
+  const readOnly =
+    (editorView && (isUnderReview || isPublished)) ||
+    (!editorView && isSubmitted)
+
+  // #region handlers
   const handleQuestionContentChange = content => {
     onEditorContentAutoSave(content)
   }
@@ -236,7 +246,9 @@ const Question = props => {
       editorContent: waxRef.current.getContent(),
     })
   }
+  // #endregion handlers
 
+  // #region components
   const BackButton = (
     <StyledButton
       ghost
@@ -314,17 +326,23 @@ const Question = props => {
           Assign HE
         </StyledButton>
       )}
-      <StyledButton onClick={onReject} type="danger">
-        Do not accept
-      </StyledButton>
-      {underReview ? (
+
+      {isUnderReview && (
         <StyledButton onClick={onPublish} type="primary">
           Publish
         </StyledButton>
-      ) : (
-        <StyledButton onClick={onMoveToReview} type="primary">
-          Move to Review
-        </StyledButton>
+      )}
+
+      {isSubmitted && !isUnderReview && !isPublished && (
+        <>
+          <StyledButton onClick={onReject} type="danger">
+            Do not accept
+          </StyledButton>
+
+          <StyledButton onClick={onMoveToReview} type="primary">
+            Move to Review
+          </StyledButton>
+        </>
       )}
 
       {showNextQuestionLink && NextQuestion}
@@ -346,6 +364,7 @@ const Question = props => {
       </div>
     </FacultyHeaderWrapper>
   )
+  // #endregion components
 
   if (loading) return <Spin />
 
@@ -367,7 +386,7 @@ const Question = props => {
                 content={editorContent}
                 innerRef={waxRef}
                 onContentChange={handleQuestionContentChange}
-                readOnly={isSubmitted && !underReview}
+                readOnly={readOnly}
               />
 
               <Metadata
@@ -377,7 +396,7 @@ const Question = props => {
                 metadata={metadata}
                 onAutoSave={onMetadataAutoSave}
                 onFormFinish={onFormFinish}
-                readOnly={isSubmitted && !underReview}
+                readOnly={readOnly}
                 resources={resources}
               />
             </QuestionWrapper>
@@ -405,7 +424,9 @@ Question.propTypes = {
   editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool.isRequired,
   submitting: PropTypes.bool.isRequired,
+  isPublished: PropTypes.bool.isRequired,
   isSubmitted: PropTypes.bool.isRequired,
+  isUnderReview: PropTypes.bool.isRequired,
   editorView: PropTypes.bool,
   showAssignHEButton: PropTypes.bool,
   showNextQuestionLink: PropTypes.bool,
@@ -634,7 +655,6 @@ Question.propTypes = {
     psychomotorLevel: PropTypes.string,
     readingLevel: PropTypes.string,
   }),
-  underReview: PropTypes.bool,
 }
 
 Question.defaultProps = {
@@ -650,7 +670,6 @@ Question.defaultProps = {
   showAssignHEButton: true,
   showNextQuestionLink: false,
   facultyView: false,
-  underReview: false,
   resources: [],
 }
 

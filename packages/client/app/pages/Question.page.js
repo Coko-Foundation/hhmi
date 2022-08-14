@@ -174,7 +174,7 @@ const QuestionPage = () => {
   }
   // #endregion data wrangling
 
-  // #region functions
+  // #region handlers
   const handleEditorContentAutoSave = debounce(content => {
     const mutationData = {
       variables: {
@@ -250,7 +250,7 @@ const QuestionPage = () => {
   const handleReject = () => {
     rejectQuestionMutation()
   }
-  // #endregion functions
+  // #endregion handlers
 
   return (
     <Question
@@ -258,7 +258,9 @@ const QuestionPage = () => {
       editorView={isEditor && !isAuthor}
       facultyView={false} //
       initialMetadataValues={initialMetadata}
+      isPublished={version.published}
       isSubmitted={version.submitted}
+      isUnderReview={version.underReview}
       loading={loading}
       metadata={metadataForQuestionPage}
       onClickAssignHE={handleClickAssignHE}
@@ -276,7 +278,6 @@ const QuestionPage = () => {
       showAssignHEButton={false} //
       showNextQuestionLink={false} //
       submitting={false} //
-      underReview={version.underReview}
     />
   )
 }
