@@ -166,25 +166,23 @@ const UserList = props => {
           searchPlaceholder="Search for users"
           showSearch
         />
-        <div>
-          <ButtonGroup justify="right">
-            <Button
-              disabled={selectedRows.length === 0}
-              onClick={onBulkDeactivate}
-              type="primary"
-            >
-              Deactivate
-            </Button>
+        <ButtonGroup justify="right">
+          <Button
+            disabled={selectedRows.length === 0}
+            onClick={onBulkDeactivate}
+            type="primary"
+          >
+            Deactivate
+          </Button>
 
-            <Button
-              disabled={selectedRows.length === 0}
-              onClick={onBulkDelete}
-              type="danger"
-            >
-              Delete
-            </Button>
-          </ButtonGroup>
-        </div>
+          <Button
+            disabled={selectedRows.length === 0}
+            onClick={onBulkDelete}
+            type="danger"
+          >
+            Delete
+          </Button>
+        </ButtonGroup>
       </StyledSection>
     </Wrapper>
   )

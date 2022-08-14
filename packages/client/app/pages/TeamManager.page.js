@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
+import { useCurrentUser } from '@coko/client'
+import { hasGlobalRole } from '../utilities'
 
 import {
   GLOBAL_TEAMS,
   NON_TEAM_MEMBER_USERS,
   UPDATE_GLOBAL_TEAMS,
 } from '../graphql'
-import { TeamManagerList } from '../ui'
+import { TeamManagerList, Result } from '../ui'
 
 const TeamManagerPage = () => {
   // #region hooks
   const [searchOptions, setSearchOptions] = useState([])
   const [searchLoading, setSearchLoading] = useState(false)
+
+  const { currentUser } = useCurrentUser()
 
   const {
     data: teamsData,
@@ -42,6 +47,7 @@ const TeamManagerPage = () => {
       return {
         id: m.user.id,
         displayName: m.user.displayName,
+        checkboxLabel: `Select user ${m.user.displayName}`,
       }
     })
 
@@ -111,6 +117,18 @@ const TeamManagerPage = () => {
     }
   }
   // #endregion handlers
+
+  if (!hasGlobalRole(currentUser, 'admin')) {
+    return (
+      <Result
+        // replace link with a Button with to="/dashboard" after MR is merged
+        extra={<Link to="/dashboard">Back to Dashboard</Link>}
+        status="403"
+        subTitle="Sorry, you are not authorized to access this page."
+        title="403"
+      />
+    )
+  }
 
   return (
     <TeamManagerList

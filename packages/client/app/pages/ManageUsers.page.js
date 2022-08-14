@@ -1,9 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
-import { UserList, Modal } from 'ui'
-// import { useHistory } from 'react-router-dom'
+import { useCurrentUser } from '@coko/client'
+import { UserList, Modal, Result } from 'ui'
+import { Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
 import { FILTER_USERS, DELETE_USERS, DEACTIVATE_USERS } from '../graphql'
+import { hasGlobalRole } from '../utilities'
 
 const { confirm, error } = Modal
 
@@ -36,6 +38,8 @@ const ManageUsers = () => {
   const [currentPage, setCurrentPage] = useState(0)
   const [selectedRows, setSelectedRows] = useState([])
   const [search, setSearch] = useState('')
+
+  const { currentUser } = useCurrentUser()
 
   const { loading: usersLoading, data: usersData } = useQuery(FILTER_USERS, {
     variables: {
@@ -165,6 +169,18 @@ const ManageUsers = () => {
       title,
       content,
     })
+  }
+
+  if (!hasGlobalRole(currentUser, 'admin')) {
+    return (
+      <Result
+        // replace link with a Button with to="/dashboard" after MR is merged
+        extra={<Link to="/dashboard">Back to Dashboard</Link>}
+        status="403"
+        subTitle="Sorry, you are not authorized to access this page."
+        title="403"
+      />
+    )
   }
 
   return (

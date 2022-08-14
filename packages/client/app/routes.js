@@ -20,6 +20,7 @@ import {
 
 // import { NavigationBar } from './ui'
 import { Button /* Spin */ } from 'ui'
+import { hasGlobalRole } from './utilities'
 // import { logout } from './utilities'
 
 import {
@@ -106,7 +107,7 @@ const Header = () => {
         <StyledLink to="/dashboard">HHMI</StyledLink>
       </div>
       <div>
-        {currentUser && (
+        {currentUser && hasGlobalRole(currentUser, 'admin') && (
           <>
             <div>
               <StyledLink to="/manage-users">User Manager</StyledLink>
