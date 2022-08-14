@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import { grid, th } from '@coko/client'
 
-import { Button as UIButton, H4, List, Select } from '../common'
+import { Button as UIButton, H2, List, Select } from '../common'
 
 const Wrapper = styled.div`
   /* width: 100%; */
@@ -78,11 +78,13 @@ const TeamManagerBlock = props => {
 
   return (
     <Wrapper className={className}>
-      <H4>{displayName}</H4>
+      <H2>{displayName}</H2>
       <SearchWrapper>
         <Select
-          async
+          aria-label={`Search for users to add in ${displayName} team`}
           // https://github.com/ant-design/ant-design/issues/19970#issuecomment-763139893
+          async
+          defaultOpen={false}
           labelInValue
           loading={searchLoading}
           mode="multiple"

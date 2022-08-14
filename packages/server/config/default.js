@@ -69,6 +69,10 @@ module.exports = {
         displayName: 'Reviewer',
         role: 'reviewer',
       },
+      admin: {
+        displayName: 'Admin',
+        role: 'admin',
+      },
     },
     nonGlobal: {
       editor: {
