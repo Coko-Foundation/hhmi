@@ -59,6 +59,8 @@ const Status = styled.span`
         return th('colorWarning')
       case 'Rejected':
         return th('colorError')
+      case 'Not Submitted':
+        return th('colorText')
       default:
         return th('colorBackground')
     }

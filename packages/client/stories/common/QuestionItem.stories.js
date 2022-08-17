@@ -44,7 +44,13 @@ export default {
   argTypes: {
     status: {
       control: 'select',
-      options: ['Published', 'Submitted', 'Under review', 'Rejected'],
+      options: [
+        'Not Submitted',
+        'Submitted',
+        'Under review',
+        'Rejected',
+        'Published',
+      ],
     },
   },
 }
