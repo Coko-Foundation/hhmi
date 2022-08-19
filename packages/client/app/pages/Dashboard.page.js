@@ -81,7 +81,7 @@ const transform = questions => {
       o => o.value === cognitiveLevel,
     )?.label
 
-    let status
+    let status = 'Not Submitted'
     if (latestVersion.submitted) status = 'Submitted'
     if (latestVersion.underReview) status = 'Under review'
     if (latestVersion.published) status = 'Published'

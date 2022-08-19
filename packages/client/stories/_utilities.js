@@ -208,7 +208,7 @@ const getRandomObjectivesForCourse = course => {
 }
 
 const getRandomStatus = () =>
-  ['Published', 'Submitted', 'Under review', 'Rejected'][
+  ['Not Submitted', 'Submitted', 'Under review', 'Rejected', 'Published'][
     Math.floor(Math.random() * 4)
   ]
 
