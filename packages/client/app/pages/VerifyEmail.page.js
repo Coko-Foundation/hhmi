@@ -31,13 +31,15 @@ const VerifyEmailPage = props => {
   ] = useMutation(RESEND_VERIFICATION_EMAIL, { variables: { token } })
 
   if (!verifyCalled) {
-    verifyEmailMutation()
+    verifyEmailMutation().catch(e => {})
     setVerifyingLoader(true)
     setTimeout(() => setVerifyingLoader(false), loaderDelay)
   }
 
   const resendVerificationEmail = () => {
-    resendVerificationEmailMutation()
+    resendVerificationEmailMutation().catch(e => {
+      console.error(e)
+    })
     setResendingLoader(true)
     setTimeout(() => setResendingLoader(false), loaderDelay)
   }
