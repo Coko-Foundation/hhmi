@@ -33,6 +33,8 @@ const usersApiToUi = users => {
 }
 
 const PAGE_SIZE = 10
+const DELETE_ACTION = 'delete'
+const DEACTIVATE_ACTION = 'deactivate'
 
 const ManageUsers = () => {
   const [currentPage, setCurrentPage] = useState(0)
@@ -109,6 +111,19 @@ const ManageUsers = () => {
   const handleSearch = query => {
     setCurrentPage(0)
     setSearch(query)
+  }
+
+  const bulkAction = action => {
+    if (selectedRows.indexOf(currentUser.id) !== -1) {
+      showErrorModal(
+        'Cannot delete or deactivate current user',
+        'You cannot delete or deactivate the user you are currently logged in as. Please deselect your current user and try again',
+      )
+    } else if (action === DEACTIVATE_ACTION) {
+      showDeactivateModal()
+    } else if (action === DELETE_ACTION) {
+      showDeleteModal()
+    }
   }
 
   const showDeactivateModal = () => {
@@ -188,8 +203,8 @@ const ManageUsers = () => {
       currentPage={currentPage + 1}
       data={usersApiToUi(usersData?.filterUsers.result)}
       loading={usersLoading}
-      onBulkDeactivate={showDeactivateModal}
-      onBulkDelete={showDeleteModal}
+      onBulkDeactivate={() => bulkAction(DEACTIVATE_ACTION)}
+      onBulkDelete={() => bulkAction(DELETE_ACTION)}
       onPageChange={handlePageChange}
       onSearch={handleSearch}
       pageSize={PAGE_SIZE}

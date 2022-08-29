@@ -2,6 +2,7 @@ const path = require('path')
 // const winston = require('winston')
 
 const components = require('./components')
+const permissions = require('./permissions')
 
 // const logger = new winston.Logger({
 //   transports: [
@@ -24,6 +25,7 @@ module.exports = {
     from: 'info@hhmi.com',
     path: path.join(__dirname, 'mailer'),
   },
+  permissions,
   publicKeys: [
     'authsome',
     'pubsweet',
