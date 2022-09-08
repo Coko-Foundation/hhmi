@@ -33,6 +33,7 @@ type QuestionVersion {
   readingLevel: String
 
   questionType: String
+  lastEdit: DateTime
 }
 
 type Topic {
@@ -84,6 +85,7 @@ input UpdateQuestionInput {
   affectiveLevel: String
   psychomotorLevel: String
   readingLevel: String
+  lastEdit: DateTime
 }
 
 input TopicInput {

@@ -175,19 +175,26 @@ const QuestionPage = () => {
   // #endregion data wrangling
 
   // #region handlers
-  const handleEditorContentAutoSave = debounce(content => {
+  const debouncedEditorAutoSave = debounce((content, resolve) => {
     const mutationData = {
       variables: {
         questionId: id,
         questionVersionId: version.id,
         input: {
           content: JSON.stringify(content),
+          lastEdit: new Date(),
         },
       },
     }
 
-    updateQuestionMutation(mutationData)
+    updateQuestionMutation(mutationData).then(() => resolve())
   }, AUTOSAVE_DELAY)
+
+  const handleEditorContentAutoSave = content => {
+    return new Promise(resolve => {
+      debouncedEditorAutoSave(content, resolve)
+    })
+  }
 
   const handleMetadataAutoSave = values => {
     const metadataToSave = metadataUiToApi(values)
@@ -196,24 +203,33 @@ const QuestionPage = () => {
       variables: {
         questionId: id,
         questionVersionId: version.id,
-        input: metadataToSave,
+        input: {
+          ...metadataToSave,
+          lastEdit: new Date(),
+        },
       },
     }
 
-    updateQuestionMutation(mutationData)
+    return updateQuestionMutation(mutationData)
   }
 
   const handleClickBackButton = () => {
     history.goBack()
   }
 
-  const handleQuestionSubmit = () => {
+  const handleQuestionSubmit = questionData => {
+    const { editorContent: latestContent } = questionData
+
     const mutationData = {
       variables: {
         questionId: id,
         questionVersionId: version.id,
         input: {
           agreedTc: true,
+          content: JSON.stringify({
+            type: 'doc',
+            content: latestContent,
+          }),
         },
       },
     }
@@ -278,6 +294,7 @@ const QuestionPage = () => {
       showAssignHEButton={false} //
       showNextQuestionLink={false} //
       submitting={false} //
+      updated={version.lastEdit}
     />
   )
 }

@@ -125,6 +125,7 @@ export const QUESTION = gql`
       versions(latestOnly: true) {
         id
         content
+        lastEdit
 
         submitted
         underReview
@@ -177,6 +178,7 @@ export const UPDATE_QUESTION = gql`
       versions(latestOnly: true) {
         id
         content
+        lastEdit
 
         submitted
         underReview

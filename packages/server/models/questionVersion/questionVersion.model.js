@@ -142,6 +142,7 @@ class QuestionVersion extends BaseModel {
         readingLevel: stringNullable,
 
         questionType: stringNullable,
+        lastEdit: dateNullable,
       },
     }
   }

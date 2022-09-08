@@ -4,7 +4,12 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 import { grid, th } from '@coko/client'
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import {
+  LeftOutlined,
+  RightOutlined,
+  LoadingOutlined,
+  CheckOutlined,
+} from '@ant-design/icons'
 
 import { HhmiLayout } from '../wax/layout'
 import { config } from '../wax/config'
@@ -13,6 +18,7 @@ import Metadata from './Metadata'
 import {
   Button,
   Checkbox,
+  DateParser,
   Modal,
   Paragraph,
   Spin,
@@ -64,9 +70,12 @@ const StyledButton = styled(Button)`
 `
 
 const RightAreaWrapper = styled.div`
-  > label {
-    margin-right: ${grid(2)};
-  }
+  align-items: center;
+  display: flex;
+`
+
+const StyledCheckbox = styled(Checkbox)`
+  margin-right: ${grid(2)};
 `
 
 const FacultyHeaderWrapper = styled.div`
@@ -141,6 +150,65 @@ MemoizedWax.defaultProps = {
 }
 // #endregion wax
 
+const AutoSavingWrapper = styled.span`
+  padding: 0 ${grid(4)};
+
+  .anticon-check {
+    color: ${th('colorSuccess')};
+  }
+
+  .anticon-loading {
+    color: ${th('colorPrimary')};
+    margin-right: ${grid(1)};
+  }
+`
+
+const AutoSaving = props => {
+  const { autoSaving, lastAutoSave } = props
+
+  const timeDifference = Math.floor(
+    (new Date() - lastAutoSave) / 1000 / 60 / 60,
+  )
+
+  if (autoSaving === false) {
+    return (
+      <AutoSavingWrapper>
+        <CheckOutlined /> Last saved{' '}
+        <DateParser
+          dateFormat={timeDifference < 24 ? 'HH:mm' : 'DD MMMM'}
+          timestamp={lastAutoSave.valueOf()}
+        >
+          {timestamp => <span>{timestamp}</span>}
+        </DateParser>
+      </AutoSavingWrapper>
+    )
+  }
+
+  if (autoSaving === true) {
+    return (
+      <AutoSavingWrapper>
+        <LoadingOutlined /> Saving...
+      </AutoSavingWrapper>
+    )
+  }
+
+  return (
+    <AutoSavingWrapper>
+      <CheckOutlined /> Autosaving is on
+    </AutoSavingWrapper>
+  )
+}
+
+AutoSaving.propTypes = {
+  autoSaving: PropTypes.oneOfType([PropTypes.bool, PropTypes.oneOf([null])]),
+  lastAutoSave: PropTypes.shape(),
+}
+
+AutoSaving.defaultProps = {
+  autoSaving: null,
+  lastAutoSave: null,
+}
+
 // QUESTION submit button here seems to be outside the form
 // submit also refers to wax
 // does all this pose an accessibility problem?
@@ -171,12 +239,14 @@ const Question = props => {
     showAssignHEButton,
     showNextQuestionLink,
     submitting,
+    updated,
   } = props
 
   const formRef = useRef()
   const waxRef = useRef()
 
   const [agreedTc, setAgreedTc] = useState(questionAgreedTc)
+  const [autoSaving, setAutoSaving] = useState(false)
 
   const readOnly =
     (editorView && (isUnderReview || isPublished)) ||
@@ -184,7 +254,17 @@ const Question = props => {
 
   // #region handlers
   const handleQuestionContentChange = content => {
-    onEditorContentAutoSave(content)
+    setAutoSaving(true)
+    onEditorContentAutoSave(content).then(() => {
+      setAutoSaving(false)
+    })
+  }
+
+  const handleMetadataAutoSave = data => {
+    setAutoSaving(true)
+    onMetadataAutoSave(data).then(() => {
+      setAutoSaving(false)
+    })
   }
 
   const showTermsAndConditions = e => {
@@ -286,8 +366,8 @@ const Question = props => {
   )
 
   const RightAreaAuthor = isSubmitted ? null : (
-    <RightAreaWrapper>
-      <Checkbox checked={agreedTc} onChange={handleAgreeTcChange}>
+    <>
+      <StyledCheckbox checked={agreedTc} onChange={handleAgreeTcChange}>
         Accept{' '}
         <a
           href="#termsAndCondition"
@@ -296,7 +376,7 @@ const Question = props => {
         >
           terms and conditions
         </a>
-      </Checkbox>
+      </StyledCheckbox>
 
       <StyledButton
         disabled={
@@ -311,7 +391,7 @@ const Question = props => {
       >
         Submit
       </StyledButton>
-    </RightAreaWrapper>
+    </>
   )
 
   const RightAreaEditor = (
@@ -349,7 +429,14 @@ const Question = props => {
     </>
   )
 
-  const RightArea = editorView ? RightAreaEditor : RightAreaAuthor
+  const RightArea = (
+    <RightAreaWrapper>
+      {readOnly ? null : (
+        <AutoSaving autoSaving={autoSaving} lastAutoSave={new Date(updated)} />
+      )}
+      {editorView ? RightAreaEditor : RightAreaAuthor}
+    </RightAreaWrapper>
+  )
 
   const FacultyHeader = (
     <FacultyHeaderWrapper>
@@ -394,7 +481,7 @@ const Question = props => {
                 initialValues={initialMetadataValues}
                 innerRef={formRef}
                 metadata={metadata}
-                onAutoSave={onMetadataAutoSave}
+                onAutoSave={handleMetadataAutoSave}
                 onFormFinish={onFormFinish}
                 readOnly={readOnly}
                 resources={resources}
@@ -655,6 +742,7 @@ Question.propTypes = {
     psychomotorLevel: PropTypes.string,
     readingLevel: PropTypes.string,
   }),
+  updated: PropTypes.string,
 }
 
 Question.defaultProps = {
@@ -671,6 +759,7 @@ Question.defaultProps = {
   showNextQuestionLink: false,
   facultyView: false,
   resources: [],
+  updated: '',
 }
 
 export default Question

@@ -263,6 +263,7 @@ const flatMeta = {
 export const Base = args => {
   const [submitted, setSubmitted] = useState(false)
   const [editorContent, setEditorContent] = useState(initialContent)
+  const [lastUpdated, setLastUpdated] = useState(new Date().toISOString())
 
   const emptyNavigationFunction = e => {
     e.preventDefault()
@@ -284,6 +285,23 @@ export const Base = args => {
   const handleEditorContentChanged = newContent => {
     // save content
     console.log(newContent)
+    return new Promise((resolve, _reject) => {
+      setTimeout(() => {
+        setLastUpdated(new Date().toISOString())
+        resolve()
+      }, 1000)
+    })
+  }
+
+  const handleMetadataAutosave = data => {
+    // save content
+    console.log(data)
+    return new Promise((resolve, _reject) => {
+      setTimeout(() => {
+        setLastUpdated(new Date().toISOString())
+        resolve()
+      }, 2000)
+    })
   }
 
   return (
@@ -299,11 +317,12 @@ export const Base = args => {
         onClickNextButton={emptyNavigationFunction}
         onClickPreviousButton={emptyNavigationFunction}
         onEditorContentAutoSave={handleEditorContentChanged}
-        onMetadataAutoSave={vals => console.log(vals)}
+        onMetadataAutoSave={handleMetadataAutosave}
         onQuestionSubmit={onSubmit}
         questionAgreedTc={false}
         resources={resources}
         submitting={false}
+        updated={lastUpdated}
       />
     </Wrapper>
   )
