@@ -33,6 +33,7 @@ const Profile = props => {
     states,
     topics,
     onCountryChange,
+    onSubmitionError,
   } = props
 
   const [unsavedChanges, setUnsavedChanges] = useState(false)
@@ -88,6 +89,7 @@ const Profile = props => {
           onAutoSave={onAutoSave}
           onCountryChange={onCountryChange}
           onSubmit={handleProfileInfoSubmit}
+          onSubmitionError={onSubmitionError}
           onValuesChange={handleValuesChange}
           // secondaryButtonLabel="Cancel"
           showSecondaryButton={false}
@@ -131,6 +133,7 @@ Profile.propTypes = {
   onAutoSave: PropTypes.func,
   onPasswordUpdate: PropTypes.func.isRequired,
   onProfileUpdate: PropTypes.func.isRequired,
+  onSubmitionError: PropTypes.func,
   submissionStatus: PropTypes.string,
   countries: PropTypes.arrayOf(PropTypes.shape()),
   courses: PropTypes.arrayOf(PropTypes.shape()),
@@ -146,6 +149,7 @@ Profile.defaultProps = {
   loading: false,
   message: '',
   onAutoSave: () => {},
+  onSubmitionError: () => {},
   submissionStatus: null,
   countries: [],
   courses: [],

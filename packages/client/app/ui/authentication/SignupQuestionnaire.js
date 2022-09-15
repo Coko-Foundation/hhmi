@@ -23,6 +23,7 @@ const SignupQuestionnaire = props => {
     message,
     onCountryChange,
     onSubmit,
+    onSubmitionError,
     // secondaryButtonAction,
     states,
     submissionStatus,
@@ -60,6 +61,7 @@ const SignupQuestionnaire = props => {
               message={message}
               onCountryChange={onCountryChange}
               onSubmit={onSubmit}
+              onSubmitionError={onSubmitionError}
               // secondaryButtonAction={secondaryButtonAction}
               // secondaryButtonLabel="Clear"
               showSecondaryButton={false}
@@ -78,6 +80,7 @@ const SignupQuestionnaire = props => {
 SignupQuestionnaire.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   onCountryChange: PropTypes.func.isRequired,
+  onSubmitionError: PropTypes.func,
 
   countries: PropTypes.arrayOf(PropTypes.shape()),
   courses: PropTypes.arrayOf(PropTypes.shape()),
@@ -109,6 +112,7 @@ SignupQuestionnaire.defaultProps = {
   submissionStatus: null,
   submitted: false,
   topics: [],
+  onSubmitionError: () => {},
 }
 
 export default SignupQuestionnaire

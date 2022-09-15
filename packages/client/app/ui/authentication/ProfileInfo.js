@@ -35,6 +35,7 @@ const ProfileInfo = props => {
     onAutoSave,
     onCountryChange,
     onSubmit,
+    onSubmitionError,
     secondaryButtonAction,
     secondaryButtonLabel,
     showSecondaryButton,
@@ -71,6 +72,7 @@ const ProfileInfo = props => {
         message={message}
         onAutoSave={onAutoSave}
         onSubmit={onSubmit}
+        onSubmitionError={onSubmitionError}
         secondaryButtonAction={secondaryButtonAction}
         secondaryButtonLabel={secondaryButtonLabel}
         showSecondaryButton={showSecondaryButton}
@@ -540,6 +542,7 @@ ProfileInfo.propTypes = {
   loading: PropTypes.bool,
   onAutoSave: PropTypes.func,
   onSubmit: PropTypes.func,
+  onSubmitionError: PropTypes.func,
   secondaryButtonAction: PropTypes.func,
   secondaryButtonLabel: PropTypes.string,
   showSecondaryButton: PropTypes.bool,
@@ -562,6 +565,7 @@ ProfileInfo.defaultProps = {
   loading: false,
   onAutoSave: () => {},
   onSubmit: () => {},
+  onSubmitionError: () => {},
   secondaryButtonAction: () => {},
   secondaryButtonLabel: 'Clear',
   showSecondaryButton: true,

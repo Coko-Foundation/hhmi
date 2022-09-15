@@ -201,6 +201,10 @@ const UserProfile = props => {
     }
   }
 
+  const handleSubmitionErrors = errors => {
+    document.getElementById(errors[0].name[0]).focus()
+  }
+
   if (!(countryOptions && statesOptions)) return null
 
   const initialValues = profileApiToUi(currentUser, signup)
@@ -217,6 +221,7 @@ const UserProfile = props => {
         message={message}
         onCountryChange={onCountryChange}
         onSubmit={handleProfileSubmit}
+        onSubmitionError={handleSubmitionErrors}
         states={statesOptions}
         submissionStatus={submissionStatus}
         submitted={submitted}
@@ -237,6 +242,7 @@ const UserProfile = props => {
       onCountryChange={onCountryChange}
       onPasswordUpdate={handlePasswordSubmit}
       onProfileUpdate={handleProfileSubmit}
+      onSubmitionError={handleSubmitionErrors}
       showSecondaryButton={false}
       states={statesOptions}
       submissionStatus={submissionStatus}

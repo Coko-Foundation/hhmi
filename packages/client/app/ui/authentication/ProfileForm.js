@@ -27,8 +27,13 @@ const ProfileForm = props => {
     secondaryButtonLabel,
     submitButtonLabel,
     submissionStatus,
+    onSubmitionError,
     ...rest
   } = props
+
+  const onFinishFailed = ({ errorFields }) => {
+    onSubmitionError(errorFields)
+  }
 
   return (
     <Wrapper className={className}>
@@ -36,6 +41,7 @@ const ProfileForm = props => {
         form={form}
         layout="vertical"
         onFinish={onSubmit}
+        onFinishFailed={onFinishFailed}
         ribbonMessage={message}
         ribbonPosition="bottom"
         submissionStatus={submissionStatus}
@@ -69,6 +75,7 @@ ProfileForm.propTypes = {
   secondaryButtonLabel: PropTypes.string,
   submitButtonLabel: PropTypes.string,
   submissionStatus: PropTypes.oneOf(['success', 'error', 'danger']),
+  onSubmitionError: PropTypes.func,
 }
 
 ProfileForm.defaultProps = {
@@ -80,6 +87,7 @@ ProfileForm.defaultProps = {
   secondaryButtonLabel: 'Cancel',
   submitButtonLabel: 'Save',
   submissionStatus: null,
+  onSubmitionError: () => {},
 }
 
 export default ProfileForm
