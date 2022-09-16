@@ -60,6 +60,8 @@ const updateUserProfile = async (userId, profileData) => {
   }
 }
 
+const getDisplayName = async user => User.getDisplayName(user)
+
 const filterUsers = async (params, options = {}) => {
   try {
     const { trx, ...restOptions } = options
@@ -80,4 +82,9 @@ const filterUsers = async (params, options = {}) => {
   }
 }
 
-module.exports = { submitQuestionnaire, updateUserProfile, filterUsers }
+module.exports = {
+  submitQuestionnaire,
+  updateUserProfile,
+  filterUsers,
+  getDisplayName,
+}

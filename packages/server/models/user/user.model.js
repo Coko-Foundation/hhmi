@@ -50,9 +50,9 @@ class User extends UserModel {
     }
   }
 
-  async getDisplayName() {
-    if (this.displayName) return this.displayName
-    return super.getDisplayName()
+  static async getDisplayName(user) {
+    if (user.displayName) return user.displayName
+    return user.getDisplayName()
   }
 
   static async filter(data = {}, options = {}) {

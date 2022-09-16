@@ -4,6 +4,7 @@ const {
   updateUserProfile,
   submitQuestionnaire,
   filterUsers,
+  getDisplayName,
 } = require('../../controllers/user.controllers')
 
 const updateUserProfileResolver = async (_, { input }, ctx) => {
@@ -23,6 +24,10 @@ const filterUsersResolver = async (_, { params, options }, _ctx) => {
   }
 }
 
+const displayNameResolver = async user => {
+  return getDisplayName(user)
+}
+
 module.exports = {
   Mutation: {
     updateUserProfile: updateUserProfileResolver,
@@ -30,5 +35,8 @@ module.exports = {
   },
   Query: {
     filterUsers: filterUsersResolver,
+  },
+  User: {
+    displayName: displayNameResolver,
   },
 }
