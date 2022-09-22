@@ -214,7 +214,7 @@ const Sidebar = props => {
         </FormFieldsContainer>
         <Footer>
           <Button onClick={clearFilters}>Clear filters</Button>
-          <Button onClick={applyFilters} type="primary">
+          <Button htmlType="submit" onClick={applyFilters} type="primary">
             Update
           </Button>
         </Footer>

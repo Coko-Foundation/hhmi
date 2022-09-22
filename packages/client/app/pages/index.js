@@ -1,4 +1,5 @@
 export { default as Dashboard } from './Dashboard.page'
+export { default as Discover } from './Discover.page'
 export { default as Login } from './Login.page'
 export { default as Question } from './Question.page'
 export { default as RequestPasswordReset } from './RequestPasswordReset.page'

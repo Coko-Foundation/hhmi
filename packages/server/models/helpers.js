@@ -41,6 +41,8 @@ const applyListQueryOptions = async (query, options = {}) => {
     q = q.withGraphFetched(related)
   }
 
+  // q.debug()
+
   const result = await q
   const { results, total } = result
 

@@ -2,11 +2,35 @@ const { Question, QuestionVersion, Team, User } = require('..')
 
 const clearDb = require('./_clearDb')
 
+const topicsValue = [
+  {
+    topic: 'topic1',
+    subtopic: 'subtopic1',
+  },
+]
+
+const coursesValue = [
+  {
+    course: 'CourseName',
+    units: [
+      {
+        unit: 'unit1',
+        skill: 'skill1',
+        application: 'application1',
+        courseTopic: 'courseTopic1',
+        understanding: 'understanding1',
+        learningObjective: 'learningObjective1',
+        essentialKnowledge: 'essentialKnowledge1',
+      },
+    ],
+  },
+]
+
 describe('Question model', () => {
   beforeEach(() => clearDb())
 
-  afterAll(() => {
-    clearDb()
+  afterAll(async () => {
+    await clearDb()
     const knex = Question.knex()
     knex.destroy()
   })
@@ -33,7 +57,7 @@ describe('Question model', () => {
   })
 
   // Two questions, only one has a published version.
-  // Results should return only the one question.
+  // Results should return only the one published question.
   test('finds published questions', async () => {
     const questionOne = await Question.insert({})
     await Question.insert({}) // question two
@@ -46,9 +70,44 @@ describe('Question model', () => {
       published: true,
     })
 
-    const questions = await Question.findPublished()
+    const questions = await Question.filterPublishedQuestions()
 
     expect(questions.result.length).toBe(1)
+  })
+
+  test('finds only one result for published questions with multiple versions', async () => {
+    const question = await Question.insert({})
+
+    const questionVersionOne = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    await questionVersionOne.patch({
+      published: true,
+    })
+
+    const questionVersionTwo = await question.createNewVersion()
+
+    await questionVersionTwo.patch({
+      published: true,
+    })
+
+    const versions = await QuestionVersion.find({
+      questionId: question.id,
+      published: true,
+    })
+
+    expect(versions.totalCount).toBe(2)
+
+    const questions = await Question.filterPublishedQuestions(
+      {},
+      {
+        orderBy: 'publicationDate',
+        ascending: true,
+      },
+    )
+
+    expect(questions.totalCount).toBe(1)
   })
 
   test('finds question versions', async () => {
@@ -185,5 +244,238 @@ describe('Question model', () => {
 
     expect(questions.totalCount).toBe(1)
     expect(questions.result[0].id).toBe(questionTwo.id)
+  })
+
+  test('filter questions by topic', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      topics: topicsValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { topic: 'topic1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by subtopic', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      topics: [
+        {
+          topic: 'topic1',
+          subtopic: 'subtopic1',
+        },
+      ],
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { subtopic: 'subtopic1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by course', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      courses: coursesValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { course: 'CourseName' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by unit', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      courses: coursesValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { unit: 'unit1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by course topic', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      courses: coursesValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { courseTopic: 'courseTopic1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by learning objective', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      courses: coursesValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { learningObjective: 'learningObjective1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by essential knowledge', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      courses: coursesValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { essentialKnowledge: 'essentialKnowledge1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by application', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      courses: coursesValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { application: 'application1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by skill', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      courses: coursesValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { skill: 'skill1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by understanding', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      courses: coursesValue,
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { understanding: 'understanding1' },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by cognitive level', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      cognitiveLevel: 'cognitive-level-1',
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { cognitiveLevel: ['cognitive-level-1'] },
+    })
+
+    expect(results.totalCount).toBe(1)
+  })
+
+  test('filter questions by question type', async () => {
+    const question = await Question.insert({})
+    const questionOneVersionOne = await question.createNewVersion()
+
+    const question2 = await Question.insert({})
+    await question2.createNewVersion()
+
+    await questionOneVersionOne.patch({
+      published: true,
+      questionType: 'type-1',
+    })
+
+    const results = await Question.filterPublishedQuestions({
+      filters: { questionType: ['type-1'] },
+    })
+
+    expect(results.totalCount).toBe(1)
   })
 })

@@ -21,6 +21,7 @@ export const Discover = props => {
     questions,
     sidebarText,
     onSearch,
+    pageSize,
     sidebarMetadata,
     totalCount,
     showSort,
@@ -34,7 +35,7 @@ export const Discover = props => {
     query: '',
     page: 1,
     filters: {},
-    sortBy: 'date',
+    orderBy: 'date-desc',
   })
 
   const setSearchPage = page => {
@@ -51,15 +52,15 @@ export const Discover = props => {
       filters,
       page: 1,
       query: '',
-      sortBy: searchParams.sortBy,
+      orderBy: searchParams.orderBy,
     })
   }
 
-  const setSortOption = sortBy => {
+  const setSortOption = orderBy => {
     sortOptions.filter(opt => opt.isDefault)[0].isDefault = false
-    sortOptions.filter(opt => opt.value === sortBy)[0].isDefault = true
+    sortOptions.filter(opt => opt.value === orderBy)[0].isDefault = true
 
-    setSearchParams({ ...searchParams, sortBy, page: 1 })
+    setSearchParams({ ...searchParams, orderBy, page: 1 })
   }
 
   useEffect(() => {
@@ -81,7 +82,7 @@ export const Discover = props => {
         onSearch={setSearchQuery}
         onSortOptionChange={setSortOption}
         questions={questions}
-        questionsPerPage={10}
+        questionsPerPage={pageSize}
         showSort={showSort}
         sortOptions={sortOptions}
         totalCount={totalCount}
@@ -97,13 +98,14 @@ Discover.propTypes = {
   loading: PropTypes.bool,
   /** Handle search */
   onSearch: PropTypes.func.isRequired,
+  pageSize: PropTypes.number,
   /** list of search result to render */
   questions: PropTypes.arrayOf(
     PropTypes.shape({
       metadata: PropTypes.arrayOf(
         PropTypes.shape({
           label: PropTypes.string,
-          value: PropTypes.string,
+          value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
         }),
       ),
       content: PropTypes.shape({
@@ -318,6 +320,7 @@ Discover.propTypes = {
 
 Discover.defaultProps = {
   loading: false,
+  pageSize: 10,
   questions: [],
   sidebarText: '',
   totalCount: 0,

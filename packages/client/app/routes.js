@@ -31,6 +31,7 @@ import {
   ResetPassword,
   VerifyCheck,
   Dashboard,
+  Discover,
   Question,
   ManageUsers,
   TeamManager,
@@ -104,7 +105,12 @@ const Header = () => {
   return (
     <HeaderFooter>
       <div>
-        <StyledLink to="/dashboard">HHMI</StyledLink>
+        <div>
+          <StyledLink to="/dashboard">HHMI</StyledLink>
+        </div>
+        <div>
+          <StyledLink to="/discover">Discover</StyledLink>
+        </div>
       </div>
       <div>
         {currentUser && hasGlobalRole(currentUser, 'admin') && (
@@ -184,6 +190,8 @@ const routes = (
             </Authenticated>
           )}
         />
+
+        <Route component={Discover} exact path="/discover" />
 
         <Route
           exact

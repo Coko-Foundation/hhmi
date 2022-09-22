@@ -73,16 +73,19 @@ const makeData = n =>
     href: `question/${uuid()}`,
   }))
 
+const PAGE_SIZE = 5
+const TOTAL_COUNT = 34
+
 const searchFunction = (params = {}) => {
   /* eslint-disable-next-line no-unused-vars */
-  const { query = '', page = 1, filters, sortBy = 'date' } = params
+  const { query = '', page = 1, filters, orderBy = 'date' } = params
 
   /* eslint-disable-next-line no-console */
   console.log(params)
 
-  const numResults = 33
+  const numResults = TOTAL_COUNT
   const data = makeData(numResults)
-  return data.slice(10 * (page - 1), 10 * page)
+  return data.slice(PAGE_SIZE * (page - 1), PAGE_SIZE * page)
 }
 
 const Wrapper = styled.div`
@@ -172,12 +175,13 @@ export const DiscoverPage = () => {
       <Discover
         loading={loading}
         onSearch={handleSearch}
+        pageSize={PAGE_SIZE}
         questions={searchResults}
         showSort
         sidebarMetadata={flatMetadata}
         sidebarText={sidebarText}
         sortOptions={sortOptions}
-        totalCount={33}
+        totalCount={TOTAL_COUNT}
       />
     </Wrapper>
   )
@@ -259,9 +263,9 @@ const DiscoveryCustom = args => {
 
 export const CustomControls = DiscoveryCustom.bind({})
 CustomControls.args = {
-  questions: makeData(10),
+  questions: makeData(PAGE_SIZE),
   onSearch: () => {},
-  totalCount: 10,
+  totalCount: TOTAL_COUNT,
   sidebarText,
 }
 

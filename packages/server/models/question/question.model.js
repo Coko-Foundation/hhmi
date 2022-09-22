@@ -80,20 +80,146 @@ class Question extends BaseModel {
     return Question.getVersions(this.id, options)
   }
 
-  static async findPublished(options = {}) {
-    const query = Question.query(options.trx)
-      .leftJoin(
-        'question_versions',
-        'questions.id',
-        'question_versions.question_id',
-      )
-      .select('questions.*')
-      .distinct('questions.id')
-      .where({
-        published: true,
-      })
+  static async filterPublishedQuestions(params = {}, options = {}) {
+    try {
+      const query = Question.query(options.trx)
+        .leftJoin(
+          'question_versions',
+          'questions.id',
+          'question_versions.question_id',
+        )
+        .select('questions.*', 'question_versions.publication_date')
+        .distinctOn('questions.id')
+        .where({
+          published: true,
+        })
+        .orderBy([
+          'questions.id',
+          { column: 'question_versions.created', order: 'desc' },
+        ])
 
-    return applyListQueryOptions(query, options)
+      if (params.filters) {
+        if (params.filters.topic) {
+          query.whereJsonSupersetOf('topics', [{ topic: params.filters.topic }])
+        }
+
+        if (params.filters.subtopic) {
+          query.whereJsonSupersetOf('topics', [
+            { subtopic: params.filters.subtopic },
+          ])
+        }
+
+        if (params.filters.course) {
+          query.whereJsonSupersetOf('courses', [
+            { course: params.filters.course },
+          ])
+        }
+
+        if (params.filters.unit) {
+          query.whereJsonSupersetOf('courses', [
+            {
+              units: [
+                {
+                  unit: params.filters.unit,
+                },
+              ],
+            },
+          ])
+        }
+
+        if (params.filters.courseTopic) {
+          query.whereJsonSupersetOf('courses', [
+            {
+              units: [
+                {
+                  courseTopic: params.filters.courseTopic,
+                },
+              ],
+            },
+          ])
+        }
+
+        if (params.filters.learningObjective) {
+          query.whereJsonSupersetOf('courses', [
+            {
+              units: [
+                {
+                  learningObjective: params.filters.learningObjective,
+                },
+              ],
+            },
+          ])
+        }
+
+        if (params.filters.essentialKnowledge) {
+          query.whereJsonSupersetOf('courses', [
+            {
+              units: [
+                {
+                  essentialKnowledge: params.filters.essentialKnowledge,
+                },
+              ],
+            },
+          ])
+        }
+
+        if (params.filters.application) {
+          query.whereJsonSupersetOf('courses', [
+            {
+              units: [
+                {
+                  application: params.filters.application,
+                },
+              ],
+            },
+          ])
+        }
+
+        if (params.filters.skill) {
+          query.whereJsonSupersetOf('courses', [
+            {
+              units: [
+                {
+                  skill: params.filters.skill,
+                },
+              ],
+            },
+          ])
+        }
+
+        if (params.filters.understanding) {
+          query.whereJsonSupersetOf('courses', [
+            {
+              units: [
+                {
+                  understanding: params.filters.understanding,
+                },
+              ],
+            },
+          ])
+        }
+
+        if (
+          params.filters.cognitiveLevel &&
+          params.filters.cognitiveLevel.length
+        ) {
+          query.whereIn('cognitive_level', params.filters.cognitiveLevel)
+        }
+
+        if (params.filters.questionType && params.filters.questionType.length) {
+          query.whereIn('questionType', params.filters.questionType)
+        }
+      }
+
+      if (params.searchQuery) {
+        query.where('content_text', 'ilike', `%${params.searchQuery}%`)
+      }
+
+      return applyListQueryOptions(query, options)
+    } catch (e) {
+      console.error('Question model: filter failed', e)
+      throw new Error(e)
+    }
   }
 
   // eg. find all questions this user is an author of

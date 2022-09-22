@@ -38,9 +38,28 @@ const getQuestionVersions = async (questionId, options = {}) => {
   }
 }
 
-const getPublishedQuestions = async (options = {}) => {
-  const { orderBy, page, pageSize, trx } = options
-  return Question.getPublishedQuestions({ orderBy, page, pageSize, trx })
+const getPublishedQuestions = async (params = {}, options = {}) => {
+  try {
+    const { orderBy, ascending, page, pageSize, trx } = options
+
+    return useTransaction(
+      async tr => {
+        return Question.filterPublishedQuestions(params, {
+          orderBy,
+          ascending,
+          page,
+          pageSize,
+          trx: tr,
+        })
+      },
+      { trx, passedTrxOnly: true },
+    )
+  } catch (e) {
+    logger.error(`error getPublishedQuestions: ${e.message}`)
+    throw new Error(e)
+  }
+
+  // return Question.findPublished({ orderBy, page, pageSize, trx })
 }
 
 // const getDashboardData = (userId, isManagingEditor) => {

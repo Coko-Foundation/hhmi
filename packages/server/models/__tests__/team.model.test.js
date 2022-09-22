@@ -4,10 +4,10 @@ const clearDb = require('./_clearDb')
 describe('Team Model', () => {
   beforeEach(() => clearDb())
 
-  afterAll(() => {
-    clearDb()
-    // const knex = Team.knex()
-    // knex.destroy()
+  afterAll(async () => {
+    await clearDb()
+    const knex = Team.knex()
+    knex.destroy()
   })
 
   test('can get non team member users for a team', async () => {

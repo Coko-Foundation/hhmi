@@ -18,8 +18,8 @@ const questionResolver = async (_, { id }) => {
   return getQuestion(id)
 }
 
-const getPublishedQuestionsResolver = async (_, args) => {
-  return getPublishedQuestions()
+const getPublishedQuestionsResolver = async (_, { params, options }) => {
+  return getPublishedQuestions(params, options)
 }
 
 const getAuthorDashboardResolver = async (_, args, ctx) => {
