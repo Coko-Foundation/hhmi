@@ -213,6 +213,11 @@ class Question extends BaseModel {
 
       if (params.searchQuery) {
         query.where('content_text', 'ilike', `%${params.searchQuery}%`)
+
+        const queryStrings = params.searchQuery.split(' ')
+        queryStrings.forEach(queryString => {
+          query.orWhereJsonSupersetOf('keywords', [queryString])
+        })
       }
 
       return applyListQueryOptions(query, options)
@@ -237,6 +242,11 @@ class Question extends BaseModel {
           'questions.id',
         )
         .where('content_text', 'ilike', `%${options.searchQuery}%`)
+
+      const queryStrings = options.searchQuery.split(' ')
+      queryStrings.forEach(queryString => {
+        query.orWhereJsonSupersetOf('keywords', [queryString])
+      })
     }
 
     return applyListQueryOptions(query, options)
@@ -269,6 +279,11 @@ class Question extends BaseModel {
           'questions.id',
         )
         .where('content_text', 'ilike', `%${options.searchQuery}%`)
+
+      const queryStrings = options.searchQuery.split(' ')
+      queryStrings.forEach(queryString => {
+        query.orWhereJsonSupersetOf('keywords', [queryString])
+      })
     }
 
     if (submittedOnly)
