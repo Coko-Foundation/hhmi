@@ -53,7 +53,7 @@ input UserProfileInput {
   organization: String!
   institutionalSetting: String!
   teachingExperience: String!
-  typeOfInstitution: String!
+  typeOfInstitution: String
 
   apIbCourses: Boolean
   employmentStatus: String
