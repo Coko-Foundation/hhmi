@@ -3,7 +3,7 @@ import { dropRight } from 'lodash'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { grid, uuid } from '@coko/client'
+import { grid } from '@coko/client'
 
 import {
   Select,
@@ -209,7 +209,7 @@ const Metadata = React.forwardRef((props, ref) => {
   // TODO: find a better solution (assigning the initialValue directly confilcts with form.setFieldsValues)
   // initialValue for 2nd course metadata for author
   const initialValueSecondCourse = index => {
-    if (!initialValues.courses?.length && index === 1 && !editorView) {
+    if (index === 1 && !editorView) {
       return {
         initialValue: form.getFieldValue([coursesKey, 0, 'course']),
       }
@@ -245,7 +245,7 @@ const Metadata = React.forwardRef((props, ref) => {
         </Form.Item>
         <Form.List name={topicsKey} noStyle>
           {(_, { add, remove }) => (
-            <StyledSupplementaryFieldsContainer key={uuid()}>
+            <StyledSupplementaryFieldsContainer>
               {topicsIndexes.map(index => (
                 <div key={`supplementaryTopic-${index}`}>
                   <TopicAndSubtopic
@@ -291,7 +291,7 @@ const Metadata = React.forwardRef((props, ref) => {
 
         <Form.List name={coursesKey} noStyle>
           {(_, { add, remove }) => (
-            <StyledSupplementaryFieldsContainer key={uuid()}>
+            <StyledSupplementaryFieldsContainer>
               {coursesIndexes.map(index => (
                 <div key={`supplementaryFields-${index}`}>
                   {index === 1 && !editorView && <p>Second reference</p>}
