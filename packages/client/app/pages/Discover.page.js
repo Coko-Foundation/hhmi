@@ -115,7 +115,7 @@ const transform = questions => {
         },
       ],
       content: parsedContent,
-      href: `/question/${id}`,
+      href: `/question/${id}/test`,
       id,
       courses,
     }

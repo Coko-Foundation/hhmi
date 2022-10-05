@@ -195,6 +195,12 @@ const routes = (
 
         <Route
           exact
+          path="/question/:id/test"
+          render={() => <Question testMode />}
+        />
+
+        <Route
+          exact
           path="/question/:id"
           render={() => (
             <Authenticated>

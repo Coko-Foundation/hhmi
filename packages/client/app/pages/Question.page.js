@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import { useHistory, useParams, Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
 import debounce from 'lodash/debounce'
 import isEmpty from 'lodash/isEmpty'
 // import { questionDataTransformer, questionDataMapper } from '../utilities'
 
-import { Question, resources } from 'ui'
+import { Question, resources, Result } from 'ui'
 
 import {
   CURRENT_USER,
@@ -99,7 +100,9 @@ const metadataUiToApi = values => {
 }
 // #endregion transformations
 
-const QuestionPage = () => {
+const QuestionPage = props => {
+  const { testMode } = props
+
   // #region hooks
   const { id } = useParams()
   const history = useHistory()
@@ -167,10 +170,25 @@ const QuestionPage = () => {
   const isEditor = hasGlobalRole(user, 'editor')
   const isAuthor = hasRole(user, 'author', id)
 
-  // const isEditor = true
+  if (testMode && !version.published) {
+    return (
+      <Result
+        // replace link with a Button with to="/dashboard" after MR is merged
+        extra={<Link to="/discover">Visit the Discover page</Link>}
+        status="404"
+        subTitle="Sorry, this question hasn't been published yet."
+        title="Question Not Ready"
+      />
+    )
+  }
 
   if (isEmpty(initialMetadata) && version) {
-    setInitialMetadata(metadataApiToUi(version))
+    if (testMode) {
+      // no need to flatten course metadata in test mode
+      setInitialMetadata(version)
+    } else {
+      setInitialMetadata(metadataApiToUi(version))
+    }
   }
   // #endregion data wrangling
 
@@ -270,11 +288,12 @@ const QuestionPage = () => {
     <Question
       editorContent={editorContent}
       editorView={isEditor && !isAuthor}
-      facultyView={false} //
+      facultyView={testMode}
       initialMetadataValues={initialMetadata}
       isPublished={version.published}
       isSubmitted={version.submitted}
       isUnderReview={version.underReview}
+      isUserLoggedIn={!!user}
       loading={loading}
       metadata={metadataForQuestionPage}
       onClickAssignHE={handleClickAssignHE}
@@ -295,6 +314,14 @@ const QuestionPage = () => {
       updated={version.lastEdit}
     />
   )
+}
+
+QuestionPage.propTypes = {
+  testMode: PropTypes.bool,
+}
+
+QuestionPage.defaultProps = {
+  testMode: false,
 }
 
 export default QuestionPage

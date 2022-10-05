@@ -16,9 +16,9 @@ import {
   AAMCFuturePhysiciansMetadata,
 } from '../common'
 import Resources from './Resources'
+import MetadataInfo from './MetadataInfo'
 
 const Wrapper = styled.div`
-  border-left: 1px solid #f0f0f0;
   height: 100%;
   overflow-y: auto;
   padding: ${grid(4)};
@@ -38,10 +38,20 @@ const Metadata = React.forwardRef((props, ref) => {
     metadata,
     editorView,
     resources,
-
+    presentationMode,
     /* eslint-disable-next-line react/prop-types */
     innerRef,
   } = props
+
+  if (presentationMode) {
+    return (
+      <MetadataInfo
+        metadata={metadata}
+        resources={resources}
+        values={initialValues}
+      />
+    )
+  }
 
   const [form] = Form.useForm()
 
@@ -453,7 +463,15 @@ Metadata.propTypes = {
     ),
     blooms: PropTypes.shape({
       cognitive: PropTypes.arrayOf(
-        PropTypes.shape({ label: PropTypes.string, value: PropTypes.string }),
+        PropTypes.shape({
+          label: PropTypes.string,
+          options: PropTypes.arrayOf(
+            PropTypes.shape({
+              label: PropTypes.string,
+              value: PropTypes.string,
+            }),
+          ),
+        }),
       ),
       affective: PropTypes.arrayOf(
         PropTypes.shape({ label: PropTypes.string, value: PropTypes.string }),
@@ -626,28 +644,45 @@ Metadata.propTypes = {
   ),
   editorView: PropTypes.bool,
   initialValues: PropTypes.shape({
+    questionType: PropTypes.string,
     topics: PropTypes.arrayOf(
       PropTypes.shape({
         topic: PropTypes.string,
         subtopic: PropTypes.string,
       }),
     ),
-    courses: PropTypes.arrayOf(
-      PropTypes.shape({
-        course: PropTypes.string,
-        units: PropTypes.arrayOf(
-          PropTypes.shape({
-            unit: PropTypes.string,
-            courseTopic: PropTypes.string,
-            learningObjective: PropTypes.string,
-            essentialKnowledge: PropTypes.string,
-            application: PropTypes.string,
-            skill: PropTypes.string,
-            understanding: PropTypes.string,
-          }),
-        ),
-      }),
-    ),
+    courses: PropTypes.oneOfType([
+      // format for metadata form
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          course: PropTypes.string,
+          unit: PropTypes.string,
+          courseTopic: PropTypes.string,
+          learningObjective: PropTypes.string,
+          essentialKnowledge: PropTypes.string,
+          application: PropTypes.string,
+          skill: PropTypes.string,
+          understanding: PropTypes.string,
+        }),
+      ),
+      // format for MetadataInfo
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          course: PropTypes.string,
+          units: PropTypes.arrayOf(
+            PropTypes.shape({
+              unit: PropTypes.string,
+              courseTopic: PropTypes.string,
+              learningObjective: PropTypes.string,
+              essentialKnowledge: PropTypes.string,
+              application: PropTypes.string,
+              skill: PropTypes.string,
+              understanding: PropTypes.string,
+            }),
+          ),
+        }),
+      ),
+    ]),
     keywords: PropTypes.arrayOf(PropTypes.string),
     biointeractiveResources: PropTypes.arrayOf(PropTypes.string),
     cognitiveLevel: PropTypes.string,
@@ -655,6 +690,7 @@ Metadata.propTypes = {
     psychomotorLevel: PropTypes.string,
     readingLevel: PropTypes.string,
   }),
+  presentationMode: PropTypes.bool,
 }
 
 Metadata.defaultProps = {
@@ -663,6 +699,7 @@ Metadata.defaultProps = {
   initialValues: {},
   readOnly: false,
   resources: [],
+  presentationMode: false,
 }
 
 export default Metadata

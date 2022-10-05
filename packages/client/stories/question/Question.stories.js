@@ -260,6 +260,33 @@ const flatMeta = {
   introToBioMeta,
 }
 
+const metadataApiToUi = values => {
+  const courseData = [...values.courses]
+
+  const transformedCoursesData = []
+
+  courseData.forEach(({ course, units }) => {
+    if (units.length > 1) {
+      units.forEach(unit => {
+        transformedCoursesData.push({
+          course,
+          ...unit,
+        })
+      })
+    } else {
+      transformedCoursesData.push({
+        course,
+        ...units[0],
+      })
+    }
+  })
+
+  return {
+    ...values,
+    courses: transformedCoursesData,
+  }
+}
+
 export const Base = args => {
   const [submitted, setSubmitted] = useState(false)
   const [editorContent, setEditorContent] = useState(initialContent)
@@ -349,25 +376,47 @@ export const EditorView = () => {
   }
 
   return (
-    <Question
-      editorContent={editorInitialContent}
-      editorView
-      initialMetadataValues={initialMetadataValues}
-      isSubmitted
-      loading={false}
-      metadata={flatMeta}
-      onClickBackButton={() => console.log('go back to dashboard')}
-      onEditorContentAutoSave={handleEditorContentChanged}
-      onMetadataAutoSave={() => console.log('metadata auto save')}
-      onMoveToReview={moveToReview}
-      onPublish={publish}
-      onQuestionSubmit={data => console.log(data)}
-      onReject={reject}
-      questionAgreedTc={false}
-      resources={resources}
-      submitting={false}
-      underReview={reviewing}
-    />
+    <Wrapper>
+      <Question
+        editorContent={editorInitialContent}
+        editorView
+        initialMetadataValues={metadataApiToUi(initialMetadataValues)}
+        isSubmitted
+        loading={false}
+        metadata={flatMeta}
+        onClickBackButton={() => console.log('go back to dashboard')}
+        onEditorContentAutoSave={handleEditorContentChanged}
+        onMetadataAutoSave={() => console.log('metadata auto save')}
+        onMoveToReview={moveToReview}
+        onPublish={publish}
+        onQuestionSubmit={data => console.log(data)}
+        onReject={reject}
+        questionAgreedTc={false}
+        resources={resources}
+        submitting={false}
+        underReview={reviewing}
+      />
+    </Wrapper>
+  )
+}
+
+export const TestMode = () => {
+  return (
+    <Wrapper>
+      <Question
+        editorContent={editorInitialContent}
+        facultyView
+        initialMetadataValues={initialMetadataValues}
+        isSubmitted
+        loading={false}
+        metadata={flatMeta}
+        onClickBackButton={() => console.log('go back to dashboard')}
+        onQuestionSubmit={data => console.log(data)}
+        readOnly
+        resources={resources}
+        submitting={false}
+      />
+    </Wrapper>
   )
 }
 
