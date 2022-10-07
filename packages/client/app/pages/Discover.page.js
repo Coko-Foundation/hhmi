@@ -3,7 +3,13 @@ import React, { useState } from 'react'
 import { Discover, DateParser } from 'ui'
 import { useQuery } from '@apollo/client'
 
-import { metadataForQuestionPage as metadata } from '../utilities'
+import {
+  metadataForQuestionPage as metadata,
+  extractDocumentText,
+  extractCourseAndObjectives,
+  extractTopicsAndSubtopics,
+  extractBloomsLevel,
+} from '../utilities'
 import { GET_PUBLISHED_QUESTIONS } from '../graphql'
 
 const sortOptions = [
@@ -31,73 +37,87 @@ const transform = questions => {
     const { id, versions } = question
     const latestVersion = versions[0]
     const { content, publicationDate, cognitiveLevel } = latestVersion
-    const parsedContent = content ? JSON.parse(content) : null
+    const parsedContent = extractDocumentText(content)
 
-    const courses = latestVersion.courses.map(c => {
-      const courseInValues = metadata.frameworks.find(f => f.value === c.course)
+    const courses = extractCourseAndObjectives(
+      latestVersion.courses,
+      metadata.frameworks,
+    )
+    // latestVersion.courses.map(c => {
+    //   const courseInValues = metadata.frameworks.find(f => f.value === c.course)
 
-      const beginning = c.course.slice(0, 2).toLowerCase()
-      // const isIB = beginning === 'ib'
-      const isAP = beginning === 'ap'
+    //   const beginning = c.course.slice(0, 2).toLowerCase()
+    //   // const isIB = beginning === 'ib'
+    //   const isAP = beginning === 'ap'
 
-      const objectives = c.units.map(unit => ({
-        label: courseInValues?.learningObjectives?.find(
-          lo => lo.value === unit.learningObjective,
-        ).label,
-      }))
+    //   const objectives = c.units.map(unit => ({
+    //     label: courseInValues?.learningObjectives?.find(
+    //       lo => lo.value === unit.learningObjective,
+    //     ).label,
+    //   }))
 
-      const understandings = c.units.map(unit => ({
-        label: courseInValues?.understandings?.find(
-          und => und.value === unit.understanding,
-        ).label,
-      }))
+    //   const understandings = c.units.map(unit => ({
+    //     label: courseInValues?.understandings?.find(
+    //       und => und.value === unit.understanding,
+    //     ).label,
+    //   }))
 
-      return {
-        course: {
-          label: courseInValues?.label,
-        },
-        label: isAP ? 'learning objectives' : 'understandings',
-        objectives: isAP ? objectives : understandings,
-      }
-    })
+    //   return {
+    //     course: {
+    //       label: courseInValues?.label,
+    //     },
+    //     label: isAP ? 'learning objectives' : 'understandings',
+    //     objectives: isAP ? objectives : understandings,
+    //   }
+    // })
 
-    const topics = latestVersion.topics
-      .map(topic => {
-        const topicObject = metadata.topics.find(t => t.value === topic?.topic)
+    const topics = extractTopicsAndSubtopics(
+      latestVersion.topics,
+      metadata.topics,
+    )
 
-        const subtopicObject = topicObject?.subtopics.find(
-          s => s.value === topic.subtopic,
-        )
+    // latestVersion.topics
+    //   .map(topic => {
+    //     const topicObject = metadata.topics.find(t => t.value === topic?.topic)
 
-        return {
-          topic: topicObject.label,
-          subtopic: subtopicObject.label,
-        }
-      })
-      .reduce(
-        (accumulator, topic, index, array) => {
-          return {
-            topics: `${accumulator.topics}${topic.topic}${
-              index < array.length - 1 ? ', ' : ''
-            }`,
-            subtopics: `${accumulator.subtopics}${topic.subtopic}${
-              index < array.length - 1 ? ', ' : ''
-            }`,
-          }
-        },
-        { topics: '', subtopics: '' },
-      )
+    //     const subtopicObject = topicObject?.subtopics.find(
+    //       s => s.value === topic.subtopic,
+    //     )
 
-    const cognitiveValues = metadata.blooms.cognitive
+    //     return {
+    //       topic: topicObject.label,
+    //       subtopic: subtopicObject.label,
+    //     }
+    //   })
+    //   .reduce(
+    //     (accumulator, topic, index, array) => {
+    //       return {
+    //         topics: `${accumulator.topics}${topic.topic}${
+    //           index < array.length - 1 ? ', ' : ''
+    //         }`,
+    //         subtopics: `${accumulator.subtopics}${topic.subtopic}${
+    //           index < array.length - 1 ? ', ' : ''
+    //         }`,
+    //       }
+    //     },
+    //     { topics: '', subtopics: '' },
+    //   )
 
-    const allCognitiveOptions = [
-      ...cognitiveValues[0].options,
-      ...cognitiveValues[1].options,
-    ]
+    // const cognitiveValues = metadata.blooms.cognitive
 
-    const cognitiveDisplayValue = allCognitiveOptions.find(
-      o => o.value === cognitiveLevel,
-    )?.label
+    // const allCognitiveOptions = [
+    //   ...cognitiveValues[0].options,
+    //   ...cognitiveValues[1].options,
+    // ]
+
+    // const cognitiveDisplayValue = allCognitiveOptions.find(
+    //   o => o.value === cognitiveLevel,
+    // )?.label
+
+    const cognitiveDisplayValue = extractBloomsLevel(
+      cognitiveLevel,
+      metadata.blooms.cognitive,
+    )
 
     return {
       metadata: [

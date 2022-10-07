@@ -283,6 +283,119 @@ const dashboardDataMapper = data => {
   })
 }
 
+const extractDocumentText = data => {
+  if (data === null) return null
+  let allContent = ''
+  const incoming = JSON.parse(data)
+
+  const extract = obj => {
+    const { content } = obj
+    if (!Array.isArray(content)) return
+
+    content.forEach(item => {
+      const { text, content: itemContent } = item
+
+      if (text) allContent += `${text} `
+      if (itemContent) extract(item)
+    })
+  }
+
+  extract(incoming)
+
+  const maxLength = 300
+  allContent = allContent.substring(0, maxLength + 1).trim()
+  allContent =
+    allContent.length === maxLength ? `${allContent} ...` : allContent
+
+  if (!allContent) allContent = ' '
+
+  return {
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        attrs: {
+          class: 'paragraph',
+        },
+        content: [
+          {
+            type: 'text',
+            text: allContent,
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const extractTopicsAndSubtopics = (topics, topicsMetadata) =>
+  topics
+    .map(topic => {
+      const topicObject = topicsMetadata.find(t => t.value === topic?.topic)
+
+      const subtopicObject = topicObject?.subtopics.find(
+        s => s.value === topic.subtopic,
+      )
+
+      return {
+        topic: topicObject.label,
+        subtopic: subtopicObject?.label,
+      }
+    })
+    .reduce(
+      (accumulator, topic, index, array) => {
+        return {
+          topics: `${accumulator.topics}${topic.topic}${
+            index < array.length - 1 ? ', ' : ''
+          }`,
+          subtopics:
+            topic.subtopic &&
+            `${accumulator.subtopics}${topic.subtopic}${
+              index < array.length - 1 ? ', ' : ''
+            }`,
+        }
+      },
+      { topics: '', subtopics: '' },
+    )
+
+const extractCourseAndObjectives = (courses, frameworksMetadata) =>
+  courses.map(c => {
+    const courseInValues = frameworksMetadata.find(f => f.value === c.course)
+
+    const beginning = c.course.slice(0, 2).toLowerCase()
+    // const isIB = beginning === 'ib'
+    const isAP = beginning === 'ap'
+
+    const objectives = c.units.map(unit => ({
+      label: courseInValues?.learningObjectives?.find(
+        lo => lo.value === unit.learningObjective,
+      )?.label,
+    }))
+
+    const understandings = c.units.map(unit => ({
+      label: courseInValues?.understandings?.find(
+        und => und.value === unit.understanding,
+      )?.label,
+    }))
+
+    return {
+      course: {
+        label: courseInValues.label,
+      },
+      label: isAP ? 'learning objectives' : 'understandings',
+      objectives: isAP ? objectives : understandings,
+    }
+  })
+
+const extractBloomsLevel = (cognitiveLevel, cognitiveValues) => {
+  const allCognitiveOptions = [
+    ...cognitiveValues[0].options,
+    ...cognitiveValues[1].options,
+  ]
+
+  return allCognitiveOptions.find(o => o.value === cognitiveLevel)?.label
+}
+
 const profileOptions = {
   institutionalSetting: [
     {
@@ -720,6 +833,10 @@ const metadataForQuestionPage = {
 
 export {
   dashboardDataMapper,
+  extractDocumentText,
+  extractTopicsAndSubtopics,
+  extractCourseAndObjectives,
+  extractBloomsLevel,
   flatAAMCMetadata,
   flatAPCoursesMetadata,
   flatIBCourseMetadata,

@@ -222,6 +222,8 @@ class Question extends BaseModel {
 
       query.as('q1')
 
+      // wrapped into a parent query so that the subsequent ordering is applied to unique question versions
+      // and not between versions of the same question
       const parentQuery = Question.query(options.trx).select('*').from(query)
 
       return applyListQueryOptions(parentQuery, options)

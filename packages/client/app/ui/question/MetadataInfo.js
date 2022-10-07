@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
+import { extractTopicsAndSubtopics } from '../../utilities'
 
 const Wrapper = styled.div`
   overflow-y: auto;
@@ -27,33 +28,10 @@ const StyledDetails = styled.details`
 const MetadataInfo = props => {
   const { values, metadata, resources } = props
 
-  const aggregateTopicsAndSubtopics = topics =>
-    topics
-      .map(topic => {
-        const topicObject = metadata.topics.find(t => t.value === topic?.topic)
-
-        const subtopicObject = topicObject?.subtopics.find(
-          s => s.value === topic.subtopic,
-        )
-
-        return {
-          topic: topicObject.label,
-          subtopic: subtopicObject.label,
-        }
-      })
-      .reduce(
-        (accumulator, topic, index, array) => {
-          return {
-            topics: `${accumulator.topics}${topic.topic}${
-              index < array.length - 1 ? ', ' : ''
-            }`,
-            subtopics: `${accumulator.subtopics}${topic.subtopic}${
-              index < array.length - 1 ? ', ' : ''
-            }`,
-          }
-        },
-        { topics: '', subtopics: '' },
-      )
+  const questionTopics = extractTopicsAndSubtopics(
+    values.topics,
+    metadata.topics,
+  )
 
   return (
     <Wrapper>
@@ -70,11 +48,11 @@ const MetadataInfo = props => {
       <p>
         <strong>Topic(s)</strong>
       </p>
-      <p>{aggregateTopicsAndSubtopics(values.topics).topics}</p>
+      <p>{questionTopics.topics}</p>
       <p>
         <strong>Subtopic(s)</strong>
       </p>
-      <p>{aggregateTopicsAndSubtopics(values.topics).subtopics}</p>
+      <p>{questionTopics.subtopics}</p>
       <p>
         <strong>Courses</strong>
       </p>

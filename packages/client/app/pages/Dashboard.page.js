@@ -13,6 +13,10 @@ import {
   hasGlobalRole,
   // dashboardDataMapper,
   metadataForQuestionPage as metadataValues,
+  extractDocumentText,
+  extractCourseAndObjectives,
+  extractTopicsAndSubtopics,
+  extractBloomsLevel,
 } from '../utilities'
 
 const defaultSearchOptions = {
@@ -30,75 +34,90 @@ const transform = questions => {
     const { content, publicationDate, cognitiveLevel } = latestVersion
     const parsedContent = extractDocumentText(content)
 
-    const courses = latestVersion.courses.map(c => {
-      const courseInValues = metadataValues.frameworks.find(
-        f => f.value === c.course,
-      )
+    const courses = extractCourseAndObjectives(
+      latestVersion.courses,
+      metadataValues.frameworks,
+    )
 
-      const beginning = c.course.slice(0, 2).toLowerCase()
-      // const isIB = beginning === 'ib'
-      const isAP = beginning === 'ap'
+    // const courses = latestVersion.courses.map(c => {
+    //   const courseInValues = metadataValues.frameworks.find(
+    //     f => f.value === c.course,
+    //   )
 
-      const objectives = c.units.map(unit => ({
-        label: courseInValues?.learningObjectives?.find(
-          lo => lo.value === unit.learningObjective,
-        )?.label,
-      }))
+    //   const beginning = c.course.slice(0, 2).toLowerCase()
+    //   // const isIB = beginning === 'ib'
+    //   const isAP = beginning === 'ap'
 
-      const understandings = c.units.map(unit => ({
-        label: courseInValues?.understandings?.find(
-          und => und.value === unit.understanding,
-        )?.label,
-      }))
+    //   const objectives = c.units.map(unit => ({
+    //     label: courseInValues?.learningObjectives?.find(
+    //       lo => lo.value === unit.learningObjective,
+    //     )?.label,
+    //   }))
 
-      return {
-        course: {
-          label: courseInValues?.label,
-        },
-        label: isAP ? 'learning objectives' : 'understandings',
-        objectives: isAP ? objectives : understandings,
-      }
-    })
+    //   const understandings = c.units.map(unit => ({
+    //     label: courseInValues?.understandings?.find(
+    //       und => und.value === unit.understanding,
+    //     )?.label,
+    //   }))
 
-    const topics = latestVersion.topics
-      .map(topic => {
-        const topicObject = metadataValues.topics.find(
-          t => t.value === topic?.topic,
-        )
+    //   return {
+    //     course: {
+    //       label: courseInValues?.label,
+    //     },
+    //     label: isAP ? 'learning objectives' : 'understandings',
+    //     objectives: isAP ? objectives : understandings,
+    //   }
+    // })
 
-        const subtopicObject = topicObject?.subtopics.find(
-          s => s.value === topic.subtopic,
-        )
+    // const topics = latestVersion.topics
+    //   .map(topic => {
+    //     const topicObject = metadataValues.topics.find(
+    //       t => t.value === topic?.topic,
+    //     )
 
-        return {
-          topic: topicObject?.label,
-          subtopic: subtopicObject?.label,
-        }
-      })
-      .reduce(
-        (accumulator, topic, index, array) => {
-          return {
-            topics: `${accumulator.topics}${topic.topic}${
-              index < array.length - 1 ? ', ' : ''
-            }`,
-            subtopics: `${accumulator.subtopics}${topic.subtopic}${
-              index < array.length - 1 ? ', ' : ''
-            }`,
-          }
-        },
-        { topics: '', subtopics: '' },
-      )
+    //     const subtopicObject = topicObject?.subtopics.find(
+    //       s => s.value === topic.subtopic,
+    //     )
 
-    const cognitiveValues = metadataValues.blooms.cognitive
+    //     return {
+    //       topic: topicObject?.label,
+    //       subtopic: subtopicObject?.label,
+    //     }
+    //   })
+    //   .reduce(
+    //     (accumulator, topic, index, array) => {
+    //       return {
+    //         topics: `${accumulator.topics}${topic.topic}${
+    //           index < array.length - 1 ? ', ' : ''
+    //         }`,
+    //         subtopics: `${accumulator.subtopics}${topic.subtopic}${
+    //           index < array.length - 1 ? ', ' : ''
+    //         }`,
+    //       }
+    //     },
+    //     { topics: '', subtopics: '' },
+    //   )
 
-    const allCognitiveOptions = [
-      ...cognitiveValues[0].options,
-      ...cognitiveValues[1].options,
-    ]
+    const topics = extractTopicsAndSubtopics(
+      latestVersion.topics,
+      metadataValues.topics,
+    )
 
-    const cognitiveDisplayValue = allCognitiveOptions.find(
-      o => o.value === cognitiveLevel,
-    )?.label
+    // const cognitiveValues = metadataValues.blooms.cognitive
+
+    // const allCognitiveOptions = [
+    //   ...cognitiveValues[0].options,
+    //   ...cognitiveValues[1].options,
+    // ]
+
+    // const cognitiveDisplayValue = allCognitiveOptions.find(
+    //   o => o.value === cognitiveLevel,
+    // )?.label
+
+    const cognitiveDisplayValue = extractBloomsLevel(
+      cognitiveLevel,
+      metadataValues.blooms.cognitive,
+    )
 
     let status = 'Not Submitted'
     if (latestVersion.submitted) status = 'Submitted'
@@ -128,51 +147,6 @@ const transform = questions => {
       courses,
     }
   })
-}
-
-const extractDocumentText = data => {
-  if (data === null) return null
-  let allContent = ''
-  const incoming = JSON.parse(data)
-
-  const extract = obj => {
-    const { content } = obj
-    if (!Array.isArray(content)) return
-
-    content.forEach(item => {
-      const { text, content: itemContent } = item
-
-      if (text) allContent += `${text} `
-      if (itemContent) extract(item)
-    })
-  }
-
-  extract(incoming)
-
-  const maxLength = 300
-  allContent = allContent.substring(0, maxLength + 1).trim()
-  allContent =
-    allContent.length === maxLength ? `${allContent} ...` : allContent
-
-  if (!allContent) allContent = ' '
-
-  return {
-    type: 'doc',
-    content: [
-      {
-        type: 'paragraph',
-        attrs: {
-          class: 'paragraph',
-        },
-        content: [
-          {
-            type: 'text',
-            text: allContent,
-          },
-        ],
-      },
-    ],
-  }
 }
 
 const DashboardPage = () => {
