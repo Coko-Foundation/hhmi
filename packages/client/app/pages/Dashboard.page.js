@@ -53,7 +53,7 @@ const transform = questions => {
 
       return {
         course: {
-          label: courseInValues.label,
+          label: courseInValues?.label,
         },
         label: isAP ? 'learning objectives' : 'understandings',
         objectives: isAP ? objectives : understandings,
