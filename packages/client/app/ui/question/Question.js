@@ -112,7 +112,9 @@ const StyledTabs = styled(Tabs)`
 const MetadataWrapper = styled.section`
   background-color: ${th('colorBackground')};
   border-left: 1px solid ${th('colorBorder')};
+  height: 100%;
   min-width: 0;
+  overflow-y: auto;
 `
 
 const StyledRadioToggle = styled(Radio)`
@@ -132,7 +134,7 @@ const EditorWrapper = styled.div`
   flex-direction: column;
   height: 100%;
   margin: auto;
-  max-width: 75vw;
+  /* max-width: 75vw; */
   overflow: hidden;
   width: 100%;
 `
@@ -145,9 +147,12 @@ const EditorScrollContainer = styled.div`
 const SubmitTestBar = styled.div`
   background-color: ${th('colorBackground')};
   border-top: 1px solid ${th('colorBorder')};
+  box-shadow: 0 0 4px ${th('colorBorder')};
+  display: flex;
+  justify-content: end;
   margin: auto;
-  max-width: 100ch;
-  padding: ${grid(1)} ${grid(2)};
+  /* max-width: 100ch; */
+  padding: ${grid(2)} ${grid(2)};
   width: 100%;
 `
 
@@ -209,7 +214,7 @@ const MemoizedWax = memo(
         <EditorScrollContainer>
           <WaxWrapper
             config={config}
-            content={editorContent}
+            content={testMode ? editorContent : content}
             customValues={{ showFeedBack: submitted, testMode }}
             innerRef={innerRef}
             layout={layout}
