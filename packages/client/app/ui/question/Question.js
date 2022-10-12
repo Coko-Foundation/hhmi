@@ -214,7 +214,7 @@ const MemoizedWax = memo(
         <EditorScrollContainer>
           <WaxWrapper
             config={config}
-            content={testMode ? editorContent : content}
+            content={published ? editorContent : content}
             customValues={{ showFeedBack: submitted, testMode }}
             innerRef={innerRef}
             layout={layout}
