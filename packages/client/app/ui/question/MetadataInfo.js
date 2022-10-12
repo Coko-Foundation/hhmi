@@ -186,13 +186,15 @@ const MetadataInfo = props => {
           </StyledDetails>
         )
       })}
-      {values.keywords?.length && (
+      {values.keywords?.length ? (
         <>
           <p>
             <strong>Keywords</strong>
           </p>
           <p>{values.keywords.join(', ')}</p>
         </>
+      ) : (
+        ''
       )}
       <p>
         <strong>Bloom&apos;s cognitive level</strong>
