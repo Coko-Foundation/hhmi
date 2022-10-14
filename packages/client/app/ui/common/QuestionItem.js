@@ -137,12 +137,18 @@ const sortFunction = (a, b) =>
   courseOrder.indexOf(a.course.label) - courseOrder.indexOf(b.course.label)
 
 const QuestionItem = props => {
-  const { className, metadata, content, status, href, id, courses } = props
+  const { className, metadata, content, status, href, id, courses, state } =
+    props
 
   return (
     <Wrapper className={className} id={id}>
       <FirstRow>
-        <WaxContainer to={href}>
+        <WaxContainer
+          to={{
+            pathname: href,
+            state,
+          }}
+        >
           <WaxWrapper
             config={dashConfig}
             content={content}
@@ -211,6 +217,7 @@ QuestionItem.propTypes = {
       ),
     }),
   ),
+  state: PropTypes.shape(),
 }
 
 QuestionItem.defaultProps = {
@@ -219,6 +226,7 @@ QuestionItem.defaultProps = {
   href: '#',
   id: uuid(),
   courses: [],
+  state: null,
 }
 
 export default QuestionItem

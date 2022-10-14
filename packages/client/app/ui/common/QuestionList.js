@@ -21,6 +21,7 @@ const RenderItem = ({ item, onClickRow }) => {
       href={item.href}
       id={item.id}
       metadata={item.metadata}
+      state={item.state}
       status={item.status}
       title={item.title}
     />

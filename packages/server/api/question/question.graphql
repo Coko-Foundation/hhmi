@@ -67,6 +67,10 @@ type QuestionsResponse {
   totalCount: Int
 }
 
+type PrevOrNextQuestionResponse {
+  questionId: ID
+}
+
 # INPUTS
 
 input UpdateQuestionInput {
@@ -131,8 +135,13 @@ input FilterQuestionsParams {
 input QuestionPageInput {
   orderBy: String
   ascending: Boolean
-  pageSize: Int!
-  page: Int!
+  pageSize: Int
+  page: Int
+}
+
+enum AdjecentQuestion {
+  NEXT
+  PREV
 }
 
 # QUERIES & MUTATIONS
@@ -167,6 +176,13 @@ extend type Query {
     pageSize: Int
     searchQuery: String
   ): QuestionsResponse!
+
+  getPreviousOrNextQuestion(
+    which: AdjecentQuestion
+    currentQuestion: ID!
+    params: FilterQuestionsParams
+    options: QuestionPageInput
+  ): PrevOrNextQuestionResponse!
 }
 
 extend type Mutation {

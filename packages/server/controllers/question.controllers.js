@@ -62,6 +62,30 @@ const getPublishedQuestions = async (params = {}, options = {}) => {
   // return Question.findPublished({ orderBy, page, pageSize, trx })
 }
 
+const getPreviousOrNextQuestionsIds = async (
+  which,
+  currentQuestionId,
+  params = {},
+  options = {},
+) => {
+  try {
+    const { orderBy, ascending } = options
+
+    return Question.getPreviousOrNextQuestionId(
+      which,
+      currentQuestionId,
+      params,
+      {
+        orderBy,
+        ascending,
+      },
+    )
+  } catch (e) {
+    logger.error(`error getPreviousOrNextQuestionsIds: ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 // const getDashboardData = (userId, isManagingEditor) => {
 //   const authorData = Question.findByRole(userId, 'author')
 //   const reviewerData = Question.findByRole(userId, 'reviewer')
@@ -308,6 +332,7 @@ module.exports = {
   getQuestion,
   getQuestionVersions,
   getPublishedQuestions,
+  getPreviousOrNextQuestionsIds,
 
   getAuthorDashboard,
   getReviewerDashboard,

@@ -5,6 +5,7 @@ const {
   getAuthorDashboard,
   getReviewerDashboard,
   getManagingEditorDashboard,
+  getPreviousOrNextQuestionsIds,
 
   createQuestion,
   updateQuestion,
@@ -90,6 +91,13 @@ const contentResolver = version => {
   return content === null ? content : JSON.stringify(content)
 }
 
+const prevOrNextQuestionsResolver = (
+  _,
+  { which, currentQuestion, params, options },
+) => {
+  return getPreviousOrNextQuestionsIds(which, currentQuestion, params, options)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -97,6 +105,7 @@ module.exports = {
     getAuthorDashboard: getAuthorDashboardResolver,
     getReviewerDashboard: getReviewerDashboardResolver,
     getManagingEditorDashboard: getManagingEditorDashboardResolver,
+    getPreviousOrNextQuestion: prevOrNextQuestionsResolver,
   },
   Mutation: {
     createQuestion: createQuestionResolver,

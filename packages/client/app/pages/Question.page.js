@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { useHistory, useParams, Link } from 'react-router-dom'
-import { useQuery, useMutation } from '@apollo/client'
+import { useHistory, useParams, Link, useLocation } from 'react-router-dom'
+import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
 import debounce from 'lodash/debounce'
-import isEmpty from 'lodash/isEmpty'
 // import { questionDataTransformer, questionDataMapper } from '../utilities'
 
-import { Question, resources, Result } from 'ui'
+import { Question, resources, Result, Modal } from 'ui'
 
 import {
   CURRENT_USER,
@@ -16,10 +15,13 @@ import {
   REJECT_QUESTION,
   MOVE_QUESTION_VERSION_TO_REVIEW,
   PUBLISH_QUESTION_VERSION,
+  GET_PREV_OR_NEXT_QUESTION_ID,
 } from '../graphql'
 import { metadataForQuestionPage, hasRole, hasGlobalRole } from '../utilities'
 
 const AUTOSAVE_DELAY = 500
+
+const { info } = Modal
 
 // #region transformations
 const metadataApiToUi = values => {
@@ -107,8 +109,6 @@ const QuestionPage = props => {
   const { id } = useParams()
   const history = useHistory()
 
-  const [initialMetadata, setInitialMetadata] = useState({})
-
   const { data, loading, error } = useQuery(QUESTION, {
     variables: { id },
   })
@@ -137,6 +137,23 @@ const QuestionPage = props => {
       refetchQueries: [{ query: QUESTION, variables: { id } }],
     },
   )
+
+  /* setup Prev/Next question functions */
+  // read state from location to get filter values, if any
+  const location = useLocation()
+  const { state } = location
+
+  // initialize searchParams by state.searchParams
+  // if no state, default to no filters, order by publication_date in descending order
+  const [searchParams] = useState(
+    state?.searchParams || {
+      ascending: false,
+      orderBy: 'publication_date',
+    },
+  )
+
+  // declare lazy query to be called when clicking the next question or previous question buttons
+  const [getQuestion] = useLazyQuery(GET_PREV_OR_NEXT_QUESTION_ID)
   // #endregion hooks
 
   // #region data wrangling
@@ -180,15 +197,6 @@ const QuestionPage = props => {
         title="Question Not Ready"
       />
     )
-  }
-
-  if (isEmpty(initialMetadata) && version) {
-    if (testMode) {
-      // no need to flatten course metadata in test mode
-      setInitialMetadata(version)
-    } else {
-      setInitialMetadata(metadataApiToUi(version))
-    }
   }
   // #endregion data wrangling
 
@@ -255,9 +263,42 @@ const QuestionPage = props => {
 
   const handleClickAssignHE = () => {}
 
-  const handleClickNextButton = () => {}
+  const handleGetQuestionButton = which => {
+    const variables = {
+      which,
+      currentQuestion: id,
+      params: {
+        filters: searchParams.filters,
+        searchQuery: searchParams.query,
+      },
+      options: {
+        orderBy: searchParams.orderBy,
+        ascending: searchParams.ascending,
+      },
+    }
 
-  const handleClickPreviousButton = () => {}
+    getQuestion({
+      variables,
+    }).then(response => {
+      const {
+        data: {
+          getPreviousOrNextQuestion: { questionId },
+        },
+      } = response
+
+      if (questionId === '0') {
+        info({
+          title: `No ${which === 'NEXT' ? 'next' : 'previous'} question`,
+          content: 'There are no more questions in this direction',
+        })
+      } else {
+        history.push({
+          pathname: `/question/${questionId}/test`,
+          state: searchParams,
+        })
+      }
+    })
+  }
 
   const handleMoveToReview = () => {
     const mutationData = {
@@ -289,7 +330,7 @@ const QuestionPage = props => {
       editorContent={editorContent}
       editorView={isEditor && !isAuthor}
       facultyView={testMode}
-      initialMetadataValues={initialMetadata}
+      initialMetadataValues={testMode ? version : metadataApiToUi(version)}
       isPublished={version.published}
       isRejected={question.rejected}
       isSubmitted={version.submitted}
@@ -299,8 +340,8 @@ const QuestionPage = props => {
       metadata={metadataForQuestionPage}
       onClickAssignHE={handleClickAssignHE}
       onClickBackButton={handleClickBackButton}
-      onClickNextButton={handleClickNextButton}
-      onClickPreviousButton={handleClickPreviousButton}
+      onClickNextButton={() => handleGetQuestionButton('NEXT')}
+      onClickPreviousButton={() => handleGetQuestionButton('PREV')}
       onEditorContentAutoSave={handleEditorContentAutoSave}
       onMetadataAutoSave={handleMetadataAutoSave}
       onMoveToReview={handleMoveToReview}

@@ -182,6 +182,23 @@ const MemoizedWax = memo(
     // only for users taking the test in student view
     const preserveLocalState = published && !withMetadata
 
+    useEffect(() => {
+      setEditorContent(content)
+    }, [content])
+
+    useEffect(() => {
+      if (withMetadata) {
+        setSubmitted(false)
+        setTestMode(false)
+      } else {
+        setSubmitted(false)
+        setTestMode(true)
+      }
+
+      // reset original content after switching views
+      setEditorContent(content)
+    }, [withMetadata])
+
     const submitTest = () => {
       setSubmitted(true)
       setTestMode(false)
@@ -201,19 +218,6 @@ const MemoizedWax = memo(
       setTestMode(true)
       setEditorContent(content)
     }
-
-    useEffect(() => {
-      if (withMetadata) {
-        setSubmitted(false)
-        setTestMode(false)
-      } else {
-        setSubmitted(false)
-        setTestMode(true)
-      }
-
-      // reset original content after switching views
-      setEditorContent(content)
-    }, [withMetadata])
 
     return (
       <EditorWrapper>
@@ -248,8 +252,7 @@ const MemoizedWax = memo(
   // add a comparison function for when we want the editor to rerender
   // returning true means the component doesn't rerender when parent rerenders
   (prevProps, nextProps) =>
-    prevProps.readOnly === nextProps.readOnly &&
-    prevProps.withMetadata === nextProps.withMetadata,
+    nextProps.published ? false : prevProps.readOnly === nextProps.readOnly,
   // && prevProps.content === nextProps.content,
 )
 
@@ -606,7 +609,6 @@ const Question = props => {
 
   const PreviousQuestion = (
     <StyledButton
-      href="#"
       icon={<LeftOutlined />}
       onClick={onClickPreviousButton}
       type="primary"
@@ -617,7 +619,6 @@ const Question = props => {
 
   const NextQuestion = (
     <StyledButton
-      href="#"
       icon={<RightOutlined />}
       onClick={onClickNextButton}
       type="primary"

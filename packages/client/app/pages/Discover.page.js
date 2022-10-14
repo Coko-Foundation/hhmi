@@ -30,7 +30,7 @@ const sidebarText =
 
 const PAGE_SIZE = 10
 
-const transform = questions => {
+const transform = (questions, searchParams) => {
   if (!questions) return null
 
   return questions.map(question => {
@@ -73,6 +73,7 @@ const transform = questions => {
       href: `/question/${id}/test`,
       id,
       courses,
+      state: { searchParams },
     }
   })
 }
@@ -123,7 +124,8 @@ const DiscoverPage = () => {
       onSearch={handleSearch}
       pageSize={PAGE_SIZE}
       questions={
-        questionsData && transform(questionsData.getPublishedQuestions.result)
+        questionsData &&
+        transform(questionsData.getPublishedQuestions.result, searchParams)
       }
       showSort
       sidebarMetadata={metadata}
