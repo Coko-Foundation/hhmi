@@ -317,6 +317,7 @@ export const GET_PREV_OR_NEXT_QUESTION_ID = gql`
     ) {
       questionId
     }
+  }
 `
 
 export const GENERATE_WORD_FILE = gql`
