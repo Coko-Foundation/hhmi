@@ -15,6 +15,7 @@ import { HhmiLayout, TestModeLayout } from '../wax/layout'
 import { config } from '../wax/config'
 
 import Metadata from './Metadata'
+import ExportToWordButton from './ExportToWordButton'
 import {
   Button,
   Checkbox,
@@ -69,6 +70,11 @@ const Wrapper = styled.div`
 `
 
 const StyledButton = styled(Button)`
+  margin-right: ${grid(2)};
+  text-transform: uppercase;
+`
+
+const StyledExportButton = styled(ExportToWordButton)`
   margin-right: ${grid(2)};
   text-transform: uppercase;
 `
@@ -356,6 +362,8 @@ const Question = props => {
     editorContent,
     editorView,
     facultyView,
+    onClickExportToWord,
+    onClickExportToScorm,
     initialMetadataValues,
     isUserLoggedIn,
     isPublished,
@@ -380,6 +388,7 @@ const Question = props => {
     showNextQuestionLink,
     submitting,
     updated,
+    wordFileLoading,
   } = props
 
   const formRef = useRef()
@@ -707,9 +716,18 @@ const Question = props => {
         {BackButton}
         {PreviousQuestion}
       </div>
+
       <div>
-        <StyledButton type="primary">Export to Word</StyledButton>
-        <StyledButton type="primary">Export to Scorm</StyledButton>
+        <StyledExportButton
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption={isUserLoggedIn}
+        />
+
+        <StyledButton onClick={onClickExportToScorm} type="primary">
+          Export to Scorm
+        </StyledButton>
+
         {isUserLoggedIn && (
           <StyledRadioToggle
             buttonStyle="solid"
@@ -722,6 +740,7 @@ const Question = props => {
             value={showMetadata}
           />
         )}
+
         {NextQuestion}
       </div>
     </FacultyHeaderWrapper>
@@ -745,6 +764,7 @@ const Question = props => {
                       This question has been rejected by the editors
                     </Ribbon>
                   )}
+
                   <QuestionWrapper showMetadata={showMetadata}>
                     <MemoizedWax
                       content={editorContent}
@@ -755,6 +775,7 @@ const Question = props => {
                       readOnly={readOnly}
                       withMetadata={showMetadata}
                     />
+
                     {showMetadata && (
                       <MetadataWrapper>
                         <Metadata
@@ -801,6 +822,8 @@ Question.propTypes = {
   onPublish: PropTypes.func,
   onReject: PropTypes.func,
   onClickAssignHE: PropTypes.func,
+  onClickExportToScorm: PropTypes.func,
+  onClickExportToWord: PropTypes.func,
 
   editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool.isRequired,
@@ -1055,6 +1078,7 @@ Question.propTypes = {
     readingLevel: PropTypes.string,
   }),
   updated: PropTypes.string,
+  wordFileLoading: PropTypes.bool.isRequired,
 }
 
 Question.defaultProps = {
@@ -1064,6 +1088,8 @@ Question.defaultProps = {
   onClickAssignHE: () => {},
   editorContent: {},
   initialMetadataValues: {},
+  onClickExportToScorm: null,
+  onClickExportToWord: null,
   onClickPreviousButton: () => {},
   onClickNextButton: () => {},
   editorView: false,

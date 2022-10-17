@@ -49,7 +49,12 @@ services:
         '--watch',
         'models',
         '--watch',
+        'rest',
+        '--watch',
+        'services',
+        '--watch',
         'scripts',
+        '--watch',
         '--ext',
         'js,graphql',
       ]
@@ -78,6 +83,7 @@ services:
       - ./packages/server/config:/home/node/hhmi/config
       - ./packages/server/controllers:/home/node/hhmi/controllers
       - ./packages/server/models:/home/node/hhmi/models
+      - ./packages/server/rest:/home/node/hhmi/rest
       - ./packages/server/scripts:/home/node/hhmi/scripts
       - ./packages/server/services:/home/node/hhmi/services
 

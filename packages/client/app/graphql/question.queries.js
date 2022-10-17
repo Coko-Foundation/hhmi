@@ -317,5 +317,13 @@ export const GET_PREV_OR_NEXT_QUESTION_ID = gql`
     ) {
       questionId
     }
+`
+
+export const GENERATE_WORD_FILE = gql`
+  mutation GenerateWordFile(
+    $questionVersionId: ID!
+    $options: GenerateWordFileOptionsInput
+  ) {
+    generateWordFile(questionVersionId: $questionVersionId, options: $options)
   }
 `

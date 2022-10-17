@@ -1,5 +1,6 @@
 const fs = require('fs')
 const imageSize = require('image-size')
+const cloneDeep = require('lodash/cloneDeep')
 
 const {
   AlignmentType,
@@ -369,13 +370,24 @@ class WaxToDocxConverter {
   // #endregion images
 
   paragraphHandler = (paragraph, options = {}) => {
+    const p = cloneDeep(paragraph)
     const { listType, level, instance, isTableCell } = options
 
     const isListItem =
       !!listType && Number.isInteger(level) && Number.isInteger(instance)
 
+    // empty paragraphs do not have a content key at all, so add a ''
+    if (!p.content) {
+      p.content = [
+        {
+          type: 'text',
+          text: '',
+        },
+      ]
+    }
+
     const paragraphObject = {
-      children: this.contentParser(paragraph.content, options),
+      children: this.contentParser(p.content, options),
     }
 
     if (isListItem) {
@@ -427,14 +439,14 @@ class WaxToDocxConverter {
     })
   }
 
-  writeToPath(path) {
+  async writeToPath(path) {
     try {
       if (!path) throw new Error('No path provided to write method')
       const parsed = this.buildDocx()
 
-      Packer.toBuffer(parsed).then(buffer => {
-        fs.writeFileSync(path, buffer)
-      })
+      const buffer = await Packer.toBuffer(parsed)
+      fs.writeFileSync(path, buffer)
+      return
     } catch (e) {
       this.error(e)
     }

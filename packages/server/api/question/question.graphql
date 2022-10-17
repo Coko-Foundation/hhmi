@@ -144,6 +144,11 @@ enum AdjecentQuestion {
   PREV
 }
 
+input GenerateWordFileOptionsInput {
+  showFeedback: Boolean
+  showMetadata: Boolean
+}
+
 # QUERIES & MUTATIONS
 
 extend type Query {
@@ -202,4 +207,9 @@ extend type Mutation {
     questionVersionId: ID!
     input: UpdateQuestionInput!
   ): Question!
+
+  generateWordFile(
+    questionVersionId: ID!
+    options: GenerateWordFileOptionsInput
+  ): String!
 }

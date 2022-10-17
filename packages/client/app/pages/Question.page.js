@@ -5,6 +5,8 @@ import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
 import debounce from 'lodash/debounce'
 // import { questionDataTransformer, questionDataMapper } from '../utilities'
 
+import { serverUrl } from '@coko/client'
+
 import { Question, resources, Result, Modal } from 'ui'
 
 import {
@@ -16,6 +18,7 @@ import {
   MOVE_QUESTION_VERSION_TO_REVIEW,
   PUBLISH_QUESTION_VERSION,
   GET_PREV_OR_NEXT_QUESTION_ID,
+  GENERATE_WORD_FILE,
 } from '../graphql'
 import { metadataForQuestionPage, hasRole, hasGlobalRole } from '../utilities'
 
@@ -154,6 +157,9 @@ const QuestionPage = props => {
 
   // declare lazy query to be called when clicking the next question or previous question buttons
   const [getQuestion] = useLazyQuery(GET_PREV_OR_NEXT_QUESTION_ID)
+
+  const [generateWordFileMutation, { loading: generateWordFileLoading }] =
+    useMutation(GENERATE_WORD_FILE)
   // #endregion hooks
 
   // #region data wrangling
@@ -216,6 +222,7 @@ const QuestionPage = props => {
   }, AUTOSAVE_DELAY)
 
   const handleEditorContentAutoSave = content => {
+    // console.log(content)
     return new Promise(resolve => {
       debouncedEditorAutoSave(content, resolve)
     })
@@ -323,6 +330,38 @@ const QuestionPage = props => {
   const handleReject = () => {
     return rejectQuestionMutation()
   }
+
+  const handleExportToScorm = () => {
+    console.warn('Not implemented yet!')
+  }
+
+  const handleExportToWord = options => {
+    const { showFeedback, showMetadata } = options
+
+    const mutationVariables = {
+      questionVersionId: version.id,
+      options: {
+        showFeedback,
+        showMetadata,
+      },
+    }
+
+    generateWordFileMutation({ variables: mutationVariables })
+      .then(res => {
+        const filename = res.data.generateWordFile
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        Modal.error({
+          title: 'Conversion error',
+          content:
+            'Something went wrong with your conversion! Please contact your system administrator.',
+        })
+      })
+  }
+
   // #endregion handlers
 
   return (
@@ -340,6 +379,8 @@ const QuestionPage = props => {
       metadata={metadataForQuestionPage}
       onClickAssignHE={handleClickAssignHE}
       onClickBackButton={handleClickBackButton}
+      onClickExportToScorm={testMode ? handleExportToScorm : null}
+      onClickExportToWord={testMode ? handleExportToWord : null}
       onClickNextButton={() => handleGetQuestionButton('NEXT')}
       onClickPreviousButton={() => handleGetQuestionButton('PREV')}
       onEditorContentAutoSave={handleEditorContentAutoSave}
@@ -354,6 +395,7 @@ const QuestionPage = props => {
       showNextQuestionLink={false} //
       submitting={false} //
       updated={version.lastEdit}
+      wordFileLoading={generateWordFileLoading}
     />
   )
 }

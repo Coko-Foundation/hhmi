@@ -81,6 +81,7 @@ class QuestionVersion extends BaseModel {
         submitted: boolean,
         underReview: boolean,
         published: boolean,
+
         publicationDate: dateNullable,
 
         topics: {

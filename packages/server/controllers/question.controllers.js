@@ -1,8 +1,10 @@
+const path = require('path')
 const config = require('config')
 
 const { logger, useTransaction } = require('@coko/server')
 
 const { Question, QuestionVersion, Team } = require('../models')
+const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const { labels } = require('./constants')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
@@ -328,6 +330,74 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
 //   }
 // }
 
+const generateWordFile = async (questionVersionId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} generateWordFile:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} generating word file for question version with id ${questionVersionId}`,
+  )
+
+  try {
+    // fake long wait
+    // await new Promise(resolve => {
+    //   setTimeout(resolve, 2000)
+    // })
+
+    // fake error
+    // throw new Error('test')
+
+    /* INIT */
+
+    const { showFeedback, showMetadata } = options
+
+    const version = await QuestionVersion.findById(questionVersionId)
+
+    const formatDate = date =>
+      date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+
+    const converter = new WaxToDocxConverter(
+      version.content,
+      {}, // image data
+      {
+        questionType: version.questionType,
+
+        topics: version.topics,
+        courses: version.courses,
+
+        keywords: version.keywords,
+        biointeractiveResources: version.biointeractiveResources,
+
+        cognitiveLevel: version.cognitiveLevel,
+        affectiveLevel: version.affectiveLevel,
+        psychomotorLevel: version.psychomotorLevel,
+        readingLevel: version.readingLevel,
+
+        publicationDate: formatDate(version.publicationDate),
+      },
+      {
+        showFeedback,
+        showMetadata,
+      },
+    )
+
+    /* CONVERT */
+
+    const tempFolderPath = path.join(__dirname, '..', 'tmp')
+
+    const filename = `${version.questionId}.docx`
+    const filePath = path.join(tempFolderPath, filename)
+    await converter.writeToPath(filePath)
+
+    return filename
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   getQuestion,
   getQuestionVersions,
@@ -345,4 +415,6 @@ module.exports = {
   publishQuestionVersion,
   rejectQuestion,
   submitQuestion,
+
+  generateWordFile,
 }

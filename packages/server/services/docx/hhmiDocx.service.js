@@ -17,6 +17,40 @@ const WaxToDocxConverter = require('./docx.service')
  * essay
  */
 
+const labels = {
+  questionType: 'Question type',
+
+  topics: 'Topics',
+  topic: 'Topic',
+  subtopic: 'Subtopic',
+
+  courses: 'Courses',
+  course: 'Course',
+  unit: 'Unit',
+  courseTopic: 'Course Topic',
+  learningObjective: 'Learning objective',
+  essentialKnowledge: 'Essential knowledge',
+  application: 'Application',
+  coreCompetence: 'Core competence',
+  coreConcept: 'Core concept',
+  skill: 'Skill',
+  subcompetence: 'Subcompetence',
+  subcompetenceStatement: 'Subcompetence statement',
+  subdiscipline: 'Subdiscipline',
+  subdisciplineStatement: 'Subdiscipline statement',
+  understanding: 'Understanding',
+
+  keywords: 'Keywords',
+  biointeractiveResources: 'BioInteractive resources',
+
+  cognitiveLevel: "Bloom's Cognitive Level",
+  affectiveLevel: "Bloom's Affective Level",
+  psychomotorLevel: "Bloom's Psychomotor Level",
+  readingLevel: "Bloom's Reading Level",
+
+  publicationDate: 'Publication date',
+}
+
 class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   constructor(doc, imageData, metadata, options = {}) {
     super(doc, imageData, options)
@@ -74,6 +108,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.multipleChoiceSolutions = {}
     this.fillTheGapSolutions = {}
     this.fillTheGapFeedback = {}
+
+    this.metadataSpacing = new TextRun({ text: '  ' })
   }
 
   multipleChoiceHandler = multipleChoice => {
@@ -127,7 +163,13 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   fillTheGapHandler = (gap, options = {}) => {
     const groupId = options.fillTheGapGroupId
     const solutions = this.fillTheGapSolutions[groupId]
-    solutions.push(gap.attrs.answer)
+    // solutions.push(gap.attrs.answer)
+    solutions.push(
+      gap.content[0].text
+        .split(',')
+        .map(i => i.trim())
+        .join(', '),
+    )
 
     return new TextRun({ text: '  ______  ' })
   }
@@ -273,6 +315,171 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     return content
   }
 
+  // #region metadata
+  metadataBulletFactory = (key, value, level = 0) => {
+    return new Paragraph({
+      children: [
+        key &&
+          new TextRun({
+            text: `${key}:`,
+            bold: true,
+          }),
+        key && this.metadataSpacing,
+        new TextRun({
+          text: value,
+        }),
+      ].filter(Boolean),
+      numbering: {
+        reference: this.listTypes.BULLET,
+        level,
+        instance: this.listInstance,
+      },
+    })
+  }
+
+  /* eslint-disable-next-line class-methods-use-this */
+  metadataBulletHeaderFactory = label => {
+    return new Paragraph({
+      children: [
+        new TextRun({
+          text: `${label}:`,
+          bold: true,
+        }),
+      ],
+    })
+  }
+
+  metadataArrayOfObjectsParser = (content, key, value) => {
+    // value is an array by definition
+    value.forEach((item, pos) => {
+      this.listInstance += 1
+
+      const textLabel =
+        value.length > 1 ? `${labels[key]} ${pos + 1}` : labels[key]
+
+      content.push(this.metadataBulletHeaderFactory(textLabel))
+
+      Object.keys(item).forEach(propertyKey => {
+        if (typeof item[propertyKey] === 'string') {
+          content.push(
+            this.metadataBulletFactory(propertyKey, item[propertyKey]),
+          )
+          return
+        }
+
+        this.metadataValueParser(content, propertyKey, item[propertyKey])
+      })
+    })
+  }
+
+  /* eslint-disable-next-line class-methods-use-this */
+  metadataArrayOfStringsParser = (content, key, value) => {
+    const items = []
+
+    value.forEach((s, pos) => {
+      items.push(
+        new TextRun({
+          text: s,
+        }),
+      )
+
+      // separate with commas
+      if (pos !== value.length - 1) {
+        items.push(
+          new TextRun({
+            text: ', ',
+          }),
+        )
+      }
+    })
+
+    content.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: `${labels[key]}:`,
+            bold: true,
+          }),
+          this.metadataSpacing,
+          ...items,
+        ],
+      }),
+    )
+  }
+
+  metadataArrayOfStringsAsBulletListParser = (content, key, value) => {
+    content.push(this.metadataBulletHeaderFactory(labels[key]))
+
+    value.forEach(v => {
+      content.push(this.metadataBulletFactory(null, v))
+    })
+  }
+
+  /* eslint-disable-next-line class-methods-use-this */
+  metadataStringFactory = (key, value) => {
+    return new Paragraph({
+      children: [
+        new TextRun({
+          text: `${labels[key]}:`,
+          bold: true,
+        }),
+        this.metadataSpacing,
+        new TextRun({
+          text: value,
+        }),
+      ],
+    })
+  }
+
+  metadataValueParser = (content, key, value) => {
+    if (typeof value === 'string') {
+      content.push(this.metadataStringFactory(key, value))
+    }
+
+    if (Array.isArray(value)) {
+      const hasStringValues = value.every(s => typeof s === 'string')
+      const hasObjectValues = value.every(o => typeof o === 'object')
+
+      if (hasStringValues) {
+        this.metadataArrayOfStringsParser(content, key, value)
+        return
+      }
+
+      if (hasObjectValues) {
+        this.metadataArrayOfObjectsParser(content, key, value)
+      }
+    }
+  }
+
+  metadataTopicsParser = (content, key, value) => {
+    content.push(this.metadataBulletHeaderFactory(labels[key]))
+
+    value.forEach(v => {
+      const { topic, subtopic } = v
+
+      content.push(this.metadataBulletFactory(labels.topic, topic))
+      content.push(this.metadataBulletFactory(labels.subtopic, subtopic, 1))
+    })
+  }
+
+  metadataCoursesParser = (content, key, value) => {
+    content.push(this.metadataBulletHeaderFactory(labels[key]))
+
+    value.forEach(v => {
+      const { course, units } = v
+      content.push(this.metadataBulletFactory(labels.course, course))
+
+      units.forEach(u => {
+        const { unit, ...rest } = u
+        content.push(this.metadataBulletFactory(labels.unit, unit, 1))
+
+        Object.keys(rest).forEach(i => {
+          content.push(this.metadataBulletFactory(labels[i], u[i], 2))
+        })
+      })
+    })
+  }
+
   metadataParser = () => {
     const content = [
       new Paragraph({
@@ -285,109 +492,31 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       }),
     ]
 
-    const spacing = new TextRun({
-      text: '  ',
-    })
-
     Object.keys(this.metadata).forEach(key => {
       const value = this.metadata[key]
 
-      if (typeof value === 'string') {
-        content.push(
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `${key}:`,
-                bold: true,
-              }),
-              spacing,
-              new TextRun({
-                text: value,
-              }),
-            ],
-          }),
-        )
+      if (key === 'topics') {
+        this.metadataTopicsParser(content, key, value)
+        return
       }
 
-      if (Array.isArray(value)) {
-        const hasStringValues = value.every(s => typeof s === 'string')
-        const hasObjectValues = value.every(o => typeof o === 'object')
-
-        if (hasStringValues) {
-          const items = []
-
-          value.forEach((s, pos) => {
-            items.push(
-              new TextRun({
-                text: s,
-              }),
-            )
-
-            // separate with commas
-            if (pos !== value.length - 1) {
-              items.push(
-                new TextRun({
-                  text: ', ',
-                }),
-              )
-            }
-          })
-
-          content.push(
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `${key}:`,
-                  bold: true,
-                }),
-                spacing,
-                ...items,
-              ],
-            }),
-          )
-        } else if (hasObjectValues) {
-          value.forEach((o, pos) => {
-            this.listInstance += 1
-
-            content.push(
-              new Paragraph({
-                children: [
-                  new TextRun({
-                    text: `${key} ${pos + 1}`,
-                    bold: true,
-                  }),
-                ],
-              }),
-            )
-
-            Object.keys(o).forEach(i => {
-              content.push(
-                new Paragraph({
-                  children: [
-                    new TextRun({
-                      text: `${i}:`,
-                      bold: true,
-                    }),
-                    spacing,
-                    new TextRun({
-                      text: o[i],
-                    }),
-                  ],
-                  numbering: {
-                    reference: this.listTypes.BULLET,
-                    level: 0,
-                    instance: this.listInstance,
-                  },
-                }),
-              )
-            })
-          })
-        }
+      if (key === 'courses') {
+        this.metadataCoursesParser(content, key, value)
+        return
       }
+
+      if (key === 'biointeractiveResources') {
+        this.metadataArrayOfStringsAsBulletListParser(content, key, value)
+
+        return
+      }
+
+      this.metadataValueParser(content, key, value)
     })
 
     return content
   }
+  // #endregion metadata
 
   buildDocx = () => {
     const sections = [
