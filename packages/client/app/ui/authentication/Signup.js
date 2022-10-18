@@ -183,7 +183,7 @@ const Signup = props => {
                       ? Promise.resolve()
                       : Promise.reject(
                           new Error(
-                            'You need to agreee to the terms and conditions',
+                            'You need to agree to the terms and conditions',
                           ),
                         ),
                 },
