@@ -178,13 +178,19 @@ const Signup = props => {
               name="agreedTc"
               rules={[
                 {
-                  required: true,
-                  message: 'You need to agreee to the terms and conditions',
+                  validator: (_, value) =>
+                    value
+                      ? Promise.resolve()
+                      : Promise.reject(
+                          new Error(
+                            'You need to agreee to the terms and conditions',
+                          ),
+                        ),
                 },
               ]}
               valuePropName="checked"
             >
-              <Checkbox>
+              <Checkbox aria-label="I agree to the terms and conditions">
                 I agree to the{' '}
                 <a
                   href="#termsAndCondition"
