@@ -472,6 +472,26 @@ const Question = props => {
   }
 
   const handleSubmit = () => {
+    const questionText = waxRef.current
+      .getContent()
+      .content.map(content => content.textContent)
+      .join('')
+
+    const isEditorEmpty = questionText.trim().length === 0
+
+    if (isEditorEmpty) {
+      error({
+        title: 'Question text cannot be empty',
+        content: 'Please provide some content for your question',
+        onOk: () => {
+          /* focus the editor */
+          document.querySelector('.ProseMirror').focus()
+        },
+      })
+
+      return
+    }
+
     confirm({
       title: 'Are you sure you want to submit the question?',
       content:
