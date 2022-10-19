@@ -58,8 +58,11 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
     const newHandlers = {
       multiple_choice_container: this.multipleChoiceHandler,
+      multiple_choice_single_correct_container: this.multipleChoiceHandler,
       question_node_multiple: this.multipleChoiceQuestionHandler,
+      question_node_multiple_single: this.multipleChoiceQuestionHandler,
       multiple_choice: this.multipleChoiceOptionHandler,
+      multiple_choice_single_correct: this.multipleChoiceOptionHandler,
       fill_the_gap_container: this.fillTheGapContainerHandler,
       fill_the_gap: this.fillTheGapHandler,
     }
@@ -149,6 +152,18 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     return parsed
   }
 
+  multipleChoiceOptionHandler = (multipleChoiceOption, options = {}) => {
+    const { /* id, */ correct, feedback } = multipleChoiceOption.attrs
+    const { multipleChoiceGroupId } = options
+
+    this.multipleChoiceSolutions[multipleChoiceGroupId].push({
+      correct,
+      feedback,
+    })
+
+    return this.contentParser(multipleChoiceOption.content, options)
+  }
+
   fillTheGapContainerHandler = container => {
     const groupId = container.attrs.id
     this.fillTheGapSolutions[groupId] = []
@@ -172,18 +187,6 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     )
 
     return new TextRun({ text: '  ______  ' })
-  }
-
-  multipleChoiceOptionHandler = (multipleChoiceOption, options = {}) => {
-    const { /* id, */ correct, feedback } = multipleChoiceOption.attrs
-    const { multipleChoiceGroupId } = options
-
-    this.multipleChoiceSolutions[multipleChoiceGroupId].push({
-      correct,
-      feedback,
-    })
-
-    return this.contentParser(multipleChoiceOption.content, options)
   }
 
   feedbackParser = () => {
