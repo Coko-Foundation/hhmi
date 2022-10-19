@@ -380,7 +380,7 @@ const QuestionPage = props => {
       onClickAssignHE={handleClickAssignHE}
       onClickBackButton={handleClickBackButton}
       onClickExportToScorm={testMode ? handleExportToScorm : null}
-      onClickExportToWord={testMode ? handleExportToWord : null}
+      onClickExportToWord={handleExportToWord}
       onClickNextButton={() => handleGetQuestionButton('NEXT')}
       onClickPreviousButton={() => handleGetQuestionButton('PREV')}
       onEditorContentAutoSave={handleEditorContentAutoSave}

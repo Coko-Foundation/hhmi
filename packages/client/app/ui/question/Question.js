@@ -667,6 +667,11 @@ const Question = props => {
 
   const RightAreaEditor = (
     <>
+      <StyledExportButton
+        loading={wordFileLoading}
+        onExport={onClickExportToWord}
+        showMetadataOption
+      />
       {showAssignHEButton && (
         <StyledButton
           aria-label="Assign Handling Editor"
