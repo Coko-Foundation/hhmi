@@ -329,7 +329,7 @@ class WaxToDocxConverter {
         bottom: 70,
         left: 100,
       },
-      verticalAlign: VerticalAlign.BOTTOM,
+      verticalAlign: VerticalAlign.TOP,
     })
   }
   // #endregion tables
