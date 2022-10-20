@@ -61,7 +61,7 @@ const MetadataInfo = props => {
           f => f.value === course.course,
         )
 
-        const courseUnits = course.units.map(unitData => {
+        const courseUnits = course.units.map((unitData, i) => {
           const unit = courseObject.units.find(u => u.value === unitData.unit)
 
           const courseTopic = courseObject.topics.find(
@@ -143,7 +143,9 @@ const MetadataInfo = props => {
           }
 
           return (
-            <li>
+            <li
+              key={`${unitData.unit}-${unitData.learningObjective}-${unitData.essentialKnowledge}`}
+            >
               <p>
                 <strong>Unit</strong>
               </p>
@@ -470,5 +472,7 @@ MetadataInfo.propTypes = {
     }),
   ).isRequired,
 }
+
+MetadataInfo.defaultProps = {}
 
 export default MetadataInfo
