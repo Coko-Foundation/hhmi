@@ -117,6 +117,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.showFeedback = options.showFeedback || false
     this.showMetadata = options.showMetadata || false
     this.multipleChoiceSolutions = {}
+    this.trueFalseSolutions = {}
     this.fillTheGapSolutions = {}
     this.fillTheGapFeedback = {}
 
@@ -159,8 +160,27 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   // #endregion multiple-choice
 
   // #region true-false
-  // same as multiple choice
-  trueFalseHandler = container => this.multipleChoiceHandler(container)
+  trueFalseHandler = trueFalse => {
+    const groupId = trueFalse.attrs.id
+    this.listInstance += 1
+    this.trueFalseSolutions[groupId] = []
+
+    return [
+      new Paragraph({
+        children: [],
+      }),
+      ...this.contentParser(
+        // remove last item, as it's an empty paragraph that wax generates
+        trueFalse.content.slice(0, trueFalse.content.length - 1),
+        {
+          trueFalseGroupId: groupId,
+          instance: this.listInstance,
+          listType: this.listTypes.MULTIPLE_CHOICE,
+          level: 0,
+        },
+      ),
+    ]
+  }
 
   trueFalseQuestionHandler = question => {
     return this.contentParser(question.content)
@@ -168,9 +188,9 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
   trueFalseOptionHandler = (trueFalseOption, options = {}) => {
     const { /* id, */ correct, feedback } = trueFalseOption.attrs
-    const { multipleChoiceGroupId } = options
+    const { trueFalseGroupId } = options
 
-    this.multipleChoiceSolutions[multipleChoiceGroupId].push({
+    this.trueFalseSolutions[trueFalseGroupId].push({
       correct,
       feedback,
     })
@@ -235,6 +255,58 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       let listContent = []
 
       if (multipleChoiceSolutionKeys.length > 1) {
+        listContent.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Multiple choice question ${i + 1}`,
+                bold: true,
+              }),
+            ],
+          }),
+        )
+      }
+
+      groupSolutions.forEach(option => {
+        const isCorrect = new Paragraph({
+          children: [
+            new TextRun({
+              text: option.correct ? 'Correct' : 'Not correct',
+            }),
+          ],
+          numbering: {
+            reference: this.listTypes.MULTIPLE_CHOICE,
+            level: 0,
+            instance: this.listInstance,
+          },
+          spacing: {
+            after: 50,
+          },
+        })
+
+        const feedback = new Paragraph({
+          children: [new TextRun({ text: option.feedback })],
+          indent: {
+            left: convertMillimetersToTwip(7),
+          },
+        })
+
+        listContent = listContent.concat([isCorrect, feedback])
+      })
+
+      content = content.concat(listContent)
+    })
+
+    // TO DO -- refactor with multiple choice
+    const trueFalseSolutionKeys = Object.keys(this.trueFalseSolutions)
+
+    trueFalseSolutionKeys.forEach((groupId, i) => {
+      this.listInstance += 1
+      const groupSolutions = this.trueFalseSolutions[groupId]
+
+      let listContent = []
+
+      if (trueFalseSolutionKeys.length > 1) {
         listContent.push(
           new Paragraph({
             children: [
