@@ -195,6 +195,13 @@ const ProfileInfo = props => {
                 ]}
               >
                 <Select
+                  filterOption={(inputValue, option) => {
+                    return (
+                      option.label
+                        .toLowerCase()
+                        .indexOf(inputValue.toLowerCase()) === 0
+                    )
+                  }}
                   onChange={onCountryChange}
                   optionFilterProp="label"
                   options={countries}
@@ -219,6 +226,13 @@ const ProfileInfo = props => {
                   ]}
                 >
                   <Select
+                    filterOption={(inputValue, option) => {
+                      return (
+                        option.label
+                          .toLowerCase()
+                          .indexOf(inputValue.toLowerCase()) === 0
+                      )
+                    }}
                     optionFilterProp="label"
                     options={states}
                     placeholder="Select the state where your institution is located"
