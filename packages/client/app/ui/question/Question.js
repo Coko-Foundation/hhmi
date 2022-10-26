@@ -605,7 +605,6 @@ const Question = props => {
   const BackButton = (
     <StyledButton
       ghost
-      href="#"
       icon={<LeftOutlined />}
       onClick={onClickBackButton}
       type="primary"
