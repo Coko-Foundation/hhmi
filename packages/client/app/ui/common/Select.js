@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import { debounce as lodashDebounceFunc } from 'lodash'
@@ -31,44 +31,14 @@ const Select = props => {
     // disable rule for props handled by ant
     /* eslint-disable react/prop-types */
     filterOption,
-    mode,
     notFoundContent,
     onSearch,
     showSearch,
-    options,
     /* eslint-enable react/prop-types */
 
     wrapOptionText,
     ...rest
   } = props
-
-  const [selectOptions, setSelectOptions] = useState(options)
-
-  // check if mode === multiple and there is a max count
-  // the following state and handleChange are relevant only to this case
-  const modeMutipleWithMaxCount = mode === 'multiple' && !!maxCount > 0
-  const [multipleValues, setMultipleValues] = useState([])
-
-  const handleChange = vals => {
-    // when reaching maxCount
-    if (mode === 'multiple' && vals.length === maxCount) {
-      // disable all other options
-      setSelectOptions(opts => {
-        return opts.map(opt => {
-          if (vals.indexOf(opt.value) === -1) return { ...opt, disabled: true }
-          return opt
-        })
-      })
-    }
-
-    // when deselecting after reaching maxCount
-    if (multipleValues.length === maxCount && vals.length < maxCount) {
-      // re-enable the other options as per initial state
-      setSelectOptions(options)
-    }
-
-    setMultipleValues(vals)
-  }
 
   const handleSearch = searchValue => {
     onSearch(searchValue)
@@ -92,17 +62,9 @@ const Select = props => {
         )
       }}
       filterOption={async && !filterOption ? false : filterOption}
-      mode={mode}
       notFoundContent={!notFoundContent && async ? null : notFoundContent}
       onSearch={onSearch && searchFunc}
-      options={modeMutipleWithMaxCount ? selectOptions : options}
       showSearch={showSearch || !!onSearch}
-      {...(modeMutipleWithMaxCount
-        ? {
-            onChange: handleChange,
-            value: multipleValues,
-          }
-        : {})}
       {...rest}
     />
   )

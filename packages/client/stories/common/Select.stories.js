@@ -43,18 +43,6 @@ export const Multi = () => (
   <Select mode="multiple" options={options} placeholder={lorem.words(4)} />
 )
 
-export const MultiWithMaxCount = () => (
-  <>
-    <p>Select a maximum of 3 options</p>
-    <Select
-      maxCount={3}
-      mode="multiple"
-      options={options}
-      placeholder={lorem.words(4)}
-    />
-  </>
-)
-
 export const Async = () => {
   const [loading, setLoading] = useState(false)
   const [optionsData, setOptionsData] = useState([])

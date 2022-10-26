@@ -479,6 +479,30 @@ const ProfileInfo = props => {
                           required: true,
                           message: 'Please select three topics',
                         },
+                        () => ({
+                          validator(_, value) {
+                            if (
+                              !value ||
+                              value?.length === 3 ||
+                              value?.length === 0
+                              // if length is 0 or value is undefined, the error is captured by the first rule, added to avoid duplication of error
+                            ) {
+                              return Promise.resolve()
+                            }
+
+                            if (value.length < 3) {
+                              return Promise.reject(
+                                new Error('Please select three topics.'),
+                              )
+                            }
+
+                            return Promise.reject(
+                              new Error(
+                                'Please select no more than three topics.',
+                              ),
+                            )
+                          },
+                        }),
                       ]}
                     >
                       <Select
