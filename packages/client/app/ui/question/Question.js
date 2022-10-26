@@ -638,7 +638,11 @@ const Question = props => {
 
   const RightAreaAuthor = isSubmitted ? null : (
     <>
-      <StyledCheckbox checked={agreedTc} onChange={handleAgreeTcChange}>
+      <StyledCheckbox
+        aria-label="I accept the terms and conditions"
+        checked={agreedTc}
+        onChange={handleAgreeTcChange}
+      >
         Accept{' '}
         <a
           href="#termsAndCondition"

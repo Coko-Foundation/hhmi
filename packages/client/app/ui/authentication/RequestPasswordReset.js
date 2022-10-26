@@ -51,16 +51,18 @@ const RequestPasswordReset = props => {
         <AuthenticationHeader>Request password reset</AuthenticationHeader>
 
         {hasSuccess && (
-          <Result
-            extra={[
-              <Link href="/login" key={1}>
-                Return to the login form
-              </Link>,
-            ]}
-            status="success"
-            subTitle={<SuccessSubTitle userEmail={userEmail} />}
-            title="Request successful!"
-          />
+          <div role="alert">
+            <Result
+              extra={[
+                <Link key={1} to="/login">
+                  Return to the login form
+                </Link>,
+              ]}
+              status="success"
+              subTitle={<SuccessSubTitle userEmail={userEmail} />}
+              title="Request successful!"
+            />
+          </div>
         )}
 
         {!hasSuccess && (
