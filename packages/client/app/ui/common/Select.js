@@ -26,7 +26,6 @@ const Select = props => {
     className,
     // debounce,
     debounceTimeout,
-    maxCount,
 
     // disable rule for props handled by ant
     /* eslint-disable react/prop-types */
@@ -74,7 +73,6 @@ Select.propTypes = {
   async: PropTypes.bool,
   // debounce: PropTypes.bool,
   debounceTimeout: PropTypes.number,
-  maxCount: PropTypes.number,
   wrapOptionText: PropTypes.bool,
 }
 
@@ -82,7 +80,6 @@ Select.defaultProps = {
   async: false,
   // debounce: false,
   debounceTimeout: 500,
-  maxCount: 0,
   wrapOptionText: false,
 }
 
