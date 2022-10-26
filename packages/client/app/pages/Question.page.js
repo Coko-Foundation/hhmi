@@ -16,6 +16,7 @@ import {
   UPDATE_QUESTION,
   REJECT_QUESTION,
   MOVE_QUESTION_VERSION_TO_REVIEW,
+  MOVE_QUESTION_VERSION_TO_PRODUCTION,
   PUBLISH_QUESTION_VERSION,
   GET_PREV_OR_NEXT_QUESTION_ID,
   GENERATE_WORD_FILE,
@@ -134,6 +135,13 @@ const QuestionPage = props => {
       refetchQueries: [{ query: QUESTION, variables: { id } }],
     })
 
+  const [
+    moveQuestionVersionToProductionMutation,
+    { error: moveToProductionError },
+  ] = useMutation(MOVE_QUESTION_VERSION_TO_PRODUCTION, {
+    refetchQueries: [{ query: QUESTION, variables: { id } }],
+  })
+
   const [publishQuestionVersionMutation, { error: publishError }] = useMutation(
     PUBLISH_QUESTION_VERSION,
     {
@@ -169,6 +177,7 @@ const QuestionPage = props => {
     submitError ||
     rejectError ||
     moveToReviewError ||
+    moveToProductionError ||
     publishError ||
     !data
   ) {
@@ -178,6 +187,7 @@ const QuestionPage = props => {
       submitError ||
       rejectError ||
       moveToReviewError ||
+      moveToProductionError ||
       publishError
 
     if (e) console.error(e)
@@ -317,6 +327,16 @@ const QuestionPage = props => {
     return moveQuestionVersionToReviewMutation(mutationData)
   }
 
+  const handleMoveToProduction = () => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version.id,
+      },
+    }
+
+    return moveQuestionVersionToProductionMutation(mutationData)
+  }
+
   const handlePublish = () => {
     const mutationData = {
       variables: {
@@ -370,6 +390,7 @@ const QuestionPage = props => {
       editorView={isEditor && !isAuthor}
       facultyView={testMode}
       initialMetadataValues={testMode ? version : metadataApiToUi(version)}
+      isInProduction={version.inProduction}
       isPublished={version.published}
       isRejected={question.rejected}
       isSubmitted={version.submitted}
@@ -385,6 +406,7 @@ const QuestionPage = props => {
       onClickPreviousButton={() => handleGetQuestionButton('PREV')}
       onEditorContentAutoSave={handleEditorContentAutoSave}
       onMetadataAutoSave={handleMetadataAutoSave}
+      onMoveToProduction={handleMoveToProduction}
       onMoveToReview={handleMoveToReview}
       onPublish={handlePublish}
       onQuestionSubmit={handleQuestionSubmit}

@@ -18,12 +18,14 @@ export const GET_AUTHOR_DASHBOARD = gql`
     ) {
       result {
         id
+        rejected
         versions(latestOnly: true) {
           id
           content
 
           submitted
           underReview
+          inProduction
           published
           publicationDate
 
@@ -79,6 +81,7 @@ export const GET_EDITOR_DASHBOARD = gql`
 
           submitted
           underReview
+          inProduction
           published
           publicationDate
 
@@ -130,6 +133,7 @@ export const QUESTION = gql`
 
         submitted
         underReview
+        inProduction
         published
 
         topics {
@@ -183,6 +187,7 @@ export const UPDATE_QUESTION = gql`
 
         submitted
         underReview
+        inProduction
         published
 
         questionType
@@ -250,6 +255,15 @@ export const MOVE_QUESTION_VERSION_TO_REVIEW = gql`
     moveQuestionVersionToReview(questionVersionId: $questionVersionId) {
       id
       underReview
+    }
+  }
+`
+
+export const MOVE_QUESTION_VERSION_TO_PRODUCTION = gql`
+  mutation MoveQuestionVersionToProdution($questionVersionId: ID!) {
+    moveQuestionVersionToProduction(questionVersionId: $questionVersionId) {
+      id
+      inProduction
     }
   }
 `

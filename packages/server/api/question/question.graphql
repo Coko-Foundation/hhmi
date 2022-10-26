@@ -17,6 +17,7 @@ type QuestionVersion {
 
   submitted: Boolean!
   underReview: Boolean!
+  inProduction: Boolean!
   published: Boolean!
 
   publicationDate: DateTime
@@ -194,6 +195,7 @@ extend type Mutation {
   createQuestion: Question!
   rejectQuestion(questionId: ID!): Question!
   moveQuestionVersionToReview(questionVersionId: ID!): QuestionVersion!
+  moveQuestionVersionToProduction(questionVersionId: ID!): QuestionVersion!
   publishQuestionVersion(questionVersionId: ID!): QuestionVersion!
 
   updateQuestion(

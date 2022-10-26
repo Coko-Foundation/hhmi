@@ -80,6 +80,7 @@ class QuestionVersion extends BaseModel {
 
         submitted: boolean,
         underReview: boolean,
+        inProduction: boolean,
         published: boolean,
 
         publicationDate: dateNullable,

@@ -57,6 +57,8 @@ const Status = styled.span`
         return th('colorPrimary')
       case 'Under review':
         return th('colorWarning')
+      case 'In Production':
+        return th('colorWarning')
       case 'Rejected':
         return th('colorError')
       case 'Not Submitted':

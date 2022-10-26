@@ -48,6 +48,7 @@ export default {
         'Not Submitted',
         'Submitted',
         'Under review',
+        'In Production',
         'Rejected',
         'Published',
       ],

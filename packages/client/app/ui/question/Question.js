@@ -258,7 +258,10 @@ const MemoizedWax = memo(
   // add a comparison function for when we want the editor to rerender
   // returning true means the component doesn't rerender when parent rerenders
   (prevProps, nextProps) =>
-    nextProps.published ? false : prevProps.readOnly === nextProps.readOnly,
+    nextProps.published
+      ? false
+      : prevProps.readOnly === nextProps.readOnly &&
+        prevProps.withMetadata === nextProps.withMetadata,
   // && prevProps.content === nextProps.content,
 )
 
@@ -370,6 +373,7 @@ const Question = props => {
     isRejected,
     isSubmitted,
     isUnderReview,
+    isInProduction,
     loading,
     metadata,
     onClickAssignHE,
@@ -378,6 +382,7 @@ const Question = props => {
     onClickPreviousButton,
     onEditorContentAutoSave,
     onMetadataAutoSave,
+    onMoveToProduction,
     onMoveToReview,
     onPublish,
     onQuestionSubmit,
@@ -399,7 +404,7 @@ const Question = props => {
   const [showMetadata, setShowMetadata] = useState(isUserLoggedIn)
 
   const readOnly =
-    (editorView && (!isUnderReview || isPublished)) ||
+    (editorView && !isInProduction) ||
     (!editorView && isSubmitted) ||
     isRejected
 
@@ -489,7 +494,7 @@ const Question = props => {
     confirm({
       title: 'You are about to move the question to review',
       content:
-        'Editors will be able to make changes to the question and then publish it. Are you sure?',
+        'Question will be passed to a reviewer and will not be editable until they provide their feedback. Are you sure you want to proceed?',
       okText: 'Move to review',
       okType: 'primary',
       onOk() {
@@ -505,7 +510,35 @@ const Question = props => {
             showDialog(
               'error',
               'Problem moving the question to review',
-              'There was an error while moving your question to review. Please try again!',
+              'There was an error while moving this question to review. Please try again!',
+            )
+          })
+      },
+      onCancel() {},
+    })
+  }
+
+  const handleMoveToProduction = () => {
+    confirm({
+      title: 'You are about to move the question to production',
+      content:
+        'Question will become editable and editors can apply the feedback from the reviewer. Are you sure?',
+      okText: 'Move to production',
+      okType: 'primary',
+      onOk() {
+        onMoveToProduction()
+          .then(() => {
+            showDialog(
+              'success',
+              'Question moved to production',
+              'Question was moved to production successfully',
+            )
+          })
+          .catch(() => {
+            showDialog(
+              'error',
+              'Problem moving the question to produciton',
+              'There was an error while moving this question to production. Please try again!',
             )
           })
       },
@@ -687,11 +720,22 @@ const Question = props => {
         </StyledButton>
       )}
       {isUnderReview && (
+        <>
+          <StyledButton onClick={handleReject} type="danger">
+            Do not accept
+          </StyledButton>
+
+          <StyledButton onClick={handleMoveToProduction} type="primary">
+            Move to production
+          </StyledButton>
+        </>
+      )}
+      {isInProduction && (
         <StyledButton onClick={handlePublish} type="primary">
           Publish
         </StyledButton>
       )}
-      {isSubmitted && !isUnderReview && !isPublished && (
+      {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
         <>
           <StyledButton onClick={handleReject} type="danger">
             Do not accept
@@ -828,6 +872,7 @@ Question.propTypes = {
   onQuestionSubmit: PropTypes.func.isRequired,
   onMetadataAutoSave: PropTypes.func.isRequired,
   onMoveToReview: PropTypes.func,
+  onMoveToProduction: PropTypes.func,
   onPublish: PropTypes.func,
   onReject: PropTypes.func,
   onClickAssignHE: PropTypes.func,
@@ -841,6 +886,7 @@ Question.propTypes = {
   isRejected: PropTypes.bool.isRequired,
   isSubmitted: PropTypes.bool.isRequired,
   isUnderReview: PropTypes.bool.isRequired,
+  isInProduction: PropTypes.bool.isRequired,
   isUserLoggedIn: PropTypes.bool,
   editorView: PropTypes.bool,
   showAssignHEButton: PropTypes.bool,
@@ -1092,6 +1138,7 @@ Question.propTypes = {
 
 Question.defaultProps = {
   onMoveToReview: () => {},
+  onMoveToProduction: () => {},
   onPublish: () => {},
   onReject: () => {},
   onClickAssignHE: () => {},

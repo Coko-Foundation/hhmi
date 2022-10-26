@@ -293,6 +293,22 @@ const moveQuestionVersionToReview = async (questionVersionId, options = {}) => {
   )
 }
 
+const moveQuestionVersionToProduction = async (
+  questionVersionId,
+  options = {},
+) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} moveQuestionVersionToProduction:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} moving question version with id ${questionVersionId} to production`,
+  )
+
+  return modifyQuestionVersion(
+    questionVersionId,
+    { underReview: false, inProduction: true },
+    { trx: options.trx },
+  )
+}
+
 const publishQuestionVersion = async (questionVersionId, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} publishQuestionVersion:`
   logger.info(
@@ -302,7 +318,7 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
   return modifyQuestionVersion(
     questionVersionId,
     {
-      underReview: false,
+      inProduction: false,
       published: true,
       publicationDate: new Date(),
     },
@@ -417,6 +433,7 @@ module.exports = {
   updateQuestion,
 
   moveQuestionVersionToReview,
+  moveQuestionVersionToProduction,
   publishQuestionVersion,
   rejectQuestion,
   submitQuestion,

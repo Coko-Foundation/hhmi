@@ -208,9 +208,14 @@ const getRandomObjectivesForCourse = course => {
 }
 
 const getRandomStatus = () =>
-  ['Not Submitted', 'Submitted', 'Under review', 'Rejected', 'Published'][
-    Math.floor(Math.random() * 4)
-  ]
+  [
+    'Not Submitted',
+    'Submitted',
+    'Under review',
+    'In Production',
+    'Rejected',
+    'Published',
+  ][Math.floor(Math.random() * 4)]
 
 const questionContentExample = {
   type: 'true_false_container',

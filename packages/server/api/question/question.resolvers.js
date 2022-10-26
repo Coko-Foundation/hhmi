@@ -12,6 +12,7 @@ const {
   submitQuestion,
   rejectQuestion,
   moveQuestionVersionToReview,
+  moveQuestionVersionToProduction,
   publishQuestionVersion,
 
   generateWordFile,
@@ -68,6 +69,13 @@ const moveQuestionVersionToReviewResolver = async (
   return moveQuestionVersionToReview(questionVersionId)
 }
 
+const moveQuestionVersionToProductionResolver = async (
+  _,
+  { questionVersionId },
+) => {
+  return moveQuestionVersionToProduction(questionVersionId)
+}
+
 const publishQuestionVersionResolver = async (_, { questionVersionId }) => {
   return publishQuestionVersion(questionVersionId)
 }
@@ -119,6 +127,7 @@ module.exports = {
     submitQuestion: submitQuestionResolver,
     rejectQuestion: rejectQuestionResolver,
     moveQuestionVersionToReview: moveQuestionVersionToReviewResolver,
+    moveQuestionVersionToProduction: moveQuestionVersionToProductionResolver,
     publishQuestionVersion: publishQuestionVersionResolver,
     generateWordFile: generateWordFileResolver,
   },

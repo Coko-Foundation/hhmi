@@ -371,6 +371,7 @@ export const Base = args => {
 
 export const EditorView = () => {
   const [reviewing, setReviewing] = useState(false)
+  const [inProduction, setInProduction] = useState(false)
   const [published, setPublished] = useState(false)
   const [rejected, setRejected] = useState(false)
   const [error, setError] = useState(false)
@@ -394,6 +395,7 @@ export const EditorView = () => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (!error) {
+          setInProduction(false)
           setPublished(true)
           resolve()
         } else {
@@ -417,6 +419,21 @@ export const EditorView = () => {
     })
   }
 
+  const moveToProduction = () => {
+    console.log('move to production')
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (!error) {
+          setReviewing(false)
+          setInProduction(true)
+          resolve()
+        } else {
+          reject()
+        }
+      }, 1000)
+    })
+  }
+
   const handleEditorContentChanged = newContent => {
     // save content
     console.log(newContent)
@@ -431,6 +448,7 @@ export const EditorView = () => {
         editorContent={editorInitialContent}
         editorView
         initialMetadataValues={metadataApiToUi(initialMetadataValues)}
+        isInProduction={inProduction}
         isPublished={published}
         isRejected={rejected}
         isSubmitted
@@ -440,6 +458,7 @@ export const EditorView = () => {
         onClickBackButton={() => console.log('go back to dashboard')}
         onEditorContentAutoSave={handleEditorContentChanged}
         onMetadataAutoSave={() => console.log('metadata auto save')}
+        onMoveToProduction={moveToProduction}
         onMoveToReview={moveToReview}
         onPublish={publish}
         onQuestionSubmit={data => console.log(data)}
