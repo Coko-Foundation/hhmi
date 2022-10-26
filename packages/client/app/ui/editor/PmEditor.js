@@ -1,8 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { Wax } from 'wax-prosemirror-core'
-import { DefaultSchema } from 'wax-prosemirror-utilities'
+import { Wax, DefaultSchema } from 'wax-prosemirror-core'
 import {
   AnnotationToolGroupService,
   DisplayToolGroupService,

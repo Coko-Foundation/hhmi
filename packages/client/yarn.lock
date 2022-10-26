@@ -5139,9 +5139,9 @@ comma-separated-tokens@^1.0.0:
   integrity sha512-GHuDRO12Sypu2cV70d1dkA2EUmXHgntrzbpvOB+Qy+49ypNfGgFQIC2fhhXbnyrJRynDCAARsT7Ou0M6hirpfw==
 
 commander@>=7.0.0:
-  version "8.3.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-8.3.0.tgz#4837ea1b2da67b9c616a67afbb0fafee567bca66"
-  integrity sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==
+  version "9.4.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-9.4.1.tgz#d1dd8f2ce6faf93147295c0df13c7c21141cfbdd"
+  integrity sha512-5EEkTNyHNGFPD2H+c/dXXfQZYa/scCKasxWcXJaWnNJ99pnQN9Vnmqow+p+PlFPE63Q6mThaZws1T+HxfpgtPw==
 
 commander@^2.19.0, commander@^2.20.0:
   version "2.20.3"
@@ -9838,11 +9838,6 @@ prosemirror-transform@1.3.4, prosemirror-transform@^1.0.0, prosemirror-transform
   dependencies:
     prosemirror-model "^1.0.0"
 
-prosemirror-utils@^0.9.6:
-  version "0.9.6"
-  resolved "https://registry.yarnpkg.com/prosemirror-utils/-/prosemirror-utils-0.9.6.tgz#3d97bd85897e3b535555867dc95a51399116a973"
-  integrity sha512-UC+j9hQQ1POYfMc5p7UFxBTptRiGPR7Kkmbl3jVvU8VgQbkI89tR/GK+3QYC8n+VvBZrtAoCrJItNhWSxX3slA==
-
 prosemirror-view@1.23.7, prosemirror-view@^1.0.0, prosemirror-view@^1.1.0, prosemirror-view@^1.13.3:
   version "1.23.7"
   resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.23.7.tgz#f003af94445ef456e397c18cf4bb995e7072097f"
@@ -12722,10 +12717,10 @@ watchpack@^2.2.0:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
 
-wax-prosemirror-components@^0.5.12:
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-components/-/wax-prosemirror-components-0.5.12.tgz#3d75bff2dfec10331329bee8ddab93fced04f5b2"
-  integrity sha512-bGuqPKvXi3z33SI0F2z4MMvZEPvYIa1DfDRrUdzkWBjLZZRp6Q+UMN0ZZzMfZdqYjvXV3iCsgs/ZYEes0MYoTg==
+wax-prosemirror-components@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/wax-prosemirror-components/-/wax-prosemirror-components-0.6.2.tgz#68097309475ba745e5851ceb49d4736544226fbe"
+  integrity sha512-LSgY1s0jEmX0Oj7hfkCauLvbs/Ltgye1Lw0SBGvqrI1oAq4JwErFPm4C/M2r0NtoSPm4E2Koj0T4qnRt6Jf8og==
   dependencies:
     "@pubsweet/ui-toolkit" "^2.3.1"
     lodash "^4.17.4"
@@ -12740,13 +12735,12 @@ wax-prosemirror-components@^0.5.12:
     styled-components "^5.3.0"
     use-deep-compare-effect "^1.3.1"
     uuid "^7.0.3"
-    wax-prosemirror-core "^0.5.12"
-    wax-prosemirror-utilities "^0.5.12"
+    wax-prosemirror-core "^0.6.2"
 
-wax-prosemirror-core@^0.5.12:
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-core/-/wax-prosemirror-core-0.5.12.tgz#39d0f6d7fd4919e5d5e7e7b26ca2d48592acc8e2"
-  integrity sha512-Yrt4/eR1sK5MwpRQOpb1eBTBiYvtymX7DsLrCRItDFzm8sGRG919KNwaMIc8N3Y98O+TRUD4d4hcAtX6/Lvf4g==
+wax-prosemirror-core@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/wax-prosemirror-core/-/wax-prosemirror-core-0.6.2.tgz#8ca8a824abfe80d3481cdfcb28f9f11cce3433f9"
+  integrity sha512-/mc90QGM7eMY7pKAnwHQhPBLmPoyZa2Jq3W3MLPQiz6TJ145kLVN/mLbWrYChOB6FBWk5xLx+rGYUPKbXP3bag==
   dependencies:
     deepmerge "^4.2.2"
     inversify "^5.0.1"
@@ -12760,50 +12754,26 @@ wax-prosemirror-core@^0.5.12:
     prosemirror-inputrules "1.1.3"
     prosemirror-keymap "1.1.5"
     prosemirror-model "1.16.1"
+    prosemirror-schema-list "^1.1.6"
     prosemirror-state "1.3.3"
     prosemirror-transform "1.3.4"
     prosemirror-view "1.23.7"
     reflect-metadata "^0.1.13"
     styled-components "^5.3.0"
     uuid "^7.0.3"
-    wax-prosemirror-utilities "^0.5.12"
 
-wax-prosemirror-plugins@^0.5.12:
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-plugins/-/wax-prosemirror-plugins-0.5.12.tgz#675eeeb15b6750d3dabef538efd9f2e9439d3f86"
-  integrity sha512-6eemKbLbQ/Qgi9k/ArTexZUGBMILHiqy4b3LkC6n+/8kPHoEuv9vvbzubniwOYq+K5The5F5hKWhP79XkGE61g==
+wax-prosemirror-services@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/wax-prosemirror-services/-/wax-prosemirror-services-0.6.2.tgz#3e1b608a7421f3575ad8562d5a9a4d7b6761adad"
+  integrity sha512-4+pFJPREoiVHt2rj0CK1sUCINt3OqYeIQrEcSerBFu/9IuEVANBmTbiI7PW1+3iBTfoEe/YYiqJc08pPor/Jlg==
   dependencies:
     highlight.js "^10.1.1"
+    inversify "^5.0.1"
+    inversify-inject-decorators "^3.1.0"
     lodash "^4.17.4"
     mathjax-full "3.1.4"
     prosemirror-commands "1.2.1"
     prosemirror-highlightjs "^0.2.0"
-    prosemirror-keymap "1.1.5"
-    prosemirror-state "1.3.3"
-    prosemirror-transform "1.3.4"
-    prosemirror-view "1.23.7"
-    wax-prosemirror-components "^0.5.12"
-    wax-prosemirror-core "^0.5.12"
-    wax-prosemirror-utilities "^0.5.12"
-
-wax-prosemirror-schema@^0.5.12:
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-schema/-/wax-prosemirror-schema-0.5.12.tgz#93c10f30133329b46e919190578223e38bc50568"
-  integrity sha512-H6I29ZHO+Ze/u+dWLZpcDLaz7BfPdn+ivIC+JPr2OHP4In3HEukiP0X8UD3g5btHI/uae08DEdn1Xz43a/pIVQ==
-  dependencies:
-    prosemirror-schema-list "^1.1.6"
-    prosemirror-tables "^1.1.1"
-    wax-prosemirror-utilities "^0.5.12"
-
-wax-prosemirror-services@^0.5.12:
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-services/-/wax-prosemirror-services-0.5.12.tgz#6ae77d29cca56a454b92a8891ce94d28a3c429b8"
-  integrity sha512-RQeL8xCIB51Jknv8/2+gr+l4TGCxMWY6BKi4SlsGWyBZpb7UGKW+BFsyTEt8KZAY05Hn2qF2qxHjyLVa0EHSMQ==
-  dependencies:
-    inversify "^5.0.1"
-    inversify-inject-decorators "^3.1.0"
-    lodash "^4.17.4"
-    prosemirror-commands "1.2.1"
     prosemirror-history "1.2.0"
     prosemirror-inputrules "1.1.3"
     prosemirror-keymap "1.1.5"
@@ -12817,21 +12787,8 @@ wax-prosemirror-services@^0.5.12:
     styled-components "^5.3.0"
     use-deep-compare-effect "^1.3.1"
     uuid "^7.0.3"
-    wax-prosemirror-components "^0.5.12"
-    wax-prosemirror-core "^0.5.12"
-    wax-prosemirror-plugins "^0.5.12"
-    wax-prosemirror-schema "^0.5.12"
-    wax-prosemirror-utilities "^0.5.12"
-
-wax-prosemirror-utilities@^0.5.12:
-  version "0.5.12"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-utilities/-/wax-prosemirror-utilities-0.5.12.tgz#4cc5673b0103444f93e8977ed425d90abb0e9334"
-  integrity sha512-G4bCP40ss/uleScJfH9P7jTxJudlGCHHHR/IvI+MijTscbCDb0rAEinQ2LuExM0dOlFL9N8UOzbQ2Lj2KY2pFA==
-  dependencies:
-    prosemirror-commands "1.2.1"
-    prosemirror-transform "1.3.4"
-    prosemirror-utils "^0.9.6"
-    uuid "^7.0.3"
+    wax-prosemirror-components "^0.6.2"
+    wax-prosemirror-core "^0.6.2"
 
 wbuf@^1.1.0, wbuf@^1.7.3:
   version "1.7.3"
@@ -13050,7 +13007,7 @@ which@^2.0.1:
 wicked-good-xpath@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/wicked-good-xpath/-/wicked-good-xpath-1.3.0.tgz#81b0e95e8650e49c94b22298fff8686b5553cf6c"
-  integrity sha1-gbDpXoZQ5JyUsiKY//hoa1VTz2w=
+  integrity sha512-Gd9+TUn5nXdwj/hFsPVx5cuHHiF5Bwuc30jZ4+ronF1qHK5O7HD0sgmXWSEgwKquT3ClLoKPVbO6qGwVwLzvAw==
 
 wide-align@^1.1.2:
   version "1.1.5"
