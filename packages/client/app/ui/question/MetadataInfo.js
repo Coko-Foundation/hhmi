@@ -61,7 +61,7 @@ const MetadataInfo = props => {
           f => f.value === course.course,
         )
 
-        const courseUnits = course.units.map((unitData, i) => {
+        const courseUnits = course.units.map(unitData => {
           const unit = courseObject.units.find(u => u.value === unitData.unit)
 
           const courseTopic = courseObject.topics.find(
