@@ -10,6 +10,7 @@ export const Base = args => (
 
 Base.args = {
   showMetadataOption: true,
+  loading: false,
 }
 
 export default {

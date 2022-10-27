@@ -41,6 +41,8 @@ const Metadata = React.forwardRef((props, ref) => {
     innerRef,
   } = props
 
+  const [formValues] = useState(initialValues)
+
   if (presentationMode) {
     return (
       <MetadataInfo
@@ -196,8 +198,8 @@ const Metadata = React.forwardRef((props, ref) => {
   useEffect(() => {
     let sIndexes = [0]
 
-    if (initialValues[topicsKey]?.length) {
-      sIndexes = initialValues[topicsKey]?.map((_, index) => index)
+    if (formValues[topicsKey]?.length) {
+      sIndexes = formValues[topicsKey]?.map((_, index) => index)
     }
 
     setTopicsIndexes(sIndexes)
@@ -205,14 +207,14 @@ const Metadata = React.forwardRef((props, ref) => {
     // reset to use for calculating existing supplementary curricula
     sIndexes = [0]
 
-    if (initialValues[coursesKey]?.length) {
-      sIndexes = initialValues[coursesKey]?.map((_, index) => index)
+    if (formValues[coursesKey]?.length) {
+      sIndexes = formValues[coursesKey]?.map((_, index) => index)
     }
 
     setCoursesIndexes(sIndexes)
 
-    form.setFieldsValue(initialValues)
-  }, [initialValues])
+    form.setFieldsValue(formValues)
+  }, [formValues])
 
   // TODO: find a better solution (assigning the initialValue directly confilcts with form.setFieldsValues)
   // initialValue for 2nd course metadata for author
@@ -235,7 +237,7 @@ const Metadata = React.forwardRef((props, ref) => {
       <Form
         autoSave
         form={form}
-        initialValues={initialValues}
+        initialValues={formValues}
         layout="vertical"
         onAutoSave={onAutoSave}
         onFinish={onFormFinish}

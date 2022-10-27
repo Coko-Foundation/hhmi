@@ -348,10 +348,10 @@ export const Base = args => {
         Will have error on submit
       </Checkbox>
       <Question
-        {...args}
         autoSaveInterval={5000}
         editorContent={editorContent}
         isSubmitted={submitted}
+        isUserLoggedIn
         loading={false}
         metadata={flatMeta}
         onClickBackButton={emptyNavigationFunction}
@@ -364,9 +364,18 @@ export const Base = args => {
         resources={resources}
         submitting={false}
         updated={lastUpdated}
+        {...args}
       />
     </Wrapper>
   )
+}
+
+Base.args = {
+  isSubmitted: false,
+  isUnderReview: false,
+  isPublished: false,
+  isRejected: false,
+  wordFileLoading: false,
 }
 
 export const EditorView = () => {
@@ -456,6 +465,7 @@ export const EditorView = () => {
         loading={false}
         metadata={flatMeta}
         onClickBackButton={() => console.log('go back to dashboard')}
+        onClickExportToWord={() => {}}
         onEditorContentAutoSave={handleEditorContentChanged}
         onMetadataAutoSave={() => console.log('metadata auto save')}
         onMoveToProduction={moveToProduction}
@@ -467,26 +477,42 @@ export const EditorView = () => {
         resources={resources}
         showAssignHEButton={false}
         submitting={false}
+        wordFileLoading={false}
       />
     </Wrapper>
   )
 }
 
 export const TestMode = () => {
+  const [wordFileLoading, setWordFileLoading] = useState(false)
+
+  const handleClickExportToWord = () => {
+    setWordFileLoading(true)
+    setTimeout(() => {
+      setWordFileLoading(false)
+      console.log('word file downloaded')
+    }, 1000)
+  }
+
   return (
     <Wrapper>
       <Question
         editorContent={editorInitialContent}
         facultyView
         initialMetadataValues={initialMetadataValues}
+        isPublished
+        isRejected={false}
         isSubmitted
+        isUnderReview={false}
         loading={false}
         metadata={flatMeta}
         onClickBackButton={() => console.log('go back to dashboard')}
+        onClickExportToWord={handleClickExportToWord}
         onQuestionSubmit={data => console.log(data)}
         readOnly
         resources={resources}
         submitting={false}
+        wordFileLoading={wordFileLoading}
       />
     </Wrapper>
   )

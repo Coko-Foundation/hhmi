@@ -143,7 +143,9 @@ const MetadataInfo = props => {
           }
 
           return (
-            <li>
+            <li
+              key={`${unitData.unit}-${unitData.learningObjective}-${unitData.essentialKnowledge}`}
+            >
               <p>
                 <strong>Unit</strong>
               </p>
@@ -470,5 +472,7 @@ MetadataInfo.propTypes = {
     }),
   ).isRequired,
 }
+
+MetadataInfo.defaultProps = {}
 
 export default MetadataInfo
