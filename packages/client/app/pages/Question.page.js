@@ -255,7 +255,12 @@ const QuestionPage = props => {
   }
 
   const handleClickBackButton = () => {
-    history.goBack()
+    if (testMode) {
+      // quetions in testMode are found in discovery, and all questions in discovery are in testMode, so back == discover page
+      history.push('/discover')
+    } else {
+      history.push('/dashboard')
+    }
   }
 
   const handleQuestionSubmit = questionData => {
