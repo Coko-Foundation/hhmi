@@ -326,6 +326,31 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
   )
 }
 
+const createNewQuestionVersion = async (questionId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} createNewQuestionVersion:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} Create new question version for question ${questionId}`,
+  )
+
+  try {
+    return useTransaction(
+      async trx => {
+        await Question.createNewVersion(questionId, {
+          trx,
+        })
+
+        return getQuestion(questionId)
+      },
+      {
+        trx: options.trx,
+      },
+    )
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 // const deleteQuestion = async questionId => {
 //   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} deleteQuestion:`
 //   logger.info(
@@ -437,6 +462,6 @@ module.exports = {
   publishQuestionVersion,
   rejectQuestion,
   submitQuestion,
-
   generateWordFile,
+  createNewQuestionVersion,
 }

@@ -214,4 +214,6 @@ extend type Mutation {
     questionVersionId: ID!
     options: GenerateWordFileOptionsInput
   ): String!
+
+  createNewQuestionVersion(questionId: ID!): Question!
 }

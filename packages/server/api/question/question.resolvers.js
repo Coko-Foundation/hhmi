@@ -14,8 +14,8 @@ const {
   moveQuestionVersionToReview,
   moveQuestionVersionToProduction,
   publishQuestionVersion,
-
   generateWordFile,
+  createNewQuestionVersion,
 } = require('../../controllers/question.controllers')
 
 const questionResolver = async (_, { id }) => {
@@ -112,6 +112,10 @@ const generateWordFileResolver = async (_, { questionVersionId, options }) => {
   return generateWordFile(questionVersionId, options)
 }
 
+const createNewQuestionVersionResolver = async (_, { questionId }) => {
+  return createNewQuestionVersion(questionId)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -130,6 +134,7 @@ module.exports = {
     moveQuestionVersionToProduction: moveQuestionVersionToProductionResolver,
     publishQuestionVersion: publishQuestionVersionResolver,
     generateWordFile: generateWordFileResolver,
+    createNewQuestionVersion: createNewQuestionVersionResolver,
   },
   Question: {
     versions: versionsResolver,

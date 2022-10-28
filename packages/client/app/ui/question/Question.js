@@ -380,6 +380,7 @@ const Question = props => {
     onClickBackButton,
     onClickNextButton,
     onClickPreviousButton,
+    onCreateNewVersion,
     onEditorContentAutoSave,
     onMetadataAutoSave,
     onMoveToProduction,
@@ -652,6 +653,22 @@ const Question = props => {
         )
       })
   }
+
+  const showNewVersionModal = () => {
+    confirm({
+      title: `Warning!`,
+      content: `You are editing a published question. Any changes you make will be automatically saved, but not automatically published. 
+      You will need to publish the question again for the edits to be reflected in the Discover page.
+      After the edited question is published, the old one will not be available anymore in the Discover page. 
+      Do you wish to continue?`,
+      okText: 'Create new version',
+      okType: 'danger',
+      onOk() {
+        onCreateNewVersion()
+      },
+      onCancel() {},
+    })
+  }
   // #endregion handlers
 
   // #region components
@@ -766,6 +783,11 @@ const Question = props => {
         </>
       )}
 
+      {isPublished && (
+        <StyledButton onClick={showNewVersionModal} type="primary">
+          Edit Question
+        </StyledButton>
+      )}
       {showNextQuestionLink && NextQuestion}
     </>
   )
@@ -887,6 +909,7 @@ Question.propTypes = {
   onClickBackButton: PropTypes.func.isRequired,
   onClickPreviousButton: PropTypes.func,
   onClickNextButton: PropTypes.func,
+  onCreateNewVersion: PropTypes.func,
   onEditorContentAutoSave: PropTypes.func,
   onQuestionSubmit: PropTypes.func.isRequired,
   onMetadataAutoSave: PropTypes.func,
@@ -1156,6 +1179,7 @@ Question.propTypes = {
 }
 
 Question.defaultProps = {
+  onCreateNewVersion: () => {},
   onMoveToReview: () => {},
   onMoveToProduction: () => {},
   onPublish: () => {},

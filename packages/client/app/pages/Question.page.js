@@ -20,6 +20,7 @@ import {
   PUBLISH_QUESTION_VERSION,
   GET_PREV_OR_NEXT_QUESTION_ID,
   GENERATE_WORD_FILE,
+  CREATE_NEW_VERSION,
 } from '../graphql'
 import { metadataForQuestionPage, hasRole, hasGlobalRole } from '../utilities'
 
@@ -114,7 +115,10 @@ const QuestionPage = props => {
   const history = useHistory()
 
   const { data, loading, error } = useQuery(QUESTION, {
-    variables: { id },
+    variables: {
+      id,
+      published: testMode, // get latest published version if in test mode
+    },
   })
 
   const { data: currentUserData } = useQuery(CURRENT_USER)
@@ -131,23 +135,24 @@ const QuestionPage = props => {
   )
 
   const [moveQuestionVersionToReviewMutation, { error: moveToReviewError }] =
-    useMutation(MOVE_QUESTION_VERSION_TO_REVIEW, {
-      refetchQueries: [{ query: QUESTION, variables: { id } }],
-    })
+    useMutation(MOVE_QUESTION_VERSION_TO_REVIEW)
 
   const [
     moveQuestionVersionToProductionMutation,
     { error: moveToProductionError },
-  ] = useMutation(MOVE_QUESTION_VERSION_TO_PRODUCTION, {
-    refetchQueries: [{ query: QUESTION, variables: { id } }],
-  })
+  ] = useMutation(MOVE_QUESTION_VERSION_TO_PRODUCTION)
 
   const [publishQuestionVersionMutation, { error: publishError }] = useMutation(
     PUBLISH_QUESTION_VERSION,
     {
-      refetchQueries: [{ query: QUESTION, variables: { id } }],
+      refetchQueries: [{ query: QUESTION, variables: { id, published: true } }],
     },
   )
+
+  const [createNewQuestionVersionMutation, { error: newVersionError }] =
+    useMutation(CREATE_NEW_VERSION, {
+      variables: { questionId: id },
+    })
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -179,6 +184,7 @@ const QuestionPage = props => {
     moveToReviewError ||
     moveToProductionError ||
     publishError ||
+    newVersionError ||
     !data
   ) {
     const e =
@@ -188,7 +194,8 @@ const QuestionPage = props => {
       rejectError ||
       moveToReviewError ||
       moveToProductionError ||
-      publishError
+      publishError ||
+      newVersionError
 
     if (e) console.error(e)
     return null
@@ -387,6 +394,15 @@ const QuestionPage = props => {
       })
   }
 
+  const handleCreateNewVersion = () => {
+    const mutationData = {
+      variables: {
+        questionId: id,
+      },
+    }
+
+    createNewQuestionVersionMutation(mutationData)
+  }
   // #endregion handlers
 
   return (
@@ -409,6 +425,7 @@ const QuestionPage = props => {
       onClickExportToWord={handleExportToWord}
       onClickNextButton={() => handleGetQuestionButton('NEXT')}
       onClickPreviousButton={() => handleGetQuestionButton('PREV')}
+      onCreateNewVersion={handleCreateNewVersion}
       onEditorContentAutoSave={handleEditorContentAutoSave}
       onMetadataAutoSave={handleMetadataAutoSave}
       onMoveToProduction={handleMoveToProduction}

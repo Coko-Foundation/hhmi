@@ -50,6 +50,47 @@ class Question extends BaseModel {
 
   // TO DO -- if there is a previous versions, you should copy its contents
   static async createNewVersion(questionId, options = {}) {
+    const previousVersions = await this.getVersions(questionId, {
+      latestOnly: true,
+      publishedOnly: true,
+    })
+
+    if (previousVersions.totalCount > 0) {
+      const {
+        content,
+        submitted,
+        topics,
+        courses,
+        keywords,
+        biointeractiveResources,
+        cognitiveLevel,
+        affectiveLevel,
+        psychomotorLevel,
+        readingLevel,
+        questionType,
+      } = previousVersions.result[0]
+
+      return QuestionVersion.insert(
+        {
+          questionId,
+          content,
+          submitted,
+          topics,
+          courses,
+          keywords,
+          biointeractiveResources,
+          cognitiveLevel,
+          affectiveLevel,
+          psychomotorLevel,
+          readingLevel,
+          questionType,
+          inProduction: true,
+          published: false,
+        },
+        { trx: options.trx },
+      )
+    }
+
     return QuestionVersion.insert({ questionId }, { trx: options.trx })
   }
 

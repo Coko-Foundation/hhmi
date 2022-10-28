@@ -122,11 +122,11 @@ export const CREATE_QUESTION = gql`
 `
 
 export const QUESTION = gql`
-  query Question($id: ID!) {
+  query Question($id: ID!, $published: Boolean) {
     question(id: $id) {
       id
       rejected
-      versions(latestOnly: true) {
+      versions(latestOnly: true, publishedOnly: $published) {
         id
         content
         lastEdit
@@ -234,7 +234,7 @@ export const SUBMIT_QUESTION = gql`
     ) {
       id
       agreedTc
-      versions(latestOnly: true) {
+      versions(latestOnly: true, publishedOnly: false) {
         submitted
       }
     }
@@ -263,6 +263,7 @@ export const MOVE_QUESTION_VERSION_TO_PRODUCTION = gql`
   mutation MoveQuestionVersionToProdution($questionVersionId: ID!) {
     moveQuestionVersionToProduction(questionVersionId: $questionVersionId) {
       id
+      underReview
       inProduction
     }
   }
@@ -272,8 +273,55 @@ export const PUBLISH_QUESTION_VERSION = gql`
   mutation PublishQuestionVersion($questionVersionId: ID!) {
     publishQuestionVersion(questionVersionId: $questionVersionId) {
       id
+      inProduction
       published
       publicationDate
+    }
+  }
+`
+
+export const CREATE_NEW_VERSION = gql`
+  mutation CreateNewQuestionVersion($questionId: ID!) {
+    createNewQuestionVersion(questionId: $questionId) {
+      id
+      versions(latestOnly: true, publishedOnly: false) {
+        id
+        content
+        lastEdit
+
+        submitted
+        underReview
+        inProduction
+        published
+
+        topics {
+          topic
+          subtopic
+        }
+
+        courses {
+          course
+          units {
+            application
+            courseTopic
+            essentialKnowledge
+            learningObjective
+            skill
+            understanding
+            unit
+          }
+        }
+
+        keywords
+        biointeractiveResources
+
+        cognitiveLevel
+        affectiveLevel
+        psychomotorLevel
+        readingLevel
+
+        questionType
+      }
     }
   }
 `
@@ -286,7 +334,7 @@ export const GET_PUBLISHED_QUESTIONS = gql`
     getPublishedQuestions(params: $params, options: $options) {
       result {
         id
-        versions(latestOnly: true) {
+        versions(latestOnly: true, publishedOnly: true) {
           id
           content
 
