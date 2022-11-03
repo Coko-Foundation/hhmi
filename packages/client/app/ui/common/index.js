@@ -27,6 +27,7 @@ export { default as Table } from './Table'
 export { default as Tabs } from './Tabs'
 export { default as TabsStyled } from './TabsStyled'
 export { default as TextArea } from './TextArea'
+export { default as VisuallyHiddenElement } from './VisuallyHiddenElement'
 
 export { default as TopicAndSubtopic } from './TopicAndSubtopic'
 export { default as APCourseMetadata } from './APCourseMetadata'
