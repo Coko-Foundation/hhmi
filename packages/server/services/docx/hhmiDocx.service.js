@@ -90,6 +90,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
       multiple_drop_down_container: this.multipleDropdownContainerHandler,
       multiple_drop_down_option: this.multipleDropdownOptionHandler,
+
+      essay_container: this.essayContainerHandler,
     }
 
     this.typeToHandlerMap = {
@@ -237,6 +239,11 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   /* eslint-disable-next-line class-methods-use-this */
   createGap = marker => {
     return new TextRun({ text: `  ${marker || ''} ______  ` })
+  }
+
+  /* eslint-disable-next-line class-methods-use-this */
+  createEmptyParagraph = () => {
+    return new Paragraph({ children: [] })
   }
 
   // #region multiple-choice
@@ -477,6 +484,24 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   }
   // #endregion multiple-dropdown
 
+  // #region essay
+  essayContainerHandler = node => {
+    return [
+      this.createEmptyParagraph(),
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: 'Write your essay below:',
+            bold: true,
+          }),
+        ],
+      }),
+      this.createEmptyParagraph(),
+    ]
+  }
+  // #endregion essay
+
+  // #region feedback
   feedbackParser = () => {
     let content = [
       new Paragraph({
@@ -774,6 +799,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
     return content
   }
+  // #endregion feedback
 
   // #region metadata
   metadataBulletFactory = (key, value, level = 0) => {
