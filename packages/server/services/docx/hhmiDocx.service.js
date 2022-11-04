@@ -12,6 +12,17 @@ const {
 
 const WaxToDocxConverter = require('./docx.service')
 
+const convertListPositionToUpperCaseLetter = pos => {
+  if (pos > 25)
+    throw new Error(
+      'Function only supports up to 26 positions! (0-25 as input)',
+    )
+
+  // 65 is the code for 'A'
+  const code = 65 + pos
+  return String.fromCharCode(code)
+}
+
 /**
  * TO DO
  *
@@ -77,6 +88,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
       fill_the_gap_container: this.fillTheGapContainerHandler,
       fill_the_gap: this.fillTheGapHandler,
+
+      matching_container: this.matchingContainerHanlder,
     }
 
     this.typeToHandlerMap = {
@@ -87,9 +100,11 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.listTypes = {
       ...this.listTypes,
       MULTIPLE_CHOICE: 'multiple_choice',
+      MATCHING_QUESTION: 'matching_question',
+      MATCHING_ANSWER: 'matching_answer',
     }
 
-    this.config.numbering.config.push({
+    const multipleChoiceListType = {
       levels: [
         {
           level: 0,
@@ -111,7 +126,59 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         },
       ],
       reference: this.listTypes.MULTIPLE_CHOICE,
-    })
+    }
+
+    const matchingQuestionListType = {
+      levels: [
+        {
+          level: 0,
+          format: LevelFormat.DECIMAL,
+          text: '%1.',
+          alignment: AlignmentType.START,
+          style: {
+            paragraph: {
+              indent: {
+                left: convertMillimetersToTwip(7),
+                hanging: this.listIndentFirstLevelHanging,
+              },
+              spacing: {
+                before: 200,
+                after: 200,
+              },
+            },
+          },
+        },
+      ],
+      reference: this.listTypes.MATCHING_QUESTION,
+    }
+
+    const matchingAnswerListType = {
+      levels: [
+        {
+          level: 0,
+          format: LevelFormat.UPPER_LETTER,
+          text: '%1.',
+          alignment: AlignmentType.START,
+          style: {
+            paragraph: {
+              indent: {
+                left: convertMillimetersToTwip(7),
+                hanging: this.listIndentFirstLevelHanging,
+              },
+              spacing: {
+                before: 200,
+                after: 200,
+              },
+            },
+          },
+        },
+      ],
+      reference: this.listTypes.MATCHING_ANSWER,
+    }
+
+    this.config.numbering.config.push(multipleChoiceListType)
+    this.config.numbering.config.push(matchingQuestionListType)
+    this.config.numbering.config.push(matchingAnswerListType)
 
     this.appendixHeaderStyles = {
       bold: true,
@@ -124,6 +191,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.trueFalseSolutions = {}
     this.fillTheGapSolutions = {}
     this.fillTheGapFeedback = {}
+    this.matchingSolutions = {}
+    this.matchingFeedback = {}
 
     this.metadataSpacing = new TextRun({ text: '  ' })
   }
@@ -135,9 +204,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.multipleChoiceSolutions[groupId] = []
 
     return [
-      new Paragraph({
-        children: [],
-      }),
+      new Paragraph({ children: [] }),
       ...this.contentParser(multipleChoice.content, {
         multipleChoiceGroupId: groupId,
         instance: this.listInstance,
@@ -237,6 +304,74 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     return new TextRun({ text: '  ______  ' })
   }
   // #endregion fill-the-gap
+
+  // #region matching
+  matchingContainerHanlder = node => {
+    const { id, options, feedback } = node.attrs
+    this.matchingSolutions[id] = []
+    this.matchingFeedback[id] = feedback
+
+    const questionRuns = []
+    const optionRuns = []
+
+    // create all questions
+    const questionNodes = node.content[0].content // content[0] because we start with an empty paragraph which includes the question nodes
+    this.listInstance += 1
+
+    questionNodes.forEach((questionNode, i) => {
+      if (questionNode.type !== 'matching_option')
+        throw new Error('Docx service: malformed question node!')
+
+      // capture solution
+      const correctId = questionNode.attrs.correct
+      const optionPosition = options.findIndex(o => o.value === correctId)
+
+      const optionPositionAsLetter =
+        convertListPositionToUpperCaseLetter(optionPosition)
+
+      this.matchingSolutions[id].push(optionPositionAsLetter)
+
+      // create content
+      questionRuns.push(
+        this.paragraphHandler(
+          {
+            content: questionNode.content,
+          },
+          {
+            listType: this.listTypes.MATCHING_QUESTION,
+            instance: this.listInstance,
+            level: 0,
+          },
+        ),
+      )
+    })
+
+    // then create all possible answers
+    this.listInstance += 1
+
+    options.forEach(option => {
+      optionRuns.push(
+        this.paragraphHandler(
+          {
+            content: [
+              {
+                type: 'text',
+                text: option.label,
+              },
+            ],
+          },
+          {
+            listType: this.listTypes.MATCHING_ANSWER,
+            instance: this.listInstance,
+            level: 0,
+          },
+        ),
+      )
+    })
+
+    return [...questionRuns, new Paragraph({ children: [] }), ...optionRuns]
+  }
+  // #endregion matching
 
   feedbackParser = () => {
     let content = [
@@ -407,6 +542,64 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         children: [
           new TextRun({
             text: this.fillTheGapFeedback[groupId],
+          }),
+        ],
+      })
+
+      listContent.push(feedbackParagraph)
+
+      content = content.concat(listContent)
+    })
+
+    const matchingSolutionKeys = Object.keys(this.matchingSolutions)
+
+    matchingSolutionKeys.forEach((groupId, i) => {
+      this.listInstance += 1
+      const groupSolutions = this.matchingSolutions[groupId]
+
+      const listContent = []
+
+      if (matchingSolutionKeys.length > 1) {
+        listContent.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Matching ${i + 1}`,
+                bold: true,
+              }),
+            ],
+          }),
+        )
+      }
+
+      groupSolutions.forEach(gapSolution => {
+        const solution = new Paragraph({
+          children: [
+            new TextRun({
+              text: gapSolution,
+            }),
+          ],
+          numbering: {
+            reference: this.listTypes.ORDERED,
+            level: 0,
+            instance: this.listInstance,
+          },
+          contextualSpacing: false,
+          indent: {
+            left: convertMillimetersToTwip(7),
+          },
+          spacing: {
+            after: 100,
+          },
+        })
+
+        listContent.push(solution)
+      })
+
+      const feedbackParagraph = new Paragraph({
+        children: [
+          new TextRun({
+            text: this.matchingFeedback[groupId],
           }),
         ],
       })
