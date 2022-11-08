@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 
 import { Discover, DateParser, VisuallyHiddenElement } from 'ui'
 import { useQuery } from '@apollo/client'
@@ -89,6 +89,7 @@ const DiscoverPage = () => {
   })
 
   const { metadata } = useMetadata()
+  const initialRender = useRef(true)
 
   const { data: questionsData, loading } = useQuery(GET_PUBLISHED_QUESTIONS, {
     variables: {
@@ -103,22 +104,38 @@ const DiscoverPage = () => {
         pageSize: PAGE_SIZE,
       },
     },
+    onCompleted: data => {
+      // run only on update, not on first render
+      if (initialRender.current) initialRender.current = false
+      else {
+        const nrOfQuestions = data.getPublishedQuestions.result.length
+        const total = data.getPublishedQuestions.totalCount
+        let announcement = 'Results updated.'
+
+        if (total === 0) {
+          announcement = `${announcement} No results for the selected filters`
+        } else if (total <= 10) {
+          announcement = `${announcement} ${nrOfQuestions} questions`
+        } else {
+          announcement = `${announcement} Page ${
+            searchParams.page
+          } of ${Math.ceil(
+            total / 10,
+          )} with ${nrOfQuestions} questions from a total of ${total}`
+        }
+
+        document.querySelector('#search-results-update').innerHTML =
+          announcement
+      }
+    },
   })
 
   const handleSearch = params => {
-    if (params.orderBy === 'date-desc') {
-      setSearchParams({
-        ...params,
-        orderBy: 'publication_date',
-        ascending: false,
-      })
-    } else if (params.orderBy === 'date-asc') {
-      setSearchParams({
-        ...params,
-        orderBy: 'publication_date',
-        ascending: true,
-      })
-    }
+    setSearchParams({
+      ...params,
+      orderBy: 'publication_date',
+      ascending: params.orderBy !== 'date-desc',
+    })
   }
 
   return (
@@ -142,6 +159,12 @@ const DiscoverPage = () => {
         sidebarText={sidebarText}
         sortOptions={sortOptions}
         totalCount={questionsData?.getPublishedQuestions.totalCount}
+      />
+      <VisuallyHiddenElement
+        aria-live="polite"
+        as="div"
+        id="search-results-update"
+        role="status"
       />
     </>
   )

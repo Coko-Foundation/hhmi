@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useApolloClient } from '@apollo/client'
 import {
   Route,
@@ -59,9 +59,19 @@ const Layout = props => {
 
   const history = useHistory()
 
+  useEffect(() => {
+    document.title = `${
+      pathToPageNameMap[history.location.pathname]
+    } - HHMI Assessment Builder`
+  }, [])
+
   history.listen(val => {
     document.getElementById('page-announcement').innerHTML =
       pathToPageNameMap[val.pathname]
+
+    document.title = `${
+      pathToPageNameMap[val.pathname]
+    } - HHMI Assessment Builder`
   })
 
   return (
