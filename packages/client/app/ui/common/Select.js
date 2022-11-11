@@ -49,16 +49,14 @@ const Select = props => {
     ? lodashDebounceFunc(handleSearch, debounceTimeout)
     : handleSearch
 
+  const customDropdownRender = menu => (
+    <StyledDropdown wrapOptionText={wrapOptionText}>{menu}</StyledDropdown>
+  )
+
   return (
     <StyledSelect
       className={className}
-      dropdownRender={menu => {
-        return (
-          <StyledDropdown wrapOptionText={wrapOptionText}>
-            {menu}
-          </StyledDropdown>
-        )
-      }}
+      dropdownRender={customDropdownRender}
       filterOption={async && !filterOption ? false : filterOption}
       notFoundContent={!notFoundContent && async ? null : notFoundContent}
       onSearch={onSearch && searchFunc}
