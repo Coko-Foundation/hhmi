@@ -12,8 +12,8 @@ import {
   TopicAndSubtopic,
   APCourseMetadata,
   IBCourseMetadata,
-  VisionAndChangeMetadata,
-  AAMCFuturePhysiciansMetadata,
+  // VisionAndChangeMetadata,
+  // AAMCFuturePhysiciansMetadata,
 } from '../common'
 import Resources from './Resources'
 import MetadataInfo from './MetadataInfo'
@@ -105,39 +105,39 @@ const Metadata = React.forwardRef((props, ref) => {
       )
     }
 
-    if (
-      selectedCourse === 'introductoryBiologyForNonMajors' ||
-      selectedCourse === 'introductoryBiologyForMajors'
-    ) {
-      return (
-        <>
-          <VisionAndChangeMetadata
-            conceptsAndCompetencies={metadata.introToBioMeta.find(
-              f => f.value === 'visionAndChange',
-            )}
-            getFieldValue={getFieldValue}
-            index={index}
-            isRequired
-            readOnly={readOnly}
-            setFieldsValue={form.setFieldsValue}
-            supplementaryKey={key}
-          />
-          {selectedCourse === 'introductoryBiologyForMajors' && (
-            <AAMCFuturePhysiciansMetadata
-              aamcMetadata={metadata.introToBioMeta.find(
-                f => f.value === 'aamcFuturePhysicians',
-              )}
-              getFieldValue={getFieldValue}
-              index={index}
-              isRequired
-              readOnly={readOnly}
-              setFieldsValue={form.setFieldsValue}
-              supplementaryKey={key}
-            />
-          )}
-        </>
-      )
-    }
+    // if (
+    //   selectedCourse === 'introductoryBiologyForNonMajors' ||
+    //   selectedCourse === 'introductoryBiologyForMajors'
+    // ) {
+    //   return (
+    //     <>
+    //       <VisionAndChangeMetadata
+    //         conceptsAndCompetencies={metadata.introToBioMeta.find(
+    //           f => f.value === 'visionAndChange',
+    //         )}
+    //         getFieldValue={getFieldValue}
+    //         index={index}
+    //         isRequired
+    //         readOnly={readOnly}
+    //         setFieldsValue={form.setFieldsValue}
+    //         supplementaryKey={key}
+    //       />
+    //       {selectedCourse === 'introductoryBiologyForMajors' && (
+    //         <AAMCFuturePhysiciansMetadata
+    //           aamcMetadata={metadata.introToBioMeta.find(
+    //             f => f.value === 'aamcFuturePhysicians',
+    //           )}
+    //           getFieldValue={getFieldValue}
+    //           index={index}
+    //           isRequired
+    //           readOnly={readOnly}
+    //           setFieldsValue={form.setFieldsValue}
+    //           supplementaryKey={key}
+    //         />
+    //       )}
+    //     </>
+    //   )
+    // }
 
     return null
   }
@@ -208,7 +208,11 @@ const Metadata = React.forwardRef((props, ref) => {
     sIndexes = [0]
 
     if (formValues[coursesKey]?.length) {
-      sIndexes = formValues[coursesKey]?.map((_, index) => index)
+      sIndexes = formValues[coursesKey]?.map((c, index) => {
+        return metadata.frameworks.find(f => f.value === c.course) !== undefined
+          ? index
+          : -1
+      })
     }
 
     setCoursesIndexes(sIndexes)
@@ -302,38 +306,49 @@ const Metadata = React.forwardRef((props, ref) => {
         <Form.List name={coursesKey} noStyle>
           {(_, { add, remove }) => (
             <StyledSupplementaryFieldsContainer>
-              {coursesIndexes.map(index => (
-                <div key={`supplementaryFields-${index}`}>
-                  {index === 1 && !editorView && <p>Second reference</p>}
-                  <Form.Item
-                    hidden={index === 1 && !editorView}
-                    {...initialValueSecondCourse(index)}
-                    label="Course"
-                    name={[index, 'course']}
-                    rules={[{ required: true, message: 'Course is required' }]}
-                  >
-                    <Select
-                      allowClear
-                      disabled={readOnly}
-                      onChange={value =>
-                        resetCourseFields(value, index, coursesKey, remove)
+              {coursesIndexes.map(index =>
+                index !== -1 ? (
+                  <div key={`supplementaryFields-${index}`}>
+                    {index === 1 && !editorView && <p>Second reference</p>}
+                    <Form.Item
+                      hidden={index === 1 && !editorView}
+                      {...initialValueSecondCourse(index)}
+                      label="Course"
+                      name={[index, 'course']}
+                      rules={[
+                        { required: true, message: 'Course is required' },
+                      ]}
+                    >
+                      <Select
+                        allowClear
+                        disabled={readOnly}
+                        onChange={value =>
+                          resetCourseFields(value, index, coursesKey, remove)
+                        }
+                        options={metadata.frameworks.map(i => ({
+                          label: i.label,
+                          value: i.value,
+                        }))}
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      dependencies={[[coursesKey, 0, 'course']]}
+                      noStyle
+                    >
+                      {({ getFieldValue }) =>
+                        renderFrameworkFields(getFieldValue, index, coursesKey)
                       }
-                      options={metadata.frameworks.map(i => ({
-                        label: i.label,
-                        value: i.value,
-                      }))}
-                    />
-                  </Form.Item>
+                    </Form.Item>
+                  </div>
+                ) : (
+                  <p key={`supplementaryFields-${index}`}>
+                    Corrupted course value, please contact the administrator
+                  </p>
+                ),
+              )}
 
-                  <Form.Item dependencies={[[coursesKey, 0, 'course']]} noStyle>
-                    {({ getFieldValue }) =>
-                      renderFrameworkFields(getFieldValue, index, coursesKey)
-                    }
-                  </Form.Item>
-                </div>
-              ))}
-
-              {!readOnly && (
+              {!readOnly && coursesIndexes.indexOf(-1) === -1 && (
                 <>
                   {(coursesIndexes.length < 2 || editorView) && (
                     <Button

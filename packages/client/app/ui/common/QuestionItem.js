@@ -163,7 +163,9 @@ const QuestionItem = props => {
 
       <SecondRow>
         {courses.sort(sortFunction).map(c => {
-          return (
+          return !c.course ? (
+            <span key={uuid()}>Unknown course</span>
+          ) : (
             <details key={uuid()}>
               <summary>
                 <MetadataLabel>
@@ -171,9 +173,7 @@ const QuestionItem = props => {
                 </MetadataLabel>
               </summary>
               <ul>
-                {c.objectives.map(o => (
-                  <li key={uuid()}>{o.label}</li>
-                ))}
+                {c.objectives.map(o => o && <li key={uuid()}>{o.label}</li>)}
               </ul>
             </details>
           )

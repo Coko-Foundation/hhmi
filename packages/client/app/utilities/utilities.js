@@ -255,21 +255,35 @@ const extractCourseAndObjectives = (courses, frameworksMetadata) =>
   courses.map(c => {
     const courseInValues = frameworksMetadata.find(f => f.value === c.course)
 
+    if (!courseInValues) {
+      return {
+        course: null,
+      }
+    }
+
     const beginning = c.course.slice(0, 2).toLowerCase()
     // const isIB = beginning === 'ib'
     const isAP = beginning === 'ap'
 
-    const objectives = c.units.map(unit => ({
-      label: courseInValues?.learningObjectives?.find(
-        lo => lo.value === unit.learningObjective,
-      )?.label,
-    }))
+    const objectives = c.units.map(unit =>
+      unit.learningObjective
+        ? {
+            label: courseInValues?.learningObjectives?.find(
+              lo => lo.value === unit.learningObjective,
+            )?.label,
+          }
+        : null,
+    )
 
-    const understandings = c.units.map(unit => ({
-      label: courseInValues?.understandings?.find(
-        und => und.value === unit.understanding,
-      )?.label,
-    }))
+    const understandings = c.units.map(unit =>
+      unit.understanding
+        ? {
+            label: courseInValues?.understandings?.find(
+              und => und.value === unit.understanding,
+            )?.label,
+          }
+        : null,
+    )
 
     return {
       course: {
