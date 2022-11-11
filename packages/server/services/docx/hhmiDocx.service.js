@@ -342,14 +342,19 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   fillTheGapHandler = (gap, options = {}) => {
     const groupId = options.fillTheGapGroupId
     const solutions = this.fillTheGapSolutions[groupId]
-    // solutions.push(gap.attrs.answer)
-    solutions.push(
-      gap.content[0].text
+
+    let solution
+
+    if (gap.content) {
+      solution = gap.content[0].text
         .split(',')
         .map(i => i.trim())
-        .join(', '),
-    )
+        .join(', ')
+    } else {
+      solution = ''
+    }
 
+    solutions.push(solution)
     return this.createGap()
   }
   // #endregion fill-the-gap
