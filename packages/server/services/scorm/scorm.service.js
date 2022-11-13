@@ -529,7 +529,7 @@ class WaxToScormConverter {
 
           return `${this.#contentHandler(contentItem.content, {
             textOnly: true,
-          })} ${correctAnswer.length ? correctAnswer[0].label : ''}`
+          })} ${correctAnswer.length ? correctAnswer[0].label : ''}<br/>`
         }
 
         if (contentItem.type === 'matching_option') {
