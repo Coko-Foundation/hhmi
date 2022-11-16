@@ -1,3 +1,5 @@
+const cloneDeep = require('lodash/cloneDeep')
+
 const {
   BaseModel,
   modelTypes: {
@@ -62,6 +64,25 @@ class QuestionVersion extends BaseModel {
     // transform stringified wax content to json before storing in the db
     if (data.content && typeof data.content === 'string') {
       data.content = JSON.parse(data.content)
+
+      // clean up potentially invalid src attribute from data
+      // (urls from the file server expire and will be generated on fetch)
+      if (data.content) {
+        data.content.content = data.content.content.map(item => {
+          if (item.type === 'figure') {
+            const clonedItem = cloneDeep(item)
+            const { src } = clonedItem.content[0].attrs
+
+            // make sure non-url existing images are not deleted
+            if (src.startsWith('data:image')) return item
+
+            clonedItem.content[0].attrs.src = null
+            return clonedItem
+          }
+
+          return item
+        })
+      }
 
       // store pure text of the question separately (for use in searching)
       data.contentText = extractDocumentText(data.content)

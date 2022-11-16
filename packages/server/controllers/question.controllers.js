@@ -1,7 +1,14 @@
 const path = require('path')
 const config = require('config')
+const cloneDeep = require('lodash/cloneDeep')
 
-const { logger, useTransaction } = require('@coko/server')
+const {
+  createFile,
+  fileStorage,
+  logger,
+  useTransaction,
+  File,
+} = require('@coko/server')
 
 const { Question, QuestionVersion, Team } = require('../models')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
@@ -468,8 +475,53 @@ const generateWordFile = async (questionVersionId, options = {}) => {
   }
 }
 
-const resourceResolver = async () => {
-  return resources
+const resourceResolver = async () => resources
+
+const uploadFiles = async files => {
+  const filesData = await Promise.all(files)
+
+  return Promise.all(
+    filesData.map(async file => {
+      const stream = file.createReadStream()
+      const storedFile = await createFile(stream, file.filename)
+      return storedFile
+    }),
+  )
+}
+
+// Populates a wax document with valid image urls
+const getImageUrls = async document => {
+  try {
+    if (!document) return document
+
+    const clonedDocument = cloneDeep(document)
+
+    clonedDocument.content = await Promise.all(
+      document.content.map(async item => {
+        if (item.type === 'figure') {
+          const clonedItem = cloneDeep(item)
+          const { attrs } = clonedItem.content[0]
+
+          if (!attrs.extraData || !attrs.extraData.fileId) {
+            logger.warn('Image without file id detected!')
+            return item
+          }
+
+          const { fileId } = attrs.extraData
+          const file = await File.findById(fileId)
+          const { key } = file.storedObjects.find(o => o.type === 'medium')
+          clonedItem.content[0].attrs.src = await fileStorage.getURL(key)
+          return clonedItem
+        }
+
+        return item
+      }),
+    )
+
+    return clonedDocument
+  } catch (e) {
+    throw new Error(e)
+  }
 }
 
 module.exports = {
@@ -496,4 +548,7 @@ module.exports = {
   generateScormZip,
   generateWordFile,
   createNewQuestionVersion,
+
+  uploadFiles,
+  getImageUrls,
 }

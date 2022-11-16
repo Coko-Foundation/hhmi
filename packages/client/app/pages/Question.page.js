@@ -23,6 +23,7 @@ import {
   GENERATE_SCORM_ZIP,
   GET_RESOURCES,
   CREATE_NEW_VERSION,
+  UPLOAD_FILES,
 } from '../graphql'
 import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 
@@ -181,6 +182,8 @@ const QuestionPage = props => {
 
   const [generateScormZipMutation, { loading: generateScormZipLoading }] =
     useMutation(GENERATE_SCORM_ZIP)
+
+  const [upload] = useMutation(UPLOAD_FILES)
   // #endregion hooks
 
   // #region data wrangling
@@ -428,6 +431,39 @@ const QuestionPage = props => {
 
     createNewQuestionVersionMutation(mutationData)
   }
+
+  const handleImageUpload = async file => {
+    const mutationVariables = {
+      variables: {
+        files: [file],
+      },
+    }
+
+    let uploadedFile
+
+    await upload(mutationVariables)
+      .then(res => {
+        /* eslint-disable-next-line prefer-destructuring */
+        uploadedFile = res.data.uploadFiles[0]
+      })
+      .catch(e => console.error(e))
+
+    // wax expects a promise here
+    return new Promise((resolve, reject) => {
+      if (uploadedFile) {
+        const { id: fileId, url } = uploadedFile
+
+        resolve({
+          url,
+          extraData: {
+            fileId,
+          },
+        })
+      } else {
+        reject()
+      }
+    })
+  }
   // #endregion handlers
 
   return (
@@ -452,6 +488,7 @@ const QuestionPage = props => {
       onClickPreviousButton={() => handleGetQuestionButton('PREV')}
       onCreateNewVersion={handleCreateNewVersion}
       onEditorContentAutoSave={handleEditorContentAutoSave}
+      onImageUpload={handleImageUpload}
       onMetadataAutoSave={handleMetadataAutoSave}
       onMoveToProduction={handleMoveToProduction}
       onMoveToReview={handleMoveToReview}
