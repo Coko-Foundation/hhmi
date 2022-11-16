@@ -3,6 +3,7 @@ const merge = require('lodash/merge')
 const question = require('./question')
 const user = require('./user')
 const team = require('./team')
+const file = require('./file')
 const metadata = require('./metadata')
 const resource = require('./resource')
 
@@ -11,6 +12,7 @@ module.exports = {
     question.typeDefs,
     user.typeDefs,
     team.typeDefs,
+    file.typeDefs,
     metadata.typeDefs,
     resource.typeDefs,
   ].join(' '),
@@ -19,6 +21,7 @@ module.exports = {
     question.resolvers,
     user.resolvers,
     team.resolvers,
+    file.resolvers,
     metadata.resolvers,
     resource.resolvers,
   ),

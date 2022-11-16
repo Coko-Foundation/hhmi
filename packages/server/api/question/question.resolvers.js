@@ -17,6 +17,9 @@ const {
   generateWordFile,
   generateScormZip,
   createNewQuestionVersion,
+
+  uploadFiles,
+  getImageUrls,
 } = require('../../controllers/question.controllers')
 
 const questionResolver = async (_, { id }) => {
@@ -97,9 +100,12 @@ const versionQuestionResolver = async version => {
   return getQuestion(version.questionId)
 }
 
-const contentResolver = version => {
+const contentResolver = async version => {
   const { content } = version
-  return content === null ? content : JSON.stringify(content)
+  if (content === null) return null
+
+  const withImageUrls = await getImageUrls(content)
+  return JSON.stringify(withImageUrls)
 }
 
 const prevOrNextQuestionsResolver = (
@@ -119,6 +125,10 @@ const generateScormZipResolver = async (_, { questionVersionId }) => {
 
 const createNewQuestionVersionResolver = async (_, { questionId }) => {
   return createNewQuestionVersion(questionId)
+}
+
+const uploadFilesResolver = async (_, { files }) => {
+  return uploadFiles(files)
 }
 
 module.exports = {
@@ -141,6 +151,7 @@ module.exports = {
     generateWordFile: generateWordFileResolver,
     generateScormZip: generateScormZipResolver,
     createNewQuestionVersion: createNewQuestionVersionResolver,
+    uploadFiles: uploadFilesResolver,
   },
   Question: {
     versions: versionsResolver,

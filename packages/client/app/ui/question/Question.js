@@ -179,6 +179,7 @@ const MemoizedWax = memo(
       innerRef,
       layout,
       onContentChange,
+      onImageUpload,
       readOnly,
       published,
       withMetadata,
@@ -241,6 +242,7 @@ const MemoizedWax = memo(
             innerRef={innerRef}
             layout={layout}
             onContentChange={!testMode && onContentChange}
+            onImageUpload={onImageUpload}
             readOnly={readOnly}
           />
         </EditorScrollContainer>
@@ -283,6 +285,7 @@ MemoizedWax.propTypes = {
   ]),
   layout: PropTypes.elementType.isRequired,
   onContentChange: PropTypes.func.isRequired,
+  onImageUpload: PropTypes.func,
   readOnly: PropTypes.bool,
   withMetadata: PropTypes.bool,
   published: PropTypes.bool,
@@ -292,6 +295,7 @@ MemoizedWax.defaultProps = {
   content: {},
   readOnly: false,
   innerRef: null,
+  onImageUpload: () => {},
   published: false,
   withMetadata: true,
 }
@@ -388,6 +392,7 @@ const Question = props => {
     onClickPreviousButton,
     onCreateNewVersion,
     onEditorContentAutoSave,
+    onImageUpload,
     onMetadataAutoSave,
     onMoveToProduction,
     onMoveToReview,
@@ -873,6 +878,7 @@ const Question = props => {
                       innerRef={waxRef}
                       layout={facultyView ? TestModeLayout : HhmiLayout}
                       onContentChange={handleQuestionContentChange}
+                      onImageUpload={onImageUpload}
                       published={isPublished}
                       readOnly={readOnly}
                       withMetadata={showMetadata}
@@ -919,6 +925,7 @@ Question.propTypes = {
   onClickNextButton: PropTypes.func,
   onCreateNewVersion: PropTypes.func,
   onEditorContentAutoSave: PropTypes.func,
+  onImageUpload: PropTypes.func,
   onQuestionSubmit: PropTypes.func.isRequired,
   onMetadataAutoSave: PropTypes.func,
   onMoveToReview: PropTypes.func,
@@ -1201,6 +1208,7 @@ Question.defaultProps = {
   onClickPreviousButton: () => {},
   onClickNextButton: () => {},
   onEditorContentAutoSave: () => {},
+  onImageUpload: () => {},
   onMetadataAutoSave: () => {},
   editorView: false,
   questionAgreedTc: false,

@@ -396,3 +396,12 @@ export const GENERATE_SCORM_ZIP = gql`
     generateScormZip(questionVersionId: $questionVersionId)
   }
 `
+
+export const UPLOAD_FILES = gql`
+  mutation ($files: [Upload!]!) {
+    uploadFiles(files: $files) {
+      id
+      url(size: medium)
+    }
+  }
+`
