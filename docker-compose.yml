@@ -115,17 +115,17 @@ services:
       - MINIO_ROOT_USER=${MINIO_ROOT_USER:-admin}
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-superSecretAdminPassword}
     command: server --console-address ":${MINIO_CONSOLE_PORT:-9001}" /data
-    # healthcheck:
-    #   test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
-    #   interval: 30s
-    #   timeout: 20s
-    #   retries: 3
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
   createbucket:
     image: minio/mc
-    # depends_on:
-    #   filehosting:
-    #     condition: service_healthy
+    depends_on:
+      filehosting:
+        condition: service_healthy
     entrypoint: >
       /bin/sh -c "
         /usr/bin/mc config host add cokoServer http://filehosting:${S3_PORT:-9000} ${MINIO_ROOT_USER:-admin} ${MINIO_ROOT_PASSWORD:-superSecretAdminPassword};
