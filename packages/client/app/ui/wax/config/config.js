@@ -1,4 +1,3 @@
-// import { emDash, ellipsis } from 'prosemirror-inputrules'
 import { columnResizing, tableEditing } from 'prosemirror-tables'
 import {
   InlineAnnotationsService,
@@ -21,15 +20,11 @@ import {
   EditorInfoToolGroupServices,
   BottomInfoService,
   MultipleChoiceQuestionService,
-  MultipleDropDownToolGroupService,
   FillTheGapQuestionService,
-  FillTheGapToolGroupService,
   MatchingService,
-  MatchingToolGroupService,
-  MultipleChoiceDropDownToolGroupService,
   MultipleDropDownService,
   EssayService,
-  EssayToolGroupService,
+  QuestionsDropDownToolGroupService,
 } from 'wax-prosemirror-services'
 
 import { DefaultSchema } from 'wax-prosemirror-core'
@@ -37,33 +32,11 @@ import { DefaultSchema } from 'wax-prosemirror-core'
 export default {
   MenuService: [
     {
-      //   templateArea: 'mainMenuToolBar',
-      //   toolGroups: [
-      //     { name: 'Base', exclude: ['Save'] },
-      //     {
-      //       name: 'Annotations',
-      //       more: [
-      //         'Superscript',
-      //         'Subscript',
-      //         'SmallCaps',
-      //         'Underline',
-      //         'StrikeThrough',
-      //       ],
-      //     },
-      //     'Lists',
-      //     'Images',
-      //     'Tables',
-      //     'MultipleDropDown',
-      //     'FillTheGap',
-      //     'FullScreen',
-      //   ],
-      // },
       templateArea: 'mainMenuToolBar',
       toolGroups: [
         'Base',
         {
           name: 'Annotations',
-          // exclude: ['LinkTool'],
           more: [
             'Superscript',
             'Subscript',
@@ -75,53 +48,30 @@ export default {
         'Lists',
         'Images',
         'Tables',
-        'MultipleChoiceDropDown',
-        'Essay',
-        'FillTheGap',
-        'MultipleDropDown',
-        'Matching',
+        'QuestionsDropDown',
         'FullScreen',
       ],
+    },
+    {
+      templateArea: 'fillTheGap',
+      toolGroups: ['FillTheGap'],
+    },
+    {
+      templateArea: 'MultipleDropDown',
+      toolGroups: ['MultipleDropDown'],
     },
   ],
 
   SchemaService: DefaultSchema,
-  // RulesService: [emDash, ellipsis],
-
-  // PmPlugins: [columnResizing(), tableEditing(), WaxSelectionPlugin],
   PmPlugins: [columnResizing(), tableEditing()],
 
   services: [
     new FillTheGapQuestionService(),
-    new FillTheGapToolGroupService(),
     new MatchingService(),
-    new MatchingToolGroupService(),
-    new MultipleChoiceDropDownToolGroupService(),
     new MultipleChoiceQuestionService(),
     new MultipleDropDownService(),
-    new MultipleDropDownToolGroupService(),
     new EssayService(),
-    new EssayToolGroupService(),
-
-    // new ListsService(),
-    // new LinkService(),
-    // new InlineAnnotationsService(),
-    // new ImageService(),
-    // new TablesService(),
-    // new BaseService(),
-    // new BaseToolGroupService(),
-    // new TableToolGroupService(),
-    // new ImageToolGroupService(),
-    // new AnnotationToolGroupService(),
-    // new ListToolGroupService(),
-    // new DisplayTextToolGroupService(),
-    // new MathService(),
-    // new FullScreenService(),
-    // new FullScreenToolGroupService(),
-    // new SpecialCharactersService(),
-    // new SpecialCharactersToolGroupService(),
-    // new EditorInfoToolGroupServices(),
-    // new BottomInfoService(),
+    new QuestionsDropDownToolGroupService(),
 
     new ListsService(),
     new LinkService(),

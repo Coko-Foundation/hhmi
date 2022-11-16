@@ -1,4 +1,3 @@
-// import { emDash, ellipsis } from 'prosemirror-inputrules'
 import { columnResizing, tableEditing } from 'prosemirror-tables'
 import {
   InlineAnnotationsService,
@@ -22,36 +21,25 @@ import {
   BottomInfoService,
   MultipleChoiceQuestionService,
   FillTheGapQuestionService,
-  FillTheGapToolGroupService,
   MatchingService,
-  MatchingToolGroupService,
-  MultipleChoiceDropDownToolGroupService,
-  MultipleDropDownToolGroupService,
   MultipleDropDownService,
   EssayService,
-  EssayToolGroupService,
+  QuestionsDropDownToolGroupService,
 } from 'wax-prosemirror-services'
 
 import { DefaultSchema } from 'wax-prosemirror-core'
 
 export default {
   SchemaService: DefaultSchema,
-  // RulesService: [emDash, ellipsis],
-
-  // PmPlugins: [columnResizing(), tableEditing(), WaxSelectionPlugin],
   PmPlugins: [columnResizing(), tableEditing()],
 
   services: [
     new FillTheGapQuestionService(),
-    new FillTheGapToolGroupService(),
     new MatchingService(),
-    new MatchingToolGroupService(),
-    new MultipleChoiceDropDownToolGroupService(),
     new MultipleChoiceQuestionService(),
     new MultipleDropDownService(),
-    new MultipleDropDownToolGroupService(),
     new EssayService(),
-    new EssayToolGroupService(),
+    new QuestionsDropDownToolGroupService(),
 
     new ListsService(),
     new LinkService(),
