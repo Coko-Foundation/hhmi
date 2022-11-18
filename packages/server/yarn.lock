@@ -344,9 +344,9 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@coko/server@https://gitlab.coko.foundation/cokoapps/server.git#74aa952d4565add0ffcdf5cb6225137e9d84a2b5":
+"@coko/server@https://gitlab.coko.foundation/cokoapps/server.git#cced62ab12c6c059cc7d2b1a55574743b25a3eb3":
   version "1.14.0"
-  resolved "https://gitlab.coko.foundation/cokoapps/server.git#74aa952d4565add0ffcdf5cb6225137e9d84a2b5"
+  resolved "https://gitlab.coko.foundation/cokoapps/server.git#cced62ab12c6c059cc7d2b1a55574743b25a3eb3"
   dependencies:
     "@pubsweet/base-model" "^4.0.10"
     "@pubsweet/component-send-email" "^0.4.13"
