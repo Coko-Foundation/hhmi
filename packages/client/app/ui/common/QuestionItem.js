@@ -2,13 +2,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
 
 import { uuid, th, grid } from '@coko/client'
 
 import WaxWrapper from '../wax/Wax'
 import { DashLayout } from '../wax/layout'
 import { dashConfig } from '../wax/config'
+import Link from './HhmiLink'
 
 const Wrapper = styled.article`
   margin: ${grid(1)};

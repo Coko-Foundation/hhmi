@@ -13,3 +13,4 @@ services:
     volumes:
       - ./packages/client/stories:/home/node/app/stories
       - ./packages/client/app:/home/node/app/app
+      - ./packages/client/static:/home/node/app/static

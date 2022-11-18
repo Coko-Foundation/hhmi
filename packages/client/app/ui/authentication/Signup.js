@@ -8,6 +8,7 @@ import AuthenticationWrapper from './AuthenticationWrapper'
 import {
   Form,
   Input,
+  Link,
   Modal,
   Result,
   Checkbox,
@@ -33,29 +34,35 @@ const Signup = props => {
       content: (
         <Paragraph>
           By checking “I agree” and selecting “Sign up” below, I accept the{' '}
-          <a
+          <Link
+            as="a"
             href="https://www.biointeractive.org/hhmi-biointeractive-online-community-terms-use"
             rel="noreferrer"
+            style={{ color: '#3F3F3F' }}
             target="_blank"
           >
             HHMI BioInteractive Online Community Terms of Use
-          </a>
+          </Link>
           ,{' '}
-          <a
+          <Link
+            as="a"
             href="https://www.hhmi.org/terms-of-use"
             rel="noreferrer"
+            style={{ color: '#3F3F3F' }}
             target="_blank"
           >
             HHMI Terms of Use
-          </a>
+          </Link>
           , and{' '}
-          <a
+          <Link
+            as="a"
             href="https://www.hhmi.org/privacy-policy"
             rel="noreferrer"
+            style={{ color: '#3F3F3F' }}
             target="_blank"
           >
             HHMI Privacy Policy and Cookie Notice
-          </a>
+          </Link>
           .
         </Paragraph>
       ),
@@ -192,13 +199,14 @@ const Signup = props => {
             >
               <Checkbox aria-label="I agree to the terms and conditions">
                 I agree to the{' '}
-                <a
+                <Link
+                  as="a"
                   href="#termsAndCondition"
                   id="termsAndConditions"
                   onClick={showTermsAndConditions}
                 >
                   terms and conditions
-                </a>
+                </Link>
               </Checkbox>
             </Form.Item>
           </AuthenticationForm>

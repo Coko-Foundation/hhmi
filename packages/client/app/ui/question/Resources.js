@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { Form, Select } from '../common'
+import { Form, Select, Link } from '../common'
 
 const StyledFormItem = styled(Form.Item)`
   .ant-col.ant-form-item-label label {
@@ -45,9 +45,14 @@ const Resources = props => {
 
       return (
         <li key={resourceObject.value}>
-          <a href={resourceObject.url} rel="noreferrer" target="_blank">
+          <Link
+            as="a"
+            href={resourceObject.url}
+            rel="noreferrer"
+            target="_blank"
+          >
             {resourceObject.label}
-          </a>
+          </Link>
         </li>
       )
     })
@@ -59,13 +64,14 @@ const Resources = props => {
         label={
           <LabelWrapper>
             <span>Biointeractive resources</span>
-            <a
+            <Link
+              as="a"
               href="https://www.biointeractive.org/classroom-resources"
               rel="noreferrer"
               target="_blank"
             >
               View all resources
-            </a>
+            </Link>
           </LabelWrapper>
         }
         name={name}

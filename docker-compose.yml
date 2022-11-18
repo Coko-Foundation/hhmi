@@ -20,6 +20,7 @@ services:
       - SERVER_PORT=${SERVER_PORT:-3000}
     volumes:
       - ./packages/client/app:/home/node/app/app
+      - ./packages/client/static:/home/node/app/static
     tty: true
 
   server:

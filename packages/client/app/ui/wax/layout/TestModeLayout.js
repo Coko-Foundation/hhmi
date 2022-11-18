@@ -1,7 +1,9 @@
 import React, { useContext } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, ThemeProvider } from 'styled-components'
 import { WaxContext } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
+import theme from '../../../theme'
+import commonStyles from './commonWaxStyles'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -22,6 +24,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  ${commonStyles};
 
   ${props => props.fullScreen && fullScreenStyles}
 `
@@ -45,15 +49,10 @@ const EditorArea = styled.div`
 
   .ProseMirror {
     background-color: inherit;
-    font-family: inherit;
     /* height: 100%; */
     margin: 0 auto;
     max-width: 100ch;
     padding: ${grid(12)} ${grid(5)};
-
-    &:focus {
-      outline: none;
-    }
   }
 `
 
@@ -63,11 +62,13 @@ const TestModeLayout = ({ editor }) => {
   const { fullScreen } = options
 
   return (
-    <Wrapper fullScreen={fullScreen}>
-      <EditorWrapper>
-        <EditorArea>{editor}</EditorArea>
-      </EditorWrapper>
-    </Wrapper>
+    <ThemeProvider theme={theme}>
+      <Wrapper fullScreen={fullScreen}>
+        <EditorWrapper>
+          <EditorArea>{editor}</EditorArea>
+        </EditorWrapper>
+      </Wrapper>
+    </ThemeProvider>
   )
 }
 

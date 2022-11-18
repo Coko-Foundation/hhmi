@@ -1,27 +1,19 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useApolloClient } from '@apollo/client'
 import {
   Route,
   Switch,
   Redirect,
-  Link,
   useLocation,
   useHistory,
 } from 'react-router-dom'
 import styled from 'styled-components'
 
-import {
-  PageLayout as Page,
-  RequireAuth,
-  useCurrentUser,
-  grid,
-  th,
-} from '@coko/client'
+import { PageLayout as Page, RequireAuth, useCurrentUser } from '@coko/client'
 
-// import { NavigationBar } from './ui'
-import { Button, VisuallyHiddenElement /* Spin */ } from 'ui'
+import { Header, Footer, VisuallyHiddenElement } from 'ui'
+import GlobalStyles from './globalStyles'
 import { hasGlobalRole, MetadataProvider } from './utilities'
-// import { logout } from './utilities'
 
 import {
   Login,
@@ -139,43 +131,32 @@ const Layout = props => {
   )
 }
 
-const HeaderFooter = styled.div`
-  align-items: center;
-  /* background-color: darkseagreen; */
-  background-color: slategray;
-  /* background-color: ${th('colorPrimary')}; */
-  color: white;
-  display: flex;
-  font-weight: bold;
-  height: ${grid(10)};
-  justify-content: space-between;
-  padding: 0 ${grid(4)};
-  width: 100%;
-
-  /* stylelint-disable-next-line */
-  > div {
-    align-items: center;
-    display: flex;
-
-    /* stylelint-disable-next-line */
-    > div:not(:last-child) {
-      margin-right: ${grid(4)};
-    }
-  }
-`
-
-const StyledLink = styled(Link)`
-  color: ${th('colorTextReverse')};
-`
-
 const StyledPage = styled(Page)`
-  height: calc(100% - ${grid(20)});
+  height: calc(100% - 76px - 115px);
 `
 
-const LogoutButton = () => {
-  const { setCurrentUser } = useCurrentUser()
+// const Loader = () => <Spin spinning />
+
+const SiteHeader = () => {
+  const headerLinks = {
+    homepage: '/',
+    questions: '/discover',
+    dashboard: '/dashboard',
+    lists: '/lists',
+    about: '/about',
+    learning: '/learning',
+    manageUsers: '/manage-users',
+    manageTeams: '/manage-teams',
+    profile: '/profile',
+    login: '/login',
+  }
+
+  const { currentUser, setCurrentUser } = useCurrentUser()
   const client = useApolloClient()
   const history = useHistory()
+  const [currentPath, setCurrentPath] = useState(history.location.pathname)
+
+  history.listen(val => setCurrentPath(val.pathname))
 
   const logout = () => {
     setCurrentUser(null)
@@ -187,49 +168,18 @@ const LogoutButton = () => {
     history.push('/login')
   }
 
-  return <Button onClick={logout}>Logout</Button>
-}
-
-// const Loader = () => <Spin spinning />
-
-const Header = () => {
-  const { currentUser } = useCurrentUser()
+  const isAdmin = hasGlobalRole(currentUser, 'admin')
 
   return (
-    <HeaderFooter>
-      <div>
-        <div>
-          <StyledLink to="/dashboard">HHMI</StyledLink>
-        </div>
-        <div>
-          <StyledLink to="/discover">Discover</StyledLink>
-        </div>
-      </div>
-      <div>
-        {currentUser && hasGlobalRole(currentUser, 'admin') && (
-          <>
-            <div>
-              <StyledLink to="/manage-users">User Manager</StyledLink>
-            </div>
-            <div>
-              <StyledLink to="/manage-teams">Team Manager</StyledLink>
-            </div>
-          </>
-        )}
-        <div>
-          <StyledLink to="/profile">{currentUser?.displayName}</StyledLink>
-        </div>
-        <div>{currentUser && <LogoutButton />}</div>
-      </div>
-    </HeaderFooter>
-  )
-}
-
-const Footer = () => {
-  return (
-    <HeaderFooter>
-      <div>Footer</div>
-    </HeaderFooter>
+    <Header
+      canManageTeams={isAdmin}
+      canManageUsers={isAdmin}
+      currentPath={currentPath}
+      displayName={currentUser?.displayName}
+      links={headerLinks}
+      loggedin={!!currentUser}
+      onLogout={logout}
+    />
   )
 }
 
@@ -264,10 +214,11 @@ const Authenticated = ({ children }) => {
 
 const routes = (
   <Layout>
-    <Header />
+    <GlobalStyles />
+    <SiteHeader />
     <MetadataProvider>
       <StyledPage fadeInPages={false} padPages={false}>
-        <StyledMain>
+        <StyledMain id="main-content" tabIndex="-1">
           <Switch>
             <Route
               exact

@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 import { grid } from '@coko/client'
 
-import { Form, Button } from '../common'
+import { Form, Button, Link } from '../common'
 
 const Wrapper = styled.div``
 
@@ -67,12 +67,12 @@ const AuthenticationForm = props => {
         <Footer showForgotPassword={showForgotPassword}>
           {showForgotPassword && (
             <ForgotPassword>
-              <a href={forgotPasswordUrl}>Forgot your password?</a>
+              <Link to={forgotPasswordUrl}>Forgot your password?</Link>
             </ForgotPassword>
           )}
 
           <AlternativeAction>
-            <a href={alternativeActionLink}>{alternativeActionLabel}</a>
+            <Link to={alternativeActionLink}>{alternativeActionLabel}</Link>
           </AlternativeAction>
         </Footer>
       )}

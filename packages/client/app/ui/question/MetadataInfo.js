@@ -3,8 +3,10 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { extractTopicsAndSubtopics } from '../../utilities'
+import { Link } from '../common'
 
 const Wrapper = styled.div`
+  font-size: ${th('fontSizeBase')};
   overflow-y: auto;
   padding: ${grid(4)};
 `
@@ -22,7 +24,16 @@ const StyledDetails = styled.details`
 
   ol {
     padding-left: 15px;
+
+    li::marker {
+      font-weight: bold;
+    }
   }
+`
+
+const StyledList = styled.ul`
+  list-style-type: none;
+  padding-left: 0;
 `
 
 const MetadataInfo = props => {
@@ -220,19 +231,24 @@ const MetadataInfo = props => {
           <p>
             <strong>Biointeractive resources</strong>
           </p>
-          <p>
+          <StyledList>
             {values.biointeractiveResources.map(resource => {
               const resourceObject = resources.find(r => r.value === resource)
 
               return (
                 <li key={resourceObject.value}>
-                  <a href={resourceObject.url} rel="noreferrer" target="_blank">
+                  <Link
+                    as="a"
+                    href={resourceObject.url}
+                    rel="noreferrer"
+                    target="_blank"
+                  >
                     {resourceObject.label}
-                  </a>
+                  </Link>
                 </li>
               )
             })}
-          </p>
+          </StyledList>
         </>
       )}
     </Wrapper>

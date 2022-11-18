@@ -6,11 +6,15 @@ import styled from 'styled-components'
 import { debounce } from 'lodash'
 
 import { Form as AntForm } from 'antd'
-import { grid } from '@coko/client'
+import { grid, th } from '@coko/client'
 
 import UIRibbon from './Ribbon'
 
-const FormWrapper = styled.div``
+const FormWrapper = styled.div`
+  .ant-form-item-explain-error {
+    color: ${th('colorError')};
+  }
+`
 
 const Ribbon = styled(UIRibbon)`
   margin: ${grid(2)} ${grid(4)};

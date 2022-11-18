@@ -21,11 +21,12 @@ import {
   Button,
   Checkbox,
   DateParser,
+  Link,
   Modal,
   Paragraph,
-  Radio,
   Ribbon,
   Spin,
+  Switch,
   TabsStyled as Tabs,
 } from '../common'
 import WaxWrapper from '../wax/Wax'
@@ -96,7 +97,7 @@ const StyledCheckbox = styled(Checkbox)`
 
 const FacultyHeaderWrapper = styled.div`
   align-items: center;
-  background-color: ${th('colorSecondary')};
+  background-color: ${th('colorBackgroundHue')};
   display: flex;
   flex: none;
   height: 46px;
@@ -104,6 +105,11 @@ const FacultyHeaderWrapper = styled.div`
   margin: 0;
   padding: 0 ${grid(3)};
   text-transform: uppercase;
+
+  > div {
+    align-items: center;
+    display: flex;
+  }
 `
 
 const StyledTabItem = styled.div`
@@ -111,7 +117,7 @@ const StyledTabItem = styled.div`
 `
 
 const QuestionWrapper = styled.div`
-  background-color: ${th('colorBody')};
+  background-color: ${th('colorBackground')};
   display: grid;
   grid-template-columns: ${props => (props.showMetadata ? `2fr 1fr` : '2fr')};
   height: 100%;
@@ -132,15 +138,45 @@ const MetadataWrapper = styled.section`
   overflow-y: auto;
 `
 
-const StyledRadioToggle = styled(Radio)`
-  margin-right: ${grid(2)};
+const StyledSwitch = styled(Switch)`
+  button {
+    align-items: center;
+    border-radius: 0;
+    display: inline-flex;
+    height: 32px;
+    justify-content: space-around;
+    margin: 0 8px;
+    width: 190px;
 
-  label.ant-radio-button-wrapper {
-    background-color: transparent;
-    border: 1px solid ${th('colorPrimary')};
-    color: ${th('colorPrimary')};
+    .ant-switch-handle {
+      height: 32px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+
+      &::before {
+        border-radius: 0;
+      }
+    }
+
+    .ant-switch-inner {
+      font-size: ${th('fontSizeBase')};
+      text-transform: uppercase;
+    }
+
+    &.ant-switch-checked {
+      .ant-switch-inner {
+        margin-left: 0;
+      }
+
+      .ant-switch-handle {
+        left: unset;
+        right: 2px;
+      }
+    }
   }
 `
+
 // #endregion styled
 
 // #region wax
@@ -387,7 +423,6 @@ const Question = props => {
     loading,
     metadata,
     onClickAssignHE,
-    onClickBackButton,
     onClickNextButton,
     onClickPreviousButton,
     onCreateNewVersion,
@@ -449,13 +484,15 @@ const Question = props => {
         <Paragraph>
           By submitting information via the form below (the “Question
           Information”), and clicking the “Submit” button, you agree to{' '}
-          <a
+          <Link
+            as="a"
             href="https://www.hhmi.org/terms-of-use"
             rel="noreferrer"
+            style={{ color: '#3F3F3F' }}
             target="_blank"
           >
             HHMI’s Terms of Use
-          </a>{' '}
+          </Link>{' '}
           and you grant to the Howard Hughes Medical Institute (“HHMI”) and our
           affiliates (referred to collectively with HHMI as, “we,” “us,” or
           “our”) a royalty-free, perpetual, irrevocable, non-exclusive right and
@@ -684,17 +721,6 @@ const Question = props => {
   // #endregion handlers
 
   // #region components
-  const BackButton = (
-    <StyledButton
-      ghost
-      icon={<LeftOutlined />}
-      onClick={onClickBackButton}
-      type="primary"
-    >
-      Back
-    </StyledButton>
-  )
-
   const QuestionTab = <StyledTabItem>Question</StyledTabItem>
 
   const PreviousQuestion = (
@@ -710,6 +736,7 @@ const Question = props => {
   const NextQuestion = (
     <StyledButton
       icon={<RightOutlined />}
+      next
       onClick={onClickNextButton}
       type="primary"
     >
@@ -725,13 +752,13 @@ const Question = props => {
         onChange={handleAgreeTcChange}
       >
         Accept{' '}
-        <a
-          href="#termsAndCondition"
+        <Link
           id="termsAndConditions"
           onClick={showTermsAndConditions}
+          to="#termsAndCondition"
         >
           terms and conditions
-        </a>
+        </Link>
       </StyledCheckbox>
 
       <StyledButton
@@ -819,7 +846,7 @@ const Question = props => {
   const FacultyHeader = (
     <FacultyHeaderWrapper>
       <div>
-        {BackButton}
+        {/* {BackButton} */}
         {PreviousQuestion}
       </div>
 
@@ -836,15 +863,11 @@ const Question = props => {
         />
 
         {isUserLoggedIn && (
-          <StyledRadioToggle
-            buttonStyle="solid"
+          <StyledSwitch
+            checked={showMetadata}
+            checkedChildren="Show Metadata"
             onChange={val => setShowMetadata(val)}
-            options={[
-              { value: false, label: 'STUDENT' },
-              { value: true, label: 'FACULTY' },
-            ]}
-            optionType="button"
-            value={showMetadata}
+            unCheckedChildren="Student view"
           />
         )}
 
@@ -908,7 +931,7 @@ const Question = props => {
             return facultyView ? FacultyHeader : <DefaultTabBar {...tabProps} />
           }}
           tabBarExtraContent={{
-            left: BackButton,
+            // left: BackButton,
             right: RightArea,
           }}
         />
@@ -919,8 +942,6 @@ const Question = props => {
 
 Question.propTypes = {
   loading: PropTypes.bool.isRequired,
-  // don't think we need this, the back "button" should be a link to dashboard I guess?
-  onClickBackButton: PropTypes.func.isRequired,
   onClickPreviousButton: PropTypes.func,
   onClickNextButton: PropTypes.func,
   onCreateNewVersion: PropTypes.func,

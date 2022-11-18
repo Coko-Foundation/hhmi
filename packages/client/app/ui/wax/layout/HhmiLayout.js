@@ -1,7 +1,9 @@
 import React, { useContext } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, ThemeProvider } from 'styled-components'
 import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
+import theme from '../../../theme'
+import commonStyles from './commonWaxStyles'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -25,6 +27,8 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+
+  ${commonStyles};
 
   ${props => props.fullScreen && fullScreenStyles}
 `
@@ -54,9 +58,6 @@ const EditorWrapper = styled.div`
   overflow-y: auto;
 `
 
-/* TO DO -- remove */
-/* ${EditorElements} */
-
 const EditorArea = styled.div`
   background-color: ${th('colorBackground')};
   flex-grow: 1;
@@ -67,17 +68,15 @@ const EditorArea = styled.div`
   }
 
   .ProseMirror {
-    /* font-family: ${th('fontInterface')}; */
-    font-family: inherit;
     height: 100%;
     margin: 0 auto;
     max-width: 100ch;
     padding: ${grid(12)} ${grid(5)};
     /* position: relative; */
 
-    &:focus {
+    /* &:focus {
       outline: none;
-    }
+    } */
 
     /* .wax-selection-marker {
       background: ${th('colorPrimary')};
@@ -119,17 +118,19 @@ const HhmiLayout = ({ editor }) => {
   const { fullScreen } = options
 
   return (
-    <Wrapper fullScreen={fullScreen}>
-      <TopMenu>
-        <MainMenuToolBar />
-      </TopMenu>
+    <ThemeProvider theme={theme}>
+      <Wrapper fullScreen={fullScreen}>
+        <TopMenu>
+          <MainMenuToolBar />
+        </TopMenu>
 
-      <EditorWrapper>
-        <EditorArea>{editor}</EditorArea>
-      </EditorWrapper>
+        <EditorWrapper>
+          <EditorArea>{editor}</EditorArea>
+        </EditorWrapper>
 
-      {/* <WaxOverlays /> */}
-    </Wrapper>
+        {/* <WaxOverlays /> */}
+      </Wrapper>
+    </ThemeProvider>
   )
 }
 

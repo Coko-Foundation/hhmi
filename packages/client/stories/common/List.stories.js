@@ -10,7 +10,7 @@ import { List, Button } from 'ui'
 import { createData } from '../_helpers'
 
 const Item = styled.div`
-  background: ${props => props.theme.colorSecondary};
+  background: ${props => props.theme.colorBackgroundHue};
   margin-bottom: 8px;
   padding: 8px;
   width: 100%;

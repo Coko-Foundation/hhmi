@@ -1,19 +1,19 @@
 /* eslint-disable react/prop-types */
 
 import React, { useContext } from 'react'
-import styled from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
-// import { cokoTheme } from '../theme'
+import theme from '../../../theme'
 import EditorElements from './DashboardEditorElements'
+import commonStyles from './commonWaxStyles'
 /* Katex css */
 // import '~../../katex/dist/katex.min.css'
 
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  font-family: ${th('fontInterface')};
-  font-size: ${th('fontSizeBase')};
+  ${commonStyles};
   overflow-y: auto;
   width: 100%;
 
@@ -64,12 +64,10 @@ const EditorContainer = styled.div`
   .ProseMirror {
     /* background: palegreen; */
     /* box-shadow: 0 0 8px #ecedf1; */
-    font-family: ${th('fontInterface')};
-    font-size: ${th('fontSizeBase')};
     margin-right: 0;
     min-height: 100%;
     /* padding-top: ${grid(10)}; */
-    text-align: justify;
+    /* text-align: justify; */
     transition: background-color 0.15s ease-in-out;
     width: 100%;
 
@@ -102,18 +100,18 @@ const DashboardLayout = ({ editor }) => {
   }
 
   return (
-    // <ThemeProvider theme={cokoTheme}>
-    <Wrapper style={fullScreenStyles}>
-      <Main>
-        <EditorArea>
-          <WaxSurfaceScroll>
-            <EditorContainer>{editor}</EditorContainer>
-          </WaxSurfaceScroll>
-        </EditorArea>
-      </Main>
-      <WaxOverlays />
-    </Wrapper>
-    // </ThemeProvider>
+    <ThemeProvider theme={theme}>
+      <Wrapper style={fullScreenStyles}>
+        <Main>
+          <EditorArea>
+            <WaxSurfaceScroll>
+              <EditorContainer>{editor}</EditorContainer>
+            </WaxSurfaceScroll>
+          </EditorArea>
+        </Main>
+        <WaxOverlays />
+      </Wrapper>
+    </ThemeProvider>
   )
 }
 
