@@ -3,13 +3,15 @@ import React, { memo, useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { grid, th } from '@coko/client'
+import { Dropdown, Menu } from 'antd'
 import {
   LeftOutlined,
   RightOutlined,
   LoadingOutlined,
   CheckOutlined,
 } from '@ant-design/icons'
+
+import { grid, th } from '@coko/client'
 
 import { HhmiLayout, TestModeLayout } from '../wax/layout'
 import { config } from '../wax/config'
@@ -147,6 +149,11 @@ const StyledSwitch = styled(Switch)`
     justify-content: space-around;
     margin: 0 8px;
     width: 190px;
+
+    @media (max-width: 900px) {
+      margin: 0;
+      width: 100%;
+    }
 
     .ant-switch-handle {
       height: 32px;
@@ -843,6 +850,48 @@ const Question = props => {
     </RightAreaWrapper>
   )
 
+  const StyledDropdown = styled(Dropdown)`
+    @media (min-width: ${th('mediaQueries.medium')}) {
+      display: none;
+    }
+  `
+
+  const StyledMenu = styled(Menu)`
+    .ant-dropdown-menu-title-content > * {
+      width: 100%;
+    }
+  `
+
+  const menu = (
+    <StyledMenu>
+      <Menu.Item>
+        {' '}
+        <StyledWordExportButton
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption={isUserLoggedIn}
+        />
+      </Menu.Item>
+      <Menu.Item>
+        {' '}
+        <StyledScormExportButton
+          loading={scormZipLoading}
+          onExport={onClickExportToScorm}
+        />
+      </Menu.Item>
+      {isUserLoggedIn && (
+        <Menu.Item>
+          <StyledSwitch
+            checked={showMetadata}
+            checkedChildren="Show Metadata"
+            onChange={val => setShowMetadata(val)}
+            unCheckedChildren="Student view"
+          />
+        </Menu.Item>
+      )}
+    </StyledMenu>
+  )
+
   const FacultyHeader = (
     <FacultyHeaderWrapper>
       <div>
@@ -851,26 +900,31 @@ const Question = props => {
       </div>
 
       <div>
-        <StyledWordExportButton
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption={isUserLoggedIn}
-        />
-
-        <StyledScormExportButton
-          loading={scormZipLoading}
-          onExport={onClickExportToScorm}
-        />
-
-        {isUserLoggedIn && (
-          <StyledSwitch
-            checked={showMetadata}
-            checkedChildren="Show Metadata"
-            onChange={val => setShowMetadata(val)}
-            unCheckedChildren="Student view"
-          />
+        {window.matchMedia('(min-width: 900px)').matches ? (
+          <>
+            <StyledWordExportButton
+              loading={wordFileLoading}
+              onExport={onClickExportToWord}
+              showMetadataOption={isUserLoggedIn}
+            />
+            <StyledScormExportButton
+              loading={scormZipLoading}
+              onExport={onClickExportToScorm}
+            />
+            {isUserLoggedIn && (
+              <StyledSwitch
+                checked={showMetadata}
+                checkedChildren="Show Metadata"
+                onChange={val => setShowMetadata(val)}
+                unCheckedChildren="Student view"
+              />
+            )}
+          </>
+        ) : (
+          <StyledDropdown overlay={menu} trigger={['click']}>
+            <StyledButton type="primary">More</StyledButton>
+          </StyledDropdown>
         )}
-
         {NextQuestion}
       </div>
     </FacultyHeaderWrapper>
