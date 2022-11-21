@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { extractTopicsAndSubtopics } from '../../utilities'
-import { Link } from '../common'
+import { Link, VisuallyHiddenElement } from '../common'
 
 const Wrapper = styled.div`
   font-size: ${th('fontSizeBase')};
@@ -46,6 +46,7 @@ const MetadataInfo = props => {
 
   return (
     <Wrapper>
+      <VisuallyHiddenElement as="h2">Question Metadata</VisuallyHiddenElement>
       <p>
         <strong>Question type</strong>
       </p>

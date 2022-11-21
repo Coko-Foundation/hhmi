@@ -12,6 +12,7 @@ import {
   TopicAndSubtopic,
   APCourseMetadata,
   IBCourseMetadata,
+  VisuallyHiddenElement,
   // VisionAndChangeMetadata,
   // AAMCFuturePhysiciansMetadata,
 } from '../common'
@@ -238,6 +239,7 @@ const Metadata = React.forwardRef((props, ref) => {
 
   return (
     <Wrapper className={className}>
+      <VisuallyHiddenElement as="h2">Metadata Form</VisuallyHiddenElement>
       <Form
         autoSave
         form={form}

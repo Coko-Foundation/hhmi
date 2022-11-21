@@ -4,6 +4,7 @@ import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
+import { VisuallyHiddenElement } from '../../common'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -121,10 +122,14 @@ const HhmiLayout = ({ editor }) => {
     <ThemeProvider theme={theme}>
       <Wrapper fullScreen={fullScreen}>
         <TopMenu>
+          <VisuallyHiddenElement as="h2">
+            Question editor toolbar
+          </VisuallyHiddenElement>
           <MainMenuToolBar />
         </TopMenu>
 
         <EditorWrapper>
+          <VisuallyHiddenElement as="h2">Question editor</VisuallyHiddenElement>
           <EditorArea>{editor}</EditorArea>
         </EditorWrapper>
 
