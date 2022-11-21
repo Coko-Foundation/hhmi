@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
+import { Empty } from 'antd'
 
 import {
   GET_AUTHOR_DASHBOARD,
@@ -206,6 +207,14 @@ const DashboardPage = () => {
         // bulkActions
         initialTabKey={initialTabKey}
         loading={loading}
+        locale={{
+          emptyText: (
+            <Empty
+              description="No Questions Found"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
+        }}
         // onQuestionSelected
         onClickCreate={handleCreateQuestion}
         onSearch={handleSearch}

@@ -32,6 +32,7 @@ const Dashboard = props => {
     className,
     initialTabKey,
     loading,
+    locale,
     onClickCreate,
     onQuestionSelected,
     onSearch,
@@ -96,6 +97,7 @@ const Dashboard = props => {
                   currentPage={searchParams.page}
                   key={searchParams.role}
                   loading={tabLoading}
+                  locale={locale}
                   onPageChange={setSearchPage}
                   onQuestionSelected={onQuestionSelected}
                   onSearch={setSearchQuery}
@@ -122,6 +124,7 @@ Dashboard.propTypes = {
   bulkActions: PropTypes.element,
   initialTabKey: PropTypes.string,
   loading: PropTypes.bool.isRequired,
+  locale: PropTypes.shape(),
   /** create new question */
   onClickCreate: PropTypes.func.isRequired,
   /** handle selection and deselection of questions */
@@ -172,6 +175,7 @@ Dashboard.propTypes = {
 Dashboard.defaultProps = {
   bulkActions: null,
   initialTabKey: null,
+  locale: {},
   onQuestionSelected: () => {},
   showSort: false,
   sortOptions: [],

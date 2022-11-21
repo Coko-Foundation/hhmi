@@ -5,6 +5,7 @@ import { gql } from '@apollo/client'
 const USER_FIELDS = gql`
   fragment UserFields on User {
     id
+    isActive
 
     givenNames
     surname
@@ -132,6 +133,14 @@ export const DELETE_USERS = gql`
 export const DEACTIVATE_USERS = gql`
   mutation DeactivateUsers($ids: [ID!]!) {
     deactivateUsers(ids: $ids) {
+      id
+    }
+  }
+`
+
+export const ACTIVATE_USERS = gql`
+  mutation ActivateUsers($ids: [ID!]!) {
+    activateUsers(ids: $ids) {
       id
     }
   }

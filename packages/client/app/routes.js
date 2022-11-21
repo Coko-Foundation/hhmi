@@ -28,6 +28,7 @@ import {
   ManageUsers,
   TeamManager,
   UserProfile,
+  DeactivatedUser,
 } from './pages'
 
 import { CURRENT_USER } from './graphql'
@@ -193,6 +194,10 @@ const RequireProfile = ({ children }) => {
 
   if (!currentUser) return null
 
+  if (!currentUser.isActive && pathname !== '/deactivated-user') {
+    return <Redirect to="/deactivated-user" />
+  }
+
   if (pathname !== '/signup-profile' && !currentUser.profileSubmitted) {
     return <Redirect to="/signup-profile" />
   }
@@ -308,7 +313,7 @@ const routes = (
               exact
               path="/ensure-verified-login"
             />
-
+            <Route component={DeactivatedUser} path="/deactivated-user" />
             <Route component={() => <Redirect to="/dashboard" />} path="*" />
           </Switch>
         </StyledMain>

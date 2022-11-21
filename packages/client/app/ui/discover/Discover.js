@@ -19,6 +19,7 @@ export const Discover = props => {
   const {
     className,
     loading,
+    locale,
     questions,
     sidebarText,
     onSearch,
@@ -83,6 +84,7 @@ export const Discover = props => {
           currentPage={searchParams.page}
           key={listKey}
           loading={loading}
+          locale={locale}
           onPageChange={setSearchPage}
           onSearch={setSearchQuery}
           onSortOptionChange={setSortOption}
@@ -102,6 +104,7 @@ Discover.propTypes = {
   sidebarText: PropTypes.string,
   /** Loading search results. */
   loading: PropTypes.bool,
+  locale: PropTypes.shape(),
   /** Handle search */
   onSearch: PropTypes.func.isRequired,
   pageSize: PropTypes.number,
@@ -326,6 +329,7 @@ Discover.propTypes = {
 
 Discover.defaultProps = {
   loading: false,
+  locale: {},
   pageSize: 10,
   questions: [],
   sidebarMetadata: null,

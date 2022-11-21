@@ -9,6 +9,10 @@ import QuestionItem from './QuestionItem'
 const ButtonWithoutStyles = styled.button`
   background-color: transparent;
   border: none;
+
+  &[disabled] {
+    cursor: not-allowed;
+  }
 `
 
 const RenderItem = ({ item, onClickRow }) => {
@@ -55,6 +59,7 @@ const QuestionList = props => {
     currentPage,
     className,
     loading,
+    locale,
     questions,
     onSearch,
     onPageChange,
@@ -76,14 +81,7 @@ const QuestionList = props => {
       }
     : null
 
-  const shouldShowPagination =
-    totalCount > questions.length || questions.length > questionsPerPage
-
   const pagination = () => {
-    if (!shouldShowPagination) {
-      return false
-    }
-
     const paginationConfig = {}
     paginationConfig.pageSize = questionsPerPage
 
@@ -96,7 +94,7 @@ const QuestionList = props => {
     paginationConfig.itemRender = (_page, type, originalElement) => {
       if (type === 'prev') {
         return (
-          <ButtonWithoutStyles aria-label="Previous page">
+          <ButtonWithoutStyles aria-label="Previous page" type="button">
             Previous
           </ButtonWithoutStyles>
         )
@@ -104,7 +102,9 @@ const QuestionList = props => {
 
       if (type === 'next') {
         return (
-          <ButtonWithoutStyles aria-label="Next page">Next</ButtonWithoutStyles>
+          <ButtonWithoutStyles aria-label="Next page" type="button">
+            Next
+          </ButtonWithoutStyles>
         )
       }
 
@@ -121,6 +121,7 @@ const QuestionList = props => {
       footerContent={bulkAction}
       itemSelection={itemSelection}
       loading={loading}
+      locale={locale}
       onSearch={onSearch}
       onSortOptionChange={onSortOptionChange}
       pagination={pagination()}
@@ -138,6 +139,7 @@ const QuestionList = props => {
 QuestionList.propTypes = {
   bulkAction: PropTypes.element,
   loading: PropTypes.bool,
+  locale: PropTypes.shape(),
   questions: PropTypes.arrayOf(
     PropTypes.shape({
       metadata: PropTypes.arrayOf(
@@ -189,6 +191,7 @@ QuestionList.propTypes = {
 QuestionList.defaultProps = {
   bulkAction: null,
   loading: false,
+  locale: {},
   currentPage: 1,
   onPageChange: () => {},
   onSearch: () => {},

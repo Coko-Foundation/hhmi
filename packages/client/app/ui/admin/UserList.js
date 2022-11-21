@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 import { uuid, grid, th } from '@coko/client'
-
 import {
   Button,
   ButtonGroup,
@@ -75,6 +74,20 @@ const StyledSection = styled.section`
   padding: ${grid(4)};
 `
 
+const FooterActionsWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const ButtonWithoutStyles = styled.button`
+  background-color: transparent;
+  border: none;
+
+  &[disabled] {
+    cursor: not-allowed;
+  }
+`
+
 // QUESTION results placement seems a bit odd here
 const UserList = props => {
   const {
@@ -82,6 +95,8 @@ const UserList = props => {
     currentPage,
     data,
     loading,
+    locale,
+    onBulkActivate,
     onBulkDeactivate,
     onBulkDelete,
     onPageChange,
@@ -91,6 +106,8 @@ const UserList = props => {
     totalUserCount,
     selectedRows,
     setSelectedRows,
+    showDeactivated,
+    onClickShowDeactivated,
   } = props
 
   const dataSource = data.map(i => {
@@ -125,6 +142,45 @@ const UserList = props => {
     return true
   }
 
+  const renderActivationButton = deactivatedUsers =>
+    deactivatedUsers ? (
+      <Button
+        disabled={selectedRows.length === 0}
+        onClick={onBulkActivate}
+        type="primary"
+      >
+        Activate
+      </Button>
+    ) : (
+      <Button
+        disabled={selectedRows.length === 0}
+        onClick={onBulkDeactivate}
+        type="primary"
+      >
+        Deactivate
+      </Button>
+    )
+
+  const paginationItemRender = (_page, type, originalElement) => {
+    if (type === 'prev') {
+      return (
+        <ButtonWithoutStyles aria-label="Previous page" type="button">
+          Previous
+        </ButtonWithoutStyles>
+      )
+    }
+
+    if (type === 'next') {
+      return (
+        <ButtonWithoutStyles aria-label="Next page" type="button">
+          Next
+        </ButtonWithoutStyles>
+      )
+    }
+
+    return originalElement
+  }
+
   return (
     <Wrapper className={className}>
       <StyledSection>
@@ -133,6 +189,7 @@ const UserList = props => {
           columns={columns}
           dataSource={dataSource}
           loading={loading}
+          locale={locale}
           onSearch={onSearch}
           pagination={{
             current: currentPage,
@@ -140,6 +197,7 @@ const UserList = props => {
             pageSize,
             showSizeChanger: false,
             total: totalUserCount,
+            itemRender: paginationItemRender,
           }}
           rowSelection={{
             onChange: handleSelectionChange,
@@ -166,23 +224,22 @@ const UserList = props => {
           searchPlaceholder="Search for users"
           showSearch
         />
-        <ButtonGroup justify="right">
-          <Button
-            disabled={selectedRows.length === 0}
-            onClick={onBulkDeactivate}
-            type="primary"
-          >
-            Deactivate
-          </Button>
+        <FooterActionsWrapper>
+          <Checkbox checked={showDeactivated} onChange={onClickShowDeactivated}>
+            Show deactivated users
+          </Checkbox>
+          <ButtonGroup justify="right">
+            {renderActivationButton(showDeactivated)}
 
-          <Button
-            disabled={selectedRows.length === 0}
-            onClick={onBulkDelete}
-            type="danger"
-          >
-            Delete
-          </Button>
-        </ButtonGroup>
+            <Button
+              disabled={selectedRows.length === 0}
+              onClick={onBulkDelete}
+              type="danger"
+            >
+              Delete
+            </Button>
+          </ButtonGroup>
+        </FooterActionsWrapper>
       </StyledSection>
     </Wrapper>
   )
@@ -200,8 +257,11 @@ UserList.propTypes = {
     }),
   ),
   loading: PropTypes.bool,
+  locale: PropTypes.shape(),
+  onBulkActivate: PropTypes.func.isRequired,
   onBulkDeactivate: PropTypes.func.isRequired,
   onBulkDelete: PropTypes.func.isRequired,
+  onClickShowDeactivated: PropTypes.func.isRequired,
   onPageChange: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
   pageSize: PropTypes.number,
@@ -209,11 +269,13 @@ UserList.propTypes = {
   setSelectedRows: PropTypes.func.isRequired,
   searchLoading: PropTypes.bool,
   totalUserCount: PropTypes.number,
+  showDeactivated: PropTypes.bool.isRequired,
 }
 
 UserList.defaultProps = {
   data: [],
   loading: false,
+  locale: {},
   pageSize: 10,
   searchLoading: false,
   totalUserCount: 0,

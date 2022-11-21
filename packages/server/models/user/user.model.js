@@ -67,8 +67,11 @@ class User extends UserModel {
           if (search) {
             queryBuilder = queryBuilder
               .withGraphJoined('defaultIdentity')
-              .where('defaultIdentity.email', 'ilike', `%${search}%`)
-              .orWhere('displayName', 'ilike', `%${search}%`)
+              .where(builder =>
+                builder
+                  .where('defaultIdentity.email', 'ilike', `%${search}%`)
+                  .orWhere('displayName', 'ilike', `%${search}%`),
+              )
           }
 
           queryBuilder = queryBuilder.where(params)

@@ -173,6 +173,7 @@ const List = props => {
     // disable prop types for props that exist on the ant component anyway
     /* eslint-disable react/prop-types */
     dataSource,
+    locale,
     pagination,
     renderItem,
     /* eslint-enable react/prop-types */
@@ -331,7 +332,7 @@ const List = props => {
         page.setAttribute('aria-label', label)
       })
     }
-  }, [paginationCurrent, paginationSize, showPagination])
+  }, [paginationCurrent, paginationSize, showPagination, dataSource])
 
   return (
     <Wrapper className={className}>
@@ -377,6 +378,7 @@ const List = props => {
 
         <StyledList
           dataSource={splitDataSource}
+          locale={locale}
           renderItem={listItemToRender}
           {...rest}
         />
