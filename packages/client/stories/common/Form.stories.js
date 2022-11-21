@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { lorem } from 'faker'
+import styled from 'styled-components'
 
 import {
   Button,
@@ -38,7 +39,15 @@ export const Base = args => (
     <Form.Item
       label="Do it"
       name="doIt"
-      rules={[{ required: true, message: 'Just do it' }]}
+      rules={[
+        {
+          validator: (_, value) =>
+            value
+              ? Promise.resolve()
+              : Promise.reject(new Error('This checkbox is required')),
+        },
+      ]}
+      valuePropName="checked"
     >
       <Checkbox>Do it man</Checkbox>
     </Form.Item>
@@ -178,6 +187,198 @@ export const Autosave = () => {
         </Form.Item>
       </Form>
     </>
+  )
+}
+
+const FormWrapper = styled.div`
+  border: 1px solid gray;
+  height: 200px;
+  margin-bottom: 30px;
+  overflow-y: scroll;
+  padding: 20px;
+`
+
+export const FocusVsNoFocusOnError = () => {
+  return (
+    <>
+      <FormWrapper>
+        <Form layout="vertical">
+          <p>
+            Form 1: Error field will be focused when validation fails on submit
+            (default behavior)
+          </p>
+          <Form.Item
+            hasFeedback
+            label="Name"
+            name="name1"
+            rules={[
+              { required: true, message: 'Cannot submit without a name' },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email1"
+            rules={[
+              { required: true, message: 'Cannot submit without an email' },
+              { type: 'email', message: 'This is not a valid email' },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Do it"
+            name="doIt1"
+            rules={[
+              {
+                validator: (_, value) =>
+                  value
+                    ? Promise.resolve()
+                    : Promise.reject(new Error('This checkbox is required')),
+              },
+            ]}
+            valuePropName="checked"
+          >
+            <Checkbox>Do it man</Checkbox>
+          </Form.Item>
+
+          <Form.Item
+            label="Choose one"
+            name="chooseOne1"
+            rules={[{ required: true, message: 'Must choose one' }]}
+          >
+            <CheckboxGroup
+              options={[
+                {
+                  label: 'Choose this',
+                  value: '1',
+                },
+                {
+                  label: 'Choose that',
+                  value: '2',
+                },
+                {
+                  label: 'Choose the other one',
+                  value: '3',
+                },
+              ]}
+              vertical
+            />
+          </Form.Item>
+
+          <Button htmlType="submit" type="primary">
+            Submit
+          </Button>
+        </Form>
+      </FormWrapper>
+      <FormWrapper>
+        <Form layout="vertical" scrollErrorIntoView={false}>
+          <p>
+            Form 2: Error field will not be focused when validation fails on
+            submit, because{' '}
+            <strong>
+              <em>scrollErrorIntoView</em>
+            </strong>{' '}
+            has been set to{' '}
+            <strong>
+              <em>false</em>
+            </strong>
+          </p>
+          <Form.Item
+            hasFeedback
+            label="Name"
+            name="name"
+            rules={[
+              { required: true, message: 'Cannot submit without a name' },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: 'Cannot submit without an email' },
+              { type: 'email', message: 'This is not a valid email' },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            label="Do it"
+            name="doIt"
+            rules={[
+              {
+                validator: (_, value) =>
+                  value
+                    ? Promise.resolve()
+                    : Promise.reject(new Error('This checkbox is required')),
+              },
+            ]}
+            valuePropName="checked"
+          >
+            <Checkbox>Do it man</Checkbox>
+          </Form.Item>
+
+          <Form.Item
+            label="Choose one"
+            name="chooseOne"
+            rules={[{ required: true, message: 'Must choose one' }]}
+          >
+            <CheckboxGroup
+              options={[
+                {
+                  label: 'Choose this',
+                  value: '1',
+                },
+                {
+                  label: 'Choose that',
+                  value: '2',
+                },
+                {
+                  label: 'Choose the other one',
+                  value: '3',
+                },
+              ]}
+              vertical
+            />
+          </Form.Item>
+
+          <Button htmlType="submit" type="primary">
+            Submit
+          </Button>
+        </Form>
+      </FormWrapper>
+    </>
+  )
+}
+
+export const RunFunctionWhenValidationFails = () => {
+  const onFinishFailed = () => {
+    // eslint-disable-next-line no-alert
+    alert('Submission failed!')
+  }
+
+  return (
+    <Form layout="vertical" onFinishFailed={onFinishFailed}>
+      <Form.Item
+        hasFeedback
+        label="Name"
+        name="name"
+        rules={[{ required: true, message: 'Cannot submit without a name' }]}
+      >
+        <Input />
+      </Form.Item>
+
+      <Button htmlType="submit" type="primary">
+        Submit
+      </Button>
+    </Form>
   )
 }
 

@@ -54,7 +54,7 @@ const ChangePassword = props => {
             <Col span={12}>
               <Form.Item
                 dependencies={['currentPassword']}
-                label="New passwrod"
+                label="New password"
                 name="newPassword"
                 rules={[
                   {

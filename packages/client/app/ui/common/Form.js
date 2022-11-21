@@ -65,9 +65,11 @@ const Form = props => {
     onAutoSave,
     // eslint-disable-next-line react/prop-types
     onValuesChange,
+    onFinishFailed,
     ribbonMessage,
     ribbonPosition,
     submissionStatus,
+    scrollErrorIntoView,
     ...rest
   } = props
 
@@ -95,11 +97,76 @@ const Form = props => {
   //   </FeedbackComponent>
   // )
 
+  // if form validation fails, scroll to first error field (if applicable) and focus
+  const focusErrorField = errorFields => {
+    let firstErrorField = document.getElementById(errorFields[0].name.join('_'))
+
+    // handle case when input is a radio group
+    if (firstErrorField.matches('div[role="radiogroup"]')) {
+      // should focus it's first radio button, since radiogroup is not focusable
+      firstErrorField = firstErrorField.querySelector('input[type="radio"]')
+    }
+
+    // create intersection observer to to check when scroll target is in view
+    const observer = new IntersectionObserver(entries => {
+      const [entry] = entries
+
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          // focus element after it becomes visible
+          entry.target.focus()
+          observer.unobserve(entry.target)
+        }, 100)
+      }
+    })
+
+    observer.observe(firstErrorField)
+
+    // scroll to first error field
+    form.scrollToField(errorFields[0].name, {
+      // specify custom scrolling behavior
+      behavior: actions => {
+        if (actions.length === 0) {
+          // no element to scroll to, field is visible
+          firstErrorField.focus()
+        } else {
+          // check motion preferences; avoid scrolling if users prefers reduced motion
+          const motionQuery = window.matchMedia('(prefers-reduced-motion)')
+          // start observing for when field becomes visible
+          observer.observe(firstErrorField)
+
+          const action = actions.find(el => el.top > 0)
+
+          const { el, top, left } = action
+          el.scrollTo({
+            top: top - 50,
+            left,
+            behavior: motionQuery.matches ? 'auto' : 'smooth',
+          })
+        }
+      },
+    })
+  }
+
+  const handleFinishFailed = data => {
+    if (scrollErrorIntoView) {
+      const { errorFields } = data
+      focusErrorField(errorFields)
+    }
+
+    onFinishFailed(data)
+  }
+
   return (
     <FormWrapper>
       {ribbonPosition === 'top' && FeedbackElement}
 
-      <AntForm form={form} onValuesChange={handleValuesChange} {...rest}>
+      <AntForm
+        form={form}
+        onFinishFailed={handleFinishFailed}
+        onValuesChange={handleValuesChange}
+        {...rest}
+      >
         {children}
       </AntForm>
 
@@ -113,9 +180,11 @@ Form.propTypes = {
   autoSaveDebounceDelay: PropTypes.number,
   feedbackComponent: PropTypes.elementType,
   onAutoSave: PropTypes.func,
+  onFinishFailed: PropTypes.func,
   ribbonMessage: PropTypes.string,
   ribbonPosition: PropTypes.oneOf(['top', 'bottom']),
   submissionStatus: PropTypes.oneOf(['success', 'error', 'danger']),
+  scrollErrorIntoView: PropTypes.bool,
 }
 
 Form.defaultProps = {
@@ -123,9 +192,11 @@ Form.defaultProps = {
   autoSaveDebounceDelay: 500,
   feedbackComponent: Ribbon,
   onAutoSave: null,
+  onFinishFailed: () => {},
   ribbonMessage: null,
   ribbonPosition: 'top',
   submissionStatus: null,
+  scrollErrorIntoView: true,
 }
 
 // const Form = {}
