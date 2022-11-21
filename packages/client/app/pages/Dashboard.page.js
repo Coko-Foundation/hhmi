@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 import { Empty } from 'antd'
@@ -89,6 +89,7 @@ const DashboardPage = () => {
   const [currentTabKey, setCurrentTabKey] = useState(initialTabKey)
   const [currentPage, setCurrentPage] = useState(1)
   const [currentSearchQuery, setCurrentSearchQuery] = useState(null)
+  const initialRender = useRef(true)
 
   const { metadata } = useMetadata()
 
@@ -109,12 +110,58 @@ const DashboardPage = () => {
       ...defaultSearchOptions,
       page: 0,
     },
+    onCompleted: data => {
+      // run only on update, not on first render
+      if (initialRender.current) initialRender.current = false
+      else {
+        const nrOfQuestions = data.getAuthorDashboard.result.length
+        const total = data.getAuthorDashboard.totalCount
+        let announcement = 'Results updated.'
+
+        if (total === 0) {
+          announcement = `${announcement} No results for your search query`
+        } else if (total <= 10) {
+          announcement = `${announcement} ${nrOfQuestions} questions`
+        } else {
+          announcement = `${announcement} Page ${currentPage} of ${Math.ceil(
+            total / 10,
+          )} with ${nrOfQuestions} questions from a total of ${total}`
+        }
+
+        document.querySelector('#search-results-update').innerHTML =
+          announcement
+      }
+    },
   })
 
   const [
     editorQuery,
     { data: editorResponse, loading: editorLoading, called: editorCalled },
-  ] = useLazyQuery(GET_EDITOR_DASHBOARD, { fetchPolicy: 'network-only' })
+  ] = useLazyQuery(GET_EDITOR_DASHBOARD, {
+    fetchPolicy: 'network-only',
+    onCompleted: data => {
+      // run only on update, not on first render
+      if (initialRender.current) initialRender.current = false
+      else {
+        const nrOfQuestions = data.getManagingEditorDashboard.result.length
+        const total = data.getManagingEditorDashboard.totalCount
+        let announcement = 'Results updated.'
+
+        if (total === 0) {
+          announcement = `${announcement} No results for your search query`
+        } else if (total <= 10) {
+          announcement = `${announcement} ${nrOfQuestions} questions`
+        } else {
+          announcement = `${announcement} Page ${currentPage} of ${Math.ceil(
+            total / 10,
+          )} with ${nrOfQuestions} questions from a total of ${total}`
+        }
+
+        document.querySelector('#search-results-update').innerHTML =
+          announcement
+      }
+    },
+  })
 
   const authorData = authorResponse && authorResponse.getAuthorDashboard
   const editorData = editorResponse && editorResponse.getManagingEditorDashboard
@@ -221,6 +268,12 @@ const DashboardPage = () => {
         // showSort
         // sortOptions
         tabsContent={tabs}
+      />
+      <VisuallyHiddenElement
+        aria-live="polite"
+        as="div"
+        id="search-results-update"
+        role="status"
       />
     </>
   )
