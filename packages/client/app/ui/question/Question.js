@@ -9,6 +9,7 @@ import {
   RightOutlined,
   LoadingOutlined,
   CheckOutlined,
+  EllipsisOutlined,
 } from '@ant-design/icons'
 
 import { grid, th } from '@coko/client'
@@ -181,6 +182,34 @@ const StyledSwitch = styled(Switch)`
         right: 2px;
       }
     }
+  }
+`
+
+const ActionsWrapper = styled.div`
+  display: none;
+
+  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
+    display: flex;
+  }
+`
+
+const MobileDropdown = styled(Dropdown)`
+  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
+    display: none;
+  }
+`
+
+const DropdownButton = styled(Button)`
+  height: 32px;
+  margin-right: 10px;
+  padding: 0;
+  transform: rotate(90deg);
+  width: 32px;
+`
+
+const StyledMenu = styled(Menu)`
+  .ant-dropdown-menu-title-content > * {
+    width: 100%;
   }
 `
 
@@ -743,7 +772,6 @@ const Question = props => {
   const NextQuestion = (
     <StyledButton
       icon={<RightOutlined />}
-      next
       onClick={onClickNextButton}
       type="primary"
     >
@@ -850,18 +878,6 @@ const Question = props => {
     </RightAreaWrapper>
   )
 
-  const StyledDropdown = styled(Dropdown)`
-    @media (min-width: ${th('mediaQueries.medium')}) {
-      display: none;
-    }
-  `
-
-  const StyledMenu = styled(Menu)`
-    .ant-dropdown-menu-title-content > * {
-      width: 100%;
-    }
-  `
-
   const menu = (
     <StyledMenu>
       <Menu.Item>
@@ -900,31 +916,34 @@ const Question = props => {
       </div>
 
       <div>
-        {window.matchMedia('(min-width: 900px)').matches ? (
-          <>
-            <StyledWordExportButton
-              loading={wordFileLoading}
-              onExport={onClickExportToWord}
-              showMetadataOption={isUserLoggedIn}
+        <ActionsWrapper>
+          <StyledWordExportButton
+            loading={wordFileLoading}
+            onExport={onClickExportToWord}
+            showMetadataOption={isUserLoggedIn}
+          />
+          <StyledScormExportButton
+            loading={scormZipLoading}
+            onExport={onClickExportToScorm}
+          />
+          {isUserLoggedIn && (
+            <StyledSwitch
+              checked={showMetadata}
+              checkedChildren="Show Metadata"
+              onChange={val => setShowMetadata(val)}
+              unCheckedChildren="Student view"
             />
-            <StyledScormExportButton
-              loading={scormZipLoading}
-              onExport={onClickExportToScorm}
-            />
-            {isUserLoggedIn && (
-              <StyledSwitch
-                checked={showMetadata}
-                checkedChildren="Show Metadata"
-                onChange={val => setShowMetadata(val)}
-                unCheckedChildren="Student view"
-              />
-            )}
-          </>
-        ) : (
-          <StyledDropdown overlay={menu} trigger={['click']}>
-            <StyledButton type="primary">More</StyledButton>
-          </StyledDropdown>
-        )}
+          )}
+        </ActionsWrapper>
+
+        <MobileDropdown overlay={menu} trigger={['click']}>
+          <DropdownButton
+            aria-label="More actions"
+            icon={<EllipsisOutlined />}
+            title="More actions"
+            type="primary"
+          />
+        </MobileDropdown>
         {NextQuestion}
       </div>
     </FacultyHeaderWrapper>
