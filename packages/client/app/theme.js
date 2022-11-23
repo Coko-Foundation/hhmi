@@ -55,6 +55,7 @@ module.exports = {
   mediaQueries: {
     small: '600px',
     medium: '900px',
+    mediumPlus: '1052px',
     large: '1200px',
   },
 }
