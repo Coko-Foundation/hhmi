@@ -34,7 +34,7 @@ const FooterTop = styled.div`
   justify-content: space-between;
   padding: ${grid(2)} 0;
 
-  @media screen and (min-width: ${props => props.theme.mediaQueries.medium}) {
+  @media screen and (min-width: ${th('mediaQueries.medium')}) {
     flex-direction: row;
   }
 `
@@ -44,7 +44,7 @@ const FooterBottom = styled.div`
   padding: ${grid(2)} 0;
   text-align: center;
 
-  @media screen and (min-width: ${props => props.theme.mediaQueries.medium}) {
+  @media screen and (min-width: ${th('mediaQueries.medium')}) {
     text-align: right;
   }
 `
@@ -66,7 +66,7 @@ const SiteLogo = styled(Link)`
     width: 0;
   }
 
-  @media screen and (min-width: ${props => props.theme.mediaQueries.small}) {
+  @media screen and (min-width: ${th('mediaQueries.small')}) {
     background-size: 400px 52px;
     height: 52px;
     width: 400px;
@@ -85,7 +85,7 @@ const FooterList = styled.ul`
   margin: 0;
   padding: 0;
 
-  @media screen and (min-width: 900px) {
+  @media screen and (min-width: ${th('mediaQueries.medium')}) {
     justify-content: right;
   }
 
@@ -95,7 +95,7 @@ const FooterList = styled.ul`
     margin: 0 ${grid(3)};
     ${({ social }) => social && `display: inline-block;`}
 
-    @media screen and (min-width: 900px) {
+    @media screen and (min-width: ${th('mediaQueries.medium')}) {
       display: inline-flex;
     }
 
