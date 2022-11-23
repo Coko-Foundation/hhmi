@@ -4,13 +4,16 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { isEqual } from 'lodash'
 
-import { grid, th } from '@coko/client'
+import { Dropdown, Menu } from 'antd'
 import {
   LeftOutlined,
   RightOutlined,
   LoadingOutlined,
   CheckOutlined,
+  EllipsisOutlined,
 } from '@ant-design/icons'
+
+import { grid, th } from '@coko/client'
 
 import { HhmiLayout, TestModeLayout } from '../wax/layout'
 import { config } from '../wax/config'
@@ -21,6 +24,7 @@ import ExportToScormButton from './ExportToScormButton'
 import {
   Button,
   Checkbox,
+  Collapse,
   DateParser,
   Link,
   Modal,
@@ -149,6 +153,11 @@ const StyledSwitch = styled(Switch)`
     margin: 0 8px;
     width: 190px;
 
+    @media (max-width: ${th('mediaQueries.mediumPlus')}) {
+      margin: 0;
+      width: 100%;
+    }
+
     .ant-switch-handle {
       height: 32px;
       top: 50%;
@@ -175,6 +184,34 @@ const StyledSwitch = styled(Switch)`
         right: 2px;
       }
     }
+  }
+`
+
+const ActionsWrapper = styled.div`
+  display: none;
+
+  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
+    display: flex;
+  }
+`
+
+const MobileDropdown = styled(Dropdown)`
+  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
+    display: none;
+  }
+`
+
+const DropdownButton = styled(Button)`
+  height: 32px;
+  margin-right: 10px;
+  padding: 0;
+  transform: rotate(90deg);
+  width: 32px;
+`
+
+const StyledMenu = styled(Menu)`
+  .ant-dropdown-menu-title-content > * {
+    width: 100%;
   }
 `
 
@@ -400,6 +437,68 @@ AutoSaving.defaultProps = {
   lastAutoSave: null,
 }
 // #endregion Autosave
+
+// #region Question Panel
+const StyledCollapse = styled(Collapse)`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .ant-collapse-item-active {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow: auto;
+
+    .ant-collapse-content {
+      flex-grow: 1;
+    }
+  }
+`
+
+const PanelWrapper = ({ editor, metadata, showMetadata }) => {
+  const isMobile = window.innerWidth < 900
+
+  const [activePanel, setActivePanel] = useState('editor')
+
+  if (!isMobile || !showMetadata) {
+    return (
+      <QuestionWrapper showMetadata={showMetadata}>
+        {editor}
+        {showMetadata && metadata}
+      </QuestionWrapper>
+    )
+  }
+
+  const handlePanelChange = e => {
+    if (e !== undefined) {
+      setActivePanel(e)
+    } else if (activePanel === 'editor') setActivePanel('metadata')
+    else if (activePanel === 'metadata') setActivePanel('editor')
+  }
+
+  return (
+    <StyledCollapse
+      accordion
+      activeKey={activePanel}
+      onChange={handlePanelChange}
+    >
+      <Collapse.Panel forceRender header="Editor" key="editor">
+        {editor}
+      </Collapse.Panel>
+      <Collapse.Panel forceRender header="Metadata" key="metadata">
+        {metadata}
+      </Collapse.Panel>
+    </StyledCollapse>
+  )
+}
+
+PanelWrapper.propTypes = {
+  editor: PropTypes.shape().isRequired,
+  metadata: PropTypes.shape().isRequired,
+  showMetadata: PropTypes.bool.isRequired,
+}
+// #endregion Question Panel
 
 // QUESTION submit button here seems to be outside the form
 // submit also refers to wax
@@ -735,7 +834,6 @@ const Question = props => {
   const NextQuestion = (
     <StyledButton
       icon={<RightOutlined />}
-      next
       onClick={onClickNextButton}
       type="primary"
     >
@@ -776,57 +874,135 @@ const Question = props => {
     </>
   )
 
-  const RightAreaEditor = (
-    <>
-      <StyledWordExportButton
-        loading={wordFileLoading}
-        onExport={onClickExportToWord}
-        showMetadataOption
-      />
+  const editorMenu = (
+    <StyledMenu>
+      <Menu.Item>
+        <StyledWordExportButton
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption
+        />
+      </Menu.Item>
       {showAssignHEButton && (
-        <StyledButton
-          aria-label="Assign Handling Editor"
-          ghost
-          onClick={onClickAssignHE}
-          type="primary "
-        >
-          Assign HE
-        </StyledButton>
+        <Menu.Item>
+          <StyledButton
+            aria-label="Assign Handling Editor"
+            ghost
+            onClick={onClickAssignHE}
+            type="primary "
+          >
+            Assign HE
+          </StyledButton>
+        </Menu.Item>
       )}
       {isUnderReview && (
         <>
-          <StyledButton onClick={handleReject} type="danger">
-            Do not accept
-          </StyledButton>
-
-          <StyledButton onClick={handleMoveToProduction} type="primary">
-            Move to production
-          </StyledButton>
+          <Menu.Item>
+            <StyledButton onClick={handleReject} type="danger">
+              Do not accept
+            </StyledButton>
+          </Menu.Item>
+          <Menu.Item>
+            <StyledButton onClick={handleMoveToProduction} type="primary">
+              Move to production
+            </StyledButton>
+          </Menu.Item>
         </>
       )}
       {isInProduction && (
-        <StyledButton onClick={handlePublish} type="primary">
-          Publish
-        </StyledButton>
+        <Menu.Item>
+          <StyledButton onClick={handlePublish} type="primary">
+            Publish
+          </StyledButton>
+        </Menu.Item>
       )}
       {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
         <>
-          <StyledButton onClick={handleReject} type="danger">
-            Do not accept
-          </StyledButton>
-
-          <StyledButton onClick={handleMoveToReview} type="primary">
-            Move to Review
-          </StyledButton>
+          <Menu.Item>
+            <StyledButton onClick={handleReject} type="danger">
+              Do not accept
+            </StyledButton>
+          </Menu.Item>
+          <Menu.Item>
+            <StyledButton onClick={handleMoveToReview} type="primary">
+              Move to Review
+            </StyledButton>
+          </Menu.Item>
         </>
       )}
 
       {isPublished && (
-        <StyledButton onClick={showNewVersionModal} type="primary">
-          Edit Question
-        </StyledButton>
+        <Menu.Item>
+          <StyledButton onClick={showNewVersionModal} type="primary">
+            Edit Question
+          </StyledButton>
+        </Menu.Item>
       )}
       {showNextQuestionLink && NextQuestion}
+    </StyledMenu>
+  )
+
+  const RightAreaEditor = (
+    <>
+      <ActionsWrapper breakpoint={900}>
+        <StyledWordExportButton
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption
+        />
+        {showAssignHEButton && (
+          <StyledButton
+            aria-label="Assign Handling Editor"
+            ghost
+            onClick={onClickAssignHE}
+            type="primary "
+          >
+            Assign HE
+          </StyledButton>
+        )}
+        {isUnderReview && (
+          <>
+            <StyledButton onClick={handleReject} type="danger">
+              Do not accept
+            </StyledButton>
+
+            <StyledButton onClick={handleMoveToProduction} type="primary">
+              Move to production
+            </StyledButton>
+          </>
+        )}
+        {isInProduction && (
+          <StyledButton onClick={handlePublish} type="primary">
+            Publish
+          </StyledButton>
+        )}
+        {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
+          <>
+            <StyledButton onClick={handleReject} type="danger">
+              Do not accept
+            </StyledButton>
+
+            <StyledButton onClick={handleMoveToReview} type="primary">
+              Move to Review
+            </StyledButton>
+          </>
+        )}
+
+        {isPublished && (
+          <StyledButton onClick={showNewVersionModal} type="primary">
+            Edit Question
+          </StyledButton>
+        )}
+        {showNextQuestionLink && NextQuestion}
+      </ActionsWrapper>
+      <MobileDropdown breakpoint={900} overlay={editorMenu} trigger={['click']}>
+        <DropdownButton
+          aria-label="More actions"
+          icon={<EllipsisOutlined />}
+          title="More actions"
+          type="primary"
+        />
+      </MobileDropdown>
     </>
   )
 
@@ -842,6 +1018,36 @@ const Question = props => {
     </RightAreaWrapper>
   )
 
+  const publishedQuestionActions = (
+    <StyledMenu>
+      <Menu.Item>
+        {' '}
+        <StyledWordExportButton
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption={isUserLoggedIn}
+        />
+      </Menu.Item>
+      <Menu.Item>
+        {' '}
+        <StyledScormExportButton
+          loading={scormZipLoading}
+          onExport={onClickExportToScorm}
+        />
+      </Menu.Item>
+      {isUserLoggedIn && (
+        <Menu.Item>
+          <StyledSwitch
+            checked={showMetadata}
+            checkedChildren="Show Metadata"
+            onChange={val => setShowMetadata(val)}
+            unCheckedChildren="Student view"
+          />
+        </Menu.Item>
+      )}
+    </StyledMenu>
+  )
+
   const FacultyHeader = (
     <FacultyHeaderWrapper>
       <div>
@@ -850,33 +1056,49 @@ const Question = props => {
       </div>
 
       <div>
-        <StyledWordExportButton
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption={isUserLoggedIn}
-        />
-
-        <StyledScormExportButton
-          loading={scormZipLoading}
-          onExport={onClickExportToScorm}
-        />
-
-        {isUserLoggedIn && (
-          <StyledSwitch
-            checked={showMetadata}
-            checkedChildren="Show Metadata"
-            onChange={val => setShowMetadata(val)}
-            unCheckedChildren="Student view"
+        <ActionsWrapper breakpoint={1000}>
+          <StyledWordExportButton
+            loading={wordFileLoading}
+            onExport={onClickExportToWord}
+            showMetadataOption={isUserLoggedIn}
           />
-        )}
+          <StyledScormExportButton
+            loading={scormZipLoading}
+            onExport={onClickExportToScorm}
+          />
+          {isUserLoggedIn && (
+            <StyledSwitch
+              checked={showMetadata}
+              checkedChildren="Show Metadata"
+              onChange={val => setShowMetadata(val)}
+              unCheckedChildren="Student view"
+            />
+          )}
+        </ActionsWrapper>
 
+        <MobileDropdown
+          breakpoint={1000}
+          items={[
+            { label: 'item 1', key: 'item-1' }, // remember to pass the key prop
+            { label: 'item 2', key: 'item-2' },
+          ]}
+          overlay={publishedQuestionActions}
+          trigger={['click']}
+        >
+          <DropdownButton
+            aria-label="More actions"
+            icon={<EllipsisOutlined />}
+            title="More actions"
+            type="primary"
+          />
+        </MobileDropdown>
         {NextQuestion}
       </div>
     </FacultyHeaderWrapper>
   )
   // #endregion components
 
-  if (loading || !metadata || !resources?.length) return <Spin />
+  if (loading || !metadata || !resources?.length) return <Spin spinning />
 
   return (
     <Wrapper>
@@ -893,20 +1115,21 @@ const Question = props => {
                       This question has been rejected by the editors
                     </Ribbon>
                   )}
-
-                  <QuestionWrapper showMetadata={showMetadata}>
-                    <MemoizedWax
-                      content={editorContent}
-                      innerRef={waxRef}
-                      layout={facultyView ? TestModeLayout : HhmiLayout}
-                      onContentChange={handleQuestionContentChange}
-                      onImageUpload={onImageUpload}
-                      published={isPublished}
-                      readOnly={readOnly}
-                      withMetadata={showMetadata}
-                    />
-
-                    {showMetadata && (
+                  <PanelWrapper
+                    condition={false}
+                    editor={
+                      <MemoizedWax
+                        content={editorContent}
+                        innerRef={waxRef}
+                        layout={facultyView ? TestModeLayout : HhmiLayout}
+                        onContentChange={handleQuestionContentChange}
+                        onImageUpload={onImageUpload}
+                        published={isPublished}
+                        readOnly={readOnly}
+                        withMetadata={showMetadata}
+                      />
+                    }
+                    metadata={
                       <MetadataWrapper>
                         <Metadata
                           editorView={editorView}
@@ -920,8 +1143,16 @@ const Question = props => {
                           resources={resources}
                         />
                       </MetadataWrapper>
+                    }
+                    showMetadata={showMetadata}
+                  />
+                  {/* <QuestionWrapper showMetadata={showMetadata}>
+                    
+
+                    {showMetadata && (
+
                     )}
-                  </QuestionWrapper>
+                  </QuestionWrapper> */}
                 </>
               ),
             },
