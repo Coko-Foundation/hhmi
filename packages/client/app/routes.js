@@ -9,12 +9,7 @@ import {
 } from 'react-router-dom'
 import styled from 'styled-components'
 
-import {
-  PageLayout as Page,
-  RequireAuth,
-  useCurrentUser,
-  th,
-} from '@coko/client'
+import { PageLayout as Page, RequireAuth, useCurrentUser } from '@coko/client'
 
 import { Header, Footer, VisuallyHiddenElement } from 'ui'
 import GlobalStyles from './globalStyles'
@@ -138,10 +133,10 @@ const Layout = props => {
 }
 
 const StyledPage = styled(Page)`
-  height: calc(100% - 76px - 170px);
+  height: calc(100% - 76px - 70px);
 
-  @media screen and (min-width: ${th('mediaQueries.medium')}) {
-    height: calc(100% - 76px - 115px);
+  @media screen and (min-width: 720px) {
+    height: calc(100% - 76px - 60px);
   }
 `
 
@@ -328,7 +323,16 @@ const routes = (
         </StyledMain>
       </StyledPage>
     </MetadataProvider>
-    <Footer />
+    <Footer
+      links={{
+        newsletter:
+          ' https://hhmi.us5.list-manage.com/subscribe?u=3c8034ebf5d74492b5c8ef8c9&id=8f2808e1d6',
+        hhmi: ' https://www.hhmi.org/',
+        termsOfUse: 'https://www.hhmi.org/terms-of-use',
+        privacyPolicy: 'https://www.hhmi.org/privacy-policy',
+        homepage: '/',
+      }}
+    />
   </Layout>
 )
 
