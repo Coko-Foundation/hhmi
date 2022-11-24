@@ -82,40 +82,34 @@ export const Discover = props => {
     setCollapseKey(null)
   }, [searchParams])
 
-  const renderFilters = () => {
-    const isMobile = useBreakpoint() < 900
+  const wrapFilters = filters => {
+    const isMobile = useBreakpoint('(max-width: 900px)')
 
     const toggleCollapse = () => {
       if (collapseKey === 'filters') setCollapseKey(null)
       else setCollapseKey('filters')
     }
 
-    if (isMobile) {
-      return (
-        <Collapse activeKey={collapseKey} onChange={toggleCollapse}>
-          <Collapse.Panel header="Filters" key="filters">
-            <Sidebar
-              metadata={sidebarMetadata}
-              setFilters={setFilters}
-              text={sidebarText}
-            />
-          </Collapse.Panel>
-        </Collapse>
-      )
-    }
-
-    return (
-      <Sidebar
-        metadata={sidebarMetadata}
-        setFilters={setFilters}
-        text={sidebarText}
-      />
+    return isMobile ? (
+      <Collapse activeKey={collapseKey} onChange={toggleCollapse}>
+        <Collapse.Panel forceRender header="Filters" key="filters">
+          {filters}
+        </Collapse.Panel>
+      </Collapse>
+    ) : (
+      filters
     )
   }
 
   return (
     <Wrapper className={className}>
-      {renderFilters()}
+      {wrapFilters(
+        <Sidebar
+          metadata={sidebarMetadata}
+          setFilters={setFilters}
+          text={sidebarText}
+        />,
+      )}
       <section>
         <VisuallyHiddenElement as="h2">
           Search results: questions list

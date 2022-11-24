@@ -470,7 +470,7 @@ const StyledCollapse = styled(Collapse)`
 `
 
 const PanelWrapper = ({ editor, metadata, showMetadata }) => {
-  const isMobile = useBreakpoint() < 900
+  const isMobile = useBreakpoint('(max-width: 900px)')
   const [activePanel, setActivePanel] = useState('editor')
 
   // if it's desktop or mobile without metadata (student view) no need for collapsable panels
