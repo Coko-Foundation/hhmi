@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons'
 
 import { grid, th } from '@coko/client'
-
+import useBreakpoint from '../_helpers/useBreakpoint'
 import { HhmiLayout, TestModeLayout } from '../wax/layout'
 import { config } from '../wax/config'
 
@@ -470,10 +470,10 @@ const StyledCollapse = styled(Collapse)`
 `
 
 const PanelWrapper = ({ editor, metadata, showMetadata }) => {
-  const isMobile = window.innerWidth < 900
-
+  const isMobile = useBreakpoint() < 900
   const [activePanel, setActivePanel] = useState('editor')
 
+  // if it's desktop or mobile without metadata (student view) no need for collapsable panels
   if (!isMobile || !showMetadata) {
     return (
       <QuestionWrapper showMetadata={showMetadata}>
@@ -496,10 +496,10 @@ const PanelWrapper = ({ editor, metadata, showMetadata }) => {
       activeKey={activePanel}
       onChange={handlePanelChange}
     >
-      <Collapse.Panel forceRender header="Editor" key="editor">
+      <Collapse.Panel header="Editor" key="editor">
         {editor}
       </Collapse.Panel>
-      <Collapse.Panel forceRender header="Metadata" key="metadata">
+      <Collapse.Panel header="Metadata" key="metadata">
         {metadata}
       </Collapse.Panel>
     </StyledCollapse>
