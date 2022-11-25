@@ -1,17 +1,17 @@
-// import React from 'react'
-// import PropTypes from 'prop-types'
-// import styled from 'styled-components'
 import { Collapse as AntCollapse } from 'antd'
+import styled from 'styled-components'
+import { th } from '@coko/client'
 
-// const Wrapper = styled.div``
+const StyledCollapse = styled(AntCollapse)`
+  .ant-collapse-item > .ant-collapse-header {
+    margin: 1px;
+    transition: outline 0s;
 
-// const Comp = props => {
-//   const { className } = props
-//   return <Wrapper className={className}>some content</Wrapper>
-// }
+    &:focus {
+      color: ${th('colorPrimary')};
+      outline: 1px solid ${th('colorPrimary')};
+    }
+  }
+`
 
-// Comp.propTypes = {}
-
-// Comp.defaultProps = {}
-
-export default AntCollapse
+export default StyledCollapse

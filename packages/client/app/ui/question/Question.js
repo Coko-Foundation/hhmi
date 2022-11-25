@@ -463,15 +463,6 @@ const StyledCollapse = styled(Collapse)`
     padding: 0;
   }
 
-  .ant-collapse-item > .ant-collapse-header {
-    margin: 2px;
-    transition: outline 0s;
-
-    &:focus {
-      outline: 2px solid ${th('colorPrimary')};
-    }
-  }
-
   .ant-collapse-item-active {
     display: flex;
     flex-direction: column;
