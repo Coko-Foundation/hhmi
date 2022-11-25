@@ -4,7 +4,6 @@ import { WaxContext } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
-import { VisuallyHiddenElement } from '../../common'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -66,9 +65,6 @@ const TestModeLayout = ({ editor }) => {
     <ThemeProvider theme={theme}>
       <Wrapper fullScreen={fullScreen}>
         <EditorWrapper>
-          <VisuallyHiddenElement as="h2">
-            Question content
-          </VisuallyHiddenElement>
           <EditorArea>{editor}</EditorArea>
         </EditorWrapper>
       </Wrapper>

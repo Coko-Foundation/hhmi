@@ -3,16 +3,13 @@ import React, { memo, useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { Dropdown, Menu } from 'antd'
+import { grid, th } from '@coko/client'
 import {
   LeftOutlined,
   RightOutlined,
   LoadingOutlined,
   CheckOutlined,
-  EllipsisOutlined,
 } from '@ant-design/icons'
-
-import { grid, th } from '@coko/client'
 
 import { HhmiLayout, TestModeLayout } from '../wax/layout'
 import { config } from '../wax/config'
@@ -151,11 +148,6 @@ const StyledSwitch = styled(Switch)`
     margin: 0 8px;
     width: 190px;
 
-    @media (max-width: 900px) {
-      margin: 0;
-      width: 100%;
-    }
-
     .ant-switch-handle {
       height: 32px;
       top: 50%;
@@ -182,34 +174,6 @@ const StyledSwitch = styled(Switch)`
         right: 2px;
       }
     }
-  }
-`
-
-const ActionsWrapper = styled.div`
-  display: none;
-
-  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
-    display: flex;
-  }
-`
-
-const MobileDropdown = styled(Dropdown)`
-  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
-    display: none;
-  }
-`
-
-const DropdownButton = styled(Button)`
-  height: 32px;
-  margin-right: 10px;
-  padding: 0;
-  transform: rotate(90deg);
-  width: 32px;
-`
-
-const StyledMenu = styled(Menu)`
-  .ant-dropdown-menu-title-content > * {
-    width: 100%;
   }
 `
 
@@ -772,6 +736,7 @@ const Question = props => {
   const NextQuestion = (
     <StyledButton
       icon={<RightOutlined />}
+      next
       onClick={onClickNextButton}
       type="primary"
     >
@@ -878,36 +843,6 @@ const Question = props => {
     </RightAreaWrapper>
   )
 
-  const menu = (
-    <StyledMenu>
-      <Menu.Item>
-        {' '}
-        <StyledWordExportButton
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption={isUserLoggedIn}
-        />
-      </Menu.Item>
-      <Menu.Item>
-        {' '}
-        <StyledScormExportButton
-          loading={scormZipLoading}
-          onExport={onClickExportToScorm}
-        />
-      </Menu.Item>
-      {isUserLoggedIn && (
-        <Menu.Item>
-          <StyledSwitch
-            checked={showMetadata}
-            checkedChildren="Show Metadata"
-            onChange={val => setShowMetadata(val)}
-            unCheckedChildren="Student view"
-          />
-        </Menu.Item>
-      )}
-    </StyledMenu>
-  )
-
   const FacultyHeader = (
     <FacultyHeaderWrapper>
       <div>
@@ -916,34 +851,26 @@ const Question = props => {
       </div>
 
       <div>
-        <ActionsWrapper>
-          <StyledWordExportButton
-            loading={wordFileLoading}
-            onExport={onClickExportToWord}
-            showMetadataOption={isUserLoggedIn}
-          />
-          <StyledScormExportButton
-            loading={scormZipLoading}
-            onExport={onClickExportToScorm}
-          />
-          {isUserLoggedIn && (
-            <StyledSwitch
-              checked={showMetadata}
-              checkedChildren="Show Metadata"
-              onChange={val => setShowMetadata(val)}
-              unCheckedChildren="Student view"
-            />
-          )}
-        </ActionsWrapper>
+        <StyledWordExportButton
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption={isUserLoggedIn}
+        />
 
-        <MobileDropdown overlay={menu} trigger={['click']}>
-          <DropdownButton
-            aria-label="More actions"
-            icon={<EllipsisOutlined />}
-            title="More actions"
-            type="primary"
+        <StyledScormExportButton
+          loading={scormZipLoading}
+          onExport={onClickExportToScorm}
+        />
+
+        {isUserLoggedIn && (
+          <StyledSwitch
+            checked={showMetadata}
+            checkedChildren="Show Metadata"
+            onChange={val => setShowMetadata(val)}
+            unCheckedChildren="Student view"
           />
-        </MobileDropdown>
+        )}
+
         {NextQuestion}
       </div>
     </FacultyHeaderWrapper>
