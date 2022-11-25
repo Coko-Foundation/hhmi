@@ -456,6 +456,22 @@ const StyledCollapse = styled(Collapse)`
   flex-direction: column;
   height: 100%;
 
+  // overwrite background and padding inherited from role="tablist"
+  // (might also remove role="tablist" itself be removing accordion prop and reimplementing its functionality)
+  && {
+    background-color: ${th('colorBackground')};
+    padding: 0;
+  }
+
+  .ant-collapse-item > .ant-collapse-header {
+    margin: 2px;
+    transition: outline 0s;
+
+    &:focus {
+      outline: 2px solid ${th('colorPrimary')};
+    }
+  }
+
   .ant-collapse-item-active {
     display: flex;
     flex-direction: column;
@@ -468,6 +484,7 @@ const StyledCollapse = styled(Collapse)`
 
       .ant-collapse-content-box {
         height: 100%;
+        padding: 0;
       }
     }
   }
@@ -475,7 +492,7 @@ const StyledCollapse = styled(Collapse)`
 
 const PanelWrapper = ({ editor, metadata, showMetadata }) => {
   const isMobile = useBreakpoint('(max-width: 900px)')
-  const [activePanel, setActivePanel] = useState('editor')
+  // const [activePanel, setActivePanel] = useState('editor')
 
   // if it's desktop or mobile without metadata (student view) no need for collapsable panels
   if (!isMobile || !showMetadata) {
@@ -487,19 +504,16 @@ const PanelWrapper = ({ editor, metadata, showMetadata }) => {
     )
   }
 
-  const handlePanelChange = e => {
-    if (e !== undefined) {
-      setActivePanel(e)
-    } else if (activePanel === 'editor') setActivePanel('metadata')
-    else if (activePanel === 'metadata') setActivePanel('editor')
-  }
+  // const handlePanelChange = e => {
+  // if (e !== undefined) {
+  //   setActivePanel(e)
+  // }
+  // else if (activePanel === 'editor') setActivePanel('metadata')
+  // else if (activePanel === 'metadata') setActivePanel('editor')
+  // }
 
   return (
-    <StyledCollapse
-      accordion
-      activeKey={activePanel}
-      onChange={handlePanelChange}
-    >
+    <StyledCollapse accordion defaultActiveKey="editor">
       <Collapse.Panel header="Editor" key="editor">
         {editor}
       </Collapse.Panel>
