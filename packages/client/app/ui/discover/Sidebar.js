@@ -49,9 +49,7 @@ const Footer = styled.div`
 `
 
 const Sidebar = props => {
-  const { className, text, setFilters, metadata } = props
-
-  const [form] = Form.useForm()
+  const { className, text, setFilters, metadata, form } = props
 
   const applyFilters = () => {
     setFilters(form.getFieldsValue())
@@ -369,11 +367,14 @@ Sidebar.propTypes = {
       PropTypes.shape({ label: PropTypes.string, value: PropTypes.string }),
     ),
   }),
+  /** form instance for the filters' <Form> */
+  form: PropTypes.shape(),
 }
 
 Sidebar.defaultProps = {
   text: '',
   metadata: null,
+  form: {},
 }
 
 export default Sidebar

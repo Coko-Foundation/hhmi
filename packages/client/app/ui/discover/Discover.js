@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Sidebar from './Sidebar'
-import { Collapse, QuestionList, VisuallyHiddenElement } from '../common'
+import { Collapse, QuestionList, VisuallyHiddenElement, Form } from '../common'
 import useBreakpoint from '../_helpers/useBreakpoint'
 
 const Wrapper = styled.div`
@@ -42,6 +42,8 @@ export const Discover = props => {
 
   // key to force list to rerender and empty search box when filters change
   const [listKey, setListKey] = useState(0)
+  // form control instance for Sidebar filters, here to preserve its state between Sidebar rerenders
+  const [filtersForm] = Form.useForm()
 
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -105,6 +107,7 @@ export const Discover = props => {
     <Wrapper className={className}>
       {wrapFilters(
         <Sidebar
+          form={filtersForm}
           metadata={sidebarMetadata}
           setFilters={setFilters}
           text={sidebarText}
