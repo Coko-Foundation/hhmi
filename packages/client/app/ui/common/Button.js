@@ -18,9 +18,17 @@ const StyledButton = styled(AntButton)`
   /* let lineHeight expand the button height */
   height: unset;
   line-height: ${th('lineHeightBase')};
-  padding: 0 ${grid(4)};
+  ${props =>
+    props.direction === 'rtl' &&
+    css`
+      direction: rtl;
 
-  /* stylelint-disable-next-line */
+      .anticon + span {
+        margin-right: 8px;
+        margin-left: 0;
+      }
+    `};
+
   ${props => {
     const { status, theme, type, ghost } = props
 
@@ -81,6 +89,7 @@ const StyledButton = styled(AntButton)`
       }
     `
   }}
+  padding: 0 ${grid(4)};
 `
 
 /**
