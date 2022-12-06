@@ -285,20 +285,29 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.listInstance += 1
     this.trueFalseSolutions[groupId] = []
 
+    const lastItem = trueFalse.content[trueFalse.content.length - 1]
+
+    // wax might or might not insert an empty paragraph at the bottom of the widget
+    const isLastItemEmptyParagraph =
+      lastItem.type === 'paragraph' &&
+      lastItem.content.length === 1 &&
+      lastItem.content[0].type === 'text' &&
+      !lastItem.content[0].text.trim()
+
+    const contentToParse = isLastItemEmptyParagraph
+      ? trueFalse.content.slice(0, trueFalse.content.length - 1)
+      : trueFalse.content
+
     return [
       new Paragraph({
         children: [],
       }),
-      ...this.contentParser(
-        // remove last item, as it's an empty paragraph that wax generates
-        trueFalse.content.slice(0, trueFalse.content.length - 1),
-        {
-          trueFalseGroupId: groupId,
-          instance: this.listInstance,
-          listType: this.listTypes.MULTIPLE_CHOICE,
-          level: 0,
-        },
-      ),
+      ...this.contentParser(contentToParse, {
+        trueFalseGroupId: groupId,
+        instance: this.listInstance,
+        listType: this.listTypes.MULTIPLE_CHOICE,
+        level: 0,
+      }),
     ]
   }
 
