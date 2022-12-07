@@ -2,6 +2,7 @@
 import React, { memo, useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { isEqual } from 'lodash'
 
 import { grid, th } from '@coko/client'
 import {
@@ -302,11 +303,9 @@ const MemoizedWax = memo(
   // add a comparison function for when we want the editor to rerender
   // returning true means the component doesn't rerender when parent rerenders
   (prevProps, nextProps) =>
-    nextProps.published
-      ? false
-      : prevProps.readOnly === nextProps.readOnly &&
-        prevProps.withMetadata === nextProps.withMetadata,
-  // && prevProps.content === nextProps.content,
+    isEqual(prevProps.content, nextProps.content) &&
+    prevProps.readOnly === nextProps.readOnly &&
+    prevProps.withMetadata === nextProps.withMetadata,
 )
 
 MemoizedWax.propTypes = {
