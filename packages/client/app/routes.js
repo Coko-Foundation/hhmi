@@ -135,11 +135,7 @@ const Layout = props => {
 }
 
 const StyledPage = styled(Page)`
-  height: calc(100% - 76px - 70px);
-
-  @media screen and (min-width: 720px) {
-    height: calc(100% - 76px - 60px);
-  }
+  height: calc(100% - 64px - 40px);
 `
 
 // const Loader = () => <Spin spinning />
