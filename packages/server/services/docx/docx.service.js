@@ -53,6 +53,7 @@ class WaxToDocxConverter {
     this.typeToHandlerMap = {
       bulletlist: this.bulletListHandler,
       figure: this.figureHandler,
+      figcaption: this.captionHandler,
       hard_break: this.hardBreakHandler,
       image: this.imageHandler,
       list_item: this.listItemHandler,
@@ -343,7 +344,7 @@ class WaxToDocxConverter {
   }
 
   imageHandler = image => {
-    const { dataId } = image.attrs
+    const { id: dataId } = image.attrs
 
     if (!dataId || !this.imageData || !this.imageData[dataId]) {
       throw new Error('Missing image data')
@@ -366,6 +367,18 @@ class WaxToDocxConverter {
         width: scale > 1 ? width / scale : width,
         height: scale > 1 ? height / scale : height,
       },
+    })
+  }
+
+  /* eslint-disable-next-line class-methods-use-this */
+  captionHandler = caption => {
+    if (!caption || !caption.content || !caption.content.length > 0) return
+
+    const { text } = caption.content[0]
+
+    /* eslint-disable-next-line consistent-return */
+    return new Paragraph({
+      children: [new TextRun({ text })],
     })
   }
   // #endregion images

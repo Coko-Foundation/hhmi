@@ -68,20 +68,30 @@ class QuestionVersion extends BaseModel {
       // clean up potentially invalid src attribute from data
       // (urls from the file server expire and will be generated on fetch)
       if (data.content) {
-        data.content.content = data.content.content.map(item => {
-          if (item.type === 'figure') {
-            const clonedItem = cloneDeep(item)
-            const { src } = clonedItem.content[0].attrs
+        const cleanUpUrls = node => {
+          if (!node.content) return node
 
-            // make sure non-url existing images are not deleted
-            if (src.startsWith('data:image')) return item
+          const modifiedNode = cloneDeep(node)
 
-            clonedItem.content[0].attrs.src = null
-            return clonedItem
-          }
+          modifiedNode.content = node.content.map(item => {
+            if (item.type === 'figure') {
+              const clonedItem = cloneDeep(item)
+              const { src } = clonedItem.content[0].attrs
 
-          return item
-        })
+              // make sure non-url existing images are not deleted
+              if (src.startsWith('data:image')) return item
+
+              clonedItem.content[0].attrs.src = null
+              return clonedItem
+            }
+
+            return cleanUpUrls(item)
+          })
+
+          return modifiedNode
+        }
+
+        data.content = cleanUpUrls(data.content)
       }
 
       // store pure text of the question separately (for use in searching)
