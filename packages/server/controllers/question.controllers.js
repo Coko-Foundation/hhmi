@@ -1,3 +1,4 @@
+const fs = require('fs')
 const path = require('path')
 const config = require('config')
 const cloneDeep = require('lodash/cloneDeep')
@@ -6,6 +7,7 @@ const {
   createFile,
   fileStorage,
   logger,
+  uuid,
   useTransaction,
   File,
 } = require('@coko/server')
@@ -408,6 +410,30 @@ const generateWordFile = async (questionVersionId, options = {}) => {
     `${CONTROLLER_MESSAGE} generating word file for question version with id ${questionVersionId}`,
   )
 
+  const imageData = {}
+
+  const clearTempImageFiles = async () => {
+    await Promise.all(
+      Object.keys(imageData).map(key => {
+        return new Promise((resolve, reject) => {
+          try {
+            const pathToDelete = imageData[key]
+            fs.unlink(pathToDelete, e => {
+              if (e) throw new Error(e)
+              logger.info(`${pathToDelete} deleted from temp folder`)
+            })
+            resolve()
+          } catch (e) {
+            if (e) {
+              logger.error(e)
+              reject(e)
+            }
+          }
+        })
+      }),
+    )
+  }
+
   try {
     // fake long wait
     // await new Promise(resolve => {
@@ -435,9 +461,41 @@ const generateWordFile = async (questionVersionId, options = {}) => {
 
     // console.log(version.content)
 
+    const tempFolderPath = path.join(__dirname, '..', 'tmp')
+
+    const findImages = async n => {
+      if (!n) return
+
+      if (n.type === 'figure') {
+        const [image] = n.content
+        const { fileId } = image.attrs.extraData
+        const file = await File.findById(fileId)
+        const medium = file.storedObjects.find(o => o.type === 'medium')
+        const { extension, key, id } = medium
+
+        const downloadPath = path.join(
+          tempFolderPath,
+          `${id}-${uuid()}.${extension}`,
+        )
+
+        await fileStorage.download(key, downloadPath)
+        imageData[image.attrs.id] = downloadPath
+
+        return
+      }
+
+      if (!n.content) return
+
+      await Promise.all(n.content.map(async i => findImages(i)))
+    }
+
+    await Promise.all(
+      version.content.content.map(async node => findImages(node)),
+    )
+
     const converter = new WaxToDocxConverter(
       version.content,
-      {}, // image data
+      imageData,
       {
         questionType: version.questionType,
 
@@ -462,16 +520,16 @@ const generateWordFile = async (questionVersionId, options = {}) => {
 
     /* CONVERT */
 
-    const tempFolderPath = path.join(__dirname, '..', 'tmp')
-
     const filename = `${version.questionId}.docx`
     const filePath = path.join(tempFolderPath, filename)
     await converter.writeToPath(filePath)
 
+    await clearTempImageFiles()
     return filename
-  } catch (e) {
-    logger.error(`${CONTROLLER_MESSAGE} ${e}`)
-    throw new Error(e)
+  } catch (err) {
+    await clearTempImageFiles()
+    logger.error(`${CONTROLLER_MESSAGE} ${err}`)
+    throw new Error(err)
   }
 }
 
@@ -492,33 +550,37 @@ const uploadFiles = async files => {
 // Populates a wax document with valid image urls
 const getImageUrls = async document => {
   try {
-    if (!document) return document
+    const findImages = async doc => {
+      if (!doc || !doc.content) return doc
 
-    const clonedDocument = cloneDeep(document)
+      const clonedDocument = cloneDeep(doc)
 
-    clonedDocument.content = await Promise.all(
-      document.content.map(async item => {
-        if (item.type === 'figure') {
-          const clonedItem = cloneDeep(item)
-          const { attrs } = clonedItem.content[0]
+      clonedDocument.content = await Promise.all(
+        doc.content.map(async item => {
+          if (item.type === 'figure') {
+            const clonedItem = cloneDeep(item)
+            const { attrs } = clonedItem.content[0]
 
-          if (!attrs.extraData || !attrs.extraData.fileId) {
-            logger.warn('Image without file id detected!')
-            return item
+            if (!attrs.extraData || !attrs.extraData.fileId) {
+              logger.warn('Image without file id detected!')
+              return item
+            }
+
+            const { fileId } = attrs.extraData
+            const file = await File.findById(fileId)
+            const { key } = file.storedObjects.find(o => o.type === 'medium')
+            clonedItem.content[0].attrs.src = await fileStorage.getURL(key)
+            return clonedItem
           }
 
-          const { fileId } = attrs.extraData
-          const file = await File.findById(fileId)
-          const { key } = file.storedObjects.find(o => o.type === 'medium')
-          clonedItem.content[0].attrs.src = await fileStorage.getURL(key)
-          return clonedItem
-        }
+          return findImages(item)
+        }),
+      )
 
-        return item
-      }),
-    )
+      return clonedDocument
+    }
 
-    return clonedDocument
+    return findImages(document)
   } catch (e) {
     throw new Error(e)
   }
