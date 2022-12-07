@@ -60,6 +60,7 @@ class WaxToDocxConverter {
       paragraph: this.paragraphHandler,
       table: this.tableHandler,
       table_cell: this.tableCellHandler,
+      table_header: this.tableCellHandler,
       table_row: this.tableRowHandler,
       text: this.textHandler,
     }
@@ -215,9 +216,10 @@ class WaxToDocxConverter {
   }
 
   /* eslint-disable-next-line class-methods-use-this */
-  textHandler = textObject => {
+  textHandler = (textObject, options = {}) => {
     const { text, marks } = textObject
     const objectToPass = { text }
+    const { isTableHeader } = options
 
     let isLink = false
     let linkUrl = null
@@ -263,6 +265,8 @@ class WaxToDocxConverter {
         children: [new TextRun(objectToPass)],
         link: linkUrl,
       })
+
+    if (isTableHeader) objectToPass.bold = true
 
     return new TextRun(objectToPass)
   }
@@ -316,14 +320,20 @@ class WaxToDocxConverter {
   }
 
   tableRowHandler = row => {
+    const isTableHeader = row.content[0].type === 'table_header'
+
     return new TableRow({
-      children: this.contentParser(row.content),
+      children: this.contentParser(row.content, { isTableHeader }),
+      tableHeader: row.content[0].type === 'table_header',
     })
   }
 
-  tableCellHandler = cell => {
+  tableCellHandler = (cell, options = {}) => {
     return new TableCell({
-      children: this.contentParser(cell.content, { isTableCell: true }),
+      children: this.contentParser(cell.content, {
+        isTableCell: true,
+        isTableHeader: options.isTableHeader,
+      }),
       margins: {
         top: 70,
         bottom: 70,
