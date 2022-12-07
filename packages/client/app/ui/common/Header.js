@@ -372,8 +372,8 @@ const Header = props => {
       questions,
       dashboard,
       // lists,
-      // about,
-      // learning,
+      about,
+      learning,
       manageUsers,
       manageTeams,
       profile,
@@ -506,12 +506,12 @@ const Header = props => {
           <LeftNavContainer>
             <StyledList>
               <li>
-                <StyledLink to="about">
+                <StyledLink to={about}>
                   <span>About</span>
                 </StyledLink>
               </li>
               <li>
-                <StyledLink to="learning">
+                <StyledLink to={learning}>
                   <span>Professional Learning</span>
                 </StyledLink>
               </li>
