@@ -48,7 +48,7 @@ module.exports = {
 
   // #region header variables
   mobileLogoHeight: '44px',
-  headerPaddingVertical: '16px',
+  headerPaddingVertical: '10px',
   headerPaddingHorizontal: '24px',
   // #endregion header variables
 

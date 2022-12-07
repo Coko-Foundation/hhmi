@@ -19,13 +19,13 @@ const StyledHeader = styled.header`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  padding: ${th('headerPaddingVertical')} ${th('headerPaddingHorizontal')};
+  padding: ${th('headerPaddingVertical')} ${grid(4)};
   width: 100%;
   z-index: 9;
 
-  /* @media screen and (min-width: ${th('mediaQueries.medium')}) {
-    flex-direction: column;
-  } */
+  @media screen and (min-width: ${th('mediaQueries.medium')}) {
+    padding: ${th('headerPaddingVertical')} ${grid(6)};
+  }
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
     flex-direction: row;
@@ -106,7 +106,7 @@ const StyledList = styled.ul`
     align-items: start;
     display: flex;
     height: 3.0625rem;
-    padding: ${grid(3)} 0 0 0;
+    padding: ${grid(4)} 0 0 0;
 
     > li {
       align-items: center;
@@ -186,7 +186,7 @@ const StyledLink = styled(Link)`
   }
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
-    line-height: 2;
+    line-height: 1.5;
     padding: 0;
 
     span::after {
@@ -256,11 +256,11 @@ const MobileMenuToggle = styled.button`
   border: none;
   cursor: pointer;
   display: block;
-  height: 35px;
+  height: 31px;
   overflow: hidden;
   padding: 0;
   transition: outline 200ms cubic-bezier(0.645, 0.045, 0.355, 1);
-  width: 35px;
+  width: 31px;
 
   &:hover,
   &:focus {
@@ -278,9 +278,10 @@ const UserMenuWrapper = styled.div`
   font-weight: bold;
   width: 100%;
 
-  /* @media screen and (min-width: ${th('mediaQueries.large')}) {
-    width: 170px;
-  } */
+  @media screen and (min-width: ${th('mediaQueries.large')}) {
+    height: 32px;
+    margin-top: ${grid(-1)};
+  }
 `
 
 const UserMenuButton = styled(Button)`
