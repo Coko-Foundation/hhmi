@@ -1,58 +1,16 @@
 import React from 'react'
-import { MetadataInfo, resources } from 'ui'
-import { metadataForQuestionPage } from '../../app/utilities'
-
-// console.log(metadata)
-
-const metadataValues = {
-  questionType: 'trueFalseSingleCorrect',
-  topics: [
-    { topic: 'genetics', subtopic: 'patternsOfInheritance' },
-    { topic: 'cellBiology', subtopic: 'cellStructureFunction' },
-  ],
-  courses: [
-    {
-      course: 'apEnvironmentalScience',
-      units: [
-        {
-          unit: 'populations',
-          courseTopic: 'generalistAndSpecialistSpecies',
-          learningObjective: 'ERT-3.A',
-          essentialKnowledge: 'ERT-3.A.1',
-        },
-        {
-          unit: 'theLivingWorldEcosystems',
-          courseTopic: 'terrestrialBiomes',
-          learningObjective: 'ERT-1.B',
-          essentialKnowledge: 'ERT-1.B.2',
-        },
-      ],
-    },
-    {
-      course: 'biEnvironmentalScience',
-      units: [
-        {
-          unit: 'ecosystemsAndEcology',
-          courseTopic: 'communitiesAndEcosystems',
-          application: 'IBES-A2.2.3',
-          understanding: 'IBES-U2.2.4',
-        },
-      ],
-    },
-  ],
-  biointeractiveResources: [
-    'biochemistryAndCellSignalingPathwayOfTheMc1rGene',
-    'cysticFibrosisMechanismAndTreatment',
-  ],
-  cognitiveLevel: 'higher-understand',
-}
+import { MetadataInfo } from 'ui'
+import metadata from './_helpers/metadataValues'
+import resources from './_helpers/resourcesData'
+import { metadataTransformer } from './_helpers/metadataTransformations'
+import initialValues from './_helpers/initialValues'
 
 export const Base = () => {
   return (
     <MetadataInfo
-      metadata={metadataForQuestionPage}
+      metadata={metadataTransformer(metadata)}
       resources={resources}
-      values={metadataValues}
+      values={initialValues}
     />
   )
 }
