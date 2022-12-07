@@ -93,16 +93,27 @@ const Footer = props => {
     <StyledFooter role="contentinfo" {...rest}>
       <FooterList>
         <li>
-          <a href={newsletter}>Newsletter</a>
+          <a href={newsletter} rel="noreferrer" target="_blank">
+            Newsletter
+          </a>
         </li>
+
         <li>
-          <a href={hhmi}>HHMI.org</a>
+          <a href={hhmi} rel="noreferrer" target="_blank">
+            HHMI.org
+          </a>
         </li>
+
         <li>
-          <Link to={termsOfUse}>Terms of Use</Link>
+          <a href={termsOfUse} rel="noreferrer" target="_blank">
+            Terms of Use
+          </a>
         </li>
+
         <li>
-          <Link to={privacyPolicy}>Privacy Policy</Link>
+          <a href={privacyPolicy} rel="noreferrer" target="_blank">
+            Privacy Policy
+          </a>
         </li>
       </FooterList>
       <SiteLogo rel="Home" title="Home" to={homepage}>
