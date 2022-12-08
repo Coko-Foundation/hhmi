@@ -4,6 +4,7 @@ import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
+import { VisuallyHiddenElement } from '../../common'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -40,6 +41,7 @@ const TopMenu = styled.div`
   flex-wrap: wrap;
   height: auto;
   justify-content: center;
+  line-height: 1;
   user-select: none;
 
   /* stylelint-disable-next-line string-quotes */
@@ -61,16 +63,12 @@ const EditorWrapper = styled.div`
 const EditorArea = styled.div`
   background-color: ${th('colorBackground')};
   flex-grow: 1;
+  margin: 0 auto;
+  max-width: 100ch;
   position: relative;
-
-  > div {
-    height: unset;
-  }
 
   .ProseMirror {
     height: 100%;
-    margin: 0 auto;
-    max-width: 100ch;
     padding: ${grid(12)} ${grid(5)};
     /* position: relative; */
 
@@ -121,10 +119,14 @@ const HhmiLayout = ({ editor }) => {
     <ThemeProvider theme={theme}>
       <Wrapper fullScreen={fullScreen}>
         <TopMenu>
+          <VisuallyHiddenElement as="h2">
+            Question editor toolbar
+          </VisuallyHiddenElement>
           <MainMenuToolBar />
         </TopMenu>
 
         <EditorWrapper>
+          <VisuallyHiddenElement as="h2">Question editor</VisuallyHiddenElement>
           <EditorArea>{editor}</EditorArea>
         </EditorWrapper>
 

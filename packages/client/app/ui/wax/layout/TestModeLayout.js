@@ -4,6 +4,7 @@ import { WaxContext } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
+import { VisuallyHiddenElement } from '../../common'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -41,17 +42,13 @@ const EditorWrapper = styled.div`
 const EditorArea = styled.div`
   background-color: ${th('colorBackground')};
   flex-grow: 1;
-  /* position: relative; */
-
-  /* > div {
-    height: unset;
-  } */
+  margin: 0 auto;
+  max-width: 100ch;
+  position: relative;
 
   .ProseMirror {
     background-color: inherit;
     /* height: 100%; */
-    margin: 0 auto;
-    max-width: 100ch;
     padding: ${grid(12)} ${grid(5)};
   }
 `
@@ -65,6 +62,9 @@ const TestModeLayout = ({ editor }) => {
     <ThemeProvider theme={theme}>
       <Wrapper fullScreen={fullScreen}>
         <EditorWrapper>
+          <VisuallyHiddenElement as="h2">
+            Question content
+          </VisuallyHiddenElement>
           <EditorArea>{editor}</EditorArea>
         </EditorWrapper>
       </Wrapper>
