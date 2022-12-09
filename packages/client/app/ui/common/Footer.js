@@ -5,38 +5,49 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import logo from '../../../static/hhmi-ab-logo-sm.svg'
+import logoSmall from '../../../static/hhmi-logo-white-sm.svg'
 
 const StyledFooter = styled.footer`
-  align-items: center;
   background-color: ${th('colorBody')};
   color: ${th('colorTextReverse')};
   display: flex;
   flex-direction: column;
+  height: 40px;
   justify-content: space-between;
   padding: ${grid(1)} 0;
 
-  @media screen and (min-width: 720px) {
+  @media screen and (min-width: ${th('mediaQueries.small')}) {
     flex-direction: row;
-    height: 60px;
-    padding: 0;
   }
 `
 
 const SiteLogo = styled(Link)`
-  background-image: ${`url(${logo})`};
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: 250px 32px;
-  display: block;
-  height: 32px;
-  margin: 0 calc(4px * 3);
-  overflow: hidden;
-  width: 250px;
+  display: none;
 
   h1 {
     height: 0;
     overflow: hidden;
     width: 0;
+  }
+
+  @media screen and (min-width: ${th('mediaQueries.small')}) {
+    background-image: ${`url(${logoSmall})`};
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 65px 32px;
+    display: block;
+    height: 32px;
+    margin: 0 calc(4px * 3);
+    overflow: hidden;
+    width: 65px;
+  }
+
+  @media screen and (min-width: ${th('mediaQueries.medium')}) {
+    background-image: ${`url(${logo})`};
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 250px 32px;
+    width: 250px;
   }
 
   /* @media screen and (min-width: ${th('mediaQueries.small')}) {

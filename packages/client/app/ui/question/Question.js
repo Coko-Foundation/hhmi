@@ -78,7 +78,6 @@ const Wrapper = styled.div`
 
 const StyledButton = styled(Button)`
   margin-right: ${grid(2)};
-  text-transform: uppercase;
 `
 
 const StyledPrevNextButton = styled(StyledButton)`
@@ -95,12 +94,10 @@ const StyledPrevNextButton = styled(StyledButton)`
 
 const StyledWordExportButton = styled(ExportToWordButton)`
   margin-right: ${grid(2)};
-  text-transform: uppercase;
 `
 
 const StyledScormExportButton = styled(ExportToScormButton)`
   margin-right: ${grid(2)};
-  text-transform: uppercase;
 `
 
 const RightAreaWrapper = styled.div`
@@ -121,7 +118,6 @@ const FacultyHeaderWrapper = styled.div`
   justify-content: space-between;
   margin: 0;
   padding: 0 ${grid(3)};
-  text-transform: uppercase;
 
   > div {
     align-items: center;
@@ -183,7 +179,6 @@ const StyledSwitch = styled(Switch)`
 
     .ant-switch-inner {
       font-size: ${th('fontSizeBase')};
-      text-transform: uppercase;
     }
 
     &.ant-switch-checked {

@@ -19,13 +19,13 @@ const StyledHeader = styled.header`
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  padding: ${th('headerPaddingVertical')} ${th('headerPaddingHorizontal')};
+  padding: ${th('headerPaddingVertical')} ${grid(4)};
   width: 100%;
   z-index: 9;
 
-  /* @media screen and (min-width: ${th('mediaQueries.medium')}) {
-    flex-direction: column;
-  } */
+  @media screen and (min-width: ${th('mediaQueries.medium')}) {
+    padding: ${th('headerPaddingVertical')} ${grid(6)};
+  }
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
     flex-direction: row;
@@ -91,24 +91,28 @@ const Navigation = styled.nav`
 
 const StyledList = styled.ul`
   display: block;
+  list-style: none;
   margin: 0;
   padding: 0;
 
-  li {
-    align-items: center;
+  > li {
     color: ${th('colorTextDark')};
-    display: flex;
     font-size: ${th('fontSizeBase')};
     line-height: 2.5rem;
+
+    > a {
+      display: inline-flex;
+      width: 100%;
+    }
   }
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
     align-items: start;
     display: flex;
     height: 3.0625rem;
-    padding: ${grid(3)} 0 0 0;
+    padding: ${grid(4)} 0 0 0;
 
-    li {
+    > li {
       align-items: center;
       color: ${th('colorTextReverse')};
       display: inline-flex;
@@ -164,7 +168,7 @@ const StyledLink = styled(Link)`
   padding: 10px 0;
   text-decoration: none;
 
-  &::after {
+  span::after {
     background-color: ${th('colorTertiary')};
     content: '';
     display: block;
@@ -180,16 +184,16 @@ const StyledLink = styled(Link)`
   &[aria-current='page'] {
     color: inherit;
 
-    &::after {
+    span::after {
       transform: translateX(0);
     }
   }
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
-    line-height: 2;
+    line-height: 1.5;
     padding: 0;
 
-    &::after {
+    span::after {
       background-color: ${th('colorTextReverse')};
     }
   }
@@ -256,11 +260,11 @@ const MobileMenuToggle = styled.button`
   border: none;
   cursor: pointer;
   display: block;
-  height: 35px;
+  height: 31px;
   overflow: hidden;
   padding: 0;
   transition: outline 200ms cubic-bezier(0.645, 0.045, 0.355, 1);
-  width: 35px;
+  width: 31px;
 
   &:hover,
   &:focus {
@@ -279,7 +283,8 @@ const UserMenuWrapper = styled.div`
   width: 100%;
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
-    width: 170px;
+    height: 32px;
+    margin-top: ${grid(-1)};
   }
 `
 
@@ -289,12 +294,17 @@ const UserMenuButton = styled(Button)`
   flex-direction: row-reverse;
   font-weight: 700;
   justify-content: space-between;
-  padding-left: 8px;
 
   span:not([role='img']) {
+    margin-left: 0;
+    margin-right: 8px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  span[role='img'] {
+    margin-top: 3px;
   }
 `
 
@@ -305,12 +315,15 @@ const CollapsableMenu = styled.ul`
   display: flex;
   flex-direction: column;
   gap: ${grid(1)};
+  list-style: none;
   padding: ${grid(2)} ${grid(4)};
   text-align: left;
 
   > li > a {
     color: ${th('colorTextReverse')};
+    display: inline-flex;
     font-size: ${th('fontSizeBase')};
+    width: 100%;
   }
 `
 
@@ -359,8 +372,8 @@ const Header = props => {
       questions,
       dashboard,
       // lists,
-      // about,
-      // learning,
+      about,
+      learning,
       manageUsers,
       manageTeams,
       profile,
@@ -469,7 +482,7 @@ const Header = props => {
                 onClick={() => setShowMenu(false)}
                 to={questions}
               >
-                Browse Questions
+                <span>Browse Questions</span>
               </StyledLink>
             </li>
             {loggedin && (
@@ -480,7 +493,7 @@ const Header = props => {
                     onClick={() => setShowMenu(false)}
                     to={dashboard}
                   >
-                    Dashboard
+                    <span>Dashboard</span>
                   </StyledLink>
                 </li>
                 {/* <li>
@@ -491,15 +504,19 @@ const Header = props => {
           </StyledList>
           <Separator />
           <LeftNavContainer>
-            {/* <StyledList>
+            <StyledList>
               <li>
-                <StyledLink to={about}>About</StyledLink>
+                <StyledLink to={about}>
+                  <span>About</span>
+                </StyledLink>
               </li>
               <li>
-                <StyledLink to={learning}>Professional Learning</StyledLink>
+                <StyledLink to={learning}>
+                  <span>Professional Learning</span>
+                </StyledLink>
               </li>
-            </StyledList> */}
-            {/* <Separator /> */}
+            </StyledList>
+            <Separator />
             <StyledList>
               <li>
                 {loggedin ? (
@@ -536,7 +553,7 @@ const Header = props => {
                             role="menuitem"
                             to={manageUsers}
                           >
-                            Manage Users
+                            <span>Manage Users</span>
                           </StyledLink>
                         </li>
                       )}
@@ -553,7 +570,7 @@ const Header = props => {
                             role="menuitem"
                             to={manageTeams}
                           >
-                            Manage Teams
+                            <span>Manage Teams</span>
                           </StyledLink>
                         </li>
                       )}
@@ -569,19 +586,27 @@ const Header = props => {
                           role="menuitem"
                           to={profile}
                         >
-                          Profile
+                          <span>Profile</span>
                         </StyledLink>
                       </li>
                       <li role="none">
-                        <StyledLink onClick={onLogout} role="menuitem" to="#">
-                          Logout
+                        <StyledLink
+                          onClick={() => {
+                            setShowMenu(false)
+                            setOpenUserMenu(false)
+                            onLogout()
+                          }}
+                          role="menuitem"
+                          to="#"
+                        >
+                          <span>Logout</span>
                         </StyledLink>
                       </li>
                     </CollapsableMenu>
                   </UserMenuWrapper>
                 ) : (
                   <StyledLogin onClick={() => setShowMenu(false)} to={login}>
-                    Loginzz
+                    Login
                   </StyledLogin>
                 )}
               </li>
