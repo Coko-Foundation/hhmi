@@ -1,6 +1,6 @@
 variables:
   IMAGE_ORG: cokoapps
-  # IMAGE_NAME: ncbi-ci-build
+  IMAGE_NAME: hhmi-ci-development
   # WORKDIR: /home/node/app
 
 stages:
@@ -9,6 +9,19 @@ stages:
   # - install
   # - lint
   # - deploy-storybook
+
+build development:
+  image: docker:20.10.16
+  stage: build
+  services:
+    - docker:20.10.16-dind
+  before_script:
+    - docker info
+    - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+  script:
+    - if [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_PASSWORD" ]; then echo "Not pushing" && exit 0; fi
+    - docker build --tag $IMAGE_ORG/$IMAGE_NAME:$CI_COMMIT_SHA ./packages/server -f packages/server/Dockerfile-development
+    - docker push $IMAGE_ORG/$IMAGE_NAME:$CI_COMMIT_SHA
 
 # lint js:
 #   image: node:16-bullseye-slim
