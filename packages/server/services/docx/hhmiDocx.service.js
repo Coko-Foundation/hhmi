@@ -11,6 +11,7 @@ const {
 } = require('docx')
 
 const WaxToDocxConverter = require('./docx.service')
+const flattenLabels = require('../../controllers/flattenMetadataValues')
 
 const convertListPositionToLetter = (pos, options = {}) => {
   if (pos > 25)
@@ -26,7 +27,11 @@ const convertListPositionToLetter = (pos, options = {}) => {
   return String.fromCharCode(code)
 }
 
+const flattenedMetadata = flattenLabels()
+
 const labels = {
+  ...flattenedMetadata,
+
   questionType: 'Question type',
 
   topics: 'Topics',
@@ -826,7 +831,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           }),
         key && this.metadataSpacing,
         new TextRun({
-          text: value,
+          text: labels[value] || value,
         }),
       ].filter(Boolean),
       numbering: {
@@ -925,7 +930,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         }),
         this.metadataSpacing,
         new TextRun({
-          text: value,
+          text: labels[value] || value,
         }),
       ],
     })
