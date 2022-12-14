@@ -21,6 +21,7 @@
     "xml": "^1.0.1"
   },
   "devDependencies": {
+    "@coko/lint": "^2.0.0",
     "faker": "^5.5.3",
     "jest": "^27.5.1",
     "node-wait-for-it": "^0.2.0",

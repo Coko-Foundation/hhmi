@@ -1,13 +1,12 @@
 variables:
   IMAGE_ORG: cokoapps
   IMAGE_NAME: hhmi-ci-development
-  # WORKDIR: /home/node/app
-
+  WORKDIR: /home/node/hhmi
 stages:
   - build
+  - lint
   - deploy
   # - install
-  # - lint
   # - deploy-storybook
 
 build development:
@@ -30,6 +29,13 @@ build development:
 #     - apt-get update && apt-get install -y git
 #     - yarn install && cd packages/client && yarn install && cd ../.. && cd packages/server && yarn install && cd ../..
 #     - yarn eslint .
+
+lint js:
+  stage: lint
+  image: $IMAGE_ORG/$IMAGE_NAME:$CI_COMMIT_SHA
+  script:
+    - cd $WORKDIR
+    - yarn eslint .
 
 # deploy storybook static:
 #   image: debian:stable-slim
