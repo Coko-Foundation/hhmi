@@ -43,6 +43,8 @@ server unit test:
     - ls -la
     - docker-compose --version
   script:
+    - docker-compose up -d filehosting createbucket db server
+    - docker-compose exec server yarn jest
     - echo 'done'
 
 # deploy storybook static:
