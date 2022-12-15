@@ -1,6 +1,6 @@
 variables:
   IMAGE_ORG: cokoapps
-  IMAGE_NAME: hhmi-ci-development
+  IMAGE_NAME: hhmi-server-ci-development
   WORKDIR: /home/node/hhmi
 
 stages:
@@ -43,9 +43,32 @@ server unit test:
     - ls -la
     - docker-compose --version
   script:
-    - docker-compose up -d filehosting createbucket db server
-    - docker-compose exec server yarn jest
-    - echo 'done'
+    - docker-compose up -d db createbucket filehosting
+    - docker pull $IMAGE_ORG/$IMAGE_NAME:$CI_COMMIT_SHA
+    - |
+      docker run \
+      --network hhmi_default \
+      -e NODE_ENV=test \
+      -e POSTGRES_HOST=db -e POSTGRES_PORT=5432 -e POSTGRES_DB=hhmi_dev -e POSTGRES_USER=hhmi_dev_user -e POSTGRES_PASSWORD=hhmi_dev_user_password \
+      -e S3_PROTOCOL=http -e S3_HOST=filehosting -e S3_PORT=9000 -e S3_ACCESS_KEY_ID=nonRootUser -e S3_SECRET_ACCESS_KEY=nonRootPassword -e S3_BUCKET=uploads \
+      $IMAGE_ORG/$IMAGE_NAME:$CI_COMMIT_SHA \
+      yarn jest --verbose
+    
+    # NODE_ENV=test
+    #   POSTGRES_HOST=localhost POSTGRES_PORT=5432 POSTGRES_DB=hhmi_dev POSTGRES_USER=hhmi_dev_user POSTGRES_PASSWORD=hhmi_dev_user_password
+    #   PUBSWEET_SECRET=superSecretThing
+    #   S3_PROTOCOL=http S3_HOST=localhost S3_PORT=9000 S3_ACCESS_KEY_ID=nonRootUser S3_SECRET_ACCESS_KEY=nonRootPassword S3_BUCKET=uploads
+
+      # SERVER_PORT=${SERVER_PORT:-3000}
+      # CLIENT_PROTOCOL=${CLIENT_PROTOCOL:-http}
+      # CLIENT_HOST=${CLIENT_HOST:-0.0.0.0}
+      # CLIENT_PORT=${CLIENT_PORT:-4000}
+      # MAILER_SENDER=${MAILER_SENDER:-dev@example.com}
+      # MAILER_HOSTNAME=${MAILER_HOSTNAME}
+      # MAILER_PORT=${MAILER_PORT}
+      # MAILER_USER=${MAILER_USER}
+      # MAILER_PASSWORD=${MAILER_PASSWORD}
+      # PASSWORD_RESET_PATH=${PASSWORD_RESET_PATH:-password-reset}
 
 # deploy storybook static:
 #   image: debian:stable-slim
