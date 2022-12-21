@@ -164,7 +164,7 @@ const QuestionItem = props => {
         ) : null}
       </FirstRow>
 
-      <SecondRow>
+      <SecondRow data-testid="courses">
         {courses.sort(sortFunction).map(c => {
           return !c.course ? (
             <span key={uuid()}>Unknown course</span>
