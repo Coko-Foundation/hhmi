@@ -105,6 +105,8 @@ const MetadataLabel = styled.div`
 
 const MetadataValue = styled.div``
 
+const EmptyText = styled.div``
+
 const courseOrder = [
   'Introductory Biology for Majors',
   'AP Biology',
@@ -130,12 +132,16 @@ const QuestionItem = props => {
             state,
           }}
         >
-          <WaxWrapper
-            config={dashConfig}
-            content={content}
-            layout={DashLayout}
-            readOnly
-          />
+          {content ? (
+            <WaxWrapper
+              config={dashConfig}
+              content={content}
+              layout={DashLayout}
+              readOnly
+            />
+          ) : (
+            <EmptyText>(empty)</EmptyText>
+          )}
         </WaxContainer>
 
         <div>{status ? <Status status={status} /> : null}</div>
