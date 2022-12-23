@@ -43,14 +43,13 @@ server unit test:
     - ls -la
     - docker-compose --version
   script:
-    - docker-compose up -d db createbucket filehosting
+    - docker-compose up -d db
     - docker pull $IMAGE_ORG/$IMAGE_NAME:$CI_COMMIT_SHA
     - |
       docker run \
       --network hhmi_default \
       -e NODE_ENV=test \
       -e POSTGRES_HOST=db -e POSTGRES_PORT=5432 -e POSTGRES_DB=hhmi_dev -e POSTGRES_USER=hhmi_dev_user -e POSTGRES_PASSWORD=hhmi_dev_user_password \
-      -e S3_PROTOCOL=http -e S3_HOST=filehosting -e S3_PORT=9000 -e S3_ACCESS_KEY_ID=nonRootUser -e S3_SECRET_ACCESS_KEY=nonRootPassword -e S3_BUCKET=uploads \
       $IMAGE_ORG/$IMAGE_NAME:$CI_COMMIT_SHA \
       yarn jest --verbose
     

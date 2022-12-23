@@ -456,9 +456,9 @@
     stylelint-order "^5.0.0"
     stylelint-processor-styled-components "^1.10.0"
 
-"@coko/server@https://gitlab.coko.foundation/cokoapps/server.git#cced62ab12c6c059cc7d2b1a55574743b25a3eb3":
+"@coko/server@https://gitlab.coko.foundation/cokoapps/server.git#49e230d4f16ec0e3c8b4c510536312cf9fde4ff1":
   version "1.14.0"
-  resolved "https://gitlab.coko.foundation/cokoapps/server.git#cced62ab12c6c059cc7d2b1a55574743b25a3eb3"
+  resolved "https://gitlab.coko.foundation/cokoapps/server.git#49e230d4f16ec0e3c8b4c510536312cf9fde4ff1"
   dependencies:
     "@pubsweet/base-model" "^4.0.10"
     "@pubsweet/component-send-email" "^0.4.13"
@@ -9149,7 +9149,7 @@ promise-inflight@^1.0.1:
   resolved "https://registry.yarnpkg.com/promise-inflight/-/promise-inflight-1.0.1.tgz#98472870bf228132fcbdd868129bad12c3c029e3"
   integrity sha512-6zWPyEOFaQBJYcGMHBKTKJ3u6TBsnMFOIZSa6ce1e/ZrrsOlnHRHbabMjLiBYKp+n44X9eUI6VUPaukCXHuG4g==
 
-"prompt@github:flatiron/prompt#1c95d1d8d333b5fbc13fa5f0619f3dcf0d514f87":
+prompt@flatiron/prompt#1c95d1d8d333b5fbc13fa5f0619f3dcf0d514f87:
   version "1.0.0"
   resolved "https://codeload.github.com/flatiron/prompt/tar.gz/1c95d1d8d333b5fbc13fa5f0619f3dcf0d514f87"
   dependencies:
