@@ -1,11 +1,11 @@
 /* stylelint-disable string-quotes */
 import React from 'react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import logo from '../../../static/hhmi-ab-logo-sm.svg'
-import logoSmall from '../../../static/hhmi-logo-white-sm.svg'
+// import logo from '../../../static/hhmi-ab-logo-sm.svg'
+// import logoSmall from '../../../static/hhmi-logo-white-sm.svg'
 
 const StyledFooter = styled.footer`
   background-color: ${th('colorBody')};
@@ -21,47 +21,47 @@ const StyledFooter = styled.footer`
   }
 `
 
-const SiteLogo = styled(Link)`
-  display: none;
+// const SiteLogo = styled(Link)`
+//   display: none;
 
-  h1 {
-    height: 0;
-    overflow: hidden;
-    width: 0;
-  }
+//   h1 {
+//     height: 0;
+//     overflow: hidden;
+//     width: 0;
+//   }
 
-  @media screen and (min-width: ${th('mediaQueries.small')}) {
-    background-image: ${`url(${logoSmall})`};
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 65px 32px;
-    display: block;
-    height: 32px;
-    margin: 0 calc(4px * 3);
-    overflow: hidden;
-    width: 65px;
-  }
+//   @media screen and (min-width: ${th('mediaQueries.small')}) {
+//     background-image: ${`url(${logoSmall})`};
+//     background-position: center center;
+//     background-repeat: no-repeat;
+//     background-size: 65px 32px;
+//     display: block;
+//     height: 32px;
+//     margin: 0 calc(4px * 3);
+//     overflow: hidden;
+//     width: 65px;
+//   }
 
-  @media screen and (min-width: ${th('mediaQueries.medium')}) {
-    background-image: ${`url(${logo})`};
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: 250px 32px;
-    width: 250px;
-  }
+//   @media screen and (min-width: ${th('mediaQueries.medium')}) {
+//     background-image: ${`url(${logo})`};
+//     background-position: center center;
+//     background-repeat: no-repeat;
+//     background-size: 250px 32px;
+//     width: 250px;
+//   }
 
-  /* @media screen and (min-width: ${th('mediaQueries.small')}) {
-    background-size: 400px 52px;
-    height: 52px;
-    width: 400px;
-  } */
+//   /* @media screen and (min-width: ${th('mediaQueries.small')}) {
+//     background-size: 400px 52px;
+//     height: 52px;
+//     width: 400px;
+//   } */
 
-  /* @media (min-width: ${props => props.theme.mediaQueries.large}) {
-    background-size: 501px 67px;
-    height: 67px;
-    width: 501px;
-  } */
-`
+//   /* @media (min-width: ${props => props.theme.mediaQueries.large}) {
+//     background-size: 501px 67px;
+//     height: 67px;
+//     width: 501px;
+//   } */
+// `
 
 const FooterList = styled.ul`
   display: flex;
@@ -96,25 +96,17 @@ const FooterList = styled.ul`
 
 const Footer = props => {
   const {
-    links: { homepage, newsletter, hhmi, termsOfUse, privacyPolicy },
+    links: {
+      // homepage,
+      termsOfUse,
+      privacyPolicy,
+    },
     ...rest
   } = props
 
   return (
     <StyledFooter role="contentinfo" {...rest}>
       <FooterList>
-        <li>
-          <a href={newsletter} rel="noreferrer" target="_blank">
-            Newsletter
-          </a>
-        </li>
-
-        <li>
-          <a href={hhmi} rel="noreferrer" target="_blank">
-            HHMI.org
-          </a>
-        </li>
-
         <li>
           <a href={termsOfUse} rel="noreferrer" target="_blank">
             Terms of Use
@@ -127,9 +119,10 @@ const Footer = props => {
           </a>
         </li>
       </FooterList>
-      <SiteLogo rel="Home" title="Home" to={homepage}>
+
+      {/* <SiteLogo rel="Home" title="Home" to={homepage}>
         <h1>Assesment Builder</h1>
-      </SiteLogo>
+      </SiteLogo> */}
     </StyledFooter>
   )
 }
@@ -141,8 +134,6 @@ Footer.propTypes = {
     facebookUrl: PropTypes.string,
     youtubeUrl: PropTypes.string,
     instagramUrl: PropTypes.string,
-    newsletter: PropTypes.string,
-    hhmi: PropTypes.string,
     termsOfUse: PropTypes.string,
     privacyPolicy: PropTypes.string,
   }),
@@ -155,8 +146,6 @@ Footer.defaultProps = {
     facebookUrl: '#',
     youtubeUrl: '#',
     instagramUrl: '#',
-    newsletter: '#',
-    hhmi: '#',
     termsOfUse: '#',
     privacyPolicy: '#',
   },

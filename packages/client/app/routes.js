@@ -327,9 +327,6 @@ const routes = (
     </MetadataProvider>
     <Footer
       links={{
-        newsletter:
-          ' https://hhmi.us5.list-manage.com/subscribe?u=3c8034ebf5d74492b5c8ef8c9&id=8f2808e1d6',
-        hhmi: ' https://www.hhmi.org/',
         termsOfUse: 'https://www.hhmi.org/terms-of-use',
         privacyPolicy: 'https://www.hhmi.org/privacy-policy',
         homepage: '/',
