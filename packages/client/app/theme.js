@@ -18,16 +18,23 @@ module.exports = {
 
   fontInterface: 'Arial, sans-serif',
   // font sizes
+  fontSize: '16', // actual antd font variable
+
   fontSizeBase: '16px',
   fontSizeBaseSmall: '14px',
-  fontSizeHeading1: '96px',
-  fontSizeHeading2: '81px',
-  fontSizeHeading3: '54px',
+  fontSizeHeading1: '54px',
+  fontSizeHeading2: '36px',
+  fontSizeHeading3: '36px',
   fontSizeHeading4: '36px',
-  fontSizeHeading5: '24px',
-  fontSizeHeading6: '18px',
+  // fontSizeHeading5: '25px',
+  // fontSizeHeading6: '16px',
+
+  // outline width
+  lineWidth: '0.5',
+  lineWidthBold: '0.5',
 
   // line heights
+  lineHeight: '1.375',
   lineHeightBase: '30px',
   // lineHeightBaseSmall: '32px',
   // lineHeightHeading1: '96px',
@@ -42,7 +49,7 @@ module.exports = {
 
   gridUnit: '4px',
 
-  borderRadius: '3px',
+  borderRadius: '0px',
   borderWidth: '1px',
   borderStyle: 'solid',
 

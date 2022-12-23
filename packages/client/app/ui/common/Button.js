@@ -30,7 +30,9 @@ const StyledButton = styled(AntButton)`
     `};
 
   ${props => {
-    const { status, theme, type, ghost } = props
+    const { status, theme, type, ghost, disabled } = props
+
+    if (disabled) return null
 
     if (!Object.keys(colors).includes(status)) {
       if (type === 'primary' && !ghost) {

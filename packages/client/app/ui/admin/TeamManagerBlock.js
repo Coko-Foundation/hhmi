@@ -7,7 +7,14 @@ import { grid, th } from '@coko/client'
 import { Button as UIButton, H2, List, Select } from '../common'
 
 const Wrapper = styled.div`
-  /* width: 100%; */
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: ${grid(8)};
+  width: 100%;
+`
+
+const Heading = styled(H2)`
+  margin: 0;
 `
 
 const SearchWrapper = styled.div`
@@ -78,7 +85,8 @@ const TeamManagerBlock = props => {
 
   return (
     <Wrapper className={className}>
-      <H2>{displayName}</H2>
+      <Heading>{displayName}</Heading>
+
       <SearchWrapper>
         <Select
           aria-label={`Search for users to add in ${displayName} team`}
@@ -117,7 +125,8 @@ const TeamManagerBlock = props => {
         <RemoveButton
           disabled={selectTeamMember.length === 0}
           onClick={handleRemove}
-          type="danger"
+          status="danger"
+          type="primary"
         >
           Remove Selected User{selectTeamMember.length > 1 ? 's' : ''} from Team
         </RemoveButton>

@@ -294,7 +294,8 @@ const Metadata = React.forwardRef((props, ref) => {
                       onClick={() => {
                         handleSupplementaryRemove(remove, topicsKey)
                       }}
-                      type="danger"
+                      status="danger"
+                      type="primary"
                     >
                       Remove second topic
                     </Button>
@@ -372,7 +373,8 @@ const Metadata = React.forwardRef((props, ref) => {
                       onClick={() => {
                         handleSupplementaryRemove(remove, coursesKey)
                       }}
-                      type="danger"
+                      status="danger"
+                      type="primary"
                     >
                       {editorView
                         ? 'Remove last course'

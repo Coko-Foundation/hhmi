@@ -234,7 +234,8 @@ const UserList = props => {
             <Button
               disabled={selectedRows.length === 0}
               onClick={onBulkDelete}
-              type="danger"
+              status="error"
+              type="primary"
             >
               Delete
             </Button>

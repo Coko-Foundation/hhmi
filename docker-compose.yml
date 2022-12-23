@@ -12,6 +12,7 @@ services:
       - NODE_ENV=development
       - CLIENT_PORT=${CLIENT_PORT:-4000}
       - CLIENT_FAST_REFRESH=1
+      - CLIENT_FAVICON_PATH=../static/favicon.ico
       - CLIENT_PAGE_TITLE=${CLIENT_PAGE_TITLE:-"HHMI Assessment Builder"}
       - CLIENT_LANGUAGE=${CLIENT_LANGUAGE:-"en-US"}
       # - CLIENT_FAST_REFRESH=1

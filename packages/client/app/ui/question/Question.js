@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { isEqual } from 'lodash'
 
-import { Dropdown, Menu } from 'antd'
+import { Dropdown } from 'antd'
 import {
   LeftOutlined,
   RightOutlined,
@@ -36,7 +36,7 @@ import {
 } from '../common'
 import WaxWrapper from '../wax/Wax'
 
-const { confirm, info, success, error } = Modal
+const ModalContext = React.createContext(null)
 
 // #region styled
 const Wrapper = styled.div`
@@ -78,6 +78,15 @@ const Wrapper = styled.div`
 
 const StyledButton = styled(Button)`
   margin-right: ${grid(2)};
+  width: 100%;
+
+  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
+    width: auto;
+  }
+`
+
+const SubmitButton = styled(StyledButton)`
+  width: auto;
 `
 
 const StyledPrevNextButton = styled(StyledButton)`
@@ -94,10 +103,12 @@ const StyledPrevNextButton = styled(StyledButton)`
 
 const StyledWordExportButton = styled(ExportToWordButton)`
   margin-right: ${grid(2)};
+  width: 100%;
 `
 
 const StyledScormExportButton = styled(ExportToScormButton)`
   margin-right: ${grid(2)};
+  width: 100%;
 `
 
 const RightAreaWrapper = styled.div`
@@ -159,7 +170,7 @@ const StyledSwitch = styled(Switch)`
     height: 32px;
     justify-content: space-around;
     margin: 0 8px;
-    width: 190px;
+    width: 170px;
 
     @media (max-width: ${th('mediaQueries.mediumPlus')}) {
       margin: 0;
@@ -178,7 +189,14 @@ const StyledSwitch = styled(Switch)`
     }
 
     .ant-switch-inner {
-      font-size: ${th('fontSizeBase')};
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .ant-switch-inner-checked,
+      .ant-switch-inner-unchecked {
+        font-size: ${th('fontSizeBase')};
+      }
     }
 
     &.ant-switch-checked {
@@ -214,12 +232,6 @@ const DropdownButton = styled(Button)`
   padding: 0;
   transform: rotate(90deg);
   width: 32px;
-`
-
-const StyledMenu = styled(Menu)`
-  .ant-dropdown-menu-title-content > * {
-    width: 100%;
-  }
 `
 
 // #endregion styled
@@ -559,6 +571,9 @@ const Question = props => {
     wordFileLoading,
   } = props
 
+  const [modal, contextHolder] = Modal.useModal()
+  const { confirm, info, success, error } = modal
+
   const formRef = useRef()
   const waxRef = useRef()
 
@@ -880,7 +895,7 @@ const Question = props => {
         </Link>
       </StyledCheckbox>
 
-      <StyledButton
+      <SubmitButton
         disabled={
           // !formRef.current.isFieldsTouched(true) ||
           submitting ||
@@ -892,77 +907,119 @@ const Question = props => {
         type="primary"
       >
         Submit
-      </StyledButton>
+      </SubmitButton>
     </>
   )
 
-  const editorMenu = (
-    <StyledMenu>
-      <Menu.Item>
+  const editorActionsDropdownMenu = [
+    {
+      key: 1,
+      label: (
         <StyledWordExportButton
           loading={wordFileLoading}
           onExport={onClickExportToWord}
           showMetadataOption
         />
-      </Menu.Item>
-      {showAssignHEButton && (
-        <Menu.Item>
-          <StyledButton
-            aria-label="Assign Handling Editor"
-            ghost
-            onClick={onClickAssignHE}
-            type="primary "
-          >
-            Assign HE
-          </StyledButton>
-        </Menu.Item>
-      )}
-      {isUnderReview && (
-        <>
-          <Menu.Item>
-            <StyledButton onClick={handleReject} type="danger">
-              Do not accept
-            </StyledButton>
-          </Menu.Item>
-          <Menu.Item>
-            <StyledButton onClick={handleMoveToProduction} type="primary">
-              Move to production
-            </StyledButton>
-          </Menu.Item>
-        </>
-      )}
-      {isInProduction && (
-        <Menu.Item>
-          <StyledButton onClick={handlePublish} type="primary">
-            Publish
-          </StyledButton>
-        </Menu.Item>
-      )}
-      {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
-        <>
-          <Menu.Item>
-            <StyledButton onClick={handleReject} type="danger">
-              Do not accept
-            </StyledButton>
-          </Menu.Item>
-          <Menu.Item>
-            <StyledButton onClick={handleMoveToReview} type="primary">
-              Move to Review
-            </StyledButton>
-          </Menu.Item>
-        </>
-      )}
-
-      {isPublished && (
-        <Menu.Item>
-          <StyledButton onClick={showNewVersionModal} type="primary">
-            Edit Question
-          </StyledButton>
-        </Menu.Item>
-      )}
-      {showNextQuestionLink && NextQuestion}
-    </StyledMenu>
-  )
+      ),
+    },
+    ...(showAssignHEButton
+      ? [
+          {
+            key: 'assignHE',
+            label: (
+              <StyledButton
+                aria-label="Assign Handling Editor"
+                ghost
+                onClick={onClickAssignHE}
+                type="primary "
+              >
+                Assign HE
+              </StyledButton>
+            ),
+          },
+        ]
+      : []),
+    ...(isUnderReview
+      ? [
+          {
+            key: 'reject',
+            label: (
+              <StyledButton
+                onClick={handleReject}
+                status="danger"
+                type="primary"
+              >
+                Do not accept
+              </StyledButton>
+            ),
+          },
+          {
+            key: 'moveToProduction',
+            label: (
+              <StyledButton onClick={handleMoveToProduction} type="primary">
+                Move to production
+              </StyledButton>
+            ),
+          },
+        ]
+      : []),
+    ...(isInProduction
+      ? [
+          {
+            key: 'publish',
+            label: (
+              <StyledButton onClick={handlePublish} type="primary">
+                Publish
+              </StyledButton>
+            ),
+          },
+        ]
+      : []),
+    ...(isSubmitted && !isUnderReview && !isInProduction && !isPublished
+      ? [
+          {
+            key: 'reject',
+            label: (
+              <StyledButton
+                onClick={handleReject}
+                status="danger"
+                type="primary"
+              >
+                Do not accept
+              </StyledButton>
+            ),
+          },
+          {
+            key: 'review',
+            label: (
+              <StyledButton onClick={handleMoveToReview} type="primary">
+                Move to Review
+              </StyledButton>
+            ),
+          },
+        ]
+      : []),
+    ...(isPublished
+      ? [
+          {
+            key: 'reviewOrReject',
+            label: (
+              <StyledButton onClick={showNewVersionModal} type="primary">
+                Edit Question
+              </StyledButton>
+            ),
+          },
+        ]
+      : []),
+    ...(showNextQuestionLink
+      ? [
+          {
+            key: 'nextQuestion',
+            label: NextQuestion,
+          },
+        ]
+      : []),
+  ]
 
   const RightAreaEditor = (
     <>
@@ -984,7 +1041,7 @@ const Question = props => {
         )}
         {isUnderReview && (
           <>
-            <StyledButton onClick={handleReject} type="danger">
+            <StyledButton onClick={handleReject} status="danger" type="primary">
               Do not accept
             </StyledButton>
 
@@ -1000,7 +1057,7 @@ const Question = props => {
         )}
         {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
           <>
-            <StyledButton onClick={handleReject} type="danger">
+            <StyledButton onClick={handleReject} status="danger" type="primary">
               Do not accept
             </StyledButton>
 
@@ -1017,7 +1074,12 @@ const Question = props => {
         )}
         {showNextQuestionLink && NextQuestion}
       </ActionsWrapper>
-      <MobileDropdown overlay={editorMenu} trigger={['click']}>
+      <MobileDropdown
+        menu={{
+          items: editorActionsDropdownMenu,
+        }}
+        trigger={['click']}
+      >
         <DropdownButton
           aria-label="More actions"
           icon={<EllipsisOutlined />}
@@ -1040,35 +1102,42 @@ const Question = props => {
     </RightAreaWrapper>
   )
 
-  const publishedQuestionActions = (
-    <StyledMenu>
-      <Menu.Item>
-        {' '}
+  const publishedQuestionActions = [
+    {
+      label: (
         <StyledWordExportButton
           loading={wordFileLoading}
           onExport={onClickExportToWord}
           showMetadataOption={isUserLoggedIn}
         />
-      </Menu.Item>
-      <Menu.Item>
-        {' '}
+      ),
+      key: 'exportWord',
+    }, // remember to pass the key prop
+    {
+      label: (
         <StyledScormExportButton
           loading={scormZipLoading}
           onExport={onClickExportToScorm}
         />
-      </Menu.Item>
-      {isUserLoggedIn && (
-        <Menu.Item>
-          <StyledSwitch
-            checked={showMetadata}
-            checkedChildren="Show Metadata"
-            onChange={val => setShowMetadata(val)}
-            unCheckedChildren="Student view"
-          />
-        </Menu.Item>
-      )}
-    </StyledMenu>
-  )
+      ),
+      key: 'exportScorm',
+    },
+    ...(isUserLoggedIn
+      ? [
+          {
+            label: (
+              <StyledSwitch
+                checked={showMetadata}
+                checkedChildren="Show Metadata"
+                onChange={val => setShowMetadata(val)}
+                unCheckedChildren="Student view"
+              />
+            ),
+            key: 'toggleMetadata',
+          },
+        ]
+      : []),
+  ]
 
   const FacultyHeader = (
     <FacultyHeaderWrapper>
@@ -1099,11 +1168,9 @@ const Question = props => {
         </ActionsWrapper>
 
         <MobileDropdown
-          items={[
-            { label: 'item 1', key: 'item-1' }, // remember to pass the key prop
-            { label: 'item 2', key: 'item-2' },
-          ]}
-          overlay={publishedQuestionActions}
+          menu={{
+            items: publishedQuestionActions,
+          }}
           trigger={['click']}
         >
           <DropdownButton
@@ -1113,7 +1180,7 @@ const Question = props => {
             type="primary"
           />
         </MobileDropdown>
-        {NextQuestion}
+        <span>{NextQuestion}</span>
       </div>
     </FacultyHeaderWrapper>
   )
@@ -1122,72 +1189,79 @@ const Question = props => {
   if (loading || !metadata || !resources?.length) return <Spin spinning />
 
   return (
-    <Wrapper>
-      <Spin renderBackground={false} spinning={loading}>
-        <StyledTabs
-          items={[
-            {
-              label: QuestionTab,
-              key: 0,
-              children: (
-                <>
-                  {isRejected && (
-                    <Ribbon status="error">
-                      This question has been rejected by the editors
-                    </Ribbon>
-                  )}
-                  <PanelWrapper
-                    condition={false}
-                    editor={
-                      <MemoizedWax
-                        content={editorContent}
-                        innerRef={waxRef}
-                        layout={facultyView ? TestModeLayout : HhmiLayout}
-                        onContentChange={handleQuestionContentChange}
-                        onImageUpload={onImageUpload}
-                        published={isPublished}
-                        readOnly={readOnly}
-                        withMetadata={showMetadata}
-                      />
-                    }
-                    metadata={
-                      <MetadataWrapper>
-                        <Metadata
-                          editorView={editorView}
-                          initialValues={initialMetadataValues}
-                          innerRef={formRef}
-                          metadata={metadata}
-                          onAutoSave={handleMetadataAutoSave}
-                          onFormFinish={onFormFinish}
-                          presentationMode={facultyView}
+    <ModalContext.Provider>
+      <Wrapper>
+        <Spin renderBackground={false} spinning={loading}>
+          <StyledTabs
+            items={[
+              {
+                label: QuestionTab,
+                key: 0,
+                children: (
+                  <>
+                    {isRejected && (
+                      <Ribbon status="error">
+                        This question has been rejected by the editors
+                      </Ribbon>
+                    )}
+                    <PanelWrapper
+                      condition={false}
+                      editor={
+                        <MemoizedWax
+                          content={editorContent}
+                          innerRef={waxRef}
+                          layout={facultyView ? TestModeLayout : HhmiLayout}
+                          onContentChange={handleQuestionContentChange}
+                          onImageUpload={onImageUpload}
+                          published={isPublished}
                           readOnly={readOnly}
-                          resources={resources}
+                          withMetadata={showMetadata}
                         />
-                      </MetadataWrapper>
-                    }
-                    showMetadata={showMetadata}
-                  />
-                  {/* <QuestionWrapper showMetadata={showMetadata}>
+                      }
+                      metadata={
+                        <MetadataWrapper>
+                          <Metadata
+                            editorView={editorView}
+                            initialValues={initialMetadataValues}
+                            innerRef={formRef}
+                            metadata={metadata}
+                            onAutoSave={handleMetadataAutoSave}
+                            onFormFinish={onFormFinish}
+                            presentationMode={facultyView}
+                            readOnly={readOnly}
+                            resources={resources}
+                          />
+                        </MetadataWrapper>
+                      }
+                      showMetadata={showMetadata}
+                    />
+                    {/* <QuestionWrapper showMetadata={showMetadata}>
                     
 
                     {showMetadata && (
 
                     )}
                   </QuestionWrapper> */}
-                </>
-              ),
-            },
-          ]}
-          renderTabBar={(tabProps, DefaultTabBar) => {
-            return facultyView ? FacultyHeader : <DefaultTabBar {...tabProps} />
-          }}
-          tabBarExtraContent={{
-            // left: BackButton,
-            right: RightArea,
-          }}
-        />
-      </Spin>
-    </Wrapper>
+                  </>
+                ),
+              },
+            ]}
+            renderTabBar={(tabProps, DefaultTabBar) => {
+              return facultyView ? (
+                FacultyHeader
+              ) : (
+                <DefaultTabBar {...tabProps} />
+              )
+            }}
+            tabBarExtraContent={{
+              // left: BackButton,
+              right: RightArea,
+            }}
+          />
+        </Spin>
+      </Wrapper>
+      {contextHolder}
+    </ModalContext.Provider>
   )
 }
 

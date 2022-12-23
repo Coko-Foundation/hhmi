@@ -13,7 +13,7 @@ import {
 } from '../graphql'
 import { hasGlobalRole } from '../utilities'
 
-const { confirm, error } = Modal
+const ModalContext = React.createContext(null)
 
 const usersApiToUi = users => {
   if (!users) return []
@@ -48,6 +48,9 @@ const ManageUsers = () => {
   const [selectedRows, setSelectedRows] = useState([])
   const [search, setSearch] = useState('')
   const [showDeactivated, setShowDeactivated] = useState(false)
+
+  const [modal, contextHolder] = Modal.useModal()
+  const { confirm, error } = modal
 
   const { currentUser } = useCurrentUser()
 
@@ -262,31 +265,34 @@ const ManageUsers = () => {
   }
 
   return (
-    <UserList
-      currentPage={currentPage + 1}
-      data={usersApiToUi(usersData?.filterUsers.result)}
-      loading={usersLoading}
-      // table can be empty only for deactivated users, hence the wording
-      locale={{
-        emptyText: (
-          <Empty
-            description="No Deactivated Users"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
-        ),
-      }}
-      onBulkActivate={() => bulkAction(ACTIVATE_ACTION)}
-      onBulkDeactivate={() => bulkAction(DEACTIVATE_ACTION)}
-      onBulkDelete={() => bulkAction(DELETE_ACTION)}
-      onClickShowDeactivated={handleShowDeactivatedChange}
-      onPageChange={handlePageChange}
-      onSearch={handleSearch}
-      pageSize={PAGE_SIZE}
-      selectedRows={selectedRows}
-      setSelectedRows={setSelectedRows}
-      showDeactivated={showDeactivated}
-      totalUserCount={usersData?.filterUsers.totalCount}
-    />
+    <ModalContext.Provider>
+      <UserList
+        currentPage={currentPage + 1}
+        data={usersApiToUi(usersData?.filterUsers.result)}
+        loading={usersLoading}
+        // table can be empty only for deactivated users, hence the wording
+        locale={{
+          emptyText: (
+            <Empty
+              description="No Deactivated Users"
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ),
+        }}
+        onBulkActivate={() => bulkAction(ACTIVATE_ACTION)}
+        onBulkDeactivate={() => bulkAction(DEACTIVATE_ACTION)}
+        onBulkDelete={() => bulkAction(DELETE_ACTION)}
+        onClickShowDeactivated={handleShowDeactivatedChange}
+        onPageChange={handlePageChange}
+        onSearch={handleSearch}
+        pageSize={PAGE_SIZE}
+        selectedRows={selectedRows}
+        setSelectedRows={setSelectedRows}
+        showDeactivated={showDeactivated}
+        totalUserCount={usersData?.filterUsers.totalCount}
+      />
+      {contextHolder}
+    </ModalContext.Provider>
   )
 }
 

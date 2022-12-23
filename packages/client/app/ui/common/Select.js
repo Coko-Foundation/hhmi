@@ -35,6 +35,7 @@ const Select = props => {
     showSearch,
     /* eslint-enable react/prop-types */
 
+    virtual,
     wrapOptionText,
     ...rest
   } = props
@@ -61,6 +62,7 @@ const Select = props => {
       notFoundContent={!notFoundContent && async ? null : notFoundContent}
       onSearch={onSearch && searchFunc}
       showSearch={showSearch || !!onSearch}
+      virtual={virtual}
       {...rest}
     />
   )
@@ -70,6 +72,7 @@ Select.propTypes = {
   async: PropTypes.bool,
   // debounce: PropTypes.bool,
   debounceTimeout: PropTypes.number,
+  virtual: PropTypes.bool,
   wrapOptionText: PropTypes.bool,
 }
 
@@ -77,6 +80,7 @@ Select.defaultProps = {
   async: false,
   // debounce: false,
   debounceTimeout: 500,
+  virtual: false,
   wrapOptionText: false,
 }
 

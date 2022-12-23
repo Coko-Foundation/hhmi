@@ -210,6 +210,7 @@ const StyledLogin = styled(Link)`
   height: 40px;
   padding: ${grid(1)} ${grid(4)};
   text-align: left;
+  text-decoration: none;
   transition: all cubic-bezier(0.645, 0.045, 0.355, 1) 0.3s;
   width: 100%;
 

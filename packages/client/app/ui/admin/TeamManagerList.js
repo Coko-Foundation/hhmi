@@ -2,26 +2,30 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { Layout, List, H1 } from '../common'
+import { List, H1 } from '../common'
 import TeamManagerBlock from './TeamManagerBlock'
 
-const Wrapper = styled.div``
+const Wrapper = styled.div`
+  height: 100%;
 
-const TeamManagerBlockWrapper = styled.div`
-  padding: ${grid(8)} 0;
-  width: 100%;
+  > section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    > div:nth-child(2) {
+      flex-grow: 1;
+    }
+  }
 `
 
-const TeamManagerListHeader = styled(H1)`
+const PageHeader = styled(H1)`
   text-align: center;
 `
 
-const StyledList = styled(List)`
-  .ant-list-items {
-    > li:not(:last-child) {
-      border-bottom: 1px solid ${th('colorSecondary')};
-    }
-  }
+const StyledSection = styled.section`
+  background: ${th('colorBackground')};
+  padding: ${grid(4)};
 `
 
 const TeamManagerList = props => {
@@ -39,38 +43,32 @@ const TeamManagerList = props => {
 
   return (
     <Wrapper className={className}>
-      <Layout>
-        <Layout.Header>
-          <TeamManagerListHeader>Team Manager</TeamManagerListHeader>
-        </Layout.Header>
+      <StyledSection>
+        <PageHeader>Team Manager</PageHeader>
 
-        <Layout.Content>
-          <StyledList
-            className={className}
-            dataSource={teams}
-            // footerContent={bulkAction}
-            loading={loading}
-            onSearch={onSearch}
-            renderItem={item => (
-              <TeamManagerBlockWrapper>
-                <TeamManagerBlock
-                  className={className}
-                  displayName={item.displayName}
-                  members={item.members}
-                  onAdd={onAdd}
-                  onRemove={onRemove}
-                  onRowSelectionChange={onRowSelectionChange}
-                  onSearch={onSearch}
-                  searchLoading={searchLoading}
-                  searchOptions={searchOptions}
-                  teamId={item.id}
-                />
-              </TeamManagerBlockWrapper>
-            )}
-            showPagination={false}
-          />
-        </Layout.Content>
-      </Layout>
+        <List
+          className={className}
+          dataSource={teams}
+          // footerContent={bulkAction}
+          loading={loading}
+          onSearch={onSearch}
+          renderItem={item => (
+            <TeamManagerBlock
+              className={className}
+              displayName={item.displayName}
+              members={item.members}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onRowSelectionChange={onRowSelectionChange}
+              onSearch={onSearch}
+              searchLoading={searchLoading}
+              searchOptions={searchOptions}
+              teamId={item.id}
+            />
+          )}
+          showPagination={false}
+        />
+      </StyledSection>
     </Wrapper>
   )
 }

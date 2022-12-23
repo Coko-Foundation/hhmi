@@ -16,6 +16,8 @@ import {
   Page,
 } from '../common'
 
+const ModalContext = React.createContext(null)
+
 const Signup = props => {
   const {
     className,
@@ -27,9 +29,12 @@ const Signup = props => {
     // userEmail,
   } = props
 
+  const [modal, contextHolder] = Modal.useModal()
+  const { info } = modal
+
   const showTermsAndConditions = e => {
     e.preventDefault()
-    Modal.info({
+    info({
       title: 'Agreeing to Terms and Conditions',
       content: (
         <Paragraph>
@@ -180,35 +185,37 @@ const Signup = props => {
                 type="password"
               />
             </Form.Item>
-
-            <Form.Item
-              name="agreedTc"
-              rules={[
-                {
-                  validator: (_, value) =>
-                    value
-                      ? Promise.resolve()
-                      : Promise.reject(
-                          new Error(
-                            'You need to agree to the terms and conditions',
+            <ModalContext.Provider>
+              <Form.Item
+                name="agreedTc"
+                rules={[
+                  {
+                    validator: (_, value) =>
+                      value
+                        ? Promise.resolve()
+                        : Promise.reject(
+                            new Error(
+                              'You need to agree to the terms and conditions',
+                            ),
                           ),
-                        ),
-                },
-              ]}
-              valuePropName="checked"
-            >
-              <Checkbox aria-label="I agree to the terms and conditions">
-                I agree to the{' '}
-                <Link
-                  as="a"
-                  href="#termsAndCondition"
-                  id="termsAndConditions"
-                  onClick={showTermsAndConditions}
-                >
-                  terms and conditions
-                </Link>
-              </Checkbox>
-            </Form.Item>
+                  },
+                ]}
+                valuePropName="checked"
+              >
+                <Checkbox aria-label="I agree to the terms and conditions">
+                  I agree to the{' '}
+                  <Link
+                    as="a"
+                    href="#termsAndCondition"
+                    id="termsAndConditions"
+                    onClick={showTermsAndConditions}
+                  >
+                    terms and conditions
+                  </Link>
+                </Checkbox>
+              </Form.Item>
+              {contextHolder}
+            </ModalContext.Provider>
           </AuthenticationForm>
         )}
       </AuthenticationWrapper>

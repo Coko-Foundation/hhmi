@@ -27,6 +27,8 @@ import {
 } from '../graphql'
 import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 
+const ModalContext = React.createContext(null)
+
 const AUTOSAVE_DELAY = 500
 
 const { info } = Modal
@@ -117,6 +119,8 @@ const QuestionPage = props => {
   const { id } = useParams()
   const history = useHistory()
   const { metadata } = useMetadata()
+
+  const [modal, contextHolder] = Modal.useModal()
 
   const { data, loading, error } = useQuery(QUESTION, {
     variables: {
@@ -387,7 +391,7 @@ const QuestionPage = props => {
       })
       .catch(e => {
         console.error(e)
-        Modal.error({
+        modal.error({
           title: 'Conversion error',
           content:
             'Something went wrong with your conversion! Please contact your system administrator.',
@@ -414,7 +418,7 @@ const QuestionPage = props => {
       })
       .catch(e => {
         console.error(e)
-        Modal.error({
+        modal.error({
           title: 'Conversion error',
           content:
             'Something went wrong with your conversion! Please contact your system administrator.',
@@ -470,43 +474,46 @@ const QuestionPage = props => {
     <>
       {/* TODO: create more specific heading */}
       <VisuallyHiddenElement as="h1">Question Page</VisuallyHiddenElement>
-      <Question
-        editorContent={editorContent}
-        editorView={isEditor && !isAuthor}
-        facultyView={testMode}
-        initialMetadataValues={testMode ? version : metadataApiToUi(version)}
-        isInProduction={version.inProduction}
-        isPublished={version.published}
-        isRejected={question.rejected}
-        isSubmitted={version.submitted}
-        isUnderReview={version.underReview}
-        isUserLoggedIn={!!user}
-        loading={loading}
-        metadata={metadata}
-        onClickAssignHE={handleClickAssignHE}
-        onClickBackButton={handleClickBackButton}
-        onClickExportToScorm={testMode ? handleExportToScorm : null}
-        onClickExportToWord={handleExportToWord}
-        onClickNextButton={() => handleGetQuestionButton('NEXT')}
-        onClickPreviousButton={() => handleGetQuestionButton('PREV')}
-        onCreateNewVersion={handleCreateNewVersion}
-        onEditorContentAutoSave={handleEditorContentAutoSave}
-        onImageUpload={handleImageUpload}
-        onMetadataAutoSave={handleMetadataAutoSave}
-        onMoveToProduction={handleMoveToProduction}
-        onMoveToReview={handleMoveToReview}
-        onPublish={handlePublish}
-        onQuestionSubmit={handleQuestionSubmit}
-        onReject={handleReject}
-        questionAgreedTc={false} //
-        resources={resourcesData?.getResources}
-        scormZipLoading={generateScormZipLoading}
-        showAssignHEButton={false} //
-        showNextQuestionLink={false} //
-        submitting={false} //
-        updated={version.lastEdit}
-        wordFileLoading={generateWordFileLoading}
-      />
+      <ModalContext.Provider>
+        <Question
+          editorContent={editorContent}
+          editorView={isEditor && !isAuthor}
+          facultyView={testMode}
+          initialMetadataValues={testMode ? version : metadataApiToUi(version)}
+          isInProduction={version.inProduction}
+          isPublished={version.published}
+          isRejected={question.rejected}
+          isSubmitted={version.submitted}
+          isUnderReview={version.underReview}
+          isUserLoggedIn={!!user}
+          loading={loading}
+          metadata={metadata}
+          onClickAssignHE={handleClickAssignHE}
+          onClickBackButton={handleClickBackButton}
+          onClickExportToScorm={testMode ? handleExportToScorm : null}
+          onClickExportToWord={handleExportToWord}
+          onClickNextButton={() => handleGetQuestionButton('NEXT')}
+          onClickPreviousButton={() => handleGetQuestionButton('PREV')}
+          onCreateNewVersion={handleCreateNewVersion}
+          onEditorContentAutoSave={handleEditorContentAutoSave}
+          onImageUpload={handleImageUpload}
+          onMetadataAutoSave={handleMetadataAutoSave}
+          onMoveToProduction={handleMoveToProduction}
+          onMoveToReview={handleMoveToReview}
+          onPublish={handlePublish}
+          onQuestionSubmit={handleQuestionSubmit}
+          onReject={handleReject}
+          questionAgreedTc={false} //
+          resources={resourcesData?.getResources}
+          scormZipLoading={generateScormZipLoading}
+          showAssignHEButton={false} //
+          showNextQuestionLink={false} //
+          submitting={false} //
+          updated={version.lastEdit}
+          wordFileLoading={generateWordFileLoading}
+        />
+        {contextHolder}
+      </ModalContext.Provider>
     </>
   )
 }
