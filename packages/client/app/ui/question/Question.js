@@ -429,7 +429,7 @@ const PanelWrapper = ({ editor, metadata, showMetadata }) => {
       <Collapse.Panel
         header="Metadata"
         key="metadata"
-        data-testid="editor-collapse"
+        data-testid="metadata-collapse"
       >
         {metadata}
       </Collapse.Panel>
