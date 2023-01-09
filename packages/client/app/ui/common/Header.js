@@ -473,7 +473,7 @@ const Header = props => {
           aria-controls="main-nav"
           aria-expanded={showMenu}
           aria-label="Menu"
-          data-testid="nav-btn"
+          data-testid="nav-toggle"
           onClick={() => setShowMenu(!showMenu)}
         />
         <NavLinks id="main-nav">
