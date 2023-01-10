@@ -31,8 +31,6 @@ const ModalContext = React.createContext(null)
 
 const AUTOSAVE_DELAY = 500
 
-const { info } = Modal
-
 // #region transformations
 const metadataApiToUi = values => {
   const courseData = [...values.courses]
@@ -331,7 +329,7 @@ const QuestionPage = props => {
       } = response
 
       if (questionId === '0') {
-        info({
+        modal.info({
           title: `No ${which === 'NEXT' ? 'next' : 'previous'} question`,
           content: 'There are no more questions in this direction',
         })
