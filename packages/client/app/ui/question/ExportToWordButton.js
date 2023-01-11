@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-import { Button, Checkbox, Modal } from 'ui'
+import { Button, Checkbox, Modal as AntModal } from 'ui'
+
+const Modal = AntModal.default
 
 const ExportToWordButton = props => {
   const { className, loading, onExport, showMetadataOption } = props

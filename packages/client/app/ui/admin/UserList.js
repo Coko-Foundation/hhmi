@@ -12,9 +12,11 @@ import {
   Tag,
   Table,
   DateParser,
-  Modal,
+  Modal as AntModal,
 } from '../common'
 import { profileOptions } from '../../utilities'
+
+const Modal = AntModal.default
 
 const Wrapper = styled.div`
   height: 100%;
@@ -435,6 +437,7 @@ const UserList = props => {
         onCancel={() => setOpenModal(null)}
         open={openModal}
         title={modalContent?.title}
+        width={416}
       >
         <ModalGrid>
           <span />

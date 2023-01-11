@@ -9,13 +9,14 @@ import {
   Form,
   Input,
   Link,
-  Modal,
+  Modal as AntModal,
   Result,
   Checkbox,
   Paragraph,
   Page,
 } from '../common'
 
+const Modal = AntModal.default
 const ModalContext = React.createContext(null)
 
 const Signup = props => {

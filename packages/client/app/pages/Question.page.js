@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce'
 
 import { serverUrl } from '@coko/client'
 
-import { Question, Result, Modal, VisuallyHiddenElement } from 'ui'
+import { Question, Result, Modal as AntModal, VisuallyHiddenElement } from 'ui'
 
 import {
   CURRENT_USER,
@@ -27,6 +27,7 @@ import {
 } from '../graphql'
 import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 
+const Modal = AntModal.default
 const ModalContext = React.createContext(null)
 
 const AUTOSAVE_DELAY = 500
@@ -118,7 +119,7 @@ const QuestionPage = props => {
   const history = useHistory()
   const { metadata } = useMetadata()
 
-  const [modal, contextHolder] = Modal.useModal()
+  // const [modal, contextHolder] = Modal.useModal()
 
   const { data, loading, error } = useQuery(QUESTION, {
     variables: {
@@ -329,7 +330,7 @@ const QuestionPage = props => {
       } = response
 
       if (questionId === '0') {
-        modal.info({
+        Modal.info({
           title: `No ${which === 'NEXT' ? 'next' : 'previous'} question`,
           content: 'There are no more questions in this direction',
         })
@@ -389,7 +390,7 @@ const QuestionPage = props => {
       })
       .catch(e => {
         console.error(e)
-        modal.error({
+        Modal.error({
           title: 'Conversion error',
           content:
             'Something went wrong with your conversion! Please contact your system administrator.',
@@ -416,7 +417,7 @@ const QuestionPage = props => {
       })
       .catch(e => {
         console.error(e)
-        modal.error({
+        Modal.error({
           title: 'Conversion error',
           content:
             'Something went wrong with your conversion! Please contact your system administrator.',
@@ -510,7 +511,7 @@ const QuestionPage = props => {
           updated={version.lastEdit}
           wordFileLoading={generateWordFileLoading}
         />
-        {contextHolder}
+        {/* {contextHolder} */}
       </ModalContext.Provider>
     </>
   )
