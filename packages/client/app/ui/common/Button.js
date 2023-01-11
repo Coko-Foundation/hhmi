@@ -14,6 +14,7 @@ const colors = {
 }
 
 const StyledButton = styled(AntButton)`
+  box-shadow: none;
   font-size: ${th('fontSizeBase')};
   /* let lineHeight expand the button height */
   height: unset;
