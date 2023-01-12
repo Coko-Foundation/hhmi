@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
-import { Button, Checkbox, Modal as AntModal } from 'ui'
+import { Button, Checkbox, Modal } from 'ui'
 
-const Modal = AntModal.default
+const ModalFooter = Modal.footer
+const ModalContext = React.createContext(null)
 
 const ExportToWordButton = props => {
   const { className, loading, onExport, showMetadataOption } = props
@@ -11,17 +12,34 @@ const ExportToWordButton = props => {
   const [showModal, setShowModal] = useState(false)
   const [showFeedback, setShowFeedback] = useState(true)
   const [showMetadata, setShowMetadata] = useState(false)
+  const [modal, contextHolder] = Modal.useModal()
 
   const handleOk = () => {
     // force metadata to false if the option if off
     const metadataValue = showMetadataOption ? showMetadata : false
 
-    onExport({ showFeedback, showMetadata: metadataValue })
     setShowModal(false)
+    onExport({ showFeedback, showMetadata: metadataValue })
+      .then()
+      .catch(() => {
+        const conversionErrorModal = modal.error()
+        conversionErrorModal.update({
+          title: 'Conversion error',
+          content:
+            'Something went wrong with your conversion! Please contact your system administrator.',
+          footer: [
+            <ModalFooter key="footer">
+              <Button onClick={conversionErrorModal.destroy} type="primary">
+                Ok
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      })
   }
 
   return (
-    <>
+    <ModalContext.Provider>
       <Button
         className={className}
         loading={loading}
@@ -32,8 +50,15 @@ const ExportToWordButton = props => {
       </Button>
 
       <Modal
+        footer={[
+          <ModalFooter key="footer">
+            <Button onClick={() => setShowModal(false)}>Cancel</Button>
+            <Button onClick={handleOk} type="primary">
+              Export
+            </Button>
+          </ModalFooter>,
+        ]}
         onCancel={() => setShowModal(false)}
-        onOk={handleOk}
         open={showModal}
         title="Export to Word"
       >
@@ -57,7 +82,8 @@ const ExportToWordButton = props => {
           </div>
         )}
       </Modal>
-    </>
+      {contextHolder}
+    </ModalContext.Provider>
   )
 }
 
