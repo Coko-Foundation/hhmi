@@ -629,7 +629,6 @@ const Question = props => {
             as="a"
             href="https://www.hhmi.org/terms-of-use"
             rel="noreferrer"
-            style={{ color: '#3F3F3F' }}
             target="_blank"
           >
             HHMI’s Terms of Use

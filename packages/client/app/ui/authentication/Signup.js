@@ -1,11 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { grid } from '@coko/client'
+import styled from 'styled-components'
 
 import AuthenticationForm from './AuthenticationForm'
 import AuthenticationHeader from './AuthenticationHeader'
 import AuthenticationWrapper from './AuthenticationWrapper'
 // import SuccessSubTitle from './SuccessSubTitle'
 import {
+  Button,
   Form,
   Input,
   Link,
@@ -19,6 +22,11 @@ import {
 const Modal = AntModal.default
 const ModalContext = React.createContext(null)
 
+const ModalFooter = styled.div`
+  margin-top: ${grid(3)};
+  text-align: right;
+`
+
 const Signup = props => {
   const {
     className,
@@ -31,11 +39,11 @@ const Signup = props => {
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
-  const { info } = modal
 
   const showTermsAndConditions = e => {
     e.preventDefault()
-    info({
+    const termsAndConditionsModal = modal.info()
+    termsAndConditionsModal.update({
       title: 'Agreeing to Terms and Conditions',
       content: (
         <Paragraph>
@@ -44,7 +52,6 @@ const Signup = props => {
             as="a"
             href="https://www.biointeractive.org/hhmi-biointeractive-online-community-terms-use"
             rel="noreferrer"
-            style={{ color: '#3F3F3F' }}
             target="_blank"
           >
             HHMI BioInteractive Online Community Terms of Use
@@ -54,7 +61,6 @@ const Signup = props => {
             as="a"
             href="https://www.hhmi.org/terms-of-use"
             rel="noreferrer"
-            style={{ color: '#3F3F3F' }}
             target="_blank"
           >
             HHMI Terms of Use
@@ -64,7 +70,6 @@ const Signup = props => {
             as="a"
             href="https://www.hhmi.org/privacy-policy"
             rel="noreferrer"
-            style={{ color: '#3F3F3F' }}
             target="_blank"
           >
             HHMI Privacy Policy and Cookie Notice
@@ -72,9 +77,14 @@ const Signup = props => {
           .
         </Paragraph>
       ),
+      footer: [
+        <ModalFooter key="footer">
+          <Button onClick={termsAndConditionsModal.destroy} type="primary">
+            Ok
+          </Button>
+        </ModalFooter>,
+      ],
       maskClosable: true,
-      afterClose: () =>
-        document.body.querySelector('#termsAndConditions').focus(),
       width: 570,
       bodyStyle: {
         marginRight: 38,

@@ -4,18 +4,20 @@ import { th } from '@coko/client'
 import { Link } from 'react-router-dom'
 
 const StyledLink = styled(Link)`
-  color: ${th('colorText')};
-  text-decoration: underline;
-
-  &:hover {
+  && {
     color: ${th('colorText')};
-    text-decoration: none;
-  }
+    text-decoration: underline;
 
-  &:focus {
-    color: ${th('colorText')};
-    outline: 1px solid ${th('colorPrimary')};
-    text-decoration: none;
+    &:hover {
+      color: ${th('colorText')};
+      text-decoration: none;
+    }
+
+    &:focus {
+      color: ${th('colorText')};
+      outline: 1px solid ${th('colorPrimary')};
+      text-decoration: none;
+    }
   }
 `
 
