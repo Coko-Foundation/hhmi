@@ -189,7 +189,7 @@ const extractDocumentText = data => {
       const { text, content: itemContent, type, attrs } = item
 
       if (type === 'image') {
-        if (attrs.alt) {
+        if (attrs?.alt && attrs.alt.trim().length) {
           allContent += `image with alt text "${attrs.alt}" `
         } else {
           allContent += 'image with no alt text '
