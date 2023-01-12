@@ -949,7 +949,24 @@ const Question = props => {
     <StyledPrevNextButton
       aria-label="Previous Question"
       icon={<LeftOutlined />}
-      onClick={onClickPreviousButton}
+      onClick={() =>
+        onClickPreviousButton()
+          .then()
+          .catch(() => {
+            const infoModal = modal.info()
+            infoModal.update({
+              title: `No previous question`,
+              content: 'There are no more questions in this direction',
+              footer: [
+                <ModalFooter key="footer">
+                  <Button onClick={infoModal.destroy} type="primary">
+                    Ok
+                  </Button>
+                </ModalFooter>,
+              ],
+            })
+          })
+      }
       title="Previous Question"
       type="primary"
     >
@@ -962,7 +979,24 @@ const Question = props => {
       aria-label="Next Question"
       direction="rtl"
       icon={<RightOutlined />}
-      onClick={onClickNextButton}
+      onClick={() =>
+        onClickNextButton()
+          .then()
+          .catch(() => {
+            const infoModal = modal.info()
+            infoModal.update({
+              title: `No next question`,
+              content: 'There are no more questions in this direction',
+              footer: [
+                <ModalFooter key="footer">
+                  <Button onClick={infoModal.destroy} type="primary">
+                    Ok
+                  </Button>
+                </ModalFooter>,
+              ],
+            })
+          })
+      }
       title="Next Question"
       type="primary"
     >

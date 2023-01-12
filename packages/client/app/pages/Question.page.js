@@ -119,7 +119,7 @@ const QuestionPage = props => {
   const history = useHistory()
   const { metadata } = useMetadata()
 
-  // const [modal, contextHolder] = Modal.useModal()
+  const [modal, contextHolder] = Modal.useModal()
 
   const { data, loading, error } = useQuery(QUESTION, {
     variables: {
@@ -320,7 +320,7 @@ const QuestionPage = props => {
       },
     }
 
-    getQuestion({
+    return getQuestion({
       variables,
     }).then(response => {
       const {
@@ -329,17 +329,17 @@ const QuestionPage = props => {
         },
       } = response
 
-      if (questionId === '0') {
-        Modal.info({
-          title: `No ${which === 'NEXT' ? 'next' : 'previous'} question`,
-          content: 'There are no more questions in this direction',
-        })
-      } else {
-        history.push({
-          pathname: `/question/${questionId}/test`,
-          state: searchParams,
-        })
-      }
+      return new Promise((resolve, reject) => {
+        if (questionId !== '0') {
+          history.push({
+            pathname: `/question/${questionId}/test`,
+            state: searchParams,
+          })
+          resolve()
+        } else {
+          reject()
+        }
+      })
     })
   }
 
@@ -390,7 +390,7 @@ const QuestionPage = props => {
       })
       .catch(e => {
         console.error(e)
-        Modal.error({
+        modal.error({
           title: 'Conversion error',
           content:
             'Something went wrong with your conversion! Please contact your system administrator.',
@@ -417,7 +417,7 @@ const QuestionPage = props => {
       })
       .catch(e => {
         console.error(e)
-        Modal.error({
+        modal.error({
           title: 'Conversion error',
           content:
             'Something went wrong with your conversion! Please contact your system administrator.',
@@ -511,7 +511,7 @@ const QuestionPage = props => {
           updated={version.lastEdit}
           wordFileLoading={generateWordFileLoading}
         />
-        {/* {contextHolder} */}
+        {contextHolder}
       </ModalContext.Provider>
     </>
   )
