@@ -8,6 +8,7 @@ module.exports = {
   colorBorder: 'gainsboro',
   colorSelection: '#3fc2cd',
 
+  colorInfo: '#178387',
   colorSuccess: '#00763a',
   colorError: '#d43131',
   colorWarning: '#a65b00',
