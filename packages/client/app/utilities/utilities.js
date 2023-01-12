@@ -186,7 +186,15 @@ const extractDocumentText = data => {
     if (!Array.isArray(content)) return
 
     content.forEach(item => {
-      const { text, content: itemContent } = item
+      const { text, content: itemContent, type, attrs } = item
+
+      if (type === 'image') {
+        if (attrs?.alt && attrs.alt.trim().length) {
+          allContent += `image with alt text "${attrs.alt}" `
+        } else {
+          allContent += 'image with no alt text '
+        }
+      }
 
       if (text) allContent += `${text} `
       if (itemContent) extract(item)
@@ -199,9 +207,7 @@ const extractDocumentText = data => {
   allContent = allContent.substring(0, maxLength + 1).trim()
   allContent =
     allContent.length === maxLength ? `${allContent} ...` : allContent
-
-  if (!allContent) allContent = ' '
-
+  if (!allContent) allContent = '(empty)'
   return {
     type: 'doc',
     content: [
