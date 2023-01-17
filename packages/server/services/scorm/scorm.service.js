@@ -1,34 +1,13 @@
 const fs = require('fs')
-// const imageSize = require('image-size')
 const xml = require('xml')
 const archiver = require('archiver')
 const path = require('path')
 
-const buildIndex = require('./helpers/buildIndex')
 const metadataResolver = require('../../controllers/metadataHandler')
 const resources = require('../../controllers/resourcesData')
 
-const answerTypes = [
-  'true_false',
-  'multiple_choice',
-  'true_false_single_correct',
-  'multiple_choice_single_correct',
-]
-
-const answerContainers = [
-  'true_false_container',
-  'multiple_choice_container',
-  'true_false_single_correct_container',
-  'multiple_choice_single_correct_container',
-  'fill_the_gap_container',
-  'multiple_drop_down_container',
-  'matching_container',
-  'essay_container',
-]
-
 class WaxToScormConverter {
   #correctAnswers = []
-  #feedback = []
   #questionIds = []
 
   #questionVersion = {}
@@ -36,6 +15,8 @@ class WaxToScormConverter {
   #courseTitle = ''
 
   #baseMessage = ''
+
+  doc = []
 
   constructor(questionVersion, imageData, options = {}) {
     this.#baseMessage = 'WaxToScormConverter:'
@@ -53,138 +34,10 @@ class WaxToScormConverter {
 
     this.#questionVersion = questionVersion
     this.doc = questionVersion.content
-    this.listInstance = 0
-
-    this.typeToHandlerMap = {
-      bulletlist: this.bulletListHandler,
-      figure: this.figureHandler,
-      image: this.imageHandler,
-      list_item: this.listItemHandler,
-      orderedlist: this.orderedListHandler,
-      paragraph: this.paragraphHandler,
-      table: this.tableHandler,
-      table_cell: this.tableCellHandler,
-      table_row: this.tableRowHandler,
-      text: this.textHandler,
-    }
-
-    this.imageData = imageData
-
-    this.baseFontSize = options.baseFontSize || '22pt'
-    this.fontFamily = options.fontFamily || 'Verdana'
   }
 
   #error = e => {
     throw new Error(`${this.#baseMessage} ${e}`)
-  }
-
-  #answerHandler = container => {
-    if (
-      container.type === 'fill_the_gap_container' ||
-      container.type === 'multiple_drop_down_container' ||
-      container.type === 'matching_container'
-    ) {
-      let contentType
-      if (container.type === 'fill_the_gap_container')
-        contentType = 'fill_the_gap'
-      else if (container.type === 'multiple_drop_down_container')
-        contentType = 'multiple_drop_down_option'
-      else contentType = 'matching_option'
-
-      container.content.map(contentItem => {
-        const options =
-          contentItem.content !== undefined
-            ? contentItem.content.filter(item => item.type === contentType)
-            : []
-
-        return options.map(option => {
-          this.#questionIds.push(option.attrs.id)
-
-          return this.#correctAnswers.push({
-            containerType:
-              container.type === 'fill_the_gap_container' ? 'value' : 'id',
-            containerId: option.attrs.id,
-            answerType: 'single',
-            answers: [
-              {
-                content:
-                  container.type === 'fill_the_gap_container'
-                    ? this.#contentHandler(option.content, { textOnly: true })
-                    : option.attrs.correct,
-                correct: true,
-              },
-            ],
-          })
-        })
-      })
-
-      const containers = container.content.map(contentItem =>
-        this.#contentHandler(contentItem.content, {
-          textOnly: true,
-          noNewLine: true,
-        }),
-      )
-
-      const fullQuestionText = containers.join(' ')
-
-      this.#feedback.push({
-        responseId: container.attrs.id,
-        questionText: fullQuestionText,
-        feedback: container.attrs.feedback,
-      })
-    } else if (container.type === 'essay_container') {
-      const essayAnswerContainer = container.content.filter(
-        content => content.type === 'essay_answer',
-      )[0]
-
-      this.#questionIds.push(essayAnswerContainer.attrs.id)
-
-      this.#correctAnswers.push({
-        containerType: 'essay',
-        containerId: essayAnswerContainer.attrs.id,
-        answerType: 'single',
-        answers: [],
-      })
-    } else {
-      const responses = container.content.filter(response =>
-        answerTypes.includes(response.type),
-      )
-
-      const answerContent = container.content.filter(
-        contentItem => answerTypes.includes(contentItem.type), // && contentItem.attrs.correct,
-      )
-
-      const answerIds = answerContent.map(answer => {
-        return { content: answer.attrs.id, correct: answer.attrs.correct }
-      })
-
-      this.#questionIds.push(container.attrs.id)
-
-      const isMulti =
-        container.type === 'true_false_container' ||
-        container.type === 'multiple_choice_container'
-
-      this.#correctAnswers.push({
-        containerType: 'id',
-        containerId: container.attrs.id,
-        answerType: isMulti ? 'multi' : 'single',
-        answers: answerIds,
-      })
-
-      responses.map(response =>
-        this.#feedback.push({
-          responseId: response.attrs.id,
-          questionText: container.content.length
-            ? `${this.#contentHandler(container.content[0].content, {
-                textOnly: true,
-              })} - ${this.#contentHandler(response.content, {
-                textOnly: true,
-              })}`
-            : '',
-          feedback: response.attrs.feedback,
-        }),
-      )
-    }
   }
 
   #essayAnswerHandler = container => {
@@ -202,382 +55,6 @@ class WaxToScormConverter {
       containerType: 'essay',
       answerType: 'single',
     })
-  }
-
-  #marksHandler = (text, marks) => {
-    if (!marks.length) return text
-
-    const mark = marks[0]
-
-    if (mark.type === 'link') {
-      const protocol = mark.attrs.href.slice(0, 5)
-      let link = ''
-
-      if (protocol === 'https') {
-        link = mark.attrs.href.slice(6)
-      } else if (protocol === 'http/') {
-        link = mark.attrs.href.slice(5)
-      } else link = mark.attrs.href
-
-      return ` <a href='//${link}' rel target='_${
-        mark.attrs.target
-      }'>${this.#marksHandler(text, marks.slice(1))}</a> `
-    }
-
-    if (mark.type === 'strikethrough') {
-      return `<span class="${
-        mark.attrs.class
-      }" style={{textDecorationLine: 'line-through'}}>${this.#marksHandler(
-        text,
-        marks.slice(1),
-      )}</span>`
-    }
-
-    if (mark.type === 'underline') {
-      return `<u>${this.#marksHandler(text, marks.slice(1))}</u>`
-    }
-
-    if (mark.type === 'subscript') {
-      return `<sub>${this.#marksHandler(text, marks.slice(1))}</sub>`
-    }
-
-    if (mark.type === 'superscript') {
-      return `<sup>${this.#marksHandler(text, marks.slice(1))}</sup>`
-    }
-
-    if (mark.type === 'smallcaps') {
-      return `<span class='${mark.attrs.class}'>${this.#marksHandler(
-        text,
-        marks.slice(1),
-      )}</span>`
-    }
-
-    return `<${mark.type}>${this.#marksHandler(text, marks.slice(1))}</${
-      mark.type
-    }>`
-  }
-
-  #contentHandler = (contentArray, options = {}) => {
-    if (!Array.isArray(contentArray)) return ''
-    return contentArray
-      .map(contentItem => {
-        if (answerContainers.includes(contentItem.type)) {
-          this.#answerHandler(contentItem)
-        }
-
-        // leaf node, type text
-        if (
-          contentItem.type === 'text' &&
-          typeof contentItem.marks === 'undefined'
-        ) {
-          return `<span>${contentItem.text}</span>`
-        }
-
-        if (contentItem.type === 'text') {
-          return this.#marksHandler(contentItem.text, contentItem.marks)
-        }
-
-        if (
-          contentItem.type === 'paragraph' &&
-          contentItem.content === undefined
-        ) {
-          return '<br/>'
-        }
-
-        if (contentItem.type === 'paragraph' && options.textOnly) {
-          return this.#contentHandler(contentItem.content)
-        }
-
-        if (contentItem.type === 'paragraph' && !options.isRadio) {
-          return `<p class="${contentItem.attrs.class}">${this.#contentHandler(
-            contentItem.content,
-          )}</p>`
-        }
-
-        if (contentItem.type === 'paragraph' && options.isRadio) {
-          return null
-        }
-
-        // type true_false_container
-        if (
-          contentItem.type === 'true_false_container' ||
-          contentItem.type === 'multiple_choice_container'
-        ) {
-          return `<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }">${this.#contentHandler(contentItem.content, {
-            containerId: contentItem.attrs.id,
-          })}</div>`
-        }
-
-        if (
-          contentItem.type === 'question_node_true_false' ||
-          contentItem.type === 'question_node_multiple'
-        ) {
-          return `<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }">${this.#contentHandler(contentItem.content)}</div>`
-        }
-
-        if (
-          contentItem.type === 'true_false_single_correct_container' ||
-          contentItem.type === 'multiple_choice_single_correct_container'
-        ) {
-          return `
-					<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }">${this.#contentHandler(contentItem.content)}
-						<div onChange={(e) => this.handleAnswer(e, {containerId: "${
-              contentItem.attrs.id
-            }", type: "single"})}>
-							${this.#contentHandler(contentItem.content, {
-                isRadio: true,
-                containerId: contentItem.attrs.id,
-              })}
-						</div>
-					</div>`
-        }
-
-        if (
-          (contentItem.type === 'question_node_true_false_single' ||
-            contentItem.type === 'question_node_multiple_single') &&
-          !options.isRadio
-        ) {
-          return `<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }">${this.#contentHandler(contentItem.content)}</div>`
-        }
-
-        // type true_false, multiple_choice
-        if (
-          contentItem.type === 'true_false' ||
-          contentItem.type === 'multiple_choice'
-        ) {
-          // TODO: answer should move to JS/React code
-          return `<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }" answer="${contentItem.attrs.answer}" correct="${
-            contentItem.attrs.correct
-          }" feedback="${
-            contentItem.attrs.feedback
-          }"><input type="checkbox" name="${options.containerId}" id="${
-            contentItem.attrs.id
-          }" value="${contentItem.attrs.id}" containerId="${
-            options.containerId
-          }" checked={this.state['q${options.containerId}'].includes("${
-            contentItem.attrs.id
-          }")} onChange={(e) => this.handleAnswer(e, {containerId: "${
-            options.containerId
-          }", type: "multi"})} /><label for="${
-            contentItem.attrs.id
-          }">${this.#contentHandler(contentItem.content, {
-            textOnly: true,
-          })}</label></div>`
-        }
-
-        if (
-          (contentItem.type === 'true_false_single_correct' ||
-            contentItem.type === 'multiple_choice_single_correct') &&
-          !options.isRadio
-        ) {
-          return null
-        }
-
-        if (
-          contentItem.type === 'true_false_single_correct' ||
-          contentItem.type === 'multiple_choice_single_correct'
-        ) {
-          return `
-					<div>
-						<input type="radio" id="${contentItem.attrs.id}" name="${
-            options.containerId
-          }" value="${contentItem.attrs.id}"/><label for="${
-            contentItem.attrs.id
-          }">${this.#contentHandler(contentItem.content, {
-            textOnly: true,
-          })}</label>
-					</div>`
-        }
-
-        if (contentItem.type === 'orderedlist') {
-          return `<ol>${this.#contentHandler(contentItem.content)}</ol>`
-        }
-
-        if (contentItem.type === 'bulletlist') {
-          return `<ul>${this.#contentHandler(contentItem.content)}</ul>`
-        }
-
-        if (contentItem.type === 'list_item') {
-          return `<li>${this.#contentHandler(contentItem.content)}</li>`
-        }
-
-        if (contentItem.type === 'table') {
-          return `
-						<table>
-							<tbody>
-								${this.#contentHandler(contentItem.content)}
-							</tbody>
-						</table>`
-        }
-
-        if (contentItem.type === 'table_row') {
-          return `<tr>${this.#contentHandler(contentItem.content)}</tr>`
-        }
-
-        if (contentItem.type === 'table_cell') {
-          return `<td colspan="${contentItem.attrs.colspan}" rowspan="${
-            contentItem.attrs.rowspan
-          }">${this.#contentHandler(contentItem.content)}</td>`
-        }
-
-        if (
-          contentItem.type === 'essay_container' ||
-          contentItem.type === 'essay_question'
-        ) {
-          return `<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }">${this.#contentHandler(contentItem.content)}</div>`
-        }
-
-        if (contentItem.type === 'essay_answer') {
-          return `
-					<div class="${contentItem.attrs.class}">
-						<textarea id="${contentItem.attrs.id}" value={this.state['q${
-            contentItem.attrs.id
-          }'][0]} onChange={(e) => this.handleAnswer(e, {containerId: "${
-            contentItem.attrs.id
-          }", type: "single"})} placeholder="Type your essay answer"/>
-						${this.#contentHandler(contentItem.content)}
-					</div>`
-        }
-
-        if (contentItem.type === 'fill_the_gap_container') {
-          return `
-					<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }" feedback="${contentItem.attrs.feedback}">
-						${this.#contentHandler(contentItem.content)}
-					</div>`
-        }
-
-        if (contentItem.type === 'fill_the_gap' && options.textOnly) {
-          return `${this.#contentHandler(contentItem.content)}`
-        }
-
-        if (contentItem.type === 'fill_the_gap') {
-          return `
-						<span answer="${this.#contentHandler(contentItem.content)}" class="portal">
-							<input type="text" id="${contentItem.attrs.id}" value={this.state['q${
-            contentItem.attrs.id
-          }'][0]} onChange={(e) => this.handleAnswer(e, {containerId: "${
-            contentItem.attrs.id
-          }", type: "single"})} />
-						</span>
-					`
-        }
-
-        if (contentItem.type === 'multiple_drop_down_container') {
-          return `<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }" feedback="${contentItem.attrs.feedback}">${this.#contentHandler(
-            contentItem.content,
-          )}</div>`
-        }
-
-        if (
-          contentItem.type === 'multiple_drop_down_option' &&
-          options.textOnly
-        ) {
-          const correctAnswer = contentItem.attrs.options.filter(
-            option => option.value === contentItem.attrs.correct,
-          )
-
-          return `${correctAnswer.length ? correctAnswer[0].label : ''}`
-        }
-
-        if (contentItem.type === 'multiple_drop_down_option') {
-          return `
-					<select id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }" answer="${contentItem.attrs.answer}" correct="${
-            contentItem.attrs.correct
-          }" value={this.state['q${
-            contentItem.attrs.id
-          }'][0]} onChange={(e) => this.handleAnswer(e, {containerId: "${
-            contentItem.attrs.id
-          }", type: "single"})}>
-							<option value="" selected={true} disabled={true}>Select option</option>
-							${contentItem.attrs.options.map(option => {
-                return `<option value="${option.value}">${option.label}</option>`
-              })}
-					</select>`
-        }
-
-        if (contentItem.type === 'matching_container') {
-          // TODO: handle content[i].attrs.isfirst
-          return `<div id="${contentItem.attrs.id}" class="${
-            contentItem.attrs.class
-          }" feedback="${contentItem.attrs.feedback}">${this.#contentHandler(
-            contentItem.content,
-          )}</div>`
-        }
-
-        if (contentItem.type === 'matching_option' && options.textOnly) {
-          const correctAnswer = contentItem.attrs.options.filter(
-            option => option.value === contentItem.attrs.correct,
-          )
-
-          return `${this.#contentHandler(contentItem.content, {
-            textOnly: true,
-          })} ${correctAnswer.length ? correctAnswer[0].label : ''}<br/>`
-        }
-
-        if (contentItem.type === 'matching_option') {
-          return `
-					<div class="${contentItem.attrs.class}">
-						${this.#contentHandler(contentItem.content)}
-						<select id="${contentItem.attrs.id}" answer="${
-            contentItem.attrs.answer
-          }" correct="${contentItem.attrs.correct}" value={this.state['q${
-            contentItem.attrs.id
-          }'][0]} onChange={(e) => this.handleAnswer(e, {containerId: "${
-            contentItem.attrs.id
-          }", type: "single"})}>
-							<option value="" selected={true} disabled={true}>Select option</option>
-							${contentItem.attrs.options.map(option => {
-                return `<option value="${option.value}">${option.label}</option>`
-              })}
-						</select>
-					</div>`
-        }
-
-        if (contentItem.type === 'figure') {
-          return `
-					<figure>
-						${this.#contentHandler(contentItem.content)}
-					</figure>`
-        }
-
-        if (contentItem.type === 'image') {
-          return `
-					<img src="${contentItem.attrs.src}" alt="${contentItem.attrs.alt}" />`
-        }
-
-        if (contentItem.type === 'figcaption') {
-          return `
-					<figcaption class="${contentItem.attrs.class}">
-						${this.#contentHandler(contentItem.content)}
-					</figcaption>`
-        }
-
-        // go again, one level down
-        if (contentItem.content.length) {
-          return this.#contentHandler()
-        }
-
-        return ''
-      })
-      .join(options.noNewLine ? '' : '\n')
   }
 
   #metadataHandler = () => {
@@ -797,6 +274,13 @@ class WaxToScormConverter {
                     },
                   },
                 },
+                {
+                  file: {
+                    _attr: {
+                      href: 'content/doc.json',
+                    },
+                  },
+                },
               ],
             },
           ],
@@ -980,26 +464,28 @@ class WaxToScormConverter {
 
     const xmlManifest = this.#buildManifest(manifestOptions)
 
-    const index = buildIndex(
-      this.#contentHandler(this.doc.content),
-      this.#correctAnswers,
-      this.#feedback,
-      this.#questionIds,
-    )
-
     const dir = path.join(__dirname, '..', '..', 'tmp', id)
     const mainPageFile = path.join(__dirname, 'helpers', 'mainPage.html')
     const stylesheet = path.join(__dirname, 'helpers', 'style.css')
     const scormAPI = path.join(__dirname, 'helpers', 'scormApi.js')
+    const indexJs = path.join(__dirname, 'helpers', 'index.js')
 
     try {
       fs.mkdirSync(`${dir}/content/`, { recursive: true })
+
       fs.writeFileSync(`${dir}/imsmanifest.xml`, xmlManifest, 'utf-8')
       fs.writeFileSync(`${dir}/metadata_course.xml`, xmlMetadata, 'utf-8')
+
+      fs.writeFileSync(
+        `${dir}/content/doc.json`,
+        JSON.stringify(this.doc.content),
+        'utf-8',
+      )
+
       fs.copyFileSync(mainPageFile, `${dir}/content/${id}.html`)
       fs.copyFileSync(stylesheet, `${dir}/content/style.css`)
       fs.copyFileSync(scormAPI, `${dir}/content/scorm_api.js`)
-      fs.writeFileSync(`${dir}/content/index.js`, index, 'utf-8')
+      fs.copyFileSync(indexJs, `${dir}/content/index.js`)
 
       const output = fs.createWriteStream(`${dir}.zip`)
       const archive = archiver('zip', { zlib: { level: 9 } })
