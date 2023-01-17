@@ -92,6 +92,7 @@ const ButtonWithoutStyles = styled.button`
 const ModalContext = React.createContext(null)
 
 const ModalFooter = Modal.footer
+const ModalHeader = Modal.header
 
 const DELETE_ACTION = 'delete'
 const DEACTIVATE_ACTION = 'deactivate'
@@ -213,7 +214,11 @@ const UserList = props => {
   const confirmActivate = () => {
     const confirmDialog = confirm()
     confirmDialog.update({
-      title: `Activate User${selectedRows.length > 1 ? 's' : ''}`,
+      title: (
+        <ModalHeader>
+          Activate User{selectedRows.length > 1 ? 's' : ''}
+        </ModalHeader>
+      ),
       content: `Are you sure you want to activate the selected user${
         selectedRows.length > 1 ? 's' : ''
       }?`,
@@ -252,7 +257,11 @@ const UserList = props => {
   const confirmDeactivate = () => {
     const confirmDialog = confirm()
     confirmDialog.update({
-      title: `Deactivate User${selectedRows.length > 1 ? 's' : ''}`,
+      title: (
+        <ModalHeader>
+          Deactivate User{selectedRows.length > 1 ? 's' : ''}
+        </ModalHeader>
+      ),
       content: `Are you sure you want to deactivate the selected user${
         selectedRows.length > 1 ? 's' : ''
       }?`,
@@ -291,7 +300,11 @@ const UserList = props => {
   const confirmDelete = () => {
     const confirmDialog = confirm()
     confirmDialog.update({
-      title: `Delete User${selectedRows.length > 1 ? 's' : ''}`,
+      title: (
+        <ModalHeader>
+          Delete User{selectedRows.length > 1 ? 's' : ''}
+        </ModalHeader>
+      ),
       content: `Are you sure you want to delete the selected user${
         selectedRows.length > 1 ? 's' : ''
       }?`,
@@ -331,7 +344,7 @@ const UserList = props => {
   const showErrorModal = (title, content) => {
     const errorModal = error()
     errorModal.update({
-      title,
+      title: <ModalHeader>{title}</ModalHeader>,
       content,
       footer: [
         <ModalFooter key="footer">

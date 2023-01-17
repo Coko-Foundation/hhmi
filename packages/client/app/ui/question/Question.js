@@ -38,6 +38,7 @@ import WaxWrapper from '../wax/Wax'
 
 const ModalContext = React.createContext(null)
 const ModalFooter = Modal.footer
+const ModalHeader = Modal.header
 
 // #region styled
 const Wrapper = styled.div`
@@ -611,7 +612,7 @@ const Question = props => {
     e.preventDefault()
     const infoModal = info()
     infoModal.update({
-      title: 'Accept Terms and Conditions',
+      title: <ModalHeader>Accept Terms and Conditions</ModalHeader>,
       content: (
         <Paragraph>
           By submitting information via the form below (the “Question
@@ -675,7 +676,7 @@ const Question = props => {
     if (isEditorEmpty) {
       const emptyEditorErrorModal = error()
       emptyEditorErrorModal.update({
-        title: 'Question text cannot be empty',
+        title: <ModalHeader>Question text cannot be empty</ModalHeader>,
         content: 'Please provide some content for your question',
         footer: [
           <ModalFooter key="footer">
@@ -698,7 +699,9 @@ const Question = props => {
 
     const confirmSubmitModal = confirm()
     confirmSubmitModal.update({
-      title: 'Are you sure you want to submit the question?',
+      title: (
+        <ModalHeader>Are you sure you want to submit the question?</ModalHeader>
+      ),
       content:
         'This will make the question visible to editors an reviewers, and after a successful review it will be published for all users.',
       footer: [
@@ -721,7 +724,9 @@ const Question = props => {
   const handleMoveToReview = () => {
     const confirmMoveToReview = confirm()
     confirmMoveToReview.update({
-      title: 'You are about to move the question to review',
+      title: (
+        <ModalHeader>You are about to move the question to review</ModalHeader>
+      ),
       content:
         'Question will be passed to a reviewer and will not be editable until they provide their feedback. Are you sure you want to proceed?',
       footer: [
@@ -758,7 +763,11 @@ const Question = props => {
   const handleMoveToProduction = () => {
     const confirmMoveToProduction = confirm()
     confirmMoveToProduction.update({
-      title: 'You are about to move the question to production',
+      title: (
+        <ModalHeader>
+          You are about to move the question to production
+        </ModalHeader>
+      ),
       content:
         'Question will become editable and editors can apply the feedback from the reviewer. Are you sure?',
       footer: [
@@ -797,7 +806,11 @@ const Question = props => {
   const handlePublish = () => {
     const confirmPublish = confirm()
     confirmPublish.update({
-      title: 'Are you sure you want to publish this question version?',
+      title: (
+        <ModalHeader>
+          Are you sure you want to publish this question version?
+        </ModalHeader>
+      ),
       content:
         'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Discover page',
       footer: [
@@ -834,7 +847,11 @@ const Question = props => {
   const handleReject = () => {
     const confirmReject = confirm()
     confirmReject.update({
-      title: 'Are you sure you want to reject this question?',
+      title: (
+        <ModalHeader>
+          Are you sure you want to reject this question?
+        </ModalHeader>
+      ),
       content: 'By rejecting, the question will not be reviewed or published.',
       footer: [
         <ModalFooter key="footer">
@@ -871,7 +888,7 @@ const Question = props => {
     const dialogType = type === 'success' ? success() : error()
 
     dialogType.update({
-      title,
+      title: <ModalHeader>{title}</ModalHeader>,
       content,
       footer: [
         <ModalFooter key="footer">
@@ -909,7 +926,7 @@ const Question = props => {
   const showNewVersionModal = () => {
     const confirmNewVersion = confirm()
     confirmNewVersion.update({
-      title: `Warning!`,
+      title: <ModalHeader>Warning!</ModalHeader>,
       content: `You are editing a published question. Any changes you make will be automatically saved, but not automatically published. 
       You will need to publish the question again for the edits to be reflected in the Discover page.
       After the edited question is published, the old one will not be available anymore in the Discover page. 
@@ -945,7 +962,7 @@ const Question = props => {
           .catch(() => {
             const infoModal = modal.info()
             infoModal.update({
-              title: `No previous question`,
+              title: <ModalHeader>No previous question</ModalHeader>,
               content: 'There are no more questions in this direction',
               footer: [
                 <ModalFooter key="footer">
@@ -975,7 +992,7 @@ const Question = props => {
           .catch(() => {
             const infoModal = modal.info()
             infoModal.update({
-              title: `No next question`,
+              title: <ModalHeader>No next question</ModalHeader>,
               content: 'There are no more questions in this direction',
               footer: [
                 <ModalFooter key="footer">

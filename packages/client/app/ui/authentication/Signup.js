@@ -18,6 +18,7 @@ import {
 } from '../common'
 
 const ModalContext = React.createContext(null)
+const ModalHeader = Modal.header
 const ModalFooter = Modal.footer
 
 const Signup = props => {
@@ -37,7 +38,7 @@ const Signup = props => {
     e.preventDefault()
     const termsAndConditionsModal = modal.info()
     termsAndConditionsModal.update({
-      title: 'Agreeing to Terms and Conditions',
+      title: <ModalHeader>Agreeing to Terms and Conditions</ModalHeader>,
       content: (
         <Paragraph>
           By checking “I agree” and selecting “Sign up” below, I accept the{' '}

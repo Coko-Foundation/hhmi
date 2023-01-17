@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 
 import { Button, Checkbox, Modal } from 'ui'
 
+const ModalHeader = Modal.header
 const ModalFooter = Modal.footer
 const ModalContext = React.createContext(null)
 
@@ -24,7 +25,7 @@ const ExportToWordButton = props => {
       .catch(() => {
         const conversionErrorModal = modal.error()
         conversionErrorModal.update({
-          title: 'Conversion error',
+          title: <ModalHeader>Conversion error</ModalHeader>,
           content:
             'Something went wrong with your conversion! Please contact your system administrator.',
           footer: [
@@ -60,7 +61,7 @@ const ExportToWordButton = props => {
         ]}
         onCancel={() => setShowModal(false)}
         open={showModal}
-        title="Export to Word"
+        title={<ModalHeader>Export to Word</ModalHeader>}
       >
         <div>
           <Checkbox

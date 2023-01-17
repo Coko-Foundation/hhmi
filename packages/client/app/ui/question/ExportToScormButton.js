@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 
 import { Button, Modal } from 'ui'
 
+const ModalHeader = Modal.header
 const ModalFooter = Modal.footer
 const ModalContext = React.createContext(null)
 
@@ -17,7 +18,7 @@ const ExportToScormButton = props => {
       .catch(() => {
         const errorDialog = modal.error()
         errorDialog.update({
-          title: 'Conversion error',
+          title: <ModalHeader>Conversion error</ModalHeader>,
           content:
             'Something went wrong with your conversion! Please contact your system administrator.',
           footer: [

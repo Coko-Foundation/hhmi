@@ -11,6 +11,12 @@ const ModalFooter = styled.div`
   }
 `
 
+const ModalHeader = styled.h2`
+  font-size: unset;
+  margin: 0;
+`
+
+Modal.header = ModalHeader
 Modal.footer = ModalFooter
 
 export default Modal
