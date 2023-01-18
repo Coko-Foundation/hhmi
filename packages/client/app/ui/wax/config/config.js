@@ -65,6 +65,8 @@ export default {
   SchemaService: DefaultSchema,
   PmPlugins: [columnResizing(), tableEditing()],
 
+  ImageService: { showAlt: true },
+
   services: [
     new FillTheGapQuestionService(),
     new MatchingService(),

@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
-
 import React from 'react'
+import PropTypes from 'prop-types'
 
 import { Wax } from 'wax-prosemirror-core'
 
@@ -22,6 +21,7 @@ import { Wax } from 'wax-prosemirror-core'
 
 const WaxWrapper = props => {
   const {
+    autoFocus,
     content,
     onContentChange,
     onImageUpload,
@@ -38,7 +38,7 @@ const WaxWrapper = props => {
 
   return (
     <Wax
-      autoFocus
+      autoFocus={autoFocus}
       config={config}
       customValues={customValues}
       // fileUpload={file => renderImage(file)}
@@ -51,6 +51,33 @@ const WaxWrapper = props => {
       value={content}
     />
   )
+}
+
+WaxWrapper.propTypes = {
+  autoFocus: PropTypes.bool,
+  content: PropTypes.shape(),
+  onContentChange: PropTypes.func,
+  onImageUpload: PropTypes.func,
+  config: PropTypes.shape(),
+  layout: PropTypes.func,
+  readOnly: PropTypes.bool,
+  innerRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.shape() }),
+  ]),
+  customValues: PropTypes.shape(),
+}
+
+WaxWrapper.defaultProps = {
+  autoFocus: true,
+  content: {},
+  onContentChange: () => {},
+  onImageUpload: () => {},
+  config: {},
+  layout: () => {},
+  readOnly: false,
+  innerRef: () => {},
+  customValues: {},
 }
 
 export default WaxWrapper

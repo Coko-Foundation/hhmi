@@ -131,6 +131,7 @@ const QuestionItem = props => {
           }}
         >
           <WaxWrapper
+            autoFocus={false}
             config={dashConfig}
             content={content}
             layout={DashLayout}

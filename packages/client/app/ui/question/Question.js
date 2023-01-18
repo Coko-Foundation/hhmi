@@ -1,8 +1,7 @@
 /* stylelint-disable string-quotes */
-import React, { memo, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { isEqual } from 'lodash'
 
 import { Dropdown } from 'antd'
 import {
@@ -34,7 +33,7 @@ import {
   Switch,
   TabsStyled as Tabs,
 } from '../common'
-import WaxWrapper from '../wax/Wax'
+import Wax from '../wax/Wax'
 
 const ModalContext = React.createContext(null)
 
@@ -264,107 +263,113 @@ const SubmitTestBar = styled.div`
   width: 100%;
 `
 
-// need to memoize Wax to prevent rerendering on state change (e.g. after accepting T&C)
-const MemoizedWax = memo(
-  props => {
-    const {
-      content,
-      innerRef,
-      layout,
-      onContentChange,
-      onImageUpload,
-      readOnly,
-      published,
-      withMetadata,
-    } = props
+const WaxWrapper = props => {
+  const {
+    content,
+    innerRef,
+    layout,
+    onContentChange,
+    onImageUpload,
+    readOnly,
+    published,
+    withFeedback,
+  } = props
 
-    const [submitted, setSubmitted] = useState(false)
-    const [editorContent, setEditorContent] = useState(content)
+  const [showFeedBack, setShowFeedBack] = useState(false)
+  const [editorContent, setEditorContent] = useState(content)
 
-    const [testMode, setTestMode] = useState(
-      published && !submitted && !withMetadata,
-    )
+  const [testMode, setTestMode] = useState(
+    published && !showFeedBack && !withFeedback,
+  )
 
-    // only for users taking the test in student view
-    const preserveLocalState = published && !withMetadata
+  const [customValues, setCustomValues] = useState({ showFeedBack, testMode })
 
-    useEffect(() => {
-      setEditorContent(content)
-    }, [content])
+  // only for users taking the test in student view
+  const preserveLocalState = published && !withFeedback
 
-    useEffect(() => {
-      if (withMetadata) {
-        setSubmitted(false)
-        setTestMode(false)
-      } else {
-        setSubmitted(false)
-        setTestMode(true)
-      }
+  useEffect(() => {
+    setEditorContent(content)
+  }, [content])
 
-      // reset original content after switching views
-      setEditorContent(content)
-    }, [withMetadata])
-
-    const submitTest = () => {
-      setSubmitted(true)
+  useEffect(() => {
+    if (withFeedback) {
+      setShowFeedBack(false)
       setTestMode(false)
-
-      const contentFeedback = JSON.parse(
-        JSON.stringify({
-          type: 'doc',
-          content: innerRef.current.getContent(),
-        }),
-      )
-
-      setEditorContent(contentFeedback)
-    }
-
-    const resetTest = () => {
-      setSubmitted(false)
+    } else {
+      setShowFeedBack(false)
       setTestMode(true)
-      setEditorContent(content)
     }
 
-    return (
-      <EditorWrapper>
-        <EditorScrollContainer>
-          <WaxWrapper
-            config={config}
-            content={preserveLocalState ? editorContent : content}
-            customValues={{ showFeedBack: submitted, testMode }}
-            innerRef={innerRef}
-            layout={layout}
-            onContentChange={!testMode && onContentChange}
-            onImageUpload={onImageUpload}
-            readOnly={readOnly}
-          />
-        </EditorScrollContainer>
+    // reset original content after switching views
+    setEditorContent(content)
+  }, [withFeedback])
 
-        {!withMetadata && (
-          <SubmitTestBar>
-            {submitted ? (
-              <Button onClick={resetTest} type="primary">
-                Reset
-              </Button>
-            ) : (
-              <Button onClick={submitTest} type="primary">
-                Submit
-              </Button>
-            )}
-          </SubmitTestBar>
-        )}
-      </EditorWrapper>
+  // changing customValues will rerender the editor
+  // avoid rerendering if testMode or showFeedBack don't change
+  // force rerendering when question is published and content changes (for next/previous navigation)
+  useEffect(() => {
+    if (
+      testMode !== customValues.testMode ||
+      showFeedBack !== customValues.showFeedBack ||
+      published
+    ) {
+      setCustomValues({ testMode, showFeedBack })
+    }
+  }, [testMode, showFeedBack, published, content])
+
+  const submitTest = () => {
+    setShowFeedBack(true)
+    setTestMode(false)
+
+    const contentFeedback = JSON.parse(
+      JSON.stringify({
+        type: 'doc',
+        content: innerRef.current.getContent(),
+      }),
     )
-  },
-  // add a comparison function for when we want the editor to rerender
-  // returning true means the component doesn't rerender when parent rerenders
-  (prevProps, nextProps) =>
-    isEqual(prevProps.content, nextProps.content) &&
-    prevProps.readOnly === nextProps.readOnly &&
-    prevProps.withMetadata === nextProps.withMetadata,
-)
 
-MemoizedWax.propTypes = {
+    setEditorContent(contentFeedback)
+  }
+
+  const resetTest = () => {
+    setShowFeedBack(false)
+    setTestMode(true)
+    setEditorContent(content)
+  }
+
+  return (
+    <EditorWrapper>
+      <EditorScrollContainer>
+        <Wax
+          config={config}
+          content={preserveLocalState ? editorContent : content}
+          customValues={customValues}
+          innerRef={innerRef}
+          layout={layout}
+          onContentChange={!testMode ? onContentChange : () => {}}
+          onImageUpload={onImageUpload}
+          readOnly={readOnly}
+        />
+      </EditorScrollContainer>
+
+      {!withFeedback && (
+        <SubmitTestBar>
+          {showFeedBack ? (
+            <Button onClick={resetTest} type="primary">
+              Reset
+            </Button>
+          ) : (
+            <Button onClick={submitTest} type="primary">
+              Submit
+            </Button>
+          )}
+        </SubmitTestBar>
+      )}
+    </EditorWrapper>
+  )
+}
+
+WaxWrapper.propTypes = {
   content: PropTypes.shape(),
   innerRef: PropTypes.oneOfType([
     // Either a function
@@ -378,17 +383,17 @@ MemoizedWax.propTypes = {
   onContentChange: PropTypes.func.isRequired,
   onImageUpload: PropTypes.func,
   readOnly: PropTypes.bool,
-  withMetadata: PropTypes.bool,
+  withFeedback: PropTypes.bool,
   published: PropTypes.bool,
 }
 
-MemoizedWax.defaultProps = {
+WaxWrapper.defaultProps = {
   content: {},
   readOnly: false,
   innerRef: null,
   onImageUpload: () => {},
   published: false,
-  withMetadata: true,
+  withFeedback: true,
 }
 // #endregion wax
 
@@ -1207,7 +1212,7 @@ const Question = props => {
                     <PanelWrapper
                       condition={false}
                       editor={
-                        <MemoizedWax
+                        <WaxWrapper
                           content={editorContent}
                           innerRef={waxRef}
                           layout={facultyView ? TestModeLayout : HhmiLayout}
@@ -1215,7 +1220,7 @@ const Question = props => {
                           onImageUpload={onImageUpload}
                           published={isPublished}
                           readOnly={readOnly}
-                          withMetadata={showMetadata}
+                          withFeedback={showMetadata}
                         />
                       }
                       metadata={
