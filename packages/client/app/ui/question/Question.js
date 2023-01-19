@@ -1118,17 +1118,17 @@ const Question = props => {
       ),
       key: 'exportWord',
     }, // remember to pass the key prop
-    {
-      label: (
-        <StyledScormExportButton
-          loading={scormZipLoading}
-          onExport={onClickExportToScorm}
-        />
-      ),
-      key: 'exportScorm',
-    },
     ...(isUserLoggedIn
       ? [
+          {
+            label: (
+              <StyledScormExportButton
+                loading={scormZipLoading}
+                onExport={onClickExportToScorm}
+              />
+            ),
+            key: 'exportScorm',
+          },
           {
             label: (
               <StyledSwitch
@@ -1158,17 +1158,19 @@ const Question = props => {
             onExport={onClickExportToWord}
             showMetadataOption={isUserLoggedIn}
           />
-          <StyledScormExportButton
-            loading={scormZipLoading}
-            onExport={onClickExportToScorm}
-          />
           {isUserLoggedIn && (
-            <StyledSwitch
-              checked={showMetadata}
-              checkedChildren="Show Metadata"
-              onChange={val => setShowMetadata(val)}
-              unCheckedChildren="Student view"
-            />
+            <>
+              <StyledScormExportButton
+                loading={scormZipLoading}
+                onExport={onClickExportToScorm}
+              />
+              <StyledSwitch
+                checked={showMetadata}
+                checkedChildren="Show Metadata"
+                onChange={val => setShowMetadata(val)}
+                unCheckedChildren="Student view"
+              />
+            </>
           )}
         </ActionsWrapper>
 
