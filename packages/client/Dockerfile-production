@@ -1,0 +1,44 @@
+# IMAGE FOR BUILDING
+FROM node:16.19.0-bullseye-slim
+
+RUN apt-get update \ 
+    && apt-get upgrade -y \
+    && apt-get install -y
+
+WORKDIR /home/node/app
+
+COPY package.json .
+COPY yarn.lock .
+
+RUN yarn install --frozen-lockfile --production
+
+COPY . .
+
+ARG server_protocol
+ARG server_host
+ARG server_port
+
+ENV NODE_ENV='production'
+ENV CLIENT_PAGE_TITLE='HHMI Assessment Builder'
+ENV CLIENT_FAVICON_PATH='../static/favicon.ico'
+ENV CLIENT_LANGUAGE='en-US'
+
+ENV SERVER_PROTOCOL=$server_protocol
+ENV SERVER_HOST=$server_host
+ENV SERVER_PORT=$server_port
+
+RUN yarn coko-client-build
+
+######################################################################
+######################################################################
+
+# IMAGE FOR RUNNING
+
+FROM node:16.19.0-bullseye-slim
+
+RUN apt-get update && apt-get install -y
+RUN npm install --global serve
+
+USER node
+
+COPY --from=0 /home/node/app/_build ./_build

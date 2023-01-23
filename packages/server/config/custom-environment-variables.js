@@ -27,8 +27,6 @@ module.exports = {
     },
   },
   fileStorage: {
-    // minioRootUser: 'MINIO_ROOT_USER',
-    // minioRootPassword: 'MINIO_ROOT_PASSWORD',
     accessKeyId: 'S3_ACCESS_KEY_ID',
     secretAccessKey: 'S3_SECRET_ACCESS_KEY',
     bucket: 'S3_BUCKET',
