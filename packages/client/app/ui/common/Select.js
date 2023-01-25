@@ -150,7 +150,12 @@ const Select = props => {
     : handleSearch
 
   const customDropdownRender = menu => (
-    <StyledDropdown wrapOptionText={wrapOptionText}>{menu}</StyledDropdown>
+    <StyledDropdown
+      data-testid="select-dropdown"
+      wrapOptionText={wrapOptionText}
+    >
+      {menu}
+    </StyledDropdown>
   )
 
   return (
