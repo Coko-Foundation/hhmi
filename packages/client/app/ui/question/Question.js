@@ -29,8 +29,8 @@ import {
   Modal,
   Paragraph,
   Ribbon,
+  Select,
   Spin,
-  Switch,
   TabsStyled as Tabs,
 } from '../common'
 import Wax from '../wax/Wax'
@@ -163,56 +163,6 @@ const MetadataWrapper = styled.section`
   overflow-y: auto;
 `
 
-const StyledSwitch = styled(Switch)`
-  button {
-    align-items: center;
-    border-radius: 0;
-    display: inline-flex;
-    height: 32px;
-    justify-content: space-around;
-    margin: 0 8px;
-    width: 170px;
-
-    @media (max-width: ${th('mediaQueries.mediumPlus')}) {
-      margin: 0;
-      width: 100%;
-    }
-
-    .ant-switch-handle {
-      height: 32px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px;
-
-      &::before {
-        border-radius: 0;
-      }
-    }
-
-    .ant-switch-inner {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-
-      .ant-switch-inner-checked,
-      .ant-switch-inner-unchecked {
-        font-size: ${th('fontSizeBase')};
-      }
-    }
-
-    &.ant-switch-checked {
-      .ant-switch-inner {
-        margin-left: 0;
-      }
-
-      .ant-switch-handle {
-        left: unset;
-        right: 2px;
-      }
-    }
-  }
-`
-
 const ActionsWrapper = styled.div`
   display: none;
 
@@ -263,6 +213,19 @@ const SubmitTestBar = styled.div`
   /* max-width: 100ch; */
   padding: ${grid(2)} ${grid(2)};
   width: 100%;
+`
+
+const ViewAsWrapper = styled.div`
+  align-items: center;
+  display: inline-flex;
+`
+
+const ViewAsLabel = styled.label`
+  width: 100%;
+`
+
+const StyledSelect = styled(Select)`
+  margin: 0 ${grid(2)};
 `
 
 const WaxWrapper = props => {
@@ -1159,6 +1122,11 @@ const Question = props => {
       : []),
   ]
 
+  const viewAsOptions = [
+    { value: true, label: 'Educator' },
+    { value: false, label: 'Learner' },
+  ]
+
   const RightAreaEditor = (
     <>
       <ActionsWrapper>
@@ -1262,17 +1230,6 @@ const Question = props => {
             ),
             key: 'exportScorm',
           },
-          {
-            label: (
-              <StyledSwitch
-                checked={showMetadata}
-                checkedChildren="Show Metadata"
-                onChange={val => setShowMetadata(val)}
-                unCheckedChildren="Student view"
-              />
-            ),
-            key: 'toggleMetadata',
-          },
         ]
       : []),
   ]
@@ -1285,6 +1242,17 @@ const Question = props => {
       </div>
 
       <div>
+        {isUserLoggedIn && (
+          <ViewAsWrapper>
+            <ViewAsLabel htmlFor="viewAsSelect">View as</ViewAsLabel>
+            <StyledSelect
+              id="viewAsSelect"
+              onChange={val => setShowMetadata(val)}
+              options={viewAsOptions}
+              value={showMetadata}
+            />
+          </ViewAsWrapper>
+        )}
         <ActionsWrapper>
           <StyledWordExportButton
             loading={wordFileLoading}
@@ -1292,18 +1260,10 @@ const Question = props => {
             showMetadataOption={isUserLoggedIn}
           />
           {isUserLoggedIn && (
-            <>
-              <StyledScormExportButton
-                loading={scormZipLoading}
-                onExport={onClickExportToScorm}
-              />
-              <StyledSwitch
-                checked={showMetadata}
-                checkedChildren="Show Metadata"
-                onChange={val => setShowMetadata(val)}
-                unCheckedChildren="Student view"
-              />
-            </>
+            <StyledScormExportButton
+              loading={scormZipLoading}
+              onExport={onClickExportToScorm}
+            />
           )}
         </ActionsWrapper>
 
