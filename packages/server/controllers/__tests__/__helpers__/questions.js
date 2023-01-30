@@ -1,7 +1,4 @@
-const {
-  createUser,
-} = require('@coko/server/src/models/__tests__/helpers/users')
-
+const { createUser } = require('../../../models/__tests__/__helpers__/users')
 const { createQuestion } = require('../../question.controllers')
 
 const waxDocumentOne = {

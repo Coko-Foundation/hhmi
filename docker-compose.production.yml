@@ -6,9 +6,7 @@ services:
       context: ./packages/client
       dockerfile: ./Dockerfile-production
       args:
-        - server_protocol=${SERVER_PROTOCOL}
-        - server_host=${SERVER_HOST}
-        - server_port=${SERVER_PORT}
+        - server_url=${SERVER_URL}
     command: ['npx', 'serve', '-p', '8080', '--single', './_build']
     ports:
       - ${CLIENT_PORT}:8080
@@ -29,9 +27,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - CLIENT_PROTOCOL=${CLIENT_PROTOCOL}
-      - CLIENT_HOST=${CLIENT_HOST}
-      - CLIENT_PORT=${CLIENT_PORT}
+      - CLIENT_URL=${CLIENT_URL}
       - MAILER_SENDER=${MAILER_SENDER}
       - MAILER_HOSTNAME=${MAILER_HOSTNAME}
       - MAILER_PORT=${MAILER_PORT}
@@ -43,4 +39,3 @@ services:
       - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
       - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
       - S3_BUCKET=${S3_BUCKET}
-      - EXTERNAL_URL=${EXTERNAL_URL}

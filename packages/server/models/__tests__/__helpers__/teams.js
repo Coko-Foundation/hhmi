@@ -1,10 +1,42 @@
-const {
-  createChatThreadTeamWithUsers,
-  createGlobalTeamWithUsers,
-  createLocalTeamWithUsers,
-} = require('@coko/server/src/models/__tests__/helpers/teams')
+const { uuid } = require('@coko/server')
 
 const { Team, User } = require('../../index')
+
+const createGlobalTeamWithUsers = async () => {
+  try {
+    const team = await Team.insert({
+      role: 'editor',
+      displayName: 'Editor',
+      global: true,
+    })
+
+    const user = await User.insert({})
+
+    await Team.addMember(team.id, user.id)
+    return { team, user }
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const createLocalTeamWithUsers = async () => {
+  try {
+    const team = await Team.insert({
+      role: 'editor',
+      displayName: 'Editor',
+      global: false,
+      objectId: uuid(),
+      objectType: 'someObjectType',
+    })
+
+    const user = await User.insert({})
+
+    await Team.addMember(team.id, user.id)
+    return { team, user }
+  } catch (e) {
+    throw new Error(e)
+  }
+}
 
 const createGlobalBaseTeamwithUsers = async (
   incomingRole,
@@ -15,6 +47,25 @@ const createGlobalBaseTeamwithUsers = async (
       role: incomingRole,
       displayName: incomingDisplayName,
       global: true,
+    })
+
+    const user = await User.insert({})
+
+    await Team.addMember(team.id, user.id)
+    return { team, user }
+  } catch (e) {
+    throw new Error(e)
+  }
+}
+
+const createChatThreadTeamWithUsers = async chatThreadId => {
+  try {
+    const team = await Team.insert({
+      role: 'editor',
+      displayName: 'Editor',
+      global: false,
+      objectId: chatThreadId,
+      objectType: 'chatThread',
     })
 
     const user = await User.insert({})

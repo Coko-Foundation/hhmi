@@ -15,10 +15,7 @@ services:
       - CLIENT_FAVICON_PATH=../static/favicon.ico
       - CLIENT_PAGE_TITLE=${CLIENT_PAGE_TITLE:-"HHMI Assessment Builder"}
       - CLIENT_LANGUAGE=${CLIENT_LANGUAGE:-"en-US"}
-      # - CLIENT_FAST_REFRESH=1
-      - SERVER_PROTOCOL=${SERVER_PROTOCOL:-http}
-      - SERVER_HOST=${SERVER_HOST:-localhost}
-      - SERVER_PORT=${SERVER_PORT:-3000}
+      - SERVER_URL=${SERVER_URL:-http://localhost:3000}
     volumes:
       - ./packages/client/app:/home/node/app/app
       - ./packages/client/static:/home/node/app/static
@@ -71,9 +68,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-hhmi_dev_user_password}
       - PUBSWEET_SECRET=${PUBSWEET_SECRET:-superSecretThing}
       - SERVER_PORT=${SERVER_PORT:-3000}
-      - CLIENT_PROTOCOL=${CLIENT_PROTOCOL:-http}
-      - CLIENT_HOST=${CLIENT_HOST:-0.0.0.0}
-      - CLIENT_PORT=${CLIENT_PORT:-4000}
+      - CLIENT_URL=${CLIENT_URL:-http://0.0.0.0:4000}
       - MAILER_SENDER=${MAILER_SENDER:-dev@example.com}
       - MAILER_HOSTNAME=${MAILER_HOSTNAME}
       - MAILER_PORT=${MAILER_PORT}

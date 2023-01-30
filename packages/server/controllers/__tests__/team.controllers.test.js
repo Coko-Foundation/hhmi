@@ -1,10 +1,7 @@
 const { uuid } = require('@coko/server')
 
-const {
-  createUser,
-} = require('@coko/server/src/models/__tests__/helpers/users')
-
 const { Team, TeamMember } = require('../../models/index')
+const { createUser } = require('../../models/__tests__/__helpers__/users')
 
 const {
   createGlobalTeamWithUsers,

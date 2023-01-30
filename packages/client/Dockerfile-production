@@ -14,18 +14,14 @@ RUN yarn install --frozen-lockfile --production
 
 COPY . .
 
-ARG server_protocol
-ARG server_host
-ARG server_port
+ARG server_url
 
 ENV NODE_ENV='production'
 ENV CLIENT_PAGE_TITLE='HHMI Assessment Builder'
 ENV CLIENT_FAVICON_PATH='../static/favicon.ico'
 ENV CLIENT_LANGUAGE='en-US'
 
-ENV SERVER_PROTOCOL=$server_protocol
-ENV SERVER_HOST=$server_host
-ENV SERVER_PORT=$server_port
+ENV SERVER_URL=$server_url
 
 RUN yarn coko-client-build
 

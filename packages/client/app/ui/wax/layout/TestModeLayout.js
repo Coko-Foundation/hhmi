@@ -4,7 +4,7 @@ import { WaxContext } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
-import { VisuallyHiddenElement } from '../../common'
+import VisuallyHiddenElement from '../../common/VisuallyHiddenElement'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
