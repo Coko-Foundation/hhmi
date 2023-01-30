@@ -331,6 +331,8 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
   return modifyQuestionVersion(
     questionVersionId,
     {
+      // set submitted to true in case it was not set before (fast published by admins); needed to retrieve question with editor query
+      submitted: true,
       inProduction: false,
       published: true,
       publicationDate: new Date(),

@@ -633,7 +633,7 @@ const Question = props => {
     setAgreedTc(!agreedTc)
   }
 
-  const handleSubmit = () => {
+  const isEmptyEditor = () => {
     const questionText = waxRef.current
       .getContent()
       .content.map(content => content.textContent)
@@ -662,8 +662,14 @@ const Question = props => {
         ],
       })
 
-      return
+      return true
     }
+
+    return false
+  }
+
+  const handleSubmit = () => {
+    if (isEmptyEditor()) return
 
     const confirmSubmitModal = confirm()
     confirmSubmitModal.update({
@@ -772,44 +778,60 @@ const Question = props => {
   }
 
   const handlePublish = () => {
-    const confirmPublish = confirm()
-    confirmPublish.update({
-      title: (
-        <ModalHeader>
-          Are you sure you want to publish this question version?
-        </ModalHeader>
-      ),
-      content:
-        'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Discover page',
-      footer: [
-        <ModalFooter key="footer">
-          <Button onClick={() => confirmPublish.destroy()}>Cancel</Button>
-          <Button
-            onClick={() => {
-              confirmPublish.destroy()
-              onPublish()
-                .then(() => {
-                  showDialog(
-                    'success',
-                    'Question published successfully',
-                    'Question was published and is now available in the Discover page',
-                  )
-                })
-                .catch(() => {
-                  showDialog(
-                    'error',
-                    'Problem publishing the question',
-                    'There was an error while publishin the question. Please try again',
-                  )
-                })
-            }}
-            type="primary"
-          >
-            Yes, publish
-          </Button>
-        </ModalFooter>,
-      ],
-    })
+    if (isEmptyEditor()) return
+
+    // validate form fields
+    formRef.current
+      .validateFields()
+      .then(() => {
+        const confirmPublish = confirm()
+        confirmPublish.update({
+          title: (
+            <ModalHeader>
+              Are you sure you want to publish this question version?
+            </ModalHeader>
+          ),
+          content:
+            'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Discover page',
+          footer: [
+            <ModalFooter key="footer">
+              <Button onClick={() => confirmPublish.destroy()}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  confirmPublish.destroy()
+                  onPublish()
+                    .then(() => {
+                      showDialog(
+                        'success',
+                        'Question published successfully',
+                        'Question was published and is now available in the Discover page',
+                      )
+                    })
+                    .catch(() => {
+                      showDialog(
+                        'error',
+                        'Problem publishing the question',
+                        'There was an error while publishin the question. Please try again',
+                      )
+                    })
+                }}
+                type="primary"
+              >
+                Yes, publish
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      })
+      .catch(data => {
+        const { errorFields } = data
+
+        const firstErrorField = document.getElementById(
+          errorFields[0].name.join('_'),
+        )
+
+        firstErrorField.focus()
+      })
   }
 
   const handleReject = () => {

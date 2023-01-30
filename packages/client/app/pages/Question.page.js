@@ -218,6 +218,7 @@ const QuestionPage = props => {
   const user = currentUserData?.currentUser
   const isEditor = hasGlobalRole(user, 'editor')
   const isAuthor = hasRole(user, 'author', id)
+  const isAdmin = hasGlobalRole(user, 'admin')
 
   if (testMode && !version.published) {
     return (
@@ -466,13 +467,19 @@ const QuestionPage = props => {
       <VisuallyHiddenElement as="h1">Question Page</VisuallyHiddenElement>
       <Question
         editorContent={editorContent}
-        editorView={isEditor && !isAuthor}
+        // admins have editorial rights (publishing rights) on their own questions
+        editorView={(isEditor && !isAuthor) || (isAdmin && isAuthor)}
         facultyView={testMode}
         initialMetadataValues={testMode ? version : metadataApiToUi(version)}
-        isInProduction={version.inProduction}
+        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
+        // unless the question has already been published
+        isInProduction={
+          version.inProduction || (isAdmin && isAuthor && !version.published)
+        }
         isPublished={version.published}
         isRejected={question.rejected}
-        isSubmitted={version.submitted}
+        // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
+        isSubmitted={version.submitted || (isAdmin && isAuthor)}
         isUnderReview={version.underReview}
         isUserLoggedIn={!!user}
         loading={loading}

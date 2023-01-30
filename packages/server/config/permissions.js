@@ -13,7 +13,8 @@ const isEditor = rule()(async (_, __, ctx) => {
 
   const UserModel = ctx.connectors.User.model
   const user = await UserModel.query().findById(ctx.user)
-  return user.isActive && user.hasGlobalRole('editor')
+  const userIsEditor = await user.hasGlobalRole('editor')
+  return user.isActive && userIsEditor
 })
 
 const isAdmin = rule()(async (_, __, ctx) => {
@@ -21,7 +22,18 @@ const isAdmin = rule()(async (_, __, ctx) => {
 
   const UserModel = ctx.connectors.User.model
   const user = await UserModel.query().findById(ctx.user)
-  return user.isActive && user.hasGlobalRole('admin')
+  const userIsAdmin = await user.hasGlobalRole('admin')
+  return user.isActive && userIsAdmin
+})
+
+const isEditorOrAdmin = rule()(async (_, __, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+  const userIsEditor = await user.hasGlobalRole('editor')
+  const userIsAdmin = await user.hasGlobalRole('admin')
+  return user.isActive && (userIsEditor || userIsAdmin)
 })
 
 const isAuthor = rule()(async (_, { questionId }, ctx) => {
@@ -90,7 +102,9 @@ const canUpdateQuestion = rule()(
     // the only other editable state is 'inProduction'
     if (question.inProduction) {
       // only editors can edit
-      return user.hasGlobalRole('editor')
+      const isUserEditor = await user.hasGlobalRole('editor')
+      const isUserAdmin = await user.hasGlobalRole('admin')
+      return isUserEditor || isUserAdmin
     }
 
     // if just submitted, under review or published
@@ -137,8 +151,8 @@ const permissions = {
     rejectQuestion: isEditor,
     moveQuestionVersionToReview: isEditor,
     moveQuestionVersionToProduction: isEditor,
-    publishQuestionVersion: isEditor,
-    createNewQuestionVersion: isEditor,
+    publishQuestionVersion: isEditorOrAdmin,
+    createNewQuestionVersion: isEditorOrAdmin,
   },
   Query: {
     // Users

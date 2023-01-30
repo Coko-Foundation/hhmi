@@ -61,6 +61,7 @@ const Metadata = React.forwardRef((props, ref) => {
     submit: () => form.submit(),
     isFieldsTouched: val => form.isFieldsTouched(val),
     getFieldsError: () => form.getFieldsError(),
+    validateFields: () => form.validateFields(),
   }))
 
   const topicsKey = 'topics'
