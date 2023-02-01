@@ -288,10 +288,7 @@ const WaxWrapper = props => {
     setTestMode(false)
 
     const contentFeedback = JSON.parse(
-      JSON.stringify({
-        type: 'doc',
-        content: innerRef.current.getContent(),
-      }),
+      JSON.stringify(innerRef.current.getContent()),
     )
 
     setEditorContent(contentFeedback)
