@@ -1,14 +1,17 @@
 /* stylelint-disable string-quotes */
+import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import Tabs from './Tabs'
+import { Tabs as AntTabs } from 'antd'
 
-const TabsStyled = styled(Tabs)`
-  [role='tablist'] {
+const TabsStyled = styled(AntTabs)`
+  .ant-tabs-nav {
     background-color: ${th('colorBackgroundHue')};
     margin: 0;
     padding: 0 ${grid(3)};
+  }
 
+  .ant-tabs-nav-list {
     .ant-tabs-tab {
       background: ${th('colorBackgroundHue')};
       font-weight: 700;
@@ -42,4 +45,58 @@ const TabsStyled = styled(Tabs)`
   }
 `
 
-export default TabsStyled
+const Tabs = props => {
+  const { className, ...rest } = props
+
+  const ref = useRef()
+
+  const handleKeyDown = (e, index) => {
+    const { key } = e
+    const isArrowLeft = key === 'ArrowLeft'
+    const isArrowRight = key === 'ArrowRight'
+    const isArrowKey = isArrowLeft || isArrowRight
+
+    if (isArrowKey) {
+      e.preventDefault()
+    }
+
+    if (isArrowKey) {
+      const listItems = ref.current.querySelectorAll('[role="tab"]')
+
+      const newIndex = isArrowRight
+        ? (index + 1) % listItems.length
+        : (index + listItems.length - 1) % listItems.length
+
+      listItems[newIndex].focus()
+    }
+  }
+
+  useEffect(() => {
+    // remove role="tablist" from outer wrapper and apply it to inner wrapper
+    // purpose: to not have illegal elements (role != tab) inside tablist
+    ref.current.querySelector('[role="tablist"').removeAttribute('role')
+    ref.current
+      .querySelector('.ant-tabs-nav-list')
+      .setAttribute('role', 'tablist')
+
+    // https://www.w3.org/WAI/ARIA/apg/patterns/tabs/#keyboardinteraction
+    // implement proper keyboard interaction
+    ref.current
+      .querySelectorAll('[role=tab][aria-selected=false]')
+      .forEach(innactiveTab => innactiveTab.setAttribute('tabIndex', '-1'))
+
+    ref.current
+      .querySelectorAll('[role=tab]')
+      .forEach((tab, index) =>
+        tab.addEventListener('onkeydown', e => handleKeyDown(e, index)),
+      )
+  }, [])
+
+  return (
+    <div className={className} ref={ref}>
+      <TabsStyled {...rest} />
+    </div>
+  )
+}
+
+export default Tabs

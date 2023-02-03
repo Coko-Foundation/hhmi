@@ -1,3 +1,6 @@
+/* stylelint-disable indentation */
+/* stylelint-disable selector-combinator-space-before */
+/* stylelint-disable selector-descendant-combinator-no-non-space */
 /* stylelint-disable string-quotes */
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
@@ -21,6 +24,14 @@ const StyledSelect = styled(AntSelect)`
 
   .ant-select-arrow {
     color: ${th('colorBorder')};
+  }
+
+  &.ant-select.ant-select-disabled > .ant-select-selector,
+  &.ant-select-multiple.ant-select-disabled
+    > .ant-select-selector
+    .ant-select-selection-item-content {
+    background-color: ${th('colorBackgroundHue')};
+    color: ${props => `${props.theme.colorText}cc`};
   }
 `
 
@@ -83,24 +94,24 @@ const Select = props => {
     // store invalid attrs in local state
     setAriaAttributes({
       'aria-controls': selectRef.current
-        .querySelector('input[role="combobox"]')
+        ?.querySelector('input[role="combobox"]')
         .getAttribute('aria-controls'),
       'aria-owns': selectRef.current
-        .querySelector('input[role="combobox"]')
+        ?.querySelector('input[role="combobox"]')
         .getAttribute('aria-owns'),
       'aria-activedescendant': selectRef.current
-        .querySelector('input[role="combobox"]')
+        ?.querySelector('input[role="combobox"]')
         .getAttribute('aria-activedescendant'),
     })
     // remove them from the DOM node
     selectRef.current
-      .querySelector('input[role="combobox"]')
+      ?.querySelector('input[role="combobox"]')
       .removeAttribute('aria-controls')
     selectRef.current
-      .querySelector('input[role="combobox"]')
+      ?.querySelector('input[role="combobox"]')
       .removeAttribute('aria-owns')
     selectRef.current
-      .querySelector('input[role="combobox"]')
+      ?.querySelector('input[role="combobox"]')
       .removeAttribute('aria-activedescendant')
   }
 

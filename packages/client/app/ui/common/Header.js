@@ -24,7 +24,7 @@ const StyledHeader = styled.header`
   z-index: 9;
 
   @media screen and (min-width: ${th('mediaQueries.medium')}) {
-    padding: ${th('headerPaddingVertical')} ${grid(6)};
+    padding: ${th('headerPaddingVertical')} ${grid(5)};
   }
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
