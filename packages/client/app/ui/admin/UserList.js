@@ -17,16 +17,6 @@ import { profileOptions } from '../../utilities'
 
 const Wrapper = styled.div`
   height: 100%;
-
-  > section {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-
-    > div:nth-child(2) {
-      flex-grow: 1;
-    }
-  }
 `
 
 const PageHeader = styled(H1)`
@@ -72,21 +62,19 @@ const columns = [
 
 const StyledSection = styled.section`
   background: ${th('colorBackground')};
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   padding: ${grid(4)};
+
+  > div:nth-child(2) {
+    flex-grow: 1;
+  }
 `
 
 const FooterActionsWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-`
-
-const ButtonWithoutStyles = styled.button`
-  background-color: transparent;
-  border: none;
-
-  &[disabled] {
-    cursor: not-allowed;
-  }
 `
 
 const ModalContext = React.createContext(null)
@@ -174,26 +162,6 @@ const UserList = props => {
         Deactivate
       </Button>
     )
-
-  const paginationItemRender = (_page, type, originalElement) => {
-    if (type === 'prev') {
-      return (
-        <ButtonWithoutStyles aria-label="Previous page" type="button">
-          Previous
-        </ButtonWithoutStyles>
-      )
-    }
-
-    if (type === 'next') {
-      return (
-        <ButtonWithoutStyles aria-label="Next page" type="button">
-          Next
-        </ButtonWithoutStyles>
-      )
-    }
-
-    return originalElement
-  }
 
   const bulkAction = action => {
     if (selectedRows.indexOf(currentUserId) !== -1) {
@@ -378,7 +346,6 @@ const UserList = props => {
               pageSize,
               showSizeChanger: false,
               total: totalUserCount,
-              itemRender: paginationItemRender,
             }}
             rowSelection={{
               onChange: handleSelectionChange,
@@ -387,7 +354,10 @@ const UserList = props => {
                 <Checkbox
                   aria-checked={isCheckboxChecked()}
                   aria-label="Select all users"
-                  checked={selectedRows.length}
+                  checked={
+                    selectedRows.length === data.length &&
+                    selectedRows.length > 0
+                  }
                   indeterminate={
                     selectedRows.length > 0 && selectedRows.length < data.length
                     // or typeof isCheckboxChecked() === string

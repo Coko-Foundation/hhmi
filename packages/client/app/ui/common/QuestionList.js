@@ -6,16 +6,7 @@ import { th, grid } from '@coko/client'
 import List from './List'
 import QuestionItem from './QuestionItem'
 
-const ButtonWithoutStyles = styled.button`
-  background-color: transparent;
-  border: none;
-
-  &[disabled] {
-    cursor: not-allowed;
-  }
-`
-
-const RenderItem = ({ item, onClickRow }) => {
+const RenderItem = ({ item }) => {
   return (
     <QuestionItem
       // additionalMetadata={item.additionalMetadata}
@@ -34,7 +25,6 @@ const RenderItem = ({ item, onClickRow }) => {
 
 RenderItem.propTypes = {
   item: PropTypes.shape().isRequired,
-  onClickRow: PropTypes.func.isRequired,
 }
 
 const StyledList = styled(List)`
@@ -98,26 +88,6 @@ const QuestionList = props => {
     }
 
     paginationConfig.current = currentPage
-
-    paginationConfig.itemRender = (_page, type, originalElement) => {
-      if (type === 'prev') {
-        return (
-          <ButtonWithoutStyles aria-label="Previous page" type="button">
-            Previous
-          </ButtonWithoutStyles>
-        )
-      }
-
-      if (type === 'next') {
-        return (
-          <ButtonWithoutStyles aria-label="Next page" type="button">
-            Next
-          </ButtonWithoutStyles>
-        )
-      }
-
-      return originalElement
-    }
 
     return paginationConfig
   }
