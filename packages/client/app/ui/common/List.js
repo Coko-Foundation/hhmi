@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useEffect, useState, useRef, memo, useCallback } from 'react'
+import React, { useEffect, useState, memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import without from 'lodash/without'
 
-import { List as AntList, Pagination /* ConfigProvider */ } from 'antd'
+import { List as AntList } from 'antd'
 
 import { grid, th } from '@coko/client'
 
@@ -12,6 +12,7 @@ import UICheckBox from './Checkbox'
 import Search from './Search'
 import UISelect from './Select'
 import Spin from './Spin'
+import Pagination from './Pagination'
 
 // #region styled
 const Wrapper = styled.div`
@@ -232,8 +233,6 @@ const List = props => {
         return <ListItemWrapper>{renderItem(itemProps, i)}</ListItemWrapper>
       }
 
-  const paginationRef = useRef(null)
-
   const paginationObj = {
     current: 1,
     pageSize: 10,
@@ -313,27 +312,6 @@ const List = props => {
     value,
   }))
 
-  useEffect(() => {
-    // enhance accessibility of pagination
-    if (showPagination) {
-      const pageItems = paginationRef.current.querySelectorAll(
-        '.ant-pagination-item',
-      )
-
-      pageItems.forEach((page, index) => {
-        const counter = index + 1
-        let label = `Go to page ${counter}`
-
-        if (page.classList.contains('ant-pagination-item-active')) {
-          page.setAttribute('aria-current', 'page')
-          label = `Page ${counter} , Current Page`
-        }
-
-        page.setAttribute('aria-label', label)
-      })
-    }
-  }, [paginationCurrent, paginationSize, showPagination, dataSource])
-
   return (
     <Wrapper className={className}>
       {showSearch && (
@@ -388,17 +366,11 @@ const List = props => {
             {footerContent || <div />}
 
             {showPagination && (
-              <nav
-                aria-label="Pagination"
-                ref={paginationRef}
-                role="navigation"
-              >
-                <Pagination
-                  {...passedPagination}
-                  onChange={onPaginationChange}
-                  onShowSizeChange={onPaginationShowSizeChange}
-                />
-              </nav>
+              <Pagination
+                onChange={onPaginationChange}
+                onShowSizeChange={onPaginationShowSizeChange}
+                pagination={passedPagination}
+              />
             )}
           </FooterWrapper>
         )}

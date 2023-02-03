@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { Table as AntTable } from 'antd'
@@ -7,6 +7,7 @@ import { grid } from '@coko/client'
 
 import Search from './Search'
 import Spin from './Spin'
+import Pagination from './Pagination'
 
 const Wrapper = styled.div`
   display: flex;
@@ -37,6 +38,11 @@ const SearchWrapper = styled.div`
   }
 `
 
+const PaginationNav = styled(Pagination)`
+  padding: ${grid(4)} 0;
+  text-align: right;
+`
+
 const Table = props => {
   const {
     className,
@@ -46,8 +52,48 @@ const Table = props => {
     searchLoading,
     onSearch,
     searchPlaceholder,
+    /* eslint-disable react/prop-types */
+    dataSource,
+    pagination,
+    /* eslint-enable react/prop-types */
     ...rest
   } = props
+
+  const paginationObj = {
+    current: 1,
+    pageSize: 10,
+    ...pagination,
+  }
+
+  const [paginationCurrent, setPaginationCurrent] = useState(
+    paginationObj.current,
+  )
+
+  const [paginationSize, setPaginationSize] = useState(paginationObj.pageSize)
+
+  useEffect(() => {
+    setPaginationCurrent(paginationObj.current)
+    setPaginationSize(paginationObj.pageSize)
+  }, [pagination])
+
+  const passedPagination = {
+    ...paginationObj,
+    current: paginationCurrent,
+    pageSize: paginationSize,
+  }
+
+  const triggerPaginationEvent = eventName => (page, pageSize) => {
+    setPaginationCurrent(page)
+    setPaginationSize(pageSize)
+
+    if (pagination && pagination[eventName]) {
+      pagination[eventName](page, pageSize)
+    }
+  }
+
+  const onPaginationChange = triggerPaginationEvent('onChange')
+
+  const onPaginationShowSizeChange = triggerPaginationEvent('onShowSizeChange')
 
   return (
     <Wrapper className={className}>
@@ -62,8 +108,17 @@ const Table = props => {
       )}
 
       <Spin spinning={loading}>
-        <AntTable {...rest}>{children}</AntTable>
+        <AntTable {...rest} dataSource={dataSource} pagination={false}>
+          {children}
+        </AntTable>
       </Spin>
+      {pagination && (
+        <PaginationNav
+          onChange={onPaginationChange}
+          onShowSizeChange={onPaginationShowSizeChange}
+          pagination={passedPagination}
+        />
+      )}
     </Wrapper>
   )
 }
