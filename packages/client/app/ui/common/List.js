@@ -120,12 +120,20 @@ const SelectableItem = memo(props => {
 
   return (
     <SelectableWrapper key={id}>
-      <CheckBox
-        aria-label={checkboxLabel}
-        checked={selected}
-        onChange={handleChange}
-      />
-      {renderItem({ id, ...rest }, index)}
+      {checkboxLabel !== '' ? (
+        <>
+          <CheckBox
+            aria-label={checkboxLabel}
+            checked={selected}
+            onChange={handleChange}
+          />
+          {renderItem({ id, ...rest }, index)}
+        </>
+      ) : (
+        <CheckBox checked={selected} onChange={handleChange}>
+          {renderItem({ id, ...rest }, index)}
+        </CheckBox>
+      )}
     </SelectableWrapper>
   )
 }, compareItem)
@@ -141,7 +149,7 @@ SelectableItem.propTypes = {
 }
 
 SelectableItem.defaultProps = {
-  checkboxLabel: 'Select item',
+  checkboxLabel: '',
 }
 
 // memoized SelectableItem would use old value of selectedItems when handleSelect and handleDeselect are passed as they are
@@ -342,6 +350,7 @@ const List = props => {
                 Sort by
                 <Select
                   defaultValue={defaultSortOption && defaultSortOption.value}
+                  id="sortBy"
                   onChange={onSortOptionChange}
                   options={sanitizedSortOptions}
                 />

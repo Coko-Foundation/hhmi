@@ -49,7 +49,11 @@ const EditorArea = styled.div`
   .ProseMirror {
     background-color: inherit;
     /* height: 100%; */
-    padding: ${grid(12)} ${grid(5)};
+    padding: 0 ${grid(5)} ${grid(12)};
+
+    @media (min-width: ${th('mediaQueries.small')}) {
+      padding: ${grid(12)} ${grid(5)};
+    }
   }
 `
 
@@ -61,7 +65,7 @@ const TestModeLayout = ({ editor }) => {
   return (
     <ThemeProvider theme={theme}>
       <Wrapper fullScreen={fullScreen}>
-        <EditorWrapper>
+        <EditorWrapper tabIndex={0}>
           <VisuallyHiddenElement as="h2">
             Question content
           </VisuallyHiddenElement>

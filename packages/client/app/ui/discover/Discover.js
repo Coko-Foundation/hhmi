@@ -2,7 +2,13 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Sidebar from './Sidebar'
-import { Collapse, QuestionList, VisuallyHiddenElement, Form } from '../common'
+import {
+  Collapse,
+  QuestionList,
+  VisuallyHiddenElement,
+  Form,
+  Empty,
+} from '../common'
 import useBreakpoint from '../_helpers/useBreakpoint'
 
 const Wrapper = styled.div`
@@ -103,6 +109,18 @@ export const Discover = props => {
     )
   }
 
+  const mergedLocale = {
+    emptyText: !loading ? (
+      <Empty
+        description="No Questions Found"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+      />
+    ) : (
+      <div role="status">Loading</div>
+    ),
+    ...locale,
+  }
+
   return (
     <Wrapper className={className}>
       {wrapFilters(
@@ -121,7 +139,7 @@ export const Discover = props => {
           currentPage={searchParams.page}
           key={listKey}
           loading={loading}
-          locale={locale}
+          locale={mergedLocale}
           onPageChange={setSearchPage}
           onSearch={setSearchQuery}
           onSortOptionChange={setSortOption}
@@ -366,7 +384,7 @@ Discover.propTypes = {
 
 Discover.defaultProps = {
   loading: false,
-  locale: {},
+  locale: null,
   pageSize: 10,
   questions: [],
   sidebarMetadata: null,

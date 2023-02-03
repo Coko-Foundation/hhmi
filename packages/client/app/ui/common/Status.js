@@ -2,13 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-import { grid, th } from '@coko/client'
+import { grid, th, lighten } from '@coko/client'
 
 const Wrapper = styled.span`
   background-color: ${({ variant }) => {
     switch (variant) {
       case 'Not Submitted':
-        return th('colorBorder')
+        return lighten('colorBorder', 0.5)
       case 'Submitted':
         return th('colorText')
       case 'Rejected':
@@ -25,12 +25,11 @@ const Wrapper = styled.span`
   }};
   border-radius: 2px;
   color: ${({ variant }) =>
-    variant === 'Not Submitted' ? th('colorText') : th('colorTextReverse')};
-  flex: 0 0 120px;
+    variant === 'Not Submitted' ? th('colorTextDark') : th('colorTextReverse')};
   font-size: ${th('fontSizeBaseSmall')};
   /* font-weight: bold; */
   padding: ${grid(1)} ${grid(3)};
-  text-align: right;
+  text-align: center;
 `
 
 const Status = props => {

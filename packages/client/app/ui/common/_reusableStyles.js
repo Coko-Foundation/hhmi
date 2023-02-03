@@ -4,9 +4,12 @@ import { th } from '@coko/client'
 
 /* eslint-disable-next-line import/prefer-default-export */
 export const inputShadow = css`
-  input {
-    &:focus {
-      box-shadow: 0 0 2px ${th('colorPrimary')};
-    }
+  transition: outline 0s;
+
+  &:focus {
+    box-shadow: 0 0 2px ${th('colorPrimary')};
+    outline: ${props => `${props.theme.lineWidth * 4}`}px solid
+      ${th('colorPrimaryBorder')};
+    outline-offset: 1px;
   }
 `

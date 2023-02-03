@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Empty } from 'antd'
 import { useCurrentUser } from '@coko/client'
 import { UserList, Result } from 'ui'
 import { Link } from 'react-router-dom'
@@ -160,15 +159,6 @@ const ManageUsers = () => {
       currentUserId={currentUser.id}
       data={usersApiToUi(usersData?.filterUsers.result)}
       loading={usersLoading}
-      // table can be empty only for deactivated users, hence the wording
-      locale={{
-        emptyText: (
-          <Empty
-            description="No Deactivated Users"
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-          />
-        ),
-      }}
       onBulkActivate={activateUsersMutation}
       onBulkDeactivate={deactivateUsersMutation}
       onBulkDelete={deleteUsersMutation}

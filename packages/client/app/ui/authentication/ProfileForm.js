@@ -3,7 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
-import { Form, Button } from '../common'
+import { Form, Button, VisuallyHiddenElement } from '../common'
 
 const Wrapper = styled.div``
 
@@ -52,6 +52,11 @@ const ProfileForm = props => {
             {submitButtonLabel}
           </Button>
         </FormButtonsContainer>
+        {loading && (
+          <VisuallyHiddenElement role="status">
+            Saving profile
+          </VisuallyHiddenElement>
+        )}
       </Form>
     </Wrapper>
   )

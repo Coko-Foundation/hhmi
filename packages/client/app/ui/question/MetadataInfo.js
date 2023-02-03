@@ -11,6 +11,10 @@ const Wrapper = styled.div`
   padding: ${grid(4)};
 `
 
+const MetadataHeading = styled.h3`
+  font-size: ${th('fontSizeBase')};
+`
+
 const StyledDetails = styled.details`
   summary {
     cursor: pointer;
@@ -45,11 +49,9 @@ const MetadataInfo = props => {
   )
 
   return (
-    <Wrapper>
+    <Wrapper tabIndex={0}>
       <VisuallyHiddenElement as="h2">Question Metadata</VisuallyHiddenElement>
-      <p>
-        <strong>Question type</strong>
-      </p>
+      <MetadataHeading>Question type</MetadataHeading>
       <p>
         {
           metadata.questionTypes.find(
@@ -57,17 +59,11 @@ const MetadataInfo = props => {
           )?.label
         }
       </p>
-      <p>
-        <strong>Topic(s)</strong>
-      </p>
+      <MetadataHeading>Topic(s)</MetadataHeading>
       <p>{questionTopics.topics}</p>
-      <p>
-        <strong>Subtopic(s)</strong>
-      </p>
+      <MetadataHeading>Subtopic(s)</MetadataHeading>
       <p>{questionTopics.subtopics}</p>
-      <p>
-        <strong>Courses</strong>
-      </p>
+      <MetadataHeading>Courses</MetadataHeading>
       {values.courses.map(course => {
         const courseObject = metadata.frameworks.find(
           f => f.value === course.course,
@@ -180,17 +176,13 @@ const MetadataInfo = props => {
       })}
       {values.keywords?.length ? (
         <>
-          <p>
-            <strong>Keywords</strong>
-          </p>
+          <MetadataHeading>Keywords</MetadataHeading>
           <p>{values.keywords.join(', ')}</p>
         </>
       ) : (
         ''
       )}
-      <p>
-        <strong>Bloom&apos;s cognitive level</strong>
-      </p>
+      <MetadataHeading>Bloom&apos;s cognitive level</MetadataHeading>
       <p>
         {
           [
@@ -201,9 +193,7 @@ const MetadataInfo = props => {
       </p>
       {values.affectiveLevel && (
         <>
-          <p>
-            <strong>Bloom&apos;s affective level</strong>
-          </p>
+          <MetadataHeading>Bloom&apos;s affective level</MetadataHeading>
           <p>
             {
               metadata.blooms.affective.find(
@@ -215,9 +205,7 @@ const MetadataInfo = props => {
       )}
       {values.psychomotorLevel && (
         <>
-          <p>
-            <strong>Bloom&apos;s psychomotor level</strong>
-          </p>
+          <MetadataHeading>Bloom&apos;s psychomotor level</MetadataHeading>
           <p>
             {
               metadata.blooms.psychomotor.find(
@@ -229,9 +217,7 @@ const MetadataInfo = props => {
       )}
       {values.biointeractiveResources.length > 0 && (
         <>
-          <p>
-            <strong>Biointeractive resources</strong>
-          </p>
+          <MetadataHeading>Biointeractive resources</MetadataHeading>
           <StyledList>
             {values.biointeractiveResources.map(resource => {
               const resourceObject = resources.find(r => r.value === resource)

@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { th } from '@coko/client'
 import { Input as AntInput } from 'antd'
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined'
 import EyeOutlined from '@ant-design/icons/EyeOutlined'
@@ -18,7 +19,16 @@ const NoStyleButton = styled.button`
   border: none;
 `
 
-const StyledPassword = styled(AntInput.Password)``
+const StyledPassword = styled(AntInput.Password)`
+  transition: outline 0s;
+
+  :has(input:focus) {
+    box-shadow: 0 0 2px ${th('colorPrimary')};
+    outline: ${props => `${props.theme.lineWidth * 4}`}px solid
+      ${th('colorPrimaryBorder')};
+    outline-offset: 1px;
+  }
+`
 
 const Input = props => {
   const { className, onChange, type, passwordIconRender, ...rest } = props

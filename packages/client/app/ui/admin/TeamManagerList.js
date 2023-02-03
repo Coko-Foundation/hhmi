@@ -20,7 +20,12 @@ const Wrapper = styled.div`
 `
 
 const PageHeader = styled(H1)`
+  margin: 0 auto;
   text-align: center;
+
+  @media (min-width: ${th('mediaQueries.small')}) {
+    margin: ${grid(2)} auto;
+  }
 `
 
 const StyledSection = styled.section`
@@ -32,6 +37,7 @@ const TeamManagerList = props => {
   const {
     className,
     loading,
+    locale,
     teams,
     onAdd,
     onRemove,
@@ -40,6 +46,11 @@ const TeamManagerList = props => {
     searchLoading,
     searchOptions,
   } = props
+
+  const mergedLocale = {
+    emptyText: <div role="status">Loading</div>,
+    ...locale,
+  }
 
   return (
     <Wrapper className={className}>
@@ -51,6 +62,7 @@ const TeamManagerList = props => {
           dataSource={teams}
           // footerContent={bulkAction}
           loading={loading}
+          locale={mergedLocale}
           onSearch={onSearch}
           renderItem={item => (
             <TeamManagerBlock
@@ -75,6 +87,7 @@ const TeamManagerList = props => {
 
 TeamManagerList.propTypes = {
   loading: PropTypes.bool,
+  locale: PropTypes.shape(),
   teams: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
@@ -103,6 +116,7 @@ TeamManagerList.propTypes = {
 
 TeamManagerList.defaultProps = {
   loading: false,
+  locale: null,
   teams: [],
   onAdd: () => {},
   onRemove: () => {},

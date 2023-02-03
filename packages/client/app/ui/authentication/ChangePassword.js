@@ -8,7 +8,13 @@ import { Form, FormSection, Input } from '../common'
 import ProfileForm from './ProfileForm'
 
 const Col = styled(AntCol)``
-const Row = ({ children }) => <AntRow gutter={8}>{children}</AntRow>
+
+const Row = ({ children }) => (
+  <AntRow align="baseline" gutter={8}>
+    {children}
+  </AntRow>
+)
+
 const Wrapper = styled.div``
 
 const ChangePassword = props => {
@@ -34,7 +40,7 @@ const ChangePassword = props => {
       >
         <FormSection label="Password" last>
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Current password"
                 name="currentPassword"
@@ -51,7 +57,7 @@ const ChangePassword = props => {
             </Col>
           </Row>
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 dependencies={['currentPassword']}
                 label="New password"
@@ -82,7 +88,7 @@ const ChangePassword = props => {
                 <Input type="password" />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 dependencies={['newPassword']}
                 label="Password confirmation"

@@ -11,7 +11,11 @@ const Wrapper = styled.div`
   margin-bottom: ${grid(8)};
 `
 
-const Row = ({ children }) => <AntRow gutter={8}>{children}</AntRow>
+const Row = ({ children }) => (
+  <AntRow align="bottom" gutter={8}>
+    {children}
+  </AntRow>
+)
 
 const yesOrNoOptions = [
   {
@@ -80,7 +84,7 @@ const ProfileInfo = props => {
       >
         <FormSection label="Contact Information">
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               {/* QUESTION reverse order from sign up form? */}
               <Form.Item
                 label="Last name"
@@ -88,30 +92,33 @@ const ProfileInfo = props => {
                 rules={[
                   {
                     required: true,
-                    message: 'You have to fill in your last name',
+                    message: 'Last name is required',
                   },
                 ]}
               >
-                <Input placeholder="Fill in your last name" />
+                <Input autoComplete="on" placeholder="Fill in your last name" />
               </Form.Item>
             </Col>
 
-            <Col span={6}>
+            <Col sm={6} xs={24}>
               <Form.Item
                 label="First name"
                 name="firstName"
                 rules={[
                   {
                     required: true,
-                    message: 'You have to fill in your first name',
+                    message: 'First name is required',
                   },
                 ]}
               >
-                <Input placeholder="Fill in your first name" />
+                <Input
+                  autoComplete="on"
+                  placeholder="Fill in your first name"
+                />
               </Form.Item>
             </Col>
 
-            <Col span={6}>
+            <Col sm={6} xs={24}>
               {/* QUESTION is this useful information? */}
               {/* QUESTION should this be required? */}
               <Form.Item label="Pronouns" name="pronouns">
@@ -121,7 +128,7 @@ const ProfileInfo = props => {
           </Row>
 
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               {/* QUESTION why not the display name? */}
               <Form.Item
                 label="Name as you would like it to appear in the assessment builder"
@@ -129,7 +136,7 @@ const ProfileInfo = props => {
                 rules={[
                   {
                     required: true,
-                    message: 'You have to fill in your display name',
+                    message: 'Display name is required',
                   },
                 ]}
               >
@@ -137,14 +144,14 @@ const ProfileInfo = props => {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Phone"
                 name="phone"
                 rules={[
                   {
                     required: true,
-                    message: 'You have to fill in your phone number',
+                    message: 'Phone number is required',
                   },
                   {
                     pattern: /^(\+?\d\s*)+$/,
@@ -153,20 +160,23 @@ const ProfileInfo = props => {
                   },
                 ]}
               >
-                <Input placeholder="Fill in your phone number" />
+                <Input
+                  autoComplete="on"
+                  placeholder="Fill in your phone number"
+                />
               </Form.Item>
             </Col>
           </Row>
 
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Email"
                 name="email"
                 rules={[
                   {
                     required: true,
-                    message: 'You have to fill in you email address',
+                    message: 'Email address is required',
                   },
                   {
                     type: 'email',
@@ -174,7 +184,10 @@ const ProfileInfo = props => {
                   },
                 ]}
               >
-                <Input placeholder="Fill in your email address" />
+                <Input
+                  autoComplete="on"
+                  placeholder="Fill in your email address"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -182,7 +195,7 @@ const ProfileInfo = props => {
 
         <FormSection label="Address">
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Country"
                 name="country"
@@ -211,7 +224,7 @@ const ProfileInfo = props => {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               {showStates && (
                 <Form.Item
                   dependencies={['country']}
@@ -244,7 +257,7 @@ const ProfileInfo = props => {
           </Row>
 
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="City"
                 name="city"
@@ -252,25 +265,28 @@ const ProfileInfo = props => {
                   {
                     required: true,
                     message:
-                      'You have to fill in the city where your Institution is located',
+                      'City where your Institution is located is required',
                   },
                 ]}
               >
-                <Input placeholder="Enter the City where your Institution is located" />
+                <Input
+                  autoComplete="on"
+                  placeholder="Enter the City where your Institution is located"
+                />
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item label="Address" name="address">
-                <Input placeholder="Type your address" />
+                <Input autoComplete="on" placeholder="Type your address" />
               </Form.Item>
             </Col>
           </Row>
 
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item label="ZIP code" name="zipCode">
-                <Input placeholder="Enter your ZIP code" />
+                <Input autoComplete="on" placeholder="Enter your ZIP code" />
               </Form.Item>
             </Col>
           </Row>
@@ -278,7 +294,7 @@ const ProfileInfo = props => {
 
         <FormSection label="School">
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Position"
                 name="position"
@@ -293,7 +309,7 @@ const ProfileInfo = props => {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Institution/Organization"
                 name="organization"
@@ -305,13 +321,16 @@ const ProfileInfo = props => {
                   },
                 ]}
               >
-                <Input placeholder="Type your Institution/Organization" />
+                <Input
+                  autoComplete="on"
+                  placeholder="Type your Institution/Organization"
+                />
               </Form.Item>
             </Col>
           </Row>
 
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               {/* QUESTION need the types */}
               <Form.Item
                 label="Institutional Setting"
@@ -330,7 +349,7 @@ const ProfileInfo = props => {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               {/* QUESTION is the number input more appropriate here? */}
               <Form.Item
                 label="Years of teaching experience"
@@ -355,7 +374,7 @@ const ProfileInfo = props => {
           </Row>
 
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               {/* QUESTION what is this sorcery? */}
               <Form.Item
                 label="Primary Institution Type"
@@ -368,7 +387,7 @@ const ProfileInfo = props => {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item dependencies={['typeOfInstitution']} noStyle>
                 {({ getFieldValue }) => {
                   if (getFieldValue('typeOfInstitution') === 'highSchool') {
@@ -444,7 +463,7 @@ const ProfileInfo = props => {
 
         <FormSection label="Reviewing" last>
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Are you interested in serving as a reviewer?"
                 name="reviewerInterest"
@@ -463,7 +482,7 @@ const ProfileInfo = props => {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item dependencies={['reviewerInterest']} noStyle>
                 {({ getFieldValue }) => {
                   if (getFieldValue('reviewerInterest') === false) {
@@ -518,7 +537,7 @@ const ProfileInfo = props => {
           </Row>
 
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Have you had training in writing/reviewing assessment items?"
                 name="assessmentTraining"
@@ -537,7 +556,7 @@ const ProfileInfo = props => {
               </Form.Item>
             </Col>
 
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="Have you had training on assessing items for inclusive language?"
                 name="assessmentTrainingInclusive"
@@ -558,7 +577,7 @@ const ProfileInfo = props => {
           </Row>
 
           <Row>
-            <Col span={12}>
+            <Col sm={12} xs={24}>
               <Form.Item label="Where did you hear about this?" name="source">
                 <Input placeholder="Enter source" />
               </Form.Item>

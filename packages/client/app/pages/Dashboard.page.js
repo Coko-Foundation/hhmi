@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
-import { Empty } from 'antd'
 
+import { Dashboard, DateParser, VisuallyHiddenElement } from 'ui'
 import {
   GET_AUTHOR_DASHBOARD,
   GET_EDITOR_DASHBOARD,
   CREATE_QUESTION,
   CURRENT_USER,
 } from '../graphql'
-import { Dashboard, DateParser, VisuallyHiddenElement } from '../ui'
 import {
   hasGlobalRole,
   // dashboardDataMapper,
@@ -254,14 +253,6 @@ const DashboardPage = () => {
         // bulkActions
         initialTabKey={initialTabKey}
         loading={loading}
-        locale={{
-          emptyText: (
-            <Empty
-              description="No Questions Found"
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-            />
-          ),
-        }}
         // onQuestionSelected
         onClickCreate={handleCreateQuestion}
         onSearch={handleSearch}

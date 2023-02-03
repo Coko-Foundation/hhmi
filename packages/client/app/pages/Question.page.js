@@ -213,6 +213,46 @@ const QuestionPage = props => {
   const question = data?.question
   const version = question?.versions[0] // latest only requested
 
+  if (testMode && metadata) {
+    const questionType = metadata?.questionTypes.find(
+      type => type.value === version.questionType,
+    )
+
+    const courses = version.courses.map(c => c.course)
+
+    const courseNames = metadata?.frameworks
+      .filter(framework => courses.indexOf(framework.value) !== -1)
+      .map(c => c.label)
+
+    const pageTitle = `${courseNames.join(', ')} question, ${
+      questionType?.label
+    }`
+
+    document.title = pageTitle
+    document.getElementById('page-announcement').innerHTML = pageTitle
+  }
+
+  if (!testMode) {
+    let pageTitle
+
+    if (question.rejected) {
+      pageTitle = 'Rejected - Question editor page'
+    } else if (version.published) {
+      pageTitle = 'Published - Question editor page'
+    } else if (version.inProduction) {
+      pageTitle = 'In production - Question editor page'
+    } else if (version.underReview) {
+      pageTitle = 'Under review - Question editor page'
+    } else if (version.submitted) {
+      pageTitle = 'Submitted - Question editor page'
+    } else {
+      pageTitle = 'Not submitted - Question editor page'
+    }
+
+    document.title = pageTitle
+    document.getElementById('page-announcement').innerHTML = pageTitle
+  }
+
   const editorContent = version?.content && JSON.parse(version.content)
 
   const user = currentUserData?.currentUser
@@ -461,7 +501,7 @@ const QuestionPage = props => {
   return (
     <>
       {/* TODO: create more specific heading */}
-      <VisuallyHiddenElement as="h1">Question Page</VisuallyHiddenElement>
+      <VisuallyHiddenElement as="h1">{document.title}</VisuallyHiddenElement>
       <Question
         editorContent={editorContent}
         // admins have editorial rights (publishing rights) on their own questions

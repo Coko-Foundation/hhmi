@@ -1,5 +1,5 @@
 /* stylelint-disable declaration-no-important */
-// import React from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 const VisuallyHiddenElement = styled.span`
@@ -15,4 +15,6 @@ const VisuallyHiddenElement = styled.span`
   width: 1px !important;
 `
 
-export default VisuallyHiddenElement
+const HiddenElement = props => <VisuallyHiddenElement {...props} />
+
+export default HiddenElement

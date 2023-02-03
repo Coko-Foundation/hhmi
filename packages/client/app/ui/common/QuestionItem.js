@@ -28,7 +28,6 @@ const Wrapper = styled.article`
 
 const FirstRow = styled.div`
   display: flex;
-  justify-content: space-between;
   margin-bottom: ${grid(2)};
 `
 
@@ -45,6 +44,11 @@ const WaxContainer = styled(Link)`
   * {
     overflow: hidden;
   }
+`
+
+const StatusContainer = styled.div`
+  min-width: 115px;
+  text-align: right;
 `
 
 const SecondRow = styled.div`
@@ -82,16 +86,27 @@ const SecondRow = styled.div`
   }
 `
 
-const BottomRow = styled.div`
-  display: flex;
-  gap: ${grid(2)};
-  justify-content: space-between;
-`
+const BottomRow = styled.table`
+  border: none;
+  width: 100%;
 
-const Metadata = styled.div`
-  display: flex;
-  flex-basis: 20%;
-  flex-direction: column;
+  th,
+  td {
+    border: none;
+  }
+
+  @media (min-width: ${th('mediaQueries.small')}) {
+    tbody {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      tr {
+        display: flex;
+        flex-direction: column;
+      }
+    }
+  }
 `
 
 const MetadataLabel = styled.div`
@@ -99,7 +114,13 @@ const MetadataLabel = styled.div`
   text-transform: uppercase;
 `
 
-const MetadataValue = styled.div``
+const MetadataValue = styled.td`
+  text-align: right;
+
+  @media (min-width: ${th('mediaQueries.small')}) {
+    text-align: left;
+  }
+`
 
 const courseOrder = [
   'Introductory Biology for Majors',
@@ -134,8 +155,11 @@ const QuestionItem = props => {
             readOnly
           />
         </WaxContainer>
-
-        <div>{status ? <Status status={status} /> : null}</div>
+        {status ? (
+          <StatusContainer>
+            <Status status={status} />
+          </StatusContainer>
+        ) : null}
       </FirstRow>
 
       <SecondRow>
@@ -158,14 +182,18 @@ const QuestionItem = props => {
       </SecondRow>
 
       <BottomRow>
-        {metadata &&
-          metadata.length &&
-          metadata.map(item => (
-            <Metadata key={uuid()}>
-              <MetadataLabel>{item.label}</MetadataLabel>
-              <MetadataValue>{item.value || '-'}</MetadataValue>
-            </Metadata>
-          ))}
+        <tbody>
+          {metadata &&
+            metadata.length &&
+            metadata.map(item => (
+              <tr key={uuid()}>
+                <th>
+                  <MetadataLabel>{item.label}</MetadataLabel>
+                </th>
+                <MetadataValue>{item.value || '-'}</MetadataValue>
+              </tr>
+            ))}
+        </tbody>
       </BottomRow>
     </Wrapper>
   )

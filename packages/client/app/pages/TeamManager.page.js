@@ -47,7 +47,6 @@ const TeamManagerPage = () => {
       return {
         id: m.user.id,
         displayName: m.user.displayName,
-        checkboxLabel: `Select user ${m.user.displayName}`,
       }
     })
 

@@ -6,7 +6,9 @@ import { Input } from 'antd'
 import { inputShadow } from './_reusableStyles'
 
 const StyledSearch = styled(Input.Search)`
-  ${inputShadow}
+  input {
+    ${inputShadow}
+  }
 `
 
 const Search = props => {

@@ -5,8 +5,9 @@ module.exports = {
   colorPrimary: '#178387',
   colorSecondary: '#0a5c5f', // 'gainsboro',
   colorTertiary: '#8ac341',
-  colorBorder: 'gainsboro',
+  colorBorder: '#777',
   colorSelection: '#3fc2cd',
+  colorPrimaryBorder: '#71ada9',
 
   colorInfo: '#178387',
   colorSuccess: '#00763a',
@@ -16,6 +17,7 @@ module.exports = {
   colorText: '#3F3F3F',
   colorTextDark: '#222222',
   colorTextReverse: 'white',
+  colorTextPlaceholder: '#777',
 
   fontInterface: 'Arial, sans-serif',
   // font sizes

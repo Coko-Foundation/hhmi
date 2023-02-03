@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react'
 
 import { Discover, DateParser, VisuallyHiddenElement } from 'ui'
 import { useQuery } from '@apollo/client'
-import { Empty } from 'antd'
 
 import {
   extractDocumentText,
@@ -144,14 +143,6 @@ const DiscoverPage = () => {
       <VisuallyHiddenElement as="h1">Discover page</VisuallyHiddenElement>
       <Discover
         loading={loading}
-        locale={{
-          emptyText: (
-            <Empty
-              description="No Questions Found"
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-            />
-          ),
-        }}
         onSearch={handleSearch}
         pageSize={PAGE_SIZE}
         questions={

@@ -8,6 +8,10 @@ import { vertical as verticalCss } from '../_helpers/cssSnippets'
 
 const StyledGroup = styled(Checkbox.Group)`
   ${checkboxStyles}
+
+  label.ant-checkbox-wrapper {
+    margin-inline-start: 0;
+  }
 `
 
 const VerticalWrapper = styled.div`

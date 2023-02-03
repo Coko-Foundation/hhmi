@@ -46,7 +46,14 @@ const StyledButton = styled(AntButton)`
         `
       }
 
-      return null
+      return css`
+        &:hover,
+        &:focus,
+        &:active {
+          border-color: ${darken('colorPrimary', 0.25)} !important;
+          color: ${darken('colorPrimary', 0.25)} !important;
+        }
+      `
     }
 
     const color = theme[colors[status]]

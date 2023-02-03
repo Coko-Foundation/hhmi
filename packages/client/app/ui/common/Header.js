@@ -203,7 +203,7 @@ const StyledLogin = styled(Link)`
   align-items: center;
   background-color: ${th('colorPrimary')};
   border-color: ${th('colorPrimary')};
-  border-radius: 3px;
+  border-radius: 0;
   color: ${th('colorTextReverse')};
   display: flex;
   font-size: ${th('fontSizeBase')};
@@ -466,7 +466,7 @@ const Header = props => {
         Skip to main content
       </SkipLink>
       <Branding to={homepage}>
-        <h1>HHMI BioInterctive Assesent Builder</h1>
+        <h1>HHMI BioInterctive Assessment Builder</h1>
       </Branding>
       <Navigation role="navigation">
         <MobileMenuToggle
@@ -527,9 +527,15 @@ const Header = props => {
                   >
                     <UserMenuButton
                       aria-controls="user-menu"
-                      aria-expanded="false"
+                      aria-expanded={openUserMenu}
                       aria-haspopup="true"
-                      icon={openUserMenu ? <UpOutlined /> : <DownOutlined />}
+                      icon={
+                        openUserMenu ? (
+                          <UpOutlined aria-hidden="true" />
+                        ) : (
+                          <DownOutlined aria-hidden="true" />
+                        )
+                      }
                       onClick={() => setOpenUserMenu(!openUserMenu)}
                       type="primary"
                     >

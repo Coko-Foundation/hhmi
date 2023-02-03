@@ -4,21 +4,31 @@ import styled from 'styled-components'
 
 import { grid, th } from '@coko/client'
 
-import { Button as UIButton, H2, List, Select } from '../common'
+import { Button as UIButton, H2, List, Select, Form } from '../common'
 
 const Wrapper = styled.div`
   margin: 0 auto;
   max-width: 1000px;
-  padding: ${grid(8)};
+  padding: ${grid(8)} 0;
   width: 100%;
+
+  @media (min-width: ${th('mediaQueries.small')}) {
+    padding: ${grid(8)};
+  }
 `
 
 const Heading = styled(H2)`
   margin: 0;
 `
 
-const SearchWrapper = styled.div`
+const SearchWrapper = styled(Form)`
+  align-items: end;
   display: flex;
+
+  > div {
+    margin-bottom: 0;
+    width: 100%;
+  }
 `
 
 const AddButton = styled(UIButton)``
@@ -85,25 +95,31 @@ const TeamManagerBlock = props => {
 
   return (
     <Wrapper className={className}>
-      <Heading>{displayName}</Heading>
+      <Heading>
+        <span id={`team-${displayName}`}>{displayName}</span>
+      </Heading>
 
-      <SearchWrapper>
-        <Select
-          aria-label={`Search for users to add in ${displayName} team`}
-          // https://github.com/ant-design/ant-design/issues/19970#issuecomment-763139893
-          async
-          defaultOpen={false}
-          labelInValue
-          loading={searchLoading}
-          mode="multiple"
-          onChange={handleSelectChange}
-          onSearch={handleSearch}
-          options={searchOptions}
-          placeholder="Search for a user"
-          value={selectData}
-        />
-
+      <SearchWrapper layout="vertical">
+        <Form.Item
+          label={`Find users to add to the ${displayName} team`}
+          name={`add${displayName}`}
+        >
+          <Select
+            // https://github.com/ant-design/ant-design/issues/19970#issuecomment-763139893
+            async
+            defaultOpen={false}
+            labelInValue
+            loading={searchLoading}
+            mode="multiple"
+            onChange={handleSelectChange}
+            onSearch={handleSearch}
+            options={searchOptions}
+            placeholder="Search for a user"
+            value={selectData}
+          />
+        </Form.Item>
         <AddButton
+          aria-labelledby={`${displayName}-team`}
           disabled={selectUserCount === 0}
           onClick={handleAdd}
           type="primary"
@@ -113,11 +129,13 @@ const TeamManagerBlock = props => {
       </SearchWrapper>
 
       <StyledList
+        aria-labelledby={`team-${displayName}`}
         dataSource={members}
         itemSelection={{
           onChange: handleRowSelectionChange,
         }}
         renderItem={member => <Member>{member.displayName}</Member>}
+        role="group"
         showPagination={false}
       />
 

@@ -40,7 +40,11 @@ const Login = props => {
               },
             ]}
           >
-            <Input placeholder="Please enter your email" type="email" />
+            <Input
+              autoComplete="on"
+              placeholder="Please enter your email"
+              type="email"
+            />
           </Form.Item>
 
           <Form.Item
@@ -48,7 +52,11 @@ const Login = props => {
             name="password"
             rules={[{ required: true, message: 'Password is required' }]}
           >
-            <Input placeholder="Please enter your password" type="password" />
+            <Input
+              autoComplete="on"
+              placeholder="Please enter your password"
+              type="password"
+            />
           </Form.Item>
         </AuthenticationForm>
       </AuthenticationWrapper>

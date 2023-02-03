@@ -40,14 +40,14 @@ const LayoutWrapper = styled.div`
 `
 
 const regexPaths = [
-  {
-    path: /^\/question\/[A-Za-z0-9-]+\/test$/i,
-    name: 'Question page',
-  },
-  {
-    path: /^\/question\/[A-Za-z0-9-]+$/i,
-    name: 'Question Editor page',
-  },
+  // {
+  //   path: /^\/question\/[A-Za-z0-9-]+\/test$/i,
+  //   name: 'Question page',
+  // },
+  // {
+  //   path: /^\/question\/[A-Za-z0-9-]+$/i,
+  //   name: 'Question Editor page',
+  // },
   {
     path: /^\/discover$/,
     name: 'Discover page',
@@ -107,15 +107,19 @@ const Layout = props => {
     const path = history.location.pathname
     const title = regexPaths.find(p => p.path.test(path))
 
-    document.title = `${title?.name} - HHMI Assessment Builder`
+    if (title) {
+      document.title = `${title?.name} - HHMI Assessment Builder`
+    }
 
     const unlisten = history.listen(val => {
       const pathName = val.pathname
       const pathTitle = regexPaths.find(p => p.path.test(pathName))
 
-      document.getElementById('page-announcement').innerHTML = pathTitle?.name
+      if (pathTitle) {
+        document.getElementById('page-announcement').innerHTML = pathTitle?.name
 
-      document.title = `${pathTitle?.name} - HHMI Assessment Builder`
+        document.title = `${pathTitle?.name} - HHMI Assessment Builder`
+      }
     })
 
     return unlisten

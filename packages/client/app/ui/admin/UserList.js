@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
@@ -12,6 +12,8 @@ import {
   Table,
   DateParser,
   Modal,
+  Empty,
+  VisuallyHiddenElement,
 } from '../common'
 import { profileOptions } from '../../utilities'
 
@@ -20,7 +22,12 @@ const Wrapper = styled.div`
 `
 
 const PageHeader = styled(H1)`
+  margin: 0 auto;
   text-align: center;
+
+  @media (min-width: ${th('mediaQueries.small')}) {
+    margin: ${grid(2)} auto;
+  }
 `
 
 const columns = [
@@ -72,9 +79,32 @@ const StyledSection = styled.section`
   }
 `
 
+const StyledTable = styled(Table)`
+  .ant-table-content {
+    overflow-x: auto;
+  }
+`
+
+const StyledCheckbox = styled(Checkbox)`
+  align-items: center;
+  display: flex;
+  flex-direction: column-reverse;
+  white-space: nowrap;
+
+  &::after {
+    display: none;
+  }
+`
+
 const FooterActionsWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
+  padding-bottom: 10px;
+
+  @media (min-width: ${th('mediaQueries.small')}) {
+    flex-direction: row;
+  }
 `
 
 const ModalContext = React.createContext(null)
@@ -178,6 +208,17 @@ const UserList = props => {
     }
   }
 
+  useEffect(() => {
+    if (dataSource.length) {
+      document.getElementById('action-status').innerHTML = showDeactivated
+        ? `Loaded inactive users`
+        : `Loaded active users`
+      setTimeout(() => {
+        document.getElementById('action-status').innerHTML = ''
+      }, 3000)
+    }
+  }, [dataSource])
+
   // #region modals
   const confirmActivate = () => {
     const confirmDialog = confirm()
@@ -202,6 +243,12 @@ const UserList = props => {
                 variables: { ids: selectedRows },
               })
                 .then(() => {
+                  document.getElementById('action-status').innerHTML = `User${
+                    selectedRows.length > 1 ? 's' : ''
+                  } activated`
+                  setTimeout(() => {
+                    document.getElementById('action-status').innerHTML = ''
+                  }, 3000)
                   setSelectedRows([])
                   confirmDialog.destroy()
                 })
@@ -245,6 +292,12 @@ const UserList = props => {
                 variables: { ids: selectedRows },
               })
                 .then(() => {
+                  document.getElementById('action-status').innerHTML = `User${
+                    selectedRows.length > 1 ? 's' : ''
+                  } deactivated`
+                  setTimeout(() => {
+                    document.getElementById('action-status').innerHTML = ''
+                  }, 3000)
                   setSelectedRows([])
                   confirmDialog.destroy()
                 })
@@ -289,6 +342,12 @@ const UserList = props => {
                 variables: { ids: selectedRows },
               })
                 .then(() => {
+                  document.getElementById('action-status').innerHTML = `User${
+                    selectedRows.length > 1 ? 's' : ''
+                  } deleted`
+                  setTimeout(() => {
+                    document.getElementById('action-status').innerHTML = ''
+                  }, 3000)
                   setSelectedRows([])
                   confirmDialog.destroy()
                 })
@@ -329,16 +388,29 @@ const UserList = props => {
   }
   // #endregion modals
 
+  const mergedLocale = {
+    emptyText: !loading ? (
+      <Empty
+        description="No Users Found"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        role="status"
+      />
+    ) : (
+      <div role="status">Loading</div>
+    ),
+    ...locale,
+  }
+
   return (
     <ModalContext.Provider value={null}>
       <Wrapper className={className}>
         <StyledSection>
           <PageHeader>User Manager</PageHeader>
-          <Table
+          <StyledTable
             columns={columns}
             dataSource={dataSource}
             loading={loading}
-            locale={locale}
+            locale={mergedLocale}
             onSearch={onSearch}
             pagination={{
               current: currentPage,
@@ -351,9 +423,8 @@ const UserList = props => {
               onChange: handleSelectionChange,
               selectedRowKeys: selectedRows,
               columnTitle: (
-                <Checkbox
+                <StyledCheckbox
                   aria-checked={isCheckboxChecked()}
-                  aria-label="Select all users"
                   checked={
                     selectedRows.length === data.length &&
                     selectedRows.length > 0
@@ -363,7 +434,9 @@ const UserList = props => {
                     // or typeof isCheckboxChecked() === string
                   }
                   onChange={toggleSelectAll}
-                />
+                >
+                  Select all
+                </StyledCheckbox>
               ),
               renderCell: (_checked, record, _index, originNode) => {
                 return React.cloneElement(originNode, {
@@ -395,6 +468,7 @@ const UserList = props => {
               </Button>
             </ButtonGroup>
           </FooterActionsWrapper>
+          <VisuallyHiddenElement id="action-status" role="status" />
         </StyledSection>
       </Wrapper>
       {contextHolder}
@@ -433,7 +507,7 @@ UserList.propTypes = {
 UserList.defaultProps = {
   data: [],
   loading: false,
-  locale: {},
+  locale: null,
   pageSize: 10,
   searchLoading: false,
   totalUserCount: 0,

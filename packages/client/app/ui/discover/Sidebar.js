@@ -19,7 +19,7 @@ const Wrapper = styled.aside`
   background-color: ${props => props.theme.colorBackground};
   height: 100%;
   overflow: hidden;
-  padding: ${grid(2)};
+  padding: ${grid(2)} 0;
 
   > div {
     height: 100%;
@@ -40,12 +40,14 @@ const StyledForm = styled(Form)`
 const FormFieldsContainer = styled.div`
   flex-grow: 1;
   overflow: auto;
+  padding: 0 ${grid(4)};
 `
 
 const Footer = styled.div`
   display: flex;
   justify-content: space-between;
-  padding-top: ${grid(4)};
+  /* padding-top: ${grid(4)}; */
+  padding: ${grid(4)} ${grid(2)} 0 ${grid(4)};
 `
 
 const Sidebar = props => {

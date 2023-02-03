@@ -1,7 +1,16 @@
+/* stylelint-disable string-quotes */
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { QuestionList, TabsStyled as Tabs, Button, Spin } from '../common'
+import { th } from '@coko/client'
+import { PlusOutlined } from '@ant-design/icons'
+import {
+  QuestionList,
+  TabsStyled as Tabs,
+  Button,
+  Spin,
+  Empty,
+} from '../common'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -15,12 +24,33 @@ const Wrapper = styled.div`
 const StyledTabs = styled(Tabs)`
   height: 100%;
 
-  .ant-tabs-content {
-    height: 100%;
+  .ant-tabs-content-holder {
+    border-top: 1px solid ${th('colorBorder')};
 
-    .ant-tabs-tabpane {
+    .ant-tabs-content {
       height: 100%;
-      margin: auto;
+
+      .ant-tabs-tabpane {
+        height: 100%;
+        margin: auto;
+      }
+    }
+  }
+`
+
+const StyledCreateQuestionButton = styled(Button)`
+  > span:not([role='img']) {
+    display: none;
+  }
+
+  @media (min-width: ${th('mediaQueries.small')}) {
+    > span:not([role='img']) {
+      display: inline-block;
+      margin-inline-start: 0;
+    }
+
+    > span[role='img'] {
+      display: none;
     }
   }
 `
@@ -69,10 +99,30 @@ const Dashboard = props => {
   }, [searchParams])
 
   const CreateQuestionButton = (
-    <Button onClick={onClickCreate} type="primary">
+    <StyledCreateQuestionButton
+      aria-label="Create Question"
+      icon={<PlusOutlined />}
+      onClick={onClickCreate}
+      title="Create Question"
+      type="primary"
+    >
       Create Question
-    </Button>
+    </StyledCreateQuestionButton>
   )
+
+  const isLoading = tabsContent.reduce(tab => tab.loading)
+
+  const mergedLocale = {
+    emptyText: !isLoading ? (
+      <Empty
+        description="No Questions Found"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+      />
+    ) : (
+      <div role="status">Loading</div>
+    ),
+    ...locale,
+  }
 
   return (
     <Wrapper>
@@ -97,7 +147,7 @@ const Dashboard = props => {
                   currentPage={searchParams.page}
                   key={searchParams.role}
                   loading={tabLoading}
-                  locale={locale}
+                  locale={mergedLocale}
                   onPageChange={setSearchPage}
                   onQuestionSelected={onQuestionSelected}
                   onSearch={setSearchQuery}
@@ -175,7 +225,7 @@ Dashboard.propTypes = {
 Dashboard.defaultProps = {
   bulkActions: null,
   initialTabKey: null,
-  locale: {},
+  locale: null,
   onQuestionSelected: () => {},
   showSort: false,
   sortOptions: [],

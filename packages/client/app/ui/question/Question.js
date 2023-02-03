@@ -7,9 +7,8 @@ import { Dropdown } from 'antd'
 import {
   LeftOutlined,
   RightOutlined,
-  LoadingOutlined,
-  CheckOutlined,
   EllipsisOutlined,
+  UploadOutlined,
 } from '@ant-design/icons'
 
 import { grid, th } from '@coko/client'
@@ -20,11 +19,11 @@ import { config } from '../wax/config'
 import Metadata from './Metadata'
 import ExportToWordButton from './ExportToWordButton'
 import ExportToScormButton from './ExportToScormButton'
+import AutoSaving from './AutoSaveIndicator'
 import {
   Button,
   Checkbox,
   Collapse,
-  DateParser,
   Link,
   Modal,
   Paragraph,
@@ -36,7 +35,7 @@ import {
 import Wax from '../wax/Wax'
 import { extractDocumentText } from '../../utilities'
 
-const ModalContext = React.createContext(null)
+const ModalContext = React.createContext({ agree: false, setAgree: () => {} })
 const ModalFooter = Modal.footer
 const ModalHeader = Modal.header
 
@@ -75,6 +74,12 @@ const Wrapper = styled.div`
 
   .ant-tabs-nav-operations {
     display: none;
+  }
+
+  @media (min-width: ${th('mediaQueries.medium')}) {
+    .ant-tabs-content-holder {
+      border-top: 1px solid ${th('colorBorder')};
+    }
   }
 `
 
@@ -207,7 +212,6 @@ const EditorScrollContainer = styled.div`
 const SubmitTestBar = styled.div`
   background-color: ${th('colorBackground')};
   border-top: 1px solid ${th('colorBorder')};
-  box-shadow: 0 0 4px ${th('colorBorder')};
   display: flex;
   justify-content: end;
   margin: auto;
@@ -359,71 +363,6 @@ WaxWrapper.defaultProps = {
   withFeedback: true,
 }
 // #endregion wax
-
-// #region Autosave
-const AutoSavingWrapper = styled.span`
-  padding: 0 ${grid(4)};
-
-  .anticon-check {
-    color: ${th('colorSuccess')};
-  }
-
-  .anticon-loading {
-    color: ${th('colorPrimary')};
-    margin-right: ${grid(1)};
-  }
-`
-
-const AutoSaving = props => {
-  const { autoSaving, lastAutoSave } = props
-
-  const timeDifference = Math.floor(
-    (new Date() - lastAutoSave) / 1000 / 60 / 60,
-  )
-
-  if (!lastAutoSave) {
-    return (
-      <AutoSavingWrapper>
-        <CheckOutlined /> Autosaving is on
-      </AutoSavingWrapper>
-    )
-  }
-
-  if (autoSaving === false) {
-    return (
-      <AutoSavingWrapper>
-        <CheckOutlined /> Last saved{' '}
-        <DateParser
-          dateFormat={timeDifference < 24 ? 'HH:mm' : 'DD MMMM'}
-          timestamp={lastAutoSave.valueOf()}
-        >
-          {timestamp => <span>{timestamp}</span>}
-        </DateParser>
-      </AutoSavingWrapper>
-    )
-  }
-
-  if (autoSaving === true) {
-    return (
-      <AutoSavingWrapper>
-        <LoadingOutlined /> Saving...
-      </AutoSavingWrapper>
-    )
-  }
-
-  return null
-}
-
-AutoSaving.propTypes = {
-  autoSaving: PropTypes.bool,
-  lastAutoSave: PropTypes.shape(),
-}
-
-AutoSaving.defaultProps = {
-  autoSaving: false,
-  lastAutoSave: null,
-}
-// #endregion Autosave
 
 // #region Question Panel
 const StyledCollapse = styled(Collapse)`
@@ -998,7 +937,10 @@ const Question = props => {
     </StyledPrevNextButton>
   )
 
-  const RightAreaAuthor = isSubmitted ? null : (
+  const isMobile = useBreakpoint('(min-width: 550px)')
+
+  // eslint-disable-next-line no-nested-ternary
+  const RightAreaAuthor = isSubmitted ? null : isMobile ? (
     <>
       <StyledCheckbox
         aria-label="I accept the terms and conditions"
@@ -1029,6 +971,68 @@ const Question = props => {
         Submit
       </SubmitButton>
     </>
+  ) : (
+    <Button
+      aria-label="Submit"
+      icon={<UploadOutlined />}
+      // onClick={handleSubmitButtonClick}
+      onClick={() => {
+        const confirmSubmit = confirm()
+        confirmSubmit.update({
+          title: 'Ready to submit?',
+          content: (
+            <ModalContext.Consumer>
+              {({ agree, setAgree }) => (
+                <StyledCheckbox
+                  aria-label="I accept the terms and conditions"
+                  checked={agree}
+                  onChange={() => setAgree(!agree)}
+                >
+                  Accept{' '}
+                  <Link
+                    id="termsAndConditions"
+                    onClick={showTermsAndConditions}
+                    to="#termsAndCondition"
+                  >
+                    terms and conditions
+                  </Link>
+                </StyledCheckbox>
+              )}
+            </ModalContext.Consumer>
+          ),
+          footer: (
+            <ModalFooter>
+              <Button
+                onClick={() => {
+                  confirmSubmit.destroy()
+                }}
+              >
+                Cancel
+              </Button>
+              <ModalContext.Consumer>
+                {({ agree }) => (
+                  <Button
+                    disabled={!agree}
+                    onClick={() => {
+                      confirmSubmit.destroy()
+                      handleSubmit()
+                    }}
+                    type="primary"
+                  >
+                    Submit
+                  </Button>
+                )}
+              </ModalContext.Consumer>
+            </ModalFooter>
+          ),
+          maskClosable: true,
+          // okText: 'Submit Question',
+          // onOk: handleSubmit,
+        })
+      }}
+      title="Submit"
+      type="primary"
+    />
   )
 
   const editorActionsDropdownMenu = [
@@ -1305,10 +1309,15 @@ const Question = props => {
   )
   // #endregion components
 
+  const contextValue = React.useMemo(
+    () => ({ agree: agreedTc, setAgree: setAgreedTc }),
+    [agreedTc],
+  )
+
   if (loading || !metadata || !resources?.length) return <Spin spinning />
 
   return (
-    <ModalContext.Provider value={null}>
+    <ModalContext.Provider value={contextValue}>
       <Wrapper>
         <Spin renderBackground={false} spinning={loading}>
           <StyledTabs
@@ -1354,13 +1363,6 @@ const Question = props => {
                       }
                       showMetadata={showMetadata}
                     />
-                    {/* <QuestionWrapper showMetadata={showMetadata}>
-                    
-
-                    {showMetadata && (
-
-                    )}
-                  </QuestionWrapper> */}
                   </>
                 ),
               },
