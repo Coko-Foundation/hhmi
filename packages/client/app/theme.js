@@ -1,6 +1,6 @@
 module.exports = {
   colorBackground: 'white',
-  colorBackgroundHue: '#f8f8f8',
+  colorBackgroundHue: '#f5f5f5',
   colorBody: '#000',
   colorPrimary: '#178387',
   colorSecondary: '#0a5c5f', // 'gainsboro',
