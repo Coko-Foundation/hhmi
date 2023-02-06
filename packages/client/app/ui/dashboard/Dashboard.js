@@ -110,7 +110,7 @@ const Dashboard = props => {
     </StyledCreateQuestionButton>
   )
 
-  const isLoading = tabsContent.reduce(tab => tab.loading)
+  const isLoading = tabsContent.some(tab => tab.loading)
 
   const mergedLocale = {
     emptyText: !isLoading ? (
