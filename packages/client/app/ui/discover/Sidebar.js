@@ -141,6 +141,7 @@ const Sidebar = props => {
               <Form.Item label="Course" name="course">
                 <Select
                   // allowClear
+                  data-testid="course-select"
                   optionFilterProp="label"
                   options={metadata.frameworks.map(i => {
                     return {
@@ -158,6 +159,7 @@ const Sidebar = props => {
               </Form.Item>
               <Form.Item label="Question type" name="questionType">
                 <Select
+                  data-testid="question-type-select"
                   mode="multiple"
                   optionFilterProp="label"
                   options={metadata.questionTypes}
@@ -165,6 +167,7 @@ const Sidebar = props => {
               </Form.Item>
               <Form.Item label="Bloom's cognitive level" name="cognitiveLevel">
                 <Select
+                  data-testid="cognitive-level-select"
                   mode="multiple"
                   optionFilterProp="label"
                   options={metadata.blooms.cognitive}
