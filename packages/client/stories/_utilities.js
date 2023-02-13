@@ -1,3 +1,4 @@
+import { name } from 'faker'
 import {
   topics as topicsMetadata,
   frameworks as frameworksMeta,
@@ -104,6 +105,10 @@ const generateMetadata = () => {
     {
       label: "bloom's level",
       value: randomBloomLevel.label,
+    },
+    {
+      label: 'author',
+      value: name.findName(),
     },
     {
       label: 'published date',

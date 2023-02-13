@@ -25,7 +25,7 @@ const defaultSearchOptions = {
   pageSize: 10,
 }
 
-const transform = (questions, metadataValues) => {
+const transform = (questions, metadataValues, tab = '') => {
   if (!questions) return null
 
   return questions.map(question => {
@@ -62,6 +62,9 @@ const transform = (questions, metadataValues) => {
         { label: 'subtopic', value: topics.subtopics },
         // question type: how do we know that data ?? what if it's more than one?
         { label: "bloom's level", value: cognitiveDisplayValue },
+        ...(tab === 'editor'
+          ? [{ label: 'author', value: question.author }]
+          : []),
         {
           label: 'published date',
           value: publicationDate && (
@@ -237,7 +240,9 @@ const DashboardPage = () => {
       label: 'Editor Questions',
       value: 'editor',
       questions:
-        editorData && metadata ? transform(editorData.result, metadata) : [],
+        editorData && metadata
+          ? transform(editorData.result, metadata, 'editor')
+          : [],
       totalCount: editorData && editorData.totalCount,
       showBulkActions: false,
       loading: editorLoading,

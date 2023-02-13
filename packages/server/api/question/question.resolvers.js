@@ -22,8 +22,8 @@ const {
   getImageUrls,
 } = require('../../controllers/question.controllers')
 
-const questionResolver = async (_, { id }) => {
-  return getQuestion(id)
+const questionResolver = async (_, { id, options }) => {
+  return getQuestion(id, options)
 }
 
 const getPublishedQuestionsResolver = async (_, { params, options }) => {

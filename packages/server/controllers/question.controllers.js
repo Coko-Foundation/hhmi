@@ -22,12 +22,13 @@ const resources = require('./resourcesData')
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
 
-const getQuestion = async questionId => {
+const getQuestion = async (questionId, options = {}) => {
+  const { trx } = options
   logger.info(
     `${BASE_MESSAGE} getQuestion: fetching question with id ${questionId}`,
   )
 
-  return Question.findById(questionId)
+  return Question.getQuestionWithAuthorDisplayName(questionId, { trx })
 }
 
 const getQuestionVersions = async (questionId, options = {}) => {

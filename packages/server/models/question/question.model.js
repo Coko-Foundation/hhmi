@@ -48,6 +48,26 @@ class Question extends BaseModel {
     return question
   }
 
+  static async getQuestionWithAuthorDisplayName(id, options = {}) {
+    try {
+      const { trx } = options
+
+      return Question.query(trx)
+        .leftJoin('teams', 'questions.id', 'teams.object_id')
+        .leftJoin('team_members', 'teams.id', 'team_members.team_id')
+        .leftJoin('users', 'team_members.user_id', 'users.id')
+        .select('questions.*', 'users.display_name as author')
+        .findOne('questions.id', id)
+        .throwIfNotFound()
+    } catch (e) {
+      console.error(
+        'Question model: getQuestionWithAuthorDisplayName failed',
+        e,
+      )
+      throw new Error(e)
+    }
+  }
+
   // TO DO -- if there is a previous versions, you should copy its contents
   static async createNewVersion(questionId, options = {}) {
     const previousVersions = await this.getVersions(questionId, {
@@ -232,7 +252,9 @@ class Question extends BaseModel {
     }
 
     if (searchQuery) {
-      query.where('content_text', 'ilike', `%${searchQuery}%`)
+      query
+        .where('content_text', 'ilike', `%${searchQuery}%`)
+        .orWhere('author', 'ilike', `%${searchQuery}%`)
 
       const queryStrings = searchQuery.split(' ')
       queryStrings.forEach(queryString => {
@@ -251,13 +273,19 @@ class Question extends BaseModel {
           'questions.id',
           'question_versions.question_id',
         )
+        .leftJoin('teams', 'questions.id', 'teams.object_id')
+        .leftJoin('team_members', 'teams.id', 'team_members.team_id')
+        .leftJoin('users', 'team_members.user_id', 'users.id')
         .select(
           'questions.*',
           'question_versions.publication_date',
           'question_versions.topics',
+          'question_versions.content_text',
+          'question_versions.keywords',
           'question_versions.courses',
           'question_versions.question_type',
           'question_versions.cognitive_level',
+          'users.display_name as author',
         )
         .distinctOn('questions.id')
         .where({
@@ -406,9 +434,8 @@ class Question extends BaseModel {
   static async findByExcludingRole(userId, role, options = {}) {
     const { submittedOnly } = options
 
-    let query = Question.query(options.trx).whereNotIn(
-      'questions.id',
-      builder => {
+    let query = Question.query(options.trx)
+      .whereNotIn('questions.id', builder => {
         return builder
           .select('questions.id')
           .from('questions')
@@ -418,8 +445,13 @@ class Question extends BaseModel {
             role,
             userId,
           })
-      },
-    )
+      })
+      .distinctOn('questions.id')
+      .leftJoin('teams', 'teams.objectId', 'questions.id')
+      .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+      .leftJoin('users', 'users.id', 'team_members.user_id')
+      .select('questions.*', 'users.display_name as author')
+      .orderBy(['questions.id'])
 
     if (options.searchQuery) {
       query
@@ -429,6 +461,7 @@ class Question extends BaseModel {
           'questions.id',
         )
         .where('content_text', 'ilike', `%${options.searchQuery}%`)
+        .orWhere('users.display_name', 'ilike', `%${options.searchQuery}%`)
 
       const queryStrings = options.searchQuery.split(' ')
       queryStrings.forEach(queryString => {
