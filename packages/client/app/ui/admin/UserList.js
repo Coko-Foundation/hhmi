@@ -453,6 +453,7 @@ const UserList = props => {
           <FooterActionsWrapper>
             <Checkbox
               checked={showDeactivated}
+              data-testid="show-inactive-users"
               onChange={onClickShowDeactivated}
             >
               Show inactive users
