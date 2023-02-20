@@ -257,9 +257,22 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.listInstance += 1
     this.multipleChoiceSolutions[groupId] = []
 
+    const lastItem = multipleChoice.content[multipleChoice.content.length - 1]
+
+    // wax might or might not insert an empty paragraph at the bottom of the widget
+    const isLastItemEmptyParagraph =
+      lastItem.type === 'paragraph' &&
+      lastItem.content.length === 1 &&
+      lastItem.content[0].type === 'text' &&
+      !lastItem.content[0].text.trim()
+
+    const contentToParse = isLastItemEmptyParagraph
+      ? multipleChoice.content.slice(0, multipleChoice.content.length - 1)
+      : multipleChoice.content
+
     return [
       new Paragraph({ children: [] }),
-      ...this.contentParser(multipleChoice.content, {
+      ...this.contentParser(contentToParse, {
         multipleChoiceGroupId: groupId,
         instance: this.listInstance,
         listType: this.listTypes.MULTIPLE_CHOICE,
@@ -280,28 +293,35 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       feedback,
     })
 
-    return this.contentParser(multipleChoiceOption.content, options)
+    return this.contentParser(multipleChoiceOption.content, {
+      ...options,
+      renderEmpty: true,
+    })
   }
   // #endregion multiple-choice
 
   // #region true-false
   trueFalseHandler = trueFalse => {
     const groupId = trueFalse.attrs.id
+    const { content } = trueFalse
     this.listInstance += 1
     this.trueFalseSolutions[groupId] = []
+    let contentToParse
 
-    const lastItem = trueFalse.content[trueFalse.content.length - 1]
+    if (content) {
+      const lastItem = content[content.length - 1]
 
-    // wax might or might not insert an empty paragraph at the bottom of the widget
-    const isLastItemEmptyParagraph =
-      lastItem.type === 'paragraph' &&
-      lastItem.content.length === 1 &&
-      lastItem.content[0].type === 'text' &&
-      !lastItem.content[0].text.trim()
+      // wax might or might not insert an empty paragraph at the bottom of the widget
+      const isLastItemEmptyParagraph =
+        lastItem.type === 'paragraph' &&
+        lastItem.content.length === 1 &&
+        lastItem.content[0].type === 'text' &&
+        !lastItem.content[0].text.trim()
 
-    const contentToParse = isLastItemEmptyParagraph
-      ? trueFalse.content.slice(0, trueFalse.content.length - 1)
-      : trueFalse.content
+      contentToParse = isLastItemEmptyParagraph
+        ? content.slice(0, content.length - 1)
+        : content
+    }
 
     return [
       new Paragraph({
@@ -330,14 +350,17 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     })
 
     const { content } = cloneDeep(trueFalseOption)
-    const lastChild = content[content.length - 1]
 
-    lastChild.content.push({
-      type: 'text',
-      text: '      True / False',
-    })
+    if (content) {
+      const lastChild = content[content.length - 1]
 
-    return this.contentParser(content, options)
+      lastChild.content.push({
+        type: 'text',
+        text: '      True / False',
+      })
+    }
+
+    return this.contentParser(content, { ...options, renderEmpty: true })
   }
   // #endregion true-false
 

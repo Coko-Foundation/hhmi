@@ -1,9 +1,5 @@
 module.exports = {
-  'pubsweet-client': {
-    protocol: 'CLIENT_PROTOCOL',
-    host: 'CLIENT_HOST',
-    port: 'CLIENT_PORT',
-  },
+  clientUrl: 'CLIENT_URL',
   'pubsweet-server': {
     admin: {
       username: 'ADMIN_USERNAME',

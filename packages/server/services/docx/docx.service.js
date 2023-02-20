@@ -440,19 +440,23 @@ class WaxToDocxConverter {
   contentParser = (content, options = {}) => {
     let children = []
 
-    if (!content) throw new Error('Content cannot be empty')
-    if (!Array.isArray(content)) throw new Error('Content needs to be an array')
+    if (content) {
+      if (!Array.isArray(content))
+        throw new Error('Content needs to be an array')
+      else
+        content.forEach(item => {
+          const { type } = item
+          const handler = this.#findHandler(type)
 
-    content.forEach(item => {
-      const { type } = item
-      const handler = this.#findHandler(type)
+          if (!handler) throw new Error(`Unknown content type "${type}"`)
 
-      if (!handler) throw new Error(`Unknown content type "${type}"`)
-
-      const childrenToAdd = handler(item, options)
-      // handlers could return a single item or an array of items
-      children = children.concat(childrenToAdd)
-    })
+          const childrenToAdd = handler(item, options)
+          // handlers could return a single item or an array of items
+          children = children.concat(childrenToAdd)
+        })
+    } else if (options.renderEmpty) {
+      return this.paragraphHandler({}, options)
+    }
 
     return children
   }
