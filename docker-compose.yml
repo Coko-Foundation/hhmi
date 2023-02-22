@@ -91,7 +91,7 @@ services:
       - ./packages/server/services:/home/node/hhmi/services
 
   db:
-    image: postgres:12
+    image: postgres:15
     ports:
       - ${POSTGRES_PORT:-5432}:5432
     environment:
