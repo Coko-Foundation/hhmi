@@ -162,6 +162,7 @@ const Form = props => {
       {ribbonPosition === 'top' && FeedbackElement}
 
       <AntForm
+        data-testid="form-content"
         form={form}
         onFinishFailed={handleFinishFailed}
         onValuesChange={handleValuesChange}
