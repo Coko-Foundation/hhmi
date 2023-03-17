@@ -14,13 +14,10 @@ import Status from './Status'
 const Wrapper = styled.article`
   padding: ${grid(4)} ${grid(3)};
   position: relative;
-  transition: background-color 0.15s ease-in-out;
   width: 100%;
 
   &:hover,
   &:focus-within {
-    background-color: ${th('colorBackgroundHue')};
-
     .ProseMirror {
       background-color: ${th('colorBackgroundHue')};
     }

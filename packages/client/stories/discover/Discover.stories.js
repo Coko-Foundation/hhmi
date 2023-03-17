@@ -90,7 +90,7 @@ const Wrapper = styled.div`
 
 const sidebarText = lorem.sentences(7)
 
-export const DiscoverPage = () => {
+export const DiscoverPage = args => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -104,10 +104,20 @@ export const DiscoverPage = () => {
     }, 500)
   }
 
+  const handleAddToList = () => {}
+
+  const handleCreateList = () => {}
+
+  const handleDuplicateQuestion = () => {}
+
   return (
     <Wrapper>
       <Discover
+        {...args}
         loading={loading}
+        onAddToList={handleAddToList}
+        onCreateList={handleCreateList}
+        onDuplicate={handleDuplicateQuestion}
         onSearch={handleSearch}
         pageSize={PAGE_SIZE}
         questions={searchResults}
@@ -119,6 +129,10 @@ export const DiscoverPage = () => {
       />
     </Wrapper>
   )
+}
+
+DiscoverPage.args = {
+  isUserLoggedIn: true,
 }
 
 const DiscoveryCustom = args => {

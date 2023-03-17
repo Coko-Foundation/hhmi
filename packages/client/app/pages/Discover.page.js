@@ -139,11 +139,20 @@ const DiscoverPage = () => {
     })
   }
 
+  const handleAddToList = () => {}
+
+  const handleCreateList = () => {}
+
+  const handleDuplicateQuestion = () => {}
+
   return (
     <>
       <VisuallyHiddenElement as="h1">Discover page</VisuallyHiddenElement>
       <Discover
         loading={loading}
+        onAddToList={handleAddToList}
+        onCreateList={handleCreateList}
+        onDuplicate={handleDuplicateQuestion}
         onSearch={handleSearch}
         pageSize={PAGE_SIZE}
         questions={

@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { grid } from '@coko/client'
+
 import Sidebar from './Sidebar'
 import {
   Collapse,
+  Divider,
+  Input,
   QuestionList,
   VisuallyHiddenElement,
   Form,
   Empty,
+  Button,
+  Popup,
 } from '../common'
+import theme from '../../theme'
 import useBreakpoint from '../_helpers/useBreakpoint'
 
 const Wrapper = styled.div`
@@ -31,13 +38,40 @@ const Wrapper = styled.div`
   }
 `
 
+const StyledPopup = styled(Popup)`
+  margin-block-end: ${grid(2)};
+`
+
+const ActionWrapper = styled.div`
+  column-gap: 10px;
+  display: flex;
+  flex-direction: row;
+`
+
+const InputWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 20vw;
+`
+
+const HeadingText = styled.h6`
+  color: ${theme.colorPrimary};
+  margin: 0;
+`
+
 export const Discover = props => {
   const {
     className,
+    isUserLoggedIn,
     loading,
     locale,
     questions,
     sidebarText,
+    onAddToList,
+    onCreateList,
+    onDuplicate,
     onSearch,
     pageSize,
     sidebarMetadata,
@@ -50,6 +84,7 @@ export const Discover = props => {
   const [listKey, setListKey] = useState(0)
   // form control instance for Sidebar filters, here to preserve its state between Sidebar rerenders
   const [filtersForm] = Form.useForm()
+  const [selectedRows, setSelectedRows] = useState([])
 
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -121,6 +156,44 @@ export const Discover = props => {
     ...locale,
   }
 
+  const BulkAction = (
+    <ActionWrapper>
+      <StyledPopup
+        id="list-popup"
+        popupPlacement="top"
+        toggle={
+          <Button disabled={selectedRows.length === 0} type="primary">
+            Add to list
+          </Button>
+        }
+      >
+        <HeadingText>EXCISTING LIST</HeadingText>
+        <InputWrapper>
+          <Input placeholder="List name" />
+          <Button onClick={onAddToList} type="primary">
+            Add
+          </Button>
+        </InputWrapper>
+        <Divider />
+        <HeadingText>A NEW LIST</HeadingText>
+        <InputWrapper>
+          <Input placeholder="List name" />
+          <Button onClick={onCreateList} type="primary">
+            Create
+          </Button>
+        </InputWrapper>
+      </StyledPopup>
+      <Button
+        disabled={selectedRows.length !== 1}
+        onClick={onDuplicate}
+        type="primary"
+      >
+        Duplicate
+      </Button>
+    </ActionWrapper>
+  )
+
+  const onQuestionSelected = rows => setSelectedRows(rows)
   return (
     <Wrapper className={className}>
       {wrapFilters(
@@ -136,15 +209,18 @@ export const Discover = props => {
           Search results: questions list
         </VisuallyHiddenElement>
         <QuestionList
+          bulkAction={isUserLoggedIn && BulkAction}
           currentPage={searchParams.page}
           key={listKey}
           loading={loading}
           locale={mergedLocale}
           onPageChange={setSearchPage}
+          onQuestionSelected={onQuestionSelected}
           onSearch={setSearchQuery}
           onSortOptionChange={setSortOption}
           questions={questions}
           questionsPerPage={pageSize}
+          showRowCheckboxes={isUserLoggedIn}
           showSort={showSort}
           sortOptions={sortOptions}
           totalCount={totalCount}
@@ -155,12 +231,16 @@ export const Discover = props => {
 }
 
 Discover.propTypes = {
+  isUserLoggedIn: PropTypes.bool.isRequired,
   /** text for the sidebar */
   sidebarText: PropTypes.string,
   /** Loading search results. */
   loading: PropTypes.bool,
   locale: PropTypes.shape(),
   /** Handle search */
+  onAddToList: PropTypes.func.isRequired,
+  onCreateList: PropTypes.func.isRequired,
+  onDuplicate: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
   pageSize: PropTypes.number,
   /** list of search result to render */

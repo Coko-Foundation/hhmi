@@ -37,10 +37,12 @@ const StyledList = styled(List)`
   .ant-list-items {
     > li {
       border-left: 5px solid transparent;
-      transition: border-left-color 0.15s ease-in-out;
+      transition: border-left-color 0.15s ease-in-out,
+        background-color 0.3s ease-in-out;
 
       &:hover,
       &:focus-within {
+        background-color: ${th('colorBackgroundHue')};
         border-left-color: ${th('colorPrimary')};
       }
 
