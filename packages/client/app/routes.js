@@ -125,6 +125,55 @@ const Layout = props => {
     return unlisten
   }, [])
 
+  useEffect(() => {
+    const keyDownListener = e => {
+      if (e.key === 'Tab') {
+        // select only visible antd modal dialog
+        const dialog = document.querySelector(
+          ':not([style="display: none;"]) > .ant-modal[role="dialog"]',
+        )
+
+        if (dialog) {
+          const focusableElements = dialog.querySelectorAll(
+            [
+              'a[href]',
+              'area[href]',
+              'input:not([disabled]):not([type=hidden])',
+              'select:not([disabled])',
+              'textarea:not([disabled])',
+              'button:not([disabled])',
+              'object',
+              'embed',
+              '[tabindex]:not([tabindex="-1"]):not([aria-hidden="true"])',
+              'audio[controls]',
+              'video[controls]',
+              '[contenteditable]:not([contenteditable="false"])',
+            ].join(', '),
+          )
+
+          const firstFocusableElement = focusableElements[0]
+
+          const lastFocusableElement =
+            focusableElements[focusableElements.length - 1]
+
+          if (e.shiftKey) {
+            if (document.activeElement === firstFocusableElement) {
+              lastFocusableElement.focus()
+              e.preventDefault()
+            }
+          } else if (document.activeElement === lastFocusableElement) {
+            firstFocusableElement.focus()
+            e.preventDefault()
+          }
+        }
+      }
+    }
+
+    document.addEventListener('keydown', keyDownListener)
+
+    return document.removeEventListener('kaydown', keyDownListener)
+  }, [])
+
   return (
     <LayoutWrapper>
       {children}

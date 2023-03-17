@@ -550,7 +550,7 @@ const Question = props => {
       ),
       footer: [
         <ModalFooter key="footer">
-          <Button onClick={() => infoModal.destroy()} type="primary">
+          <Button autoFocus onClick={() => infoModal.destroy()} type="primary">
             Ok
           </Button>
         </ModalFooter>,
@@ -585,6 +585,7 @@ const Question = props => {
         footer: [
           <ModalFooter key="footer">
             <Button
+              autoFocus
               onClick={() => {
                 emptyEditorErrorModal.destroy()
                 /* focus the editor */
@@ -618,6 +619,7 @@ const Question = props => {
         <ModalFooter key="footer">
           <Button onClick={() => confirmSubmitModal.destroy()}>Cancel</Button>
           <Button
+            autoFocus
             onClick={() => {
               formRef.current.submit()
               confirmSubmitModal.destroy()
@@ -643,6 +645,7 @@ const Question = props => {
         <ModalFooter key="footer">
           <Button onClick={() => confirmMoveToReview.destroy()}>Cancel</Button>
           <Button
+            autoFocus
             onClick={() => {
               confirmMoveToReview.destroy()
               onMoveToReview()
@@ -686,6 +689,7 @@ const Question = props => {
             Cancel
           </Button>
           <Button
+            autoFocus
             onClick={() => {
               confirmMoveToProduction.destroy()
               onMoveToProduction()
@@ -733,6 +737,7 @@ const Question = props => {
             <ModalFooter key="footer">
               <Button onClick={() => confirmPublish.destroy()}>Cancel</Button>
               <Button
+                autoFocus
                 onClick={() => {
                   confirmPublish.destroy()
                   onPublish()
@@ -783,6 +788,7 @@ const Question = props => {
         <ModalFooter key="footer">
           <Button onClick={() => confirmReject.destroy()}>Cancel</Button>
           <Button
+            autoFocus
             onClick={() => {
               confirmReject.destroy()
               onReject()
@@ -818,7 +824,7 @@ const Question = props => {
       content,
       footer: [
         <ModalFooter key="footer">
-          <Button onClick={() => dialogType.destroy()} type="primary">
+          <Button autoFocus onClick={() => dialogType.destroy()} type="primary">
             Ok
           </Button>
         </ModalFooter>,
@@ -861,6 +867,7 @@ const Question = props => {
         <ModalFooter key="footer">
           <Button onClick={() => confirmNewVersion.destroy()}>Cancel</Button>
           <Button
+            autoFocus
             onClick={() => {
               confirmNewVersion.destroy()
               onCreateNewVersion()
@@ -892,7 +899,7 @@ const Question = props => {
               content: 'There are no more questions in this direction',
               footer: [
                 <ModalFooter key="footer">
-                  <Button onClick={infoModal.destroy} type="primary">
+                  <Button autoFocus onClick={infoModal.destroy} type="primary">
                     Ok
                   </Button>
                 </ModalFooter>,
@@ -922,7 +929,7 @@ const Question = props => {
               content: 'There are no more questions in this direction',
               footer: [
                 <ModalFooter key="footer">
-                  <Button onClick={infoModal.destroy} type="primary">
+                  <Button autoFocus onClick={infoModal.destroy} type="primary">
                     Ok
                   </Button>
                 </ModalFooter>,
@@ -1012,6 +1019,7 @@ const Question = props => {
               <ModalContext.Consumer>
                 {({ agree }) => (
                   <Button
+                    autoFocus
                     disabled={!agree}
                     onClick={() => {
                       confirmSubmit.destroy()

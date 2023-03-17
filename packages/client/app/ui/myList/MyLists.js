@@ -101,6 +101,7 @@ const MyLists = props => {
             Cancel
           </Button>
           <Button
+            autoFocus
             key="delete"
             onClick={() => {
               handleDeleteRows()

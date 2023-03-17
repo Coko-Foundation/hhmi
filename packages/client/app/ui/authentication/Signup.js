@@ -73,7 +73,11 @@ const Signup = props => {
       ),
       footer: [
         <ModalFooter key="footer">
-          <Button onClick={termsAndConditionsModal.destroy} type="primary">
+          <Button
+            autoFocus
+            onClick={termsAndConditionsModal.destroy}
+            type="primary"
+          >
             Ok
           </Button>
         </ModalFooter>,

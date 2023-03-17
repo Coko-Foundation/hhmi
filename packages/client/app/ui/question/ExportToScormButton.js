@@ -23,7 +23,7 @@ const ExportToScormButton = props => {
             'Something went wrong with your conversion! Please contact your system administrator.',
           footer: [
             <ModalFooter key="footer">
-              <Button onClick={errorDialog.destroy} type="primary">
+              <Button autoFocus onClick={errorDialog.destroy} type="primary">
                 Ok
               </Button>
             </ModalFooter>,

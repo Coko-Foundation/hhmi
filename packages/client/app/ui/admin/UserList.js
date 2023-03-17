@@ -217,7 +217,7 @@ const UserList = props => {
         document.getElementById('action-status').innerHTML = ''
       }, 3000)
     }
-  }, [dataSource])
+  }, [JSON.stringify(dataSource)])
 
   // #region modals
   const confirmActivate = () => {
@@ -237,6 +237,7 @@ const UserList = props => {
             Cancel
           </Button>
           <Button
+            autoFocus
             key="activate"
             onClick={() => {
               return onBulkActivate({
@@ -286,6 +287,7 @@ const UserList = props => {
             Cancel
           </Button>
           <Button
+            autoFocus
             key="deactivate"
             onClick={() => {
               return onBulkDeactivate({
@@ -334,8 +336,8 @@ const UserList = props => {
           <Button key="cancel" onClick={() => confirmDialog.destroy()}>
             Cancel
           </Button>
-          ,
           <Button
+            autoFocus
             key="delete"
             onClick={() => {
               return onBulkDelete({

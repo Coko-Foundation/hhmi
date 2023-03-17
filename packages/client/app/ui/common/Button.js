@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import PropTypes from 'prop-types'
 import { Button as AntButton } from 'antd'
@@ -108,11 +108,19 @@ const StyledButton = styled(AntButton)`
  */
 
 const Button = props => {
-  const { children, className, ...rest } = props
+  const { children, className, autoFocus, ...rest } = props
   const passProps = omit(rest, 'danger')
 
+  const buttonRef = useRef(null)
+
+  useEffect(() => {
+    if (autoFocus) {
+      buttonRef.current?.focus()
+    }
+  }, [])
+
   return (
-    <StyledButton className={className} {...passProps}>
+    <StyledButton className={className} ref={buttonRef} {...passProps}>
       {children}
     </StyledButton>
   )
@@ -120,10 +128,12 @@ const Button = props => {
 
 Button.propTypes = {
   status: PropTypes.oneOf(['error', 'danger', 'success']),
+  autoFocus: PropTypes.bool,
 }
 
 Button.defaultProps = {
   status: null,
+  autoFocus: false,
 }
 
 export default Button

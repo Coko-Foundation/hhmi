@@ -43,6 +43,7 @@ const ExportToWordButton = props => {
     <ModalContext.Provider value={null}>
       <Button
         className={className}
+        id="exportToWord"
         loading={loading}
         onClick={() => setShowModal(true)}
         type="primary"
@@ -51,10 +52,12 @@ const ExportToWordButton = props => {
       </Button>
 
       <Modal
+        afterClose={() => window.exportToWord.focus()}
+        destroyOnClose
         footer={[
           <ModalFooter key="footer">
             <Button onClick={() => setShowModal(false)}>Cancel</Button>
-            <Button onClick={handleOk} type="primary">
+            <Button autoFocus onClick={handleOk} type="primary">
               Export
             </Button>
           </ModalFooter>,
