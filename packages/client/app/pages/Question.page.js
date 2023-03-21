@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useHistory, useParams, Link, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
@@ -30,7 +30,11 @@ import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 const AUTOSAVE_DELAY = 500
 
 // #region transformations
-const metadataApiToUi = values => {
+const metadataApiToUi = (values, testMode) => {
+  if (!values) return {}
+
+  if (testMode) return values
+
   const courseData = [...values.courses]
 
   const transformedCoursesData = []
@@ -116,47 +120,47 @@ const QuestionPage = props => {
   const history = useHistory()
   const { metadata } = useMetadata()
 
-  const { data, loading, error } = useQuery(QUESTION, {
+  const {
+    data: { question } = {},
+    loading,
+    error,
+  } = useQuery(QUESTION, {
     variables: {
       id,
       published: testMode, // get latest published version if in test mode
     },
   })
 
-  const { data: currentUserData } = useQuery(CURRENT_USER)
+  const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
 
-  const { data: resourcesData } = useQuery(GET_RESOURCES)
+  const { data: { getResources } = {} } = useQuery(GET_RESOURCES)
 
-  const [updateQuestionMutation, { error: updateError }] =
-    useMutation(UPDATE_QUESTION)
+  const [updateQuestionMutation] = useMutation(UPDATE_QUESTION)
 
-  const [submitQuestionMutation, { error: submitError }] =
-    useMutation(SUBMIT_QUESTION)
+  const [submitQuestionMutation] = useMutation(SUBMIT_QUESTION)
 
-  const [rejectQuestionMutation, { error: rejectError }] = useMutation(
-    REJECT_QUESTION,
-    { variables: { questionId: id } },
+  const [rejectQuestionMutation] = useMutation(REJECT_QUESTION, {
+    variables: { questionId: id },
+  })
+
+  const [moveQuestionVersionToReviewMutation] = useMutation(
+    MOVE_QUESTION_VERSION_TO_REVIEW,
   )
 
-  const [moveQuestionVersionToReviewMutation, { error: moveToReviewError }] =
-    useMutation(MOVE_QUESTION_VERSION_TO_REVIEW)
+  const [moveQuestionVersionToProductionMutation] = useMutation(
+    MOVE_QUESTION_VERSION_TO_PRODUCTION,
+  )
 
-  const [
-    moveQuestionVersionToProductionMutation,
-    { error: moveToProductionError },
-  ] = useMutation(MOVE_QUESTION_VERSION_TO_PRODUCTION)
-
-  const [publishQuestionVersionMutation, { error: publishError }] = useMutation(
+  const [publishQuestionVersionMutation] = useMutation(
     PUBLISH_QUESTION_VERSION,
     {
       refetchQueries: [{ query: QUESTION, variables: { id, published: true } }],
     },
   )
 
-  const [createNewQuestionVersionMutation, { error: newVersionError }] =
-    useMutation(CREATE_NEW_VERSION, {
-      variables: { questionId: id },
-    })
+  const [createNewQuestionVersionMutation] = useMutation(CREATE_NEW_VERSION, {
+    variables: { questionId: id },
+  })
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -172,6 +176,59 @@ const QuestionPage = props => {
     },
   )
 
+  // keep a reactive copy of page title have an updated h1
+  const [pageTitle, setPageTitle] = useState('')
+
+  const version = question?.versions[0]
+
+  useEffect(() => {
+    if (version && metadata) {
+      // udpate title for published questions
+      if (testMode) {
+        const questionType = metadata?.questionTypes.find(
+          type => type.value === version.questionType,
+        )
+
+        const courses = version.courses.map(c => c.course)
+
+        const courseNames = metadata?.frameworks
+          .filter(framework => courses.indexOf(framework.value) !== -1)
+          .map(c => c.label)
+
+        const title = `${courseNames.join(', ')} question, ${
+          questionType?.label
+        }`
+
+        setPageTitle(title)
+        document.title = title
+        document.getElementById('page-announcement').innerHTML = title
+      }
+
+      // update title dashboard questions
+      if (!testMode) {
+        let title
+
+        if (question.rejected) {
+          title = 'Rejected - Question editor page'
+        } else if (version.published) {
+          title = 'Published - Question editor page'
+        } else if (version.inProduction) {
+          title = 'In production - Question editor page'
+        } else if (version.underReview) {
+          title = 'Under review - Question editor page'
+        } else if (version.submitted) {
+          title = 'Submitted - Question editor page'
+        } else {
+          title = 'Not submitted - Question editor page'
+        }
+
+        setPageTitle(title)
+        document.title = title
+        document.getElementById('page-announcement').innerHTML = title
+      }
+    }
+  }, [version, metadata])
+
   // declare lazy query to be called when clicking the next question or previous question buttons
   const [getQuestion] = useLazyQuery(GET_PREV_OR_NEXT_QUESTION_ID)
 
@@ -184,94 +241,11 @@ const QuestionPage = props => {
   const [upload] = useMutation(UPLOAD_FILES)
   // #endregion hooks
 
-  // #region data wrangling
-  if (
-    error ||
-    updateError ||
-    submitError ||
-    rejectError ||
-    moveToReviewError ||
-    moveToProductionError ||
-    publishError ||
-    newVersionError ||
-    !data
-  ) {
-    const e =
-      error ||
-      updateError ||
-      submitError ||
-      rejectError ||
-      moveToReviewError ||
-      moveToProductionError ||
-      publishError ||
-      newVersionError
-
-    if (e) console.error(e)
-    return null
-  }
-
-  const question = data?.question
-  const version = question?.versions[0] // latest only requested
-
-  if (testMode && metadata) {
-    const questionType = metadata?.questionTypes.find(
-      type => type.value === version.questionType,
-    )
-
-    const courses = version.courses.map(c => c.course)
-
-    const courseNames = metadata?.frameworks
-      .filter(framework => courses.indexOf(framework.value) !== -1)
-      .map(c => c.label)
-
-    const pageTitle = `${courseNames.join(', ')} question, ${
-      questionType?.label
-    }`
-
-    document.title = pageTitle
-    document.getElementById('page-announcement').innerHTML = pageTitle
-  }
-
-  if (!testMode) {
-    let pageTitle
-
-    if (question.rejected) {
-      pageTitle = 'Rejected - Question editor page'
-    } else if (version.published) {
-      pageTitle = 'Published - Question editor page'
-    } else if (version.inProduction) {
-      pageTitle = 'In production - Question editor page'
-    } else if (version.underReview) {
-      pageTitle = 'Under review - Question editor page'
-    } else if (version.submitted) {
-      pageTitle = 'Submitted - Question editor page'
-    } else {
-      pageTitle = 'Not submitted - Question editor page'
-    }
-
-    document.title = pageTitle
-    document.getElementById('page-announcement').innerHTML = pageTitle
-  }
-
-  const editorContent = version?.content && JSON.parse(version.content)
-
-  const user = currentUserData?.currentUser
-  const isEditor = hasGlobalRole(user, 'editor')
-  const isAuthor = hasRole(user, 'author', id)
-  const isAdmin = hasGlobalRole(user, 'admin')
-
-  if (testMode && !version.published) {
-    return (
-      <Result
-        // replace link with a Button with to="/dashboard" after MR is merged
-        extra={<Link to="/discover">Visit the Discover page</Link>}
-        status="404"
-        subTitle="Sorry, this question hasn't been published yet."
-        title="Question Not Ready"
-      />
-    )
-  }
-  // #endregion data wrangling
+  // #region user roles
+  const isEditor = hasGlobalRole(currentUser, 'editor')
+  const isAuthor = hasRole(currentUser, 'author', id)
+  const isAdmin = hasGlobalRole(currentUser, 'admin')
+  // #endregion user roles
 
   // #region handlers
   const debouncedEditorAutoSave = debounce((content, resolve) => {
@@ -498,29 +472,59 @@ const QuestionPage = props => {
   }
   // #endregion handlers
 
+  if (error) {
+    return (
+      <Result
+        // replace link with a Button with to="/dashboard" after MR is merged
+        extra={
+          testMode ? (
+            <Link to="/discover">Back to Browse Questions</Link>
+          ) : (
+            <Link to="/dashboard">Back to Dashboard</Link>
+          )
+        }
+        status="500"
+        subTitle="There was an error on our server. Please try again later or contact the administrators"
+        title="Sorry, something went wrong"
+      />
+    )
+  }
+
+  // when no published version was found
+  if (testMode && question && question.versions.length === 0) {
+    return (
+      <Result
+        // replace link with a Button with to="/dashboard" after MR is merged
+        extra={<Link to="/discover">Visit the Discover page</Link>}
+        status="404"
+        subTitle="Sorry, this question hasn't been published yet."
+        title="Question Not Ready"
+      />
+    )
+  }
+
   return (
     <>
-      {/* TODO: create more specific heading */}
-      <VisuallyHiddenElement as="h1">{document.title}</VisuallyHiddenElement>
+      <VisuallyHiddenElement as="h1">{pageTitle}</VisuallyHiddenElement>
       <Question
-        editorContent={editorContent}
+        editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
         editorView={(isEditor && !isAuthor) || (isAdmin && isAuthor)}
         facultyView={testMode}
-        initialMetadataValues={testMode ? version : metadataApiToUi(version)}
+        initialMetadataValues={metadataApiToUi(version, testMode)}
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
         // unless the question has already been published
         isInProduction={
-          version.inProduction || (isAdmin && isAuthor && !version.published)
+          version?.inProduction || (isAdmin && isAuthor && !version?.published)
         }
-        isPublished={version.published}
-        isRejected={question.rejected}
+        isPublished={version?.published}
+        isRejected={question?.rejected}
         // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
-        isSubmitted={version.submitted || (isAdmin && isAuthor)}
-        isUnderReview={version.underReview}
-        isUserLoggedIn={!!user}
-        loading={loading}
-        metadata={metadata}
+        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
+        isUnderReview={version?.underReview}
+        isUserLoggedIn={!!currentUser}
+        loading={loading || !version || !metadata || !getResources}
+        metadata={metadata || {}}
         onClickAssignHE={handleClickAssignHE}
         onClickBackButton={handleClickBackButton}
         onClickExportToScorm={testMode ? handleExportToScorm : null}
@@ -537,12 +541,11 @@ const QuestionPage = props => {
         onQuestionSubmit={handleQuestionSubmit}
         onReject={handleReject}
         questionAgreedTc={false} //
-        resources={resourcesData?.getResources}
+        resources={getResources}
         scormZipLoading={generateScormZipLoading}
         showAssignHEButton={false} //
         showNextQuestionLink={false} //
-        submitting={false} //
-        updated={version.lastEdit}
+        updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
       />
     </>

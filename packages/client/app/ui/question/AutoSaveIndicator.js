@@ -95,7 +95,10 @@ const AutoSaveIndicator = props => {
 
 AutoSaveIndicator.propTypes = {
   autoSaving: PropTypes.bool,
-  lastAutoSave: PropTypes.shape(),
+  lastAutoSave: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(Date),
+  ]),
 }
 
 AutoSaveIndicator.defaultProps = {

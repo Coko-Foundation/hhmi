@@ -878,6 +878,7 @@ const Question = props => {
             autoFocus
             onClick={() => {
               confirmNewVersion.destroy()
+              // TODO: add error handling for this action
               onCreateNewVersion()
             }}
             status="danger"
@@ -1340,8 +1341,6 @@ const Question = props => {
     [agreedTc],
   )
 
-  if (loading || !metadata || !resources?.length) return <Spin spinning />
-
   return (
     <ModalContext.Provider value={contextValue}>
       <Wrapper>
@@ -1431,12 +1430,12 @@ Question.propTypes = {
 
   editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool,
-  submitting: PropTypes.bool.isRequired,
-  isPublished: PropTypes.bool.isRequired,
-  isRejected: PropTypes.bool.isRequired,
-  isSubmitted: PropTypes.bool.isRequired,
-  isUnderReview: PropTypes.bool.isRequired,
-  isInProduction: PropTypes.bool.isRequired,
+  submitting: PropTypes.bool,
+  isPublished: PropTypes.bool,
+  isRejected: PropTypes.bool,
+  isSubmitted: PropTypes.bool,
+  isUnderReview: PropTypes.bool,
+  isInProduction: PropTypes.bool,
   isUserLoggedIn: PropTypes.bool,
   editorView: PropTypes.bool,
   showAssignHEButton: PropTypes.bool,
@@ -1703,6 +1702,12 @@ Question.defaultProps = {
   onEditorContentAutoSave: () => {},
   onImageUpload: () => {},
   onMetadataAutoSave: () => {},
+  submitting: false,
+  isPublished: false,
+  isRejected: false,
+  isSubmitted: false,
+  isUnderReview: false,
+  isInProduction: false,
   editorView: false,
   questionAgreedTc: false,
   showAssignHEButton: true,

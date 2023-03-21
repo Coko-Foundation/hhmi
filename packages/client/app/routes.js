@@ -11,7 +11,7 @@ import styled from 'styled-components'
 
 import { PageLayout as Page, RequireAuth, useCurrentUser } from '@coko/client'
 
-import { Header, Footer, VisuallyHiddenElement } from 'ui'
+import { Header, Footer, VisuallyHiddenElement, Spin } from 'ui'
 import GlobalStyles from './globalStyles'
 import { hasGlobalRole, MetadataProvider } from './utilities'
 
@@ -191,7 +191,14 @@ const StyledPage = styled(Page)`
   height: calc(100% - 64px - 40px);
 `
 
-// const Loader = () => <Spin spinning />
+const StyledSpin = styled(Spin)`
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+`
+
+const Loader = () => <StyledSpin spinning />
 
 const SiteHeader = () => {
   const headerLinks = {
@@ -267,8 +274,8 @@ const RequireProfile = ({ children }) => {
 const Authenticated = ({ children }) => {
   return (
     <RequireAuth
-      // LoadingComponent={Loader}
       currentUserQuery={CURRENT_USER}
+      loadingComponent={<Loader />}
       notAuthenticatedRedirectTo="/login"
     >
       <RequireProfile>{children}</RequireProfile>
