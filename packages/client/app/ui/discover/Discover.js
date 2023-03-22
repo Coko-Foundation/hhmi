@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { grid } from '@coko/client'
+import { grid, th } from '@coko/client'
 
 import Sidebar from './Sidebar'
 import {
@@ -40,25 +40,45 @@ const Wrapper = styled.div`
 
 const StyledPopup = styled(Popup)`
   margin-block-end: ${grid(2)};
+  min-inline-size: 300px;
+`
+
+const PopupContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `
 
 const ActionWrapper = styled.div`
+  align-items: flex-start;
   column-gap: 10px;
   display: flex;
   flex-direction: row;
 `
 
 const InputWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  width: 20vw;
+  display: grid;
+  grid-template-columns: 1fr ${grid(18)};
+
+  &:nth-child(2) {
+    border-top: 1px solid ${th('colorBorder')};
+  }
+
+  > button {
+    align-self: end;
+    padding-inline: unset;
+  }
 `
 
-const HeadingText = styled.h6`
+const StyledLabel = styled.label`
   color: ${theme.colorPrimary};
+  font-weight: bold;
   margin: 0;
+`
+
+const StyledDivider = styled(Divider)`
+  border-block-start-color: ${th('colorBorder')};
+  margin-block: ${grid(4)};
 `
 
 export const Discover = props => {
@@ -172,21 +192,27 @@ export const Discover = props => {
           </Button>
         }
       >
-        <HeadingText>EXCISTING LIST</HeadingText>
-        <InputWrapper>
-          <Input placeholder="List name" />
-          <Button onClick={onAddToList} type="primary">
-            Add
-          </Button>
-        </InputWrapper>
-        <Divider />
-        <HeadingText>A NEW LIST</HeadingText>
-        <InputWrapper>
-          <Input placeholder="List name" />
-          <Button onClick={onCreateList} type="primary">
-            Create
-          </Button>
-        </InputWrapper>
+        <PopupContentWrapper>
+          <InputWrapper>
+            <StyledLabel>
+              Existing list
+              <Input placeholder="List name" />
+            </StyledLabel>
+            <Button onClick={onAddToList} type="primary">
+              Add
+            </Button>
+          </InputWrapper>
+          <StyledDivider />
+          <InputWrapper>
+            <StyledLabel>
+              A new list
+              <Input placeholder="List name" />
+            </StyledLabel>
+            <Button onClick={onCreateList} type="primary">
+              Create
+            </Button>
+          </InputWrapper>
+        </PopupContentWrapper>
       </StyledPopup>
       <Button
         disabled={selectedRows.length !== 1}

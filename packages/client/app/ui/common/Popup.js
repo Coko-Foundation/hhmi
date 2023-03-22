@@ -10,8 +10,6 @@ const PopupContainer = styled.div`
   border-radius: 10px;
   display: ${({ visible }) => (visible ? 'block' : 'none')};
 
-  min-block-size: 200px;
-  min-inline-size: 200px;
   ${props => {
     const { position, alignment } = props
 
@@ -56,6 +54,7 @@ const Popup = ({
   position,
   ...rest
 }) => {
+  const WrapperRef = useRef(null)
   const popupRef = useRef(null)
 
   const [focusableElements, setFocusableElements] = useState([])
@@ -79,7 +78,7 @@ const Popup = ({
         popupRef.current.querySelectorAll(focusableContentSelector),
       )
     }
-  }, [])
+  }, [children])
 
   const handleKeyDown = e => {
     const isEscapePress = e.key === 'Escape' || e.keyCode === 27
@@ -106,8 +105,15 @@ const Popup = ({
     }
   }
 
+  const handleBlur = e => {
+    // when clicking outside the popup wrapper close the popup
+    if (!WrapperRef.current.contains(e.relatedTarget)) {
+      setVisible(false)
+    }
+  }
+
   return (
-    <Wrapper>
+    <Wrapper ref={WrapperRef}>
       {cloneElement(toggle, {
         onClick: onClickToggle,
         'aria-controls': id,
@@ -117,6 +123,7 @@ const Popup = ({
       <PopupContainer
         alignment={alignment}
         id={id}
+        onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         position={position}
         ref={popupRef}

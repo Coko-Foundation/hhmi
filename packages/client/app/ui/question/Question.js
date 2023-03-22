@@ -2,8 +2,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
-import { Dropdown } from 'antd'
 import {
   LeftOutlined,
   RightOutlined,
@@ -27,6 +25,7 @@ import {
   Link,
   Modal,
   Paragraph,
+  Popup,
   Ribbon,
   Select,
   Spin,
@@ -127,6 +126,19 @@ const StyledCheckbox = styled(Checkbox)`
   margin-right: ${grid(2)};
 `
 
+const PopupContentWrapper = styled.div`
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: ${grid(2)};
+  justify-content: space-between;
+
+  > button {
+    margin: 0;
+    width: unset;
+  }
+`
+
 const FacultyHeaderWrapper = styled.div`
   align-items: center;
   background-color: ${th('colorBackgroundHue')};
@@ -177,18 +189,16 @@ const ActionsWrapper = styled.div`
   }
 `
 
-const MobileDropdown = styled(Dropdown)`
-  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
-    display: none;
-  }
-`
-
-const DropdownButton = styled(Button)`
+const PopupToggle = styled(Button)`
   height: 32px;
   margin-right: 10px;
   padding: 0;
   transform: rotate(90deg);
   width: 32px;
+
+  @media (min-width: ${th('mediaQueries.mediumPlus')}) {
+    display: none;
+  }
 `
 
 // #endregion styled
@@ -1054,119 +1064,57 @@ const Question = props => {
     />
   )
 
-  const editorActionsDropdownMenu = [
-    {
-      key: 1,
-      label: (
-        <StyledWordExportButton
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption
-        />
-      ),
-    },
-    ...(showAssignHEButton
-      ? [
-          {
-            key: 'assignHE',
-            label: (
-              <StyledButton
-                aria-label="Assign Handling Editor"
-                ghost
-                onClick={onClickAssignHE}
-                type="primary "
-              >
-                Assign HE
-              </StyledButton>
-            ),
-          },
-        ]
-      : []),
-    ...(isUnderReview
-      ? [
-          {
-            key: 'reject',
-            label: (
-              <StyledButton
-                onClick={handleReject}
-                status="danger"
-                type="primary"
-              >
-                Do not accept
-              </StyledButton>
-            ),
-          },
-          {
-            key: 'moveToProduction',
-            label: (
-              <StyledButton onClick={handleMoveToProduction} type="primary">
-                Move to production
-              </StyledButton>
-            ),
-          },
-        ]
-      : []),
-    ...(isInProduction
-      ? [
-          {
-            key: 'publish',
-            label: (
-              <StyledButton
-                data-testid="publish-question-btn"
-                onClick={handlePublish}
-                type="primary"
-              >
-                Publish
-              </StyledButton>
-            ),
-          },
-        ]
-      : []),
-    ...(isSubmitted && !isUnderReview && !isInProduction && !isPublished
-      ? [
-          {
-            key: 'reject',
-            label: (
-              <StyledButton
-                onClick={handleReject}
-                status="danger"
-                type="primary"
-              >
-                Do not accept
-              </StyledButton>
-            ),
-          },
-          {
-            key: 'review',
-            label: (
-              <StyledButton onClick={handleMoveToReview} type="primary">
-                Move to Review
-              </StyledButton>
-            ),
-          },
-        ]
-      : []),
-    ...(isPublished
-      ? [
-          {
-            key: 'reviewOrReject',
-            label: (
-              <StyledButton onClick={showNewVersionModal} type="primary">
-                Edit Question
-              </StyledButton>
-            ),
-          },
-        ]
-      : []),
-    ...(showNextQuestionLink
-      ? [
-          {
-            key: 'nextQuestion',
-            label: NextQuestion,
-          },
-        ]
-      : []),
-  ]
+  const editorActionsDropdownMenu = (
+    <>
+      <StyledWordExportButton
+        loading={wordFileLoading}
+        onExport={onClickExportToWord}
+        showMetadataOption
+      />
+      {showAssignHEButton && (
+        <StyledButton
+          aria-label="Assign Handling Editor"
+          ghost
+          onClick={onClickAssignHE}
+          type="primary "
+        >
+          Assign HE
+        </StyledButton>
+      )}
+      {isUnderReview && (
+        <>
+          <StyledButton onClick={handleReject} status="danger" type="primary">
+            Do not accept
+          </StyledButton>
+
+          <StyledButton onClick={handleMoveToProduction} type="primary">
+            Move to production
+          </StyledButton>
+        </>
+      )}
+      {isInProduction && (
+        <StyledButton data-testid="publish-question-btn" onClick={handlePublish} type="primary">
+          Publish
+        </StyledButton>
+      )}
+      {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
+        <>
+          <StyledButton onClick={handleReject} status="danger" type="primary">
+            Do not accept
+          </StyledButton>
+          <StyledButton onClick={handleMoveToReview} type="primary">
+            Move to Review
+          </StyledButton>
+        </>
+      )}
+      {isPublished && (
+        <StyledButton onClick={showNewVersionModal} type="primary">
+          Edit Question
+        </StyledButton>
+      )}
+      {showNextQuestionLink && NextQuestion}
+    </>
+  )
 
   const viewAsOptions = [
     { value: true, label: 'Educator' },
@@ -1230,19 +1178,20 @@ const Question = props => {
         )}
         {showNextQuestionLink && NextQuestion}
       </ActionsWrapper>
-      <MobileDropdown
-        menu={{
-          items: editorActionsDropdownMenu,
-        }}
-        trigger={['click']}
+      <Popup
+        alignment="end"
+        position="block-end"
+        toggle={
+          <PopupToggle
+            aria-label="More actions"
+            icon={<EllipsisOutlined />}
+            title="More actions"
+            type="primary"
+          />
+        }
       >
-        <DropdownButton
-          aria-label="More actions"
-          icon={<EllipsisOutlined />}
-          title="More actions"
-          type="primary"
-        />
-      </MobileDropdown>
+        <PopupContentWrapper>{editorActionsDropdownMenu}</PopupContentWrapper>
+      </Popup>
     </>
   )
 
@@ -1258,31 +1207,21 @@ const Question = props => {
     </RightAreaWrapper>
   )
 
-  const publishedQuestionActions = [
-    {
-      label: (
-        <StyledWordExportButton
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption={isUserLoggedIn}
+  const publishedQuestionActions = (
+    <>
+      <StyledWordExportButton
+        loading={wordFileLoading}
+        onExport={onClickExportToWord}
+        showMetadataOption={isUserLoggedIn}
+      />
+      {isUserLoggedIn && (
+        <StyledScormExportButton
+          loading={scormZipLoading}
+          onExport={onClickExportToScorm}
         />
-      ),
-      key: 'exportWord',
-    }, // remember to pass the key prop
-    ...(isUserLoggedIn
-      ? [
-          {
-            label: (
-              <StyledScormExportButton
-                loading={scormZipLoading}
-                onExport={onClickExportToScorm}
-              />
-            ),
-            key: 'exportScorm',
-          },
-        ]
-      : []),
-  ]
+      )}
+    </>
+  )
 
   const FacultyHeader = (
     <FacultyHeaderWrapper>
@@ -1317,19 +1256,20 @@ const Question = props => {
           )}
         </ActionsWrapper>
 
-        <MobileDropdown
-          menu={{
-            items: publishedQuestionActions,
-          }}
-          trigger={['click']}
+        <Popup
+          alignment="end"
+          position="block-end"
+          toggle={
+            <PopupToggle
+              aria-label="More actions"
+              icon={<EllipsisOutlined />}
+              title="More actions"
+              type="primary"
+            />
+          }
         >
-          <DropdownButton
-            aria-label="More actions"
-            icon={<EllipsisOutlined />}
-            title="More actions"
-            type="primary"
-          />
-        </MobileDropdown>
+          <PopupContentWrapper>{publishedQuestionActions}</PopupContentWrapper>
+        </Popup>
         <span>{NextQuestion}</span>
       </div>
     </FacultyHeaderWrapper>
