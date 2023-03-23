@@ -1,4 +1,4 @@
-import { columnResizing, tableEditing } from 'prosemirror-tables'
+import { tableEditing } from 'prosemirror-tables'
 import {
   InlineAnnotationsService,
   AnnotationToolGroupService,
@@ -31,7 +31,7 @@ import { DefaultSchema } from 'wax-prosemirror-core'
 
 export default {
   SchemaService: DefaultSchema,
-  PmPlugins: [columnResizing(), tableEditing()],
+  PmPlugins: [tableEditing()],
 
   services: [
     new FillTheGapQuestionService(),

@@ -1,4 +1,4 @@
-import { columnResizing, tableEditing } from 'prosemirror-tables'
+import { tableEditing } from 'prosemirror-tables'
 import {
   InlineAnnotationsService,
   AnnotationToolGroupService,
@@ -37,13 +37,14 @@ export default {
         'Base',
         {
           name: 'Annotations',
-          more: [
-            'Superscript',
-            'Subscript',
-            'SmallCaps',
-            'Underline',
-            'StrikeThrough',
-          ],
+          exclude: ['linkTool', 'SmallCaps'],
+          // more: [
+          //   'Superscript',
+          //   'Subscript',
+          //   'SmallCaps',
+          //   'Underline',
+          //   'StrikeThrough',
+          // ],
         },
         'Lists',
         'Images',
@@ -63,7 +64,7 @@ export default {
   ],
 
   SchemaService: DefaultSchema,
-  PmPlugins: [columnResizing(), tableEditing()],
+  PmPlugins: [tableEditing()],
 
   ImageService: { showAlt: true },
 
