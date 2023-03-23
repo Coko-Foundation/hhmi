@@ -35,6 +35,7 @@ const Wrapper = styled.div`
 `
 
 const TopMenu = styled.div`
+  align-items: center;
   background: ${th('colorBackground')};
   border-bottom: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
   display: flex;
@@ -122,7 +123,11 @@ const HhmiLayout = ({ editor }) => {
   return (
     <ThemeProvider theme={theme}>
       <Wrapper fullScreen={fullScreen}>
-        <TopMenu>
+        <TopMenu
+          aria-controls="wax-editor"
+          aria-label="Editor toolbar"
+          role="toolbar"
+        >
           <VisuallyHiddenElement as="h2">
             Question editor toolbar
           </VisuallyHiddenElement>
@@ -131,7 +136,7 @@ const HhmiLayout = ({ editor }) => {
 
         <EditorWrapper tabIndex={0}>
           <VisuallyHiddenElement as="h2">Question editor</VisuallyHiddenElement>
-          <EditorArea>{editor}</EditorArea>
+          <EditorArea id="wax-editor">{editor}</EditorArea>
         </EditorWrapper>
 
         {/* <WaxOverlays /> */}
