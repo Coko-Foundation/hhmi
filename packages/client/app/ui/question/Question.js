@@ -421,6 +421,7 @@ const PanelWrapper = ({ editor, metadata, showMetadata }) => {
     <StyledCollapse accordion defaultActiveKey="editor">
       <Collapse.Panel
         data-testid="editor-collapse"
+        forceRender
         header="Editor"
         key="editor"
       >
@@ -428,6 +429,7 @@ const PanelWrapper = ({ editor, metadata, showMetadata }) => {
       </Collapse.Panel>
       <Collapse.Panel
         data-testid="metadata-collapse"
+        forceRender
         header="Metadata"
         key="metadata"
       >
