@@ -183,6 +183,7 @@ Select.propTypes = {
   notFoundContent: PropTypes.element,
   isOpen: PropTypes.bool,
   virtual: PropTypes.bool,
+
   wrapOptionText: PropTypes.bool,
 }
 

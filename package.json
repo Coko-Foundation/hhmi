@@ -22,8 +22,10 @@
       "path": "cz-customizable"
     }
   },
-  "dependencies": {},
   "devDependencies": {
-    "@coko/lint": "^2.0.0"
+    "@coko/lint": "^2.0.0",
+    "any-text": "^1.2.0",
+    "cypress": "^12.3.0",
+    "lodash": "^4.17.21"
   }
 }
