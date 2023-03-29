@@ -52,7 +52,7 @@ const ExportToWordButton = props => {
       </Button>
 
       <Modal
-        afterClose={() => window.exportToWord.focus()}
+        afterClose={() => document.body.querySelector('#exportToWord').focus()}
         destroyOnClose
         footer={[
           <ModalFooter key="footer">

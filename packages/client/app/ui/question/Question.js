@@ -1095,7 +1095,11 @@ const Question = props => {
         </>
       )}
       {isInProduction && (
-        <StyledButton data-testid="publish-question-btn" onClick={handlePublish} type="primary">
+        <StyledButton
+          data-testid="publish-question-btn"
+          onClick={handlePublish}
+          type="primary"
+        >
           Publish
         </StyledButton>
       )}
@@ -1182,6 +1186,7 @@ const Question = props => {
       </ActionsWrapper>
       <Popup
         alignment="end"
+        data-testid="editor-actions-popup"
         position="block-end"
         toggle={
           <PopupToggle

@@ -16,6 +16,7 @@ const StyledCheckbox = styled(AntCheckbox)`
 `
 
 const Checkbox = props => {
+  // eslint-disable-next-line react/prop-types
   const { children, className, ...rest } = props
 
   return (
