@@ -10,7 +10,7 @@ import {
   metadataTransformer,
   metadataApiToUi,
 } from '../../app/utilities/question/metadataTransformations'
-import initialValues from '../../app/utilities/question/initialValues'
+import { initialMetadataValues } from '../../app/utilities/question/initialValues'
 
 export const Author = () => {
   return (
@@ -31,7 +31,7 @@ export const Editor = args => {
       <Metadata
         {...args}
         editorView
-        initialValues={metadataApiToUi(initialValues)}
+        initialValues={metadataApiToUi(initialMetadataValues)}
         metadata={metadataTransformer(metadata)}
         onFormFinish={() => console.log('on form finish')}
         readOnly={!editable}
