@@ -1,18 +1,16 @@
 import { gql } from '@apollo/client'
+import { USER_FIELDS } from './user.queries'
 
 export const LOGIN = gql`
   mutation Login($input: LoginInput!) {
     login(input: $input) {
       user {
-        id
-        defaultIdentity {
-          id
-          isVerified
-        }
+        ...UserFields
       }
       token
     }
   }
+  ${USER_FIELDS}
 `
 
 export const SIGNUP = gql`

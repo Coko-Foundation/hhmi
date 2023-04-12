@@ -1,12 +1,15 @@
 import React from 'react'
 import { useLocation, Redirect } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
+import { useCurrentUser } from '@coko/client'
 
 import { Login } from 'ui'
 import { LOGIN } from '../graphql'
 
 const LoginPage = props => {
   const { search } = useLocation()
+
+  const { setCurrentUser } = useCurrentUser()
 
   const [loginMutation, { data, loading, error }] = useMutation(LOGIN)
 
@@ -32,6 +35,8 @@ const LoginPage = props => {
 
   if (data) {
     const token = data.login?.token
+
+    setCurrentUser(data.login?.user)
 
     if (token) {
       localStorage.setItem('token', token)

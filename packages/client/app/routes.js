@@ -9,7 +9,12 @@ import {
 } from 'react-router-dom'
 import styled from 'styled-components'
 
-import { PageLayout as Page, RequireAuth, useCurrentUser } from '@coko/client'
+import {
+  Authenticate,
+  PageLayout as Page,
+  RequireAuth,
+  useCurrentUser,
+} from '@coko/client'
 
 import { Header, Footer, VisuallyHiddenElement, Spin } from 'ui'
 import GlobalStyles from './globalStyles'
@@ -98,7 +103,7 @@ const regexPaths = [
   },
 ]
 
-const Layout = props => {
+const Wrapper = props => {
   const { children } = props
 
   const history = useHistory()
@@ -192,10 +197,9 @@ const StyledPage = styled(Page)`
 `
 
 const StyledSpin = styled(Spin)`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: center;
+  display: grid;
+  height: 100vh;
+  place-content: center;
 `
 
 const Loader = () => <StyledSpin spinning />
@@ -273,126 +277,124 @@ const RequireProfile = ({ children }) => {
 
 const Authenticated = ({ children }) => {
   return (
-    <RequireAuth
-      currentUserQuery={CURRENT_USER}
-      loadingComponent={<Loader />}
-      notAuthenticatedRedirectTo="/login"
-    >
+    <RequireAuth notAuthenticatedRedirectTo="/login">
       <RequireProfile>{children}</RequireProfile>
     </RequireAuth>
   )
 }
 
 const routes = (
-  <Layout>
-    <GlobalStyles />
-    <SiteHeader />
-    <MetadataProvider>
-      <StyledPage fadeInPages={false} padPages={false}>
-        <StyledMain id="main-content" tabIndex="-1">
-          <Switch>
-            <Route
-              exact
-              path="/signup-profile"
-              render={() => (
-                <Authenticated>
-                  <UserProfile signup />
-                </Authenticated>
-              )}
-            />
+  <Authenticate currentUserQuery={CURRENT_USER} loadingComponent={<Loader />}>
+    <Wrapper>
+      <GlobalStyles />
+      <SiteHeader />
+      <MetadataProvider>
+        <StyledPage fadeInPages={false} padPages={false}>
+          <StyledMain id="main-content" tabIndex="-1">
+            <Switch>
+              <Route
+                exact
+                path="/signup-profile"
+                render={() => (
+                  <Authenticated>
+                    <UserProfile signup />
+                  </Authenticated>
+                )}
+              />
 
-            <Route
-              exact
-              path="/dashboard"
-              render={() => (
-                <Authenticated>
-                  <Dashboard />
-                </Authenticated>
-              )}
-            />
+              <Route
+                exact
+                path="/dashboard"
+                render={() => (
+                  <Authenticated>
+                    <Dashboard />
+                  </Authenticated>
+                )}
+              />
 
-            <Route component={Discover} exact path="/discover" />
+              <Route component={Discover} exact path="/discover" />
 
-            <Route
-              exact
-              path="/question/:id/test"
-              render={() => <Question testMode />}
-            />
+              <Route
+                exact
+                path="/question/:id/test"
+                render={() => <Question testMode />}
+              />
 
-            <Route
-              exact
-              path="/question/:id"
-              render={() => (
-                <Authenticated>
-                  <Question />
-                </Authenticated>
-              )}
-            />
-            <Route
-              exact
-              path="/manage-users"
-              render={() => (
-                <Authenticated>
-                  <ManageUsers />
-                </Authenticated>
-              )}
-            />
+              <Route
+                exact
+                path="/question/:id"
+                render={() => (
+                  <Authenticated>
+                    <Question />
+                  </Authenticated>
+                )}
+              />
+              <Route
+                exact
+                path="/manage-users"
+                render={() => (
+                  <Authenticated>
+                    <ManageUsers />
+                  </Authenticated>
+                )}
+              />
 
-            <Route
-              exact
-              path="/manage-teams"
-              render={() => (
-                <Authenticated>
-                  <TeamManager />
-                </Authenticated>
-              )}
-            />
-            <Route
-              exact
-              path="/profile"
-              render={() => (
-                <Authenticated>
-                  <UserProfile />
-                </Authenticated>
-              )}
-            />
+              <Route
+                exact
+                path="/manage-teams"
+                render={() => (
+                  <Authenticated>
+                    <TeamManager />
+                  </Authenticated>
+                )}
+              />
+              <Route
+                exact
+                path="/profile"
+                render={() => (
+                  <Authenticated>
+                    <UserProfile />
+                  </Authenticated>
+                )}
+              />
 
-            <Route component={Login} exact path="/login" />
-            <Route component={Signup} exact path="/signup" />
-            <Route
-              component={VerifyEmail}
-              exact
-              path="/email-verification/:token"
-            />
-            <Route
-              component={RequestPasswordReset}
-              exact
-              path="/request-password-reset"
-            />
-            <Route
-              component={ResetPassword}
-              exact
-              path="/password-reset/:token"
-            />
-            <Route
-              component={VerifyCheck}
-              exact
-              path="/ensure-verified-login"
-            />
-            <Route component={DeactivatedUser} path="/deactivated-user" />
-            <Route component={() => <Redirect to="/dashboard" />} path="*" />
-          </Switch>
-        </StyledMain>
-      </StyledPage>
-    </MetadataProvider>
-    <Footer
-      links={{
-        termsOfUse: 'https://www.hhmi.org/terms-of-use',
-        privacyPolicy: 'https://www.hhmi.org/privacy-policy',
-        homepage: '/',
-      }}
-    />
-  </Layout>
+              <Route component={Login} exact path="/login" />
+              <Route component={Signup} exact path="/signup" />
+              <Route
+                component={VerifyEmail}
+                exact
+                path="/email-verification/:token"
+              />
+              <Route
+                component={RequestPasswordReset}
+                exact
+                path="/request-password-reset"
+              />
+              <Route
+                component={ResetPassword}
+                exact
+                path="/password-reset/:token"
+              />
+              <Route
+                component={VerifyCheck}
+                exact
+                path="/ensure-verified-login"
+              />
+              <Route component={DeactivatedUser} path="/deactivated-user" />
+              <Route component={() => <Redirect to="/dashboard" />} path="*" />
+            </Switch>
+          </StyledMain>
+        </StyledPage>
+      </MetadataProvider>
+      <Footer
+        links={{
+          termsOfUse: 'https://www.hhmi.org/terms-of-use',
+          privacyPolicy: 'https://www.hhmi.org/privacy-policy',
+          homepage: '/',
+        }}
+      />
+    </Wrapper>
+  </Authenticate>
 )
 
 export default routes
