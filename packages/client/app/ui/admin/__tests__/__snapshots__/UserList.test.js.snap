@@ -2,13 +2,13 @@
 
 exports[`UserList matches snapshot 1`] = `
 <div
-  className="sc-gohhfD fWxEWx"
+  className="sc-jMLGdu kxOJWq"
 >
   <section
-    className="sc-glpldh eyLwAH"
+    className="sc-jJTKaY gUlKHH"
   >
     <h1
-      className="ant-typography sc-jMLGdu fBXxTH css-dev-only-do-not-override-1vtf12y"
+      className="ant-typography sc-glpldh cejvKt css-dev-only-do-not-override-1vtf12y"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,10 +18,10 @@ exports[`UserList matches snapshot 1`] = `
       User Manager
     </h1>
     <div
-      className="sc-fWRKtz cncskI sc-jJTKaY jhhCqZ"
+      className="sc-hsfzap fkaFKA sc-fDetwT dYxSQC"
     >
       <div
-        className="sc-hsfzap fHrHFH"
+        className="sc-hdoUXQ dvFjHW"
       >
         <span
           className="ant-input-group-wrapper ant-input-search sc-blLsxD dtbdnh css-dev-only-do-not-override-1vtf12y"
@@ -135,7 +135,7 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper sc-jTrPJq fhnEky sc-fDetwT petfZ css-dev-only-do-not-override-1vtf12y"
+                                className="ant-checkbox-wrapper sc-jTrPJq fhnEky sc-jbISuK BSTUZ css-dev-only-do-not-override-1vtf12y"
                               >
                                 <span
                                   className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
@@ -481,7 +481,7 @@ exports[`UserList matches snapshot 1`] = `
       </div>
       <nav
         aria-label="Pagination"
-        className="sc-dnwKUv kKzMli sc-hdoUXQ dYObif"
+        className="sc-dnwKUv kKzMli sc-jUzWen kmVUUB"
         role="navigation"
       >
         <ul
@@ -541,7 +541,7 @@ exports[`UserList matches snapshot 1`] = `
       </nav>
     </div>
     <div
-      className="sc-jbISuK bWrQJT"
+      className="sc-fAmxux bmpsI"
     >
       <label
         className="ant-checkbox-wrapper sc-jTrPJq fhnEky css-dev-only-do-not-override-1vtf12y"

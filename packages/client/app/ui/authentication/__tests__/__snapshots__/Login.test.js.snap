@@ -5,10 +5,10 @@ exports[`Login matches snapshot 1`] = `
   className="sc-gXSCqU kijXUi"
 >
   <div
-    className="sc-fAmxux oVhTI"
+    className="sc-iYQWso gKRimZ"
   >
     <h1
-      className="ant-typography sc-jbISuK cHgzBa css-dev-only-do-not-override-1vtf12y"
+      className="ant-typography sc-fAmxux fxjTXB css-dev-only-do-not-override-1vtf12y"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,7 +18,7 @@ exports[`Login matches snapshot 1`] = `
       Login
     </h1>
     <div
-      className="sc-gohhfD"
+      className="sc-jMLGdu"
     >
       <div
         className="sc-kFuwaP eKsANT"
@@ -180,7 +180,7 @@ exports[`Login matches snapshot 1`] = `
             </div>
           </div>
           <button
-            className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-jMLGdu kGUdUr"
+            className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-glpldh gSlzfl"
             disabled={false}
             onClick={[Function]}
             status={null}
@@ -193,13 +193,13 @@ exports[`Login matches snapshot 1`] = `
         </form>
       </div>
       <div
-        className="sc-glpldh dYmoIv"
+        className="sc-jJTKaY hInurn"
       >
         <div
-          className="sc-jJTKaY fbAprY"
+          className="sc-fDetwT gKoXVL"
         >
           <a
-            className="sc-kRQdhH ginInV"
+            className="sc-ejqkTo klkCZv"
             href="/request-password-reset"
             onClick={[Function]}
           >
@@ -207,10 +207,10 @@ exports[`Login matches snapshot 1`] = `
           </a>
         </div>
         <div
-          className="sc-fDetwT cWgMyB"
+          className="sc-jbISuK bqDygV"
         >
           <a
-            className="sc-kRQdhH ginInV"
+            className="sc-ejqkTo klkCZv"
             href="/signup"
             onClick={[Function]}
           >
