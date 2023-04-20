@@ -5,7 +5,7 @@ type Question {
   versions(latestOnly: Boolean, publishedOnly: Boolean): [QuestionVersion!]!
   agreedTc: Boolean!
   rejected: Boolean!
-  author: String!
+  author: String
 }
 
 type QuestionVersion {
