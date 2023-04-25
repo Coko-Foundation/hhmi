@@ -97,6 +97,9 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       multiple_drop_down_option: this.multipleDropdownOptionHandler,
 
       essay_container: this.essayContainerHandler,
+      essay_question: this.essayQuestionHandler,
+      essay_prompt: this.essayFeedbackHandler,
+      essay_answer: this.essayAnswerHandler,
     }
 
     this.typeToHandlerMap = {
@@ -237,6 +240,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.multipleDropdownOptions = {}
     this.multipleDropdownSolutions = {}
     this.multipleDropdownFeedback = {}
+
+    this.essaySolutions = {}
 
     this.metadataSpacing = new TextRun({ text: '  ' })
   }
@@ -528,8 +533,27 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
   // #region essay
   essayContainerHandler = node => {
+    const groupId = node.attrs.id
+    this.essaySolutions[groupId] = []
+
     return [
       this.createEmptyParagraph(),
+      ...this.contentParser(node.content, { essayGroupId: groupId }),
+    ]
+  }
+
+  essayQuestionHandler = node => {
+    return this.contentParser(node.content)
+  }
+
+  essayFeedbackHandler = (node, options = {}) => {
+    const groupId = options.essayGroupId
+
+    this.essaySolutions[groupId].push(...node.content)
+  }
+
+  essayAnswerHandler = node => {
+    return [
       new Paragraph({
         children: [
           new TextRun({
@@ -538,6 +562,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           }),
         ],
       }),
+      this.createEmptyParagraph(),
       this.createEmptyParagraph(),
     ]
   }
@@ -837,6 +862,16 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       listContent.push(feedbackParagraph)
 
       content = content.concat(listContent)
+    })
+
+    const essaySolutionKeys = Object.keys(this.essaySolutions)
+
+    essaySolutionKeys.forEach((groupId, i) => {
+      const feedback = this.essaySolutions[groupId]
+
+      const feedbackContent = this.contentParser(feedback)
+
+      content = content.concat(feedbackContent)
     })
 
     return content
