@@ -192,6 +192,17 @@ const extractDocumentText = data => {
         }
       }
 
+      // do not render content from essay feedback
+      if (type === 'essay_prompt') {
+        return
+      }
+
+      // render an empty line for fill_the_gap answers
+      if (type === 'fill_the_gap') {
+        allContent += '   '
+        return
+      }
+
       if (text) allContent += `${text} `
       if (itemContent) extract(item)
     })
