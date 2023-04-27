@@ -157,6 +157,20 @@ mutation CreateNewQuestionVersion($questionId: ID!) {
 }
 `
 
+const GET_QUESTION = `
+query getQuestion($id:ID!){
+  question(id:$id){
+    id
+    agreedTc
+    rejected
+    author{
+      displayName
+      givenNames
+    }
+  }
+}
+`
+
 describe('Question API authorization', () => {
   beforeEach(async () => clearDb())
 
@@ -165,6 +179,37 @@ describe('Question API authorization', () => {
     const user = User.knex()
     question.destroy()
     user.destroy()
+  })
+
+  it('gets correct author fields', async () => {
+    const user = await User.insert({
+      isActive: true,
+      displayName: 'user1',
+      givenNames: 'user 1',
+    })
+
+    const question = await Question.insert({})
+
+    const authorTeamQuestion = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(authorTeamQuestion.id, user.id)
+    const testServer = await createGraphQLServer(user.id)
+
+    const result = await testServer.executeOperation({
+      query: GET_QUESTION,
+      variables: {
+        id: question.id,
+      },
+    })
+
+    expect(result.errors).toBe(undefined)
+    expect(result.data.question.author.displayName).toBe('user1')
+    expect(result.data.question.author.givenNames).toBe('user 1')
   })
 
   it("blocks inactive users from quering author's dashboard", async () => {

@@ -61,7 +61,7 @@ const transform = (questions, metadata, searchParams) => {
         { label: 'subtopic', value: topics.subtopics },
         // question type: how do we know that data ?? what if it's more than one?
         { label: "bloom's level", value: cognitiveDisplayValue },
-        { label: 'author', value: question.author },
+        { label: 'author', value: question.author.displayName },
         {
           label: 'published date',
           value: (

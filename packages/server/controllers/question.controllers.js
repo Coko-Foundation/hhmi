@@ -28,7 +28,7 @@ const getQuestion = async (questionId, options = {}) => {
     `${BASE_MESSAGE} getQuestion: fetching question with id ${questionId}`,
   )
 
-  return Question.getQuestionWithAuthorDisplayName(questionId, { trx })
+  return Question.getQuestion(questionId, { trx })
 }
 
 const getQuestionVersions = async (questionId, options = {}) => {
@@ -118,6 +118,10 @@ const getPreviousOrNextQuestionsIds = async (
 //     editor: managingEditorData,
 //   }
 // }
+
+const getAuthor = async questionId => {
+  return Question.getAuthor(questionId)
+}
 
 const getAuthorDashboard = async (userId, options = {}) => {
   const { orderBy, ascending, page, pageSize, searchQuery, trx } = options
@@ -595,6 +599,7 @@ module.exports = {
   getPublishedQuestions,
   getPreviousOrNextQuestionsIds,
 
+  getAuthor,
   getAuthorDashboard,
   getReviewerDashboard,
   getManagingEditorDashboard,

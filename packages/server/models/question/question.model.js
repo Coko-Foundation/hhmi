@@ -8,6 +8,7 @@ const {
 const { db } = require('@pubsweet/db-manager')
 
 const QuestionVersion = require('../questionVersion/questionVersion.model')
+const User = require('../user/user.model')
 const { applyListQueryOptions } = require('../helpers')
 
 class Question extends BaseModel {
@@ -48,23 +49,15 @@ class Question extends BaseModel {
     return question
   }
 
-  static async getQuestionWithAuthorDisplayName(id, options = {}) {
+  static async getQuestion(id, options = {}) {
     try {
       const { trx } = options
-
       return Question.query(trx)
-        .leftJoin('teams', 'questions.id', 'teams.object_id')
-        .leftJoin('team_members', 'teams.id', 'team_members.team_id')
-        .leftJoin('users', 'team_members.user_id', 'users.id')
-        .select('questions.*', 'users.display_name as author')
+        .select('questions.*')
         .findOne('questions.id', id)
-        .throwIfNotFound()
-    } catch (e) {
-      console.error(
-        'Question model: getQuestionWithAuthorDisplayName failed',
-        e,
-      )
-      throw new Error(e)
+    } catch (err) {
+      console.error(err)
+      throw new Error(err)
     }
   }
 
@@ -273,9 +266,6 @@ class Question extends BaseModel {
           'questions.id',
           'question_versions.question_id',
         )
-        .leftJoin('teams', 'questions.id', 'teams.object_id')
-        .leftJoin('team_members', 'teams.id', 'team_members.team_id')
-        .leftJoin('users', 'team_members.user_id', 'users.id')
         .select(
           'questions.*',
           'question_versions.publication_date',
@@ -285,7 +275,6 @@ class Question extends BaseModel {
           'question_versions.courses',
           'question_versions.question_type',
           'question_versions.cognitive_level',
-          'users.display_name as author',
         )
         .distinctOn('questions.id')
         .where({
@@ -447,10 +436,7 @@ class Question extends BaseModel {
           })
       })
       .distinctOn('questions.id')
-      .leftJoin('teams', 'teams.objectId', 'questions.id')
-      .leftJoin('team_members', 'team_members.team_id', 'teams.id')
-      .leftJoin('users', 'users.id', 'team_members.user_id')
-      .select('questions.*', 'users.display_name as author')
+      .select('questions.*')
       .orderBy(['questions.id'])
 
     if (options.searchQuery) {
@@ -485,6 +471,18 @@ class Question extends BaseModel {
       })
 
     return applyListQueryOptions(query, options)
+  }
+
+  static async getAuthor(id, options = {}) {
+    const { trx } = options
+
+    const author = await Question.query(trx)
+      .leftJoin('teams', 'questions.id', 'teams.object_id')
+      .leftJoin('team_members', 'teams.id', 'team_members.team_id')
+      .select('team_members.user_id')
+      .findOne({ 'teams.role': 'author', 'teams.objectId': id })
+
+    return User.findById(author.userId)
   }
 }
 

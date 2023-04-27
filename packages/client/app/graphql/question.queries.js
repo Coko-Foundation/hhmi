@@ -75,7 +75,9 @@ export const GET_EDITOR_DASHBOARD = gql`
       result {
         id
         rejected
-        author
+        author {
+          displayName
+        }
         versions(latestOnly: true) {
           id
           content
@@ -335,7 +337,9 @@ export const GET_PUBLISHED_QUESTIONS = gql`
     getPublishedQuestions(params: $params, options: $options) {
       result {
         id
-        author
+        author {
+          displayName
+        }
         versions(latestOnly: true, publishedOnly: true) {
           id
           content

@@ -1,4 +1,5 @@
 const {
+  getAuthor,
   getQuestion,
   getQuestionVersions,
   getPublishedQuestions,
@@ -131,6 +132,10 @@ const uploadFilesResolver = async (_, { files }) => {
   return uploadFiles(files)
 }
 
+const authorResolver = async ({ id }) => {
+  return getAuthor(id)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -155,6 +160,7 @@ module.exports = {
   },
   Question: {
     versions: versionsResolver,
+    author: authorResolver,
   },
   QuestionVersion: {
     question: versionQuestionResolver,
