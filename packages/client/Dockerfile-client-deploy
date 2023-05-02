@@ -31,10 +31,13 @@ FROM node:16.19.0-bullseye-slim
 RUN apt-get update && apt-get install -y
 RUN npm install --global serve
 
-USER node
+WORKDIR /home/node/app
 
 COPY --from=0 /home/node/app/_build ./_build
 COPY --from=0 /home/node/app/node_modules/@coko/client/scripts/env.sh ./env.sh
+
+RUN chown -R node:node .
+USER node
 
 ENTRYPOINT ["sh", "./env.sh"]
 CMD ["npx", "serve", "-p", "8080", "--single", "./_build"]
