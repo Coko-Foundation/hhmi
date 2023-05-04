@@ -144,7 +144,7 @@ build server:
     - if [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_PASSWORD" ]; then echo "Not pushing" && exit 0; fi
     - cd ./packages/server
     - docker pull $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest || true
-    - docker build --cache-from $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest --tag $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:$CI_COMMIT_SHA --tag $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest . -f Dockerfile-production
+    - docker build --cache-from $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest --tag $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:$CI_COMMIT_SHA --tag $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest . -f Dockerfile-server-deploy
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest
   only:
