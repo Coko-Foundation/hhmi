@@ -63,7 +63,7 @@ const transform = (questions, metadataValues, tab = '') => {
         // question type: how do we know that data ?? what if it's more than one?
         { label: "bloom's level", value: cognitiveDisplayValue },
         ...(tab === 'editor'
-          ? [{ label: 'author', value: question.author.displayName }]
+          ? [{ label: 'author', value: question?.author?.displayName }]
           : []),
         {
           label: 'published date',
