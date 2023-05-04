@@ -482,7 +482,11 @@ class Question extends BaseModel {
       .select('team_members.user_id')
       .findOne({ 'teams.role': 'author', 'teams.objectId': id })
 
-    return User.findById(author.userId)
+    if (author.userId) {
+      return User.findById(author.userId)
+    }
+
+    return null
   }
 }
 
