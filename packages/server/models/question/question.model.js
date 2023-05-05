@@ -266,6 +266,9 @@ class Question extends BaseModel {
           'questions.id',
           'question_versions.question_id',
         )
+        .leftJoin('teams', 'teams.objectId', 'questions.id')
+        .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+        .leftJoin('users', 'users.id', 'team_members.user_id')
         .select(
           'questions.*',
           'question_versions.publication_date',
@@ -275,6 +278,7 @@ class Question extends BaseModel {
           'question_versions.courses',
           'question_versions.question_type',
           'question_versions.cognitive_level',
+          'users.display_name as author',
         )
         .distinctOn('questions.id')
         .where({
@@ -439,23 +443,7 @@ class Question extends BaseModel {
       .select('questions.*')
       .orderBy(['questions.id'])
 
-    if (options.searchQuery) {
-      query
-        .leftJoin(
-          'question_versions',
-          'question_versions.question_id',
-          'questions.id',
-        )
-        .where('content_text', 'ilike', `%${options.searchQuery}%`)
-        .orWhere('users.display_name', 'ilike', `%${options.searchQuery}%`)
-
-      const queryStrings = options.searchQuery.split(' ')
-      queryStrings.forEach(queryString => {
-        query.orWhereJsonSupersetOf('keywords', [queryString])
-      })
-    }
-
-    if (submittedOnly)
+    if (submittedOnly) {
       query = query.whereIn('questions.id', builder => {
         return builder
           .select('questions.id')
@@ -469,6 +457,29 @@ class Question extends BaseModel {
             submitted: true,
           })
       })
+    }
+
+    if (options.searchQuery) {
+      query
+        .leftJoin(
+          'question_versions',
+          'question_versions.question_id',
+          'questions.id',
+        )
+        .leftJoin('teams', 'teams.objectId', 'questions.id')
+        .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+        .leftJoin('users', 'users.id', 'team_members.user_id')
+        .where(builder => {
+          return builder
+            .where('content_text', 'ilike', `%${options.searchQuery}%`)
+            .orWhere('users.displayName', 'ilike', `%${options.searchQuery}%`)
+        })
+
+      const queryStrings = options.searchQuery.split(' ')
+      queryStrings.forEach(queryString => {
+        query.orWhereJsonSupersetOf('keywords', [queryString])
+      })
+    }
 
     return applyListQueryOptions(query, options)
   }
