@@ -53,6 +53,7 @@ const RequestPasswordReset = props => {
         {hasSuccess && (
           <div role="alert">
             <Result
+              data-testid="result-request-password-success"
               extra={[
                 <Link key={1} to="/login">
                   Return to the login form

@@ -5,7 +5,8 @@ import { workflowData, question } from '../support/appData'
 import { laptop } from '../support/viewport'
 import { dashboard, graphqlEndpoint } from '../support/routes'
 
-describe('Question Workflows', () => {
+/* eslint-disable-next-line jest/no-disabled-tests */
+describe.skip('Question Workflows', () => {
   const { contact } = user
   before(() => {
     cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')

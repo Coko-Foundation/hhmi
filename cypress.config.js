@@ -22,5 +22,6 @@ module.exports = defineConfig({
       })
     },
     baseUrl: 'http://localhost:4000',
+    video: false,
   },
 })

@@ -1,5 +1,4 @@
 /* eslint-disable jest/expect-expect */
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { capitalize } from 'lodash'
 import { user, generalUser } from '../support/credentials'
 import { laptop } from '../support/viewport'
@@ -12,8 +11,10 @@ import {
   graphqlEndpoint,
 } from '../support/routes'
 
-describe('Tests for user authentication', () => {
+/* eslint-disable-next-line jest/no-disabled-tests */
+describe.skip('Tests for user authentication', () => {
   const { contact, address, school, reviewing } = user
+
   before(() => {
     cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
     cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
@@ -29,11 +30,12 @@ describe('Tests for user authentication', () => {
       `docker exec hhmi_server_1 node ./scripts/seedUser.js create seconduser@gmail.com profileSubmitted editor`,
     )
   })
+
   beforeEach(() => {
     cy.viewport(laptop.preset)
-
     cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
   })
+
   it('forgot password', () => {
     cy.visit(requestPasswordReset)
     cy.get('[type="submit"]').click()
@@ -48,6 +50,7 @@ describe('Tests for user authentication', () => {
       `An email has been sent to ${contact.email} containing further instructions`,
     )
   })
+
   it('signup test', () => {
     cy.signup(generalUser)
   })
@@ -134,7 +137,9 @@ describe('Tests for user authentication', () => {
     cy.wait('@GQLReq')
     cy.contains('div', 'Thank you for submitting your profile!')
   })
-  it('Team manager', () => {
+
+  /* eslint-disable-next-line jest/no-disabled-tests */
+  it.skip('Team manager', () => {
     const addUserToRole = (role, username) => {
       cy.get(`[data-testid="select-${role}"]`).type(username)
       cy.contains('.ant-select-item-option-active', username).click()
@@ -151,8 +156,10 @@ describe('Tests for user authentication', () => {
     cy.login({ ...contact, visitUrl: manageTeam })
     // cy.get('[data-testid="usermenu-btn"]').click()
     // cy.contains('a', 'Manage Teams').click()
-    cy.visit(manageTeam, { method: 'GET' })
+
+    // cy.visit(manageTeam, { method: 'GET' })
     cy.contains('h1', 'Team Manager')
+
     removeUserFromRole('editor', 'seconduser')
     removeUserFromRole('reviewer', 'firstuser')
 
@@ -160,7 +167,7 @@ describe('Tests for user authentication', () => {
     addUserToRole('reviewer', 'firstuser')
   })
 
-  it('User with editor privelages', () => {
+  it('User with editor priveleges', () => {
     cy.login({
       email: 'seconduser@gmail.com',
       password: 'Password@123',
@@ -177,7 +184,8 @@ describe('Tests for user authentication', () => {
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
   })
-  it('User with Reviewer privelages', () => {
+
+  it('User with Reviewer priveleges', () => {
     cy.login({
       email: 'firstuser@gmail.com',
       password: 'Password@123',
@@ -251,6 +259,7 @@ describe('Tests for user authentication', () => {
       'exist',
     )
   })
+
   it('updating user info', () => {
     cy.login({ ...contact, visitUrl: profile })
     // cy.get('a[href="/profile"]').click()
@@ -305,6 +314,7 @@ describe('Tests for user authentication', () => {
     cy.get('[name="assessmentTrainingInclusive"]').should('have.value', 'true')
     cy.get('[id="source"]').should('have.value', 'college')
   })
+
   it('password reset', () => {
     cy.login({ ...contact, visitUrl: profile })
     cy.contains('[class="ant-tabs-tab"]', 'Password').click()

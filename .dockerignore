@@ -30,7 +30,7 @@ app.pid
 # app
 _build/
 config/local*
-cypress/
+# cypress/
 data/
 coverage/
 logs/

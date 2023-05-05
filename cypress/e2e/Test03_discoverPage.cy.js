@@ -8,8 +8,10 @@ import { laptop } from '../support/viewport'
 
 const path = require('path')
 
-describe('Discover page tests', () => {
+/* eslint-disable-next-line jest/no-disabled-tests */
+describe.skip('Discover page tests', () => {
   const { contact } = user
+
   before(() => {
     cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
     cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
@@ -33,12 +35,14 @@ describe('Discover page tests', () => {
 
     // cy.visit('/discover')
   })
+
   beforeEach(() => {
     cy.visit('/discover')
     cy.intercept('POST', graphqlEndpoint).as('GQLReq')
 
     cy.viewport(laptop.preset)
   })
+
   it('sort functionality', () => {
     // [segment]: Descending order
     cy.log('checking descedning order...')

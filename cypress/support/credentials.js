@@ -1,6 +1,6 @@
-const setRandomNumbes = false
+const setRandomNumbers = false
 
-const randomNumber = setRandomNumbes
+const randomNumber = setRandomNumbers
   ? Math.floor(Math.random() * (1000 - 100 + 1)) + 100
   : ''
 
