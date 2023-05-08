@@ -9,7 +9,7 @@ import { LOGIN } from '../graphql'
 const LoginPage = props => {
   const { search } = useLocation()
 
-  const { setCurrentUser } = useCurrentUser()
+  const { currentUser, setCurrentUser } = useCurrentUser()
 
   const [loginMutation, { data, loading, error }] = useMutation(LOGIN)
 
@@ -25,8 +25,7 @@ const LoginPage = props => {
     loginMutation(mutationData).catch(e => console.error(e))
   }
 
-  const existingToken = localStorage.getItem('token')
-  if (existingToken) return <Redirect to={redirectUrl} />
+  if (currentUser) return <Redirect to={redirectUrl} />
 
   let errorMessage = 'Something went wrong!'
 
