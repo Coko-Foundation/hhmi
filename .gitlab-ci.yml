@@ -7,6 +7,7 @@ variables:
   IMAGE_NAME_SERVER_PRODUCTION: hhmi-server
   IMAGE_NAME_CLIENT_PRODUCTION: hhmi-client
   IMAGE_NAME_STORYBOOK: hhmi-storybook
+  CYPRESS_RECORD_KEY: a25f8612-45b7-4f19-941d-6fd738b181c1
   WORKDIR_SERVER: /home/node/hhmi
   WORKDIR_CLIENT: /home/node/app
 
@@ -135,10 +136,11 @@ end to end tests:
     - build client
     - build server
   script:
+    - cp .env.ci .env
     - docker compose --compatibility -f docker-compose.cypress-ci.yml up -d
     - docker compose ps
     - yarn install --frozen-lockfile
-    - wait-on --timeout 30000 http://localhost:3000/healthcheck && yarn cypress run
+    - wait-on --timeout 30000 http://localhost:3000/healthcheck && yarn cypress run --record
 
 # PUBLISH PRODUCTION
 

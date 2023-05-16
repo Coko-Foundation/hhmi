@@ -11,24 +11,39 @@ import {
   graphqlEndpoint,
 } from '../support/routes'
 
-/* eslint-disable-next-line jest/no-disabled-tests */
-describe.skip('Tests for user authentication', () => {
+describe('Tests for user authentication', () => {
   const { contact, address, school, reviewing } = user
 
   before(() => {
     cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
+      .its('stdout')
+      .should('contain', 'database cleared')
     cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
+      .its('stdout')
+      .should('contain', `Added global team "admin"`)
+      .should('contain', `Added global team "reviewer"`)
+      .should('contain', `Added global team "editor"`)
+
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmited admin`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - ${contact.email}.`)
+      .should('contain', `user given admin role`)
 
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedUser.js create firstuser@gmail.com profileSubmitted reviewer`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - firstuser@gmail.com.`)
+      .should('contain', `user given reviewer role`)
 
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedUser.js create seconduser@gmail.com profileSubmitted editor`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - seconduser@gmail.com.`)
+      .should('contain', `user given editor role`)
   })
 
   beforeEach(() => {
@@ -138,8 +153,7 @@ describe.skip('Tests for user authentication', () => {
     cy.contains('div', 'Thank you for submitting your profile!')
   })
 
-  /* eslint-disable-next-line jest/no-disabled-tests */
-  it.skip('Team manager', () => {
+  it('Team manager', () => {
     const addUserToRole = (role, username) => {
       cy.get(`[data-testid="select-${role}"]`).type(username)
       cy.contains('.ant-select-item-option-active', username).click()

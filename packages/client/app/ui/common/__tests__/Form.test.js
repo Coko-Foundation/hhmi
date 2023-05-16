@@ -30,7 +30,9 @@ describe('Form', () => {
   })
 
   it('renders ribbon with correct message', () => {
-    render(<MockForm ribbonMessage="Failed to submit" submissionStatus />)
+    render(
+      <MockForm ribbonMessage="Failed to submit" submissionStatus="error" />,
+    )
     const ribbonText = screen.queryByText('Failed to submit')
     expect(ribbonText).toBeTruthy()
   })

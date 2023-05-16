@@ -5,37 +5,57 @@ import { workflowData, question } from '../support/appData'
 import { laptop } from '../support/viewport'
 import { dashboard, graphqlEndpoint } from '../support/routes'
 
-/* eslint-disable-next-line jest/no-disabled-tests */
-describe.skip('Question Workflows', () => {
+describe('Question Workflows', () => {
   const { contact } = user
   before(() => {
     cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
+      .its('stdout')
+      .should('contain', 'database cleared')
     cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
+      .its('stdout')
+      .should('contain', `Added global team "admin"`)
+      .should('contain', `Added global team "reviewer"`)
+      .should('contain', `Added global team "editor"`)
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email}  profileSubmitted admin`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - ${contact.email}.`)
+      .should('contain', `user given admin role`)
+
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${editor.email} profileSubmitted editor`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - ${editor.email}.`)
+      .should('contain', `user given editor role`)
     cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -2 population`,
+      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -3 population`,
     )
+      .its('stdout')
+      .should(
+        'contain',
+        `question created under the author ${contact.username}`,
+      )
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -2 biochemistry`,
     )
+      .its('stdout')
+      .should(
+        'contain',
+        `question created under the author ${contact.username}`,
+      )
   })
   beforeEach(() => {
     cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
     cy.viewport(laptop.preset)
   })
   it('Regular workflow', () => {
-    const checkStage = async (listItem, stage) => {
+    const checkStage = (listItem, stage) => {
       const { operationBtn, prompt, success, QuestionStatus } =
         workflowData[stage]
 
-      cy.get(
-        'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-      )
+      cy.get('[data-testid="list-item-wrapper"]')
         .eq(listItem)
         .contains('p')
         .first()
@@ -61,9 +81,7 @@ describe.skip('Question Workflows', () => {
       cy.contains('[class="ant-modal-body"] [type="button"]', 'Ok').click()
       cy.visit(dashboard, { method: 'GET' })
 
-      cy.get(
-        'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-      )
+      cy.get('[data-testid="list-item-wrapper"]')
         .eq(listItem)
         .contains('[data-testid="question-status"]', QuestionStatus)
     }
@@ -85,9 +103,7 @@ describe.skip('Question Workflows', () => {
 
     // [segment]: editing question in production
     cy.log('checking question in production...')
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
       .contains(
         'p',
@@ -104,10 +120,9 @@ describe.skip('Question Workflows', () => {
     cy.log('checking published questions...')
 
     cy.get('a[href="/discover"]').click()
+    cy.wait('@GQLReq')
 
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
       .contains(
         'p',
@@ -119,7 +134,7 @@ describe.skip('Question Workflows', () => {
     cy.get('[data-testid="create-question-btn"]').click()
     cy.get('[data-testid="submit-question-btn"]').should('not.exist')
     cy.fillQuestion(question)
-    cy.get('[data-testid="publish-question-btn"]').click()
+    cy.get('[data-testid="publish-question-btn"]').first().click()
     cy.contains(
       '[class="ant-modal-confirm-title"]',
       'Are you sure you want to publish this question version?',

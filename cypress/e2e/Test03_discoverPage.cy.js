@@ -8,30 +8,51 @@ import { laptop } from '../support/viewport'
 
 const path = require('path')
 
-/* eslint-disable-next-line jest/no-disabled-tests */
-describe.skip('Discover page tests', () => {
+describe('Discover page tests', () => {
   const { contact } = user
 
   before(() => {
     cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
+      .its('stdout')
+      .should('contain', 'database cleared')
     cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
+      .its('stdout')
+      .should('contain', `Added global team "admin"`)
+      .should('contain', `Added global team "reviewer"`)
+      .should('contain', `Added global team "editor"`)
     cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmitted`,
+      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmitted reviewer`,
     )
       .its('stdout')
       .should('contain', `user created with email - ${contact.email}.`)
+      .should('contain', `user given reviewer role`)
 
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -1 anatomy published`,
     )
+      .its('stdout')
+      .should(
+        'contain',
+        `question created under the author ${contact.username}`,
+      )
 
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -2 biochemistry published`,
     )
+      .its('stdout')
+      .should(
+        'contain',
+        `question created under the author ${contact.username}`,
+      )
 
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -3 population published`,
     )
+      .its('stdout')
+      .should(
+        'contain',
+        `question created under the author ${contact.username}`,
+      )
 
     // cy.visit('/discover')
   })
@@ -48,19 +69,13 @@ describe.skip('Discover page tests', () => {
     cy.log('checking descedning order...')
     cy.get('[data-testid="sort-select"]').click({ force: true })
     cy.get('[title="Date (descending)"]').first().click({ force: true })
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
       .contains('[data-testid="published date-value"]', getDateInFormat(-1))
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(1)
       .contains('[data-testid="published date-value"]', getDateInFormat(-2))
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(2)
       .contains('[data-testid="published date-value"]', getDateInFormat(-3))
 
@@ -68,26 +83,23 @@ describe.skip('Discover page tests', () => {
     cy.log('checking ascending order...')
     cy.get('[data-testid="sort-select"]').click({ force: true })
     cy.get('[title="Date (ascending)"]').first().click({ force: true })
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
       .contains('[data-testid="published date-value"]', getDateInFormat(-3))
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(1)
       .contains('[data-testid="published date-value"]', getDateInFormat(-2))
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(2)
       .contains('[data-testid="published date-value"]', getDateInFormat(-1))
   })
 
-  it('search functionality', () => {
+  // wait for fixes to be merged
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip('search functionality', () => {
+    cy.wait('@GQLReq')
     cy.get('[placeholder="Search..."]', { timeout: 10000 }).type(
-      'biochemistry{enter}',
+      'Energy: carbohydrates{enter}',
     )
     cy.contains(
       '[data-testid="topic-value"]',
@@ -98,7 +110,7 @@ describe.skip('Discover page tests', () => {
       .find('.List__ListItemWrapper-dan8sa-6')
       .should('have.length', 1)
     cy.contains(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"] p',
+      '[data-testid="list-item-wrapper"]',
       'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
     )
     cy.contains('[data-testid="subtopic-value"]', 'General Chemistry')
@@ -111,7 +123,7 @@ describe.skip('Discover page tests', () => {
     cy.get('[data-testid="subtopic-select"]').type('General Chemistry{enter}')
     cy.contains('button[type="submit"]', 'Update').click()
     cy.get('[class="ant-list-items"]')
-      .find('.List__ListItemWrapper-dan8sa-6')
+      .find('.List__ListItemWrapper-sc-dan8sa-7')
       .should('have.length', 1)
     cy.contains(
       '[data-testid="topic-value"]',
@@ -132,7 +144,7 @@ describe.skip('Discover page tests', () => {
     cy.get('[data-testid="course-unit-select"]').type('population{enter}')
     cy.contains('button[type="submit"]', 'Update').click()
     cy.get('[class="ant-list-items"]')
-      .find('.List__ListItemWrapper-dan8sa-6')
+      .find('.List__ListItemWrapper-sc-dan8sa-7')
       .should('have.length', 1)
     cy.contains('[data-testid="topic-value"]', 'Environmental science')
     cy.contains('[data-testid="subtopic-value"]', 'Human Population & Impacts')
@@ -142,9 +154,7 @@ describe.skip('Discover page tests', () => {
     // cy.login({ ...contact, visitUrl: discover })
     cy.visit(discover)
 
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(2)
       .contains('p')
       .first()

@@ -100,7 +100,7 @@ Cypress.Commands.add(
     cy.get(biointeractiveResources.selector).click()
     biointeractiveResources.values.forEach(key => {
       cy.get(biointeractiveResources.selector).type(key.slice(0, 10))
-      cy.contains(key, { timeout: 50000 }).click()
+      cy.contains(key, { timeout: 50000 }).click({ force: true })
     })
     cy.get(biointeractiveResources.selector).click()
     selectDataWithoutParent(affectiveLevel)

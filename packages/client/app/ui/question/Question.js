@@ -1242,6 +1242,7 @@ const Question = props => {
           <ViewAsWrapper>
             <ViewAsLabel htmlFor="viewAsSelect">View as</ViewAsLabel>
             <StyledSelect
+              data-testid="viewas-select"
               id="viewAsSelect"
               onChange={val => setShowMetadata(val)}
               options={viewAsOptions}

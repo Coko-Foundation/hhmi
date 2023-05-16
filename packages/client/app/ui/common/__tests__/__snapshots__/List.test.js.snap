@@ -18,6 +18,7 @@ exports[`list matches snapshot 1`] = `
         >
           <li
             className="sc-hAtEyd cWVVsj"
+            data-testid="list-item-wrapper"
           >
             <div>
               Eaque laboriosam magnam perspiciatis delectus sunt et voluptatum et fugiat. Architecto molestias iure.
@@ -25,6 +26,7 @@ exports[`list matches snapshot 1`] = `
           </li>
           <li
             className="sc-hAtEyd cWVVsj"
+            data-testid="list-item-wrapper"
           >
             <div>
               Autem eaque temporibus rerum vero consequuntur modi incidunt. Quis facere et saepe consequatur dignissimos ipsa adipisci eos.
@@ -32,6 +34,7 @@ exports[`list matches snapshot 1`] = `
           </li>
           <li
             className="sc-hAtEyd cWVVsj"
+            data-testid="list-item-wrapper"
           >
             <div>
               Vel non aperiam nam quos perspiciatis temporibus. Nam ex quasi beatae cum est nesciunt.
@@ -39,6 +42,7 @@ exports[`list matches snapshot 1`] = `
           </li>
           <li
             className="sc-hAtEyd cWVVsj"
+            data-testid="list-item-wrapper"
           >
             <div>
               Rem culpa nostrum quia non sed quod. Et est nesciunt aliquam non adipisci aut error qui.
@@ -46,6 +50,7 @@ exports[`list matches snapshot 1`] = `
           </li>
           <li
             className="sc-hAtEyd cWVVsj"
+            data-testid="list-item-wrapper"
           >
             <div>
               Possimus dicta earum. Placeat mollitia doloribus nisi.

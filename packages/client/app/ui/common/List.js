@@ -228,6 +228,7 @@ const List = props => {
           <Draggable draggableId={`draggable-${i}`} index={i}>
             {(provided, snapshot) => (
               <ListItemWrapper
+                data-testid="list-item-wrapper"
                 key={itemProps?.id}
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
@@ -246,7 +247,7 @@ const List = props => {
             )}
           </Draggable>
         ) : (
-          <ListItemWrapper key={itemProps?.id}>
+          <ListItemWrapper data-testid="list-item-wrapper" key={itemProps?.id}>
             <SelectableItem
               index={i}
               onDeselect={handleDeselect}
@@ -260,7 +261,7 @@ const List = props => {
       }
     : (itemProps, i) => {
         return draggable ? (
-          <ListItemWrapper>
+          <ListItemWrapper data-testid="list-item-wrapper">
             <Draggable draggableId={`draggable-${i}`} index={i}>
               {provided => (
                 <div
@@ -274,7 +275,9 @@ const List = props => {
             </Draggable>
           </ListItemWrapper>
         ) : (
-          <ListItemWrapper>{renderItem(itemProps, i)}</ListItemWrapper>
+          <ListItemWrapper data-testid="list-item-wrapper">
+            {renderItem(itemProps, i)}
+          </ListItemWrapper>
         )
       }
 
