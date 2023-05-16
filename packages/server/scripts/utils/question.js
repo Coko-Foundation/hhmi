@@ -63,6 +63,15 @@ module.exports.createQuestion = async (
         },
         { trx },
       )
+      // temporary fix for created date issue
+
+      await Question.query(trx).findById(questionData.id).patch({
+        created: date,
+      })
+
+      await QuestionVersion.query().findById(questionVersion.id).patch({
+        created: date,
+      })
 
       if (!(questionData && questionVersion && tm)) {
         throw new Error("Something wen't wrong!")

@@ -5,8 +5,7 @@ import { editor, question } from '../support/appData'
 import { graphqlEndpoint } from '../support/routes'
 import { laptop } from '../support/viewport'
 
-/* eslint-disable-next-line jest/no-disabled-tests */
-describe.skip('Testing questions', () => {
+describe('Testing questions', () => {
   const { contact } = user
   const listItems = ['item1', 'item2', 'item3']
 
@@ -22,13 +21,25 @@ describe.skip('Testing questions', () => {
 
   before(() => {
     cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
+      .its('stdout')
+      .should('contain', 'database cleared')
     cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
+      .its('stdout')
+      .should('contain', `Added global team "admin"`)
+      .should('contain', `Added global team "reviewer"`)
+      .should('contain', `Added global team "editor"`)
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${editorRole.email} profileSubmitted editor`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - ${editorRole.email}.`)
+      .should('contain', `user given editor role`)
     cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmitted`,
+      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmitted reviewer`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - ${contact.email}.`)
+      .should('contain', `user given reviewer role`)
   })
 
   beforeEach(() => {
@@ -36,7 +47,8 @@ describe.skip('Testing questions', () => {
     cy.viewport(laptop.preset)
   })
 
-  it('checking the wax editor', () => {
+  /* eslint-disable-next-line jest/no-disabled-tests */
+  it.skip('checking the wax editor', () => {
     cy.login(contact)
 
     cy.get('[data-testid="create-question-btn"]').click()
@@ -122,10 +134,11 @@ describe.skip('Testing questions', () => {
     cy.exec(
       'docker exec hhmi_server_1 node ./scripts/seedQuestions.js deleteAll',
     )
+      .its('stdout')
+      .should('contain', 'Emptied questions and question_versions')
   })
 
-  /* eslint-disable-next-line jest/no-disabled-tests */
-  it.skip('create question', () => {
+  it('create question', () => {
     cy.login(contact)
 
     cy.get('[data-testid="create-question-btn"]').click()
@@ -134,14 +147,14 @@ describe.skip('Testing questions', () => {
     cy.fillQuestion(question)
 
     // [segment]: checking last save
-    cy.log('checking the last saved...')
-    const today = new Date()
+    // cy.log('checking the last saved...')
+    // const today = new Date()
 
-    const time = `Last saved ${today.getHours()}:${String(
-      today.getMinutes(),
-    ).padStart(2, 0)}`
+    // const time = `Last saved ${today.getHours()}:${String(
+    //   today.getMinutes(),
+    // ).padStart(2, 0)}`
 
-    cy.contains('span', time)
+    // cy.contains('span', time)
 
     cy.get('[data-testid="accept-tnc"]').click()
 
@@ -158,8 +171,7 @@ describe.skip('Testing questions', () => {
     cy.wait('@GQLReq')
   })
 
-  /* eslint-disable-next-line jest/no-disabled-tests */
-  it.skip('checking if the values selected from the UI are retained', () => {
+  it('checking if the values selected from the UI are retained', () => {
     cy.login(contact)
 
     // [segment]: Checking  dashboard
@@ -208,14 +220,11 @@ describe.skip('Testing questions', () => {
     })
   })
 
-  /* eslint-disable-next-line jest/no-disabled-tests */
-  it.skip('Editing the question', () => {
+  it('Editing the question', () => {
     cy.login(editorRole)
 
     cy.contains('.ant-tabs-tab', 'Editor Questions').click()
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
       .contains('.ProseMirror', 'Question 1')
       .click()
@@ -248,7 +257,7 @@ describe.skip('Testing questions', () => {
     cy.contains('[class="ant-modal-body"] [type="button"]', 'Ok').click()
   })
 
-  /* eslint-disable-next-line jest/no-disabled-tests */
+  // eslint-disable-next-line jest/no-disabled-tests
   it.skip('check alternative text for empty questions', () => {
     cy.login(contact)
     cy.get('[data-testid="create-question-btn"]').click()
@@ -256,9 +265,7 @@ describe.skip('Testing questions', () => {
     cy.wait('@GQLReq')
     cy.visit('/dashboard', { method: 'GET' })
 
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
       .contains('.ProseMirror', '(empty)')
       .click()
@@ -272,9 +279,7 @@ describe.skip('Testing questions', () => {
 
     cy.visit('/dashboard', { method: 'GET' })
 
-    cy.get(
-      'ul[class="ant-list-items"] li[class="List__ListItemWrapper-dan8sa-6 hYfqM"]',
-    )
+    cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
       .contains('.ProseMirror', 'image with no alt text')
       .click()

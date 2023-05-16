@@ -154,6 +154,7 @@ export const workflowData = {
 
 export const multipleChoiceQuestionString =
   'By 2040, the world s population is expected to rise to approximately20 billion10 billion7 billion9 billion'
-
+export const MultipleChoiceQuestionContent =
+  "By 2040, the world s population is expected to rise to approximately20 billion10 billion7 billion9 billionSolutionsNot correctNot correctNot correctCorrectMetadataQuestion type:  Multiple choiceTopics:Topic:  Environmental scienceSubtopic:  Human Population & ImpactsCourses:Course:  AP Environmental ScienceUnit:  Unit 3: PopulationsSkill:  Application:  Course Topic:  Topic 3.5 Population Growth and Resource AvailabilityUnderstanding:  Learning objective:  ERT-3.F Explain how resource availability affects population growth.Essential knowledge:  ERT-3.F.1 Population growth is limited by environmental factors, especially by the available resources and space.Keywords:  population, environmentBioInteractive resources:Bloom's Cognitive Level:  EvaluateBloom's Affective Level:  ValuingBloom's Psychomotor Level:  Non-discursive communicationPublication date:  May 2, 2023"
 export const multipleChoiceQuestionWithMetadata =
   'correctNot correctCorrectMetadataQuestion type:  multipleChoiceTopics:Topic:  environmentalScienceSubtopic:  humanPopulationImpctsCourses:Course:  apEnvironmentalScienceUnit:  populationsSkill:  Application:  Course Topic:  populationGrowthAndResourceAvailabilityUnderstanding:  Learning objective:  ERT-3.FEssential knowledge:  ERT-3.F.1Keywords:  population, environmentBioInteractive resources:Bloom&apos;s Cognitive Level:  higher-evaluateBloom&apos;s Affective Level:  valuingBloom&apos;s Psychomotor Level:  nonDiscursiveCommunicationPublication date:'

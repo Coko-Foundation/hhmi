@@ -217,6 +217,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
           >
             <li
               className="sc-eACynP ceZVnW"
+              data-testid="list-item-wrapper"
             >
               <label
                 className="ant-checkbox-wrapper sc-jTrPJq fhnEky sc-ilEZps jxppfF css-dev-only-do-not-override-1vtf12y"
@@ -245,6 +246,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
             </li>
             <li
               className="sc-eACynP ceZVnW"
+              data-testid="list-item-wrapper"
             >
               <label
                 className="ant-checkbox-wrapper sc-jTrPJq fhnEky sc-ilEZps jxppfF css-dev-only-do-not-override-1vtf12y"
@@ -273,6 +275,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
             </li>
             <li
               className="sc-eACynP ceZVnW"
+              data-testid="list-item-wrapper"
             >
               <label
                 className="ant-checkbox-wrapper sc-jTrPJq fhnEky sc-ilEZps jxppfF css-dev-only-do-not-override-1vtf12y"
@@ -301,6 +304,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
             </li>
             <li
               className="sc-eACynP ceZVnW"
+              data-testid="list-item-wrapper"
             >
               <label
                 className="ant-checkbox-wrapper sc-jTrPJq fhnEky sc-ilEZps jxppfF css-dev-only-do-not-override-1vtf12y"

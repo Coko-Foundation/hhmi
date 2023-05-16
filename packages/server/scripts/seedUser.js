@@ -29,7 +29,7 @@ const { seedUser, addToTeams } = require('./utils/user')
 
       if (result) {
         logger.info(`[seedUser]: user created with email - ${email}.`)
-        if (role) logger.info(`[seedUser]: user ${role} role.`)
+        if (role) logger.info(`[seedUser]: user given ${role} role.`)
       } else {
         logger.info(`[seedUser]: something wen't wrong!`)
       }

@@ -6,16 +6,34 @@ import { graphqlEndpoint } from '../support/routes'
 describe('Testing apps responsiveness', () => {
   before(() => {
     cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
+      .its('stdout')
+      .should('contain', 'database cleared')
     cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
+      .its('stdout')
+      .should('contain', `Added global team "admin"`)
+      .should('contain', `Added global team "reviewer"`)
+      .should('contain', `Added global team "editor"`)
     cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${generalUser.email} profileSubmitted`,
+      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${generalUser.email} profileSubmitted reviewer`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - ${generalUser.email}.`)
+      .should('contain', `user given reviewer role`)
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${editorRole.email} profileSubmitted editor`,
     )
+      .its('stdout')
+      .should('contain', `user created with email - ${editorRole.email}.`)
+      .should('contain', `user given editor role`)
+
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${generalUser.username} -2 population submitted`,
     )
+      .its('stdout')
+      .should(
+        'contain',
+        `question created under the author ${generalUser.username}`,
+      )
   })
 
   describe('mobile view', () => {
@@ -24,8 +42,7 @@ describe('Testing apps responsiveness', () => {
       cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     })
 
-    /* eslint-disable-next-line jest/no-disabled-tests */
-    it.skip('navigation bar', () => {
+    it('navigation bar', () => {
       cy.login(editorRole)
       cy.get('[href="/discover"]').should('not.be.visible')
       cy.get('[href="/dashboard"]').should('not.be.visible')
@@ -39,8 +56,7 @@ describe('Testing apps responsiveness', () => {
       cy.get('[data-testid="nav-toggle"]').click()
     })
 
-    /* eslint-disable-next-line jest/no-disabled-tests */
-    it.skip('question page', () => {
+    it('question page', () => {
       cy.login(editorRole)
       cy.get('[data-testid="create-question-btn"]').click({ force: true })
       cy.get('[data-testid="editor-collapse"]').should('exist')
@@ -81,7 +97,7 @@ describe('Testing apps responsiveness', () => {
         'Move to Review',
       ).click()
       cy.contains(
-        '[class="ant-modal-content"] [type="button"]',
+        '[class="ant-modal-body"] [type="button"]',
         'Move to review',
       ).click()
 
@@ -120,7 +136,7 @@ describe('Testing apps responsiveness', () => {
       cy.contains(
         '[data-testid="editor-actions-popup"] [type="button"]',
         'Publish',
-      ).click()
+      ).click({ force: true })
       cy.contains(
         '[class="ant-modal-content"] [type="button"]',
         'Yes, publish',
@@ -140,7 +156,7 @@ describe('Testing apps responsiveness', () => {
     })
 
     /* eslint-disable-next-line jest/no-disabled-tests */
-    it.skip('navigation bar', () => {
+    it('navigation bar', () => {
       cy.login(editorRole)
 
       cy.get('[data-testid="nav-toggle"]').should('not.be.visible')
@@ -151,7 +167,7 @@ describe('Testing apps responsiveness', () => {
     })
 
     /* eslint-disable-next-line jest/no-disabled-tests */
-    it.skip('question page', () => {
+    it('question page', () => {
       cy.login(editorRole)
 
       cy.get('[data-testid="create-question-btn"]').click({ force: true })
