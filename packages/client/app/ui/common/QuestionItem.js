@@ -5,6 +5,7 @@ import styled from 'styled-components'
 
 import { uuid, th, grid } from '@coko/client'
 
+import { DateParser } from '@pubsweet/ui'
 import WaxWrapper from '../wax/Wax'
 import { DashLayout } from '../wax/layout'
 import { dashConfig } from '../wax/config'
@@ -187,7 +188,16 @@ const QuestionItem = props => {
                   <MetadataLabel>{item.label}</MetadataLabel>
                 </th>
                 <MetadataValue data-testid={`${item.label}-value`}>
-                  {item.value || '-'}
+                  {item.value && item.type === 'date' ? (
+                    <DateParser
+                      dateFormat="MMMM DD, YYYY"
+                      timestamp={item.value}
+                    >
+                      {timestamp => timestamp}
+                    </DateParser>
+                  ) : (
+                    item.value || '-'
+                  )}
                 </MetadataValue>
               </tr>
             ))}

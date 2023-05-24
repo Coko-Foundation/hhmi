@@ -1,15 +1,9 @@
 import React, { useState, useRef } from 'react'
 
-import { Discover, DateParser, VisuallyHiddenElement } from 'ui'
+import { Discover, VisuallyHiddenElement } from 'ui'
 import { useQuery } from '@apollo/client'
 
-import {
-  extractDocumentText,
-  extractCourseAndObjectives,
-  extractTopicsAndSubtopics,
-  extractBloomsLevel,
-  useMetadata,
-} from '../utilities'
+import { useMetadata, dashboardDataMapper } from '../utilities'
 
 import { GET_PUBLISHED_QUESTIONS } from '../graphql'
 
@@ -30,57 +24,6 @@ const sidebarText =
   'Explore questions by applying one or more of the filters below'
 
 const PAGE_SIZE = 10
-
-const transform = (questions, metadata, searchParams) => {
-  if (!questions) return null
-
-  return questions.map(question => {
-    const { id, versions } = question
-    const latestVersion = versions[0]
-    const { content, publicationDate, cognitiveLevel } = latestVersion
-    const parsedContent = extractDocumentText(content)
-
-    const courses = extractCourseAndObjectives(
-      latestVersion.courses,
-      metadata.frameworks,
-    )
-
-    const topics = extractTopicsAndSubtopics(
-      latestVersion.topics,
-      metadata.topics,
-    )
-
-    const cognitiveDisplayValue = extractBloomsLevel(
-      cognitiveLevel,
-      metadata.blooms.cognitive,
-    )
-
-    return {
-      metadata: [
-        { label: 'topic', value: topics.topics },
-        { label: 'subtopic', value: topics.subtopics },
-        // question type: how do we know that data ?? what if it's more than one?
-        { label: "bloom's level", value: cognitiveDisplayValue },
-        ...(question?.author?.displayName
-          ? [{ label: 'author', value: question?.author?.displayName }]
-          : []),
-        {
-          label: 'published date',
-          value: (
-            <DateParser dateFormat="MMMM DD, YYYY" timestamp={publicationDate}>
-              {timestamp => timestamp}
-            </DateParser>
-          ),
-        },
-      ],
-      content: parsedContent,
-      href: `/question/${id}/test`,
-      id,
-      courses,
-      state: { searchParams },
-    }
-  })
-}
 
 const DiscoverPage = () => {
   const [searchParams, setSearchParams] = useState({
@@ -159,10 +102,14 @@ const DiscoverPage = () => {
         pageSize={PAGE_SIZE}
         questions={
           questionsData && metadata
-            ? transform(
+            ? dashboardDataMapper(
                 questionsData.getPublishedQuestions.result,
                 metadata,
+                [],
+                false,
+                true,
                 searchParams,
+                true,
               )
             : []
         }

@@ -5,10 +5,10 @@ exports[`Signup matches snapshot 1`] = `
   className="sc-gXSCqU kijXUi"
 >
   <div
-    className="sc-iYQWso gKRimZ"
+    className="sc-fofoGw pDqkX"
   >
     <h1
-      className="ant-typography sc-fAmxux fxjTXB css-dev-only-do-not-override-1vtf12y"
+      className="ant-typography sc-bPAPIF hewxZa css-dev-only-do-not-override-1vtf12y"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,7 +18,7 @@ exports[`Signup matches snapshot 1`] = `
       Sign up
     </h1>
     <div
-      className="sc-jMLGdu"
+      className="sc-ihEcPi"
     >
       <div
         className="sc-kFuwaP eKsANT"
@@ -420,7 +420,7 @@ exports[`Signup matches snapshot 1`] = `
                         I agree to the
                          
                         <a
-                          className="sc-ejqkTo klkCZv"
+                          className="sc-fiabOi kmwAVj"
                           href="#termsAndCondition"
                           id="termsAndConditions"
                           onClick={[Function]}
@@ -435,7 +435,7 @@ exports[`Signup matches snapshot 1`] = `
             </div>
           </div>
           <button
-            className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-glpldh gSlzfl"
+            className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-ebLpKB ijrffI"
             disabled={false}
             onClick={[Function]}
             status={null}
@@ -448,13 +448,13 @@ exports[`Signup matches snapshot 1`] = `
         </form>
       </div>
       <div
-        className="sc-jJTKaY dsvhB"
+        className="sc-hApOIs cOxIyC"
       >
         <div
-          className="sc-jbISuK bqDygV"
+          className="sc-ybGpS cOlmvW"
         >
           <a
-            className="sc-ejqkTo klkCZv"
+            className="sc-fiabOi kmwAVj"
             href="/login"
             onClick={[Function]}
           >

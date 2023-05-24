@@ -690,6 +690,100 @@ const questionTypes = [
   },
 ]
 
+const dashboardDataMapper = (
+  questions,
+  metadata,
+  complexItemSetOptions,
+  showStatus,
+  showAuthor,
+  searchParams,
+  testMode,
+) => {
+  if (!questions) return null
+
+  const renderStatus = (
+    submitted,
+    underReview,
+    inProduction,
+    published,
+    rejected,
+  ) => {
+    let status = 'Not Submitted'
+    if (submitted) status = 'Submitted'
+    if (underReview) status = 'Under Review'
+    if (inProduction) status = 'In Production'
+    if (published) status = 'Published'
+    if (rejected) status = 'Rejected'
+
+    return status
+  }
+
+  return questions.map(question => {
+    const { id, versions } = question
+    const latestVersion = versions[0]
+
+    const { content, publicationDate, cognitiveLevel, complexItemSetId } =
+      latestVersion
+
+    const parsedContent = extractDocumentText(content)
+
+    const courses = extractCourseAndObjectives(
+      latestVersion.courses,
+      metadata.frameworks,
+    )
+
+    const topics = extractTopicsAndSubtopics(
+      latestVersion.topics,
+      metadata.topics,
+    )
+
+    const cognitiveDisplayValue = extractBloomsLevel(
+      cognitiveLevel,
+      metadata.blooms.cognitive,
+    )
+
+    const complexItemSet = complexItemSetId
+      ? {
+          href: `/set/${complexItemSetId}`,
+          title: complexItemSetOptions?.find(c => c.value === complexItemSetId)
+            ?.label,
+        }
+      : null
+
+    return {
+      metadata: [
+        { label: 'topic', value: topics.topics },
+        { label: 'subtopic', value: topics.subtopics },
+        // question type: how do we know that data ?? what if it's more than one?
+        { label: "bloom's level", value: cognitiveDisplayValue },
+        ...(showAuthor
+          ? [{ label: 'author', value: question?.author?.displayName }]
+          : []),
+        {
+          label: 'published date',
+          type: 'date', // let the ui handle the format if type === 'date'
+          value: publicationDate,
+        },
+      ],
+      content: parsedContent,
+      status: showStatus
+        ? renderStatus(
+            latestVersion.submitted,
+            latestVersion.underReview,
+            latestVersion.inProduction,
+            latestVersion.published,
+            question.rejected,
+          )
+        : null,
+      href: testMode ? `/question/${id}/test` : `/question/${id}`,
+      id,
+      courses,
+      state: { searchParams },
+      complexItemSet,
+    }
+  })
+}
+
 export {
   extractDocumentText,
   extractTopicsAndSubtopics,
@@ -704,4 +798,5 @@ export {
   questionDataMapper,
   questionDataTransformer,
   questionTypes,
+  dashboardDataMapper,
 }

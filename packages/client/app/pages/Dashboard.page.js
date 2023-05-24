@@ -2,85 +2,19 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 
-import { Dashboard, DateParser, VisuallyHiddenElement } from 'ui'
+import { Dashboard, VisuallyHiddenElement } from 'ui'
 import {
   GET_AUTHOR_DASHBOARD,
   GET_EDITOR_DASHBOARD,
   CREATE_QUESTION,
   CURRENT_USER,
 } from '../graphql'
-import {
-  hasGlobalRole,
-  // dashboardDataMapper,
-  extractDocumentText,
-  extractCourseAndObjectives,
-  extractTopicsAndSubtopics,
-  extractBloomsLevel,
-  useMetadata,
-} from '../utilities'
+import { hasGlobalRole, dashboardDataMapper, useMetadata } from '../utilities'
 
 const defaultSearchOptions = {
   orderBy: 'created',
   ascending: false,
   pageSize: 10,
-}
-
-const transform = (questions, metadataValues, tab = '') => {
-  if (!questions) return null
-
-  return questions.map(question => {
-    const { id, versions } = question
-    const latestVersion = versions[0]
-    const { content, publicationDate, cognitiveLevel } = latestVersion
-    const parsedContent = extractDocumentText(content)
-
-    const courses = extractCourseAndObjectives(
-      latestVersion.courses,
-      metadataValues.frameworks,
-    )
-
-    const topics = extractTopicsAndSubtopics(
-      latestVersion.topics,
-      metadataValues.topics,
-    )
-
-    const cognitiveDisplayValue = extractBloomsLevel(
-      cognitiveLevel,
-      metadataValues.blooms.cognitive,
-    )
-
-    let status = 'Not Submitted'
-    if (latestVersion.submitted) status = 'Submitted'
-    if (latestVersion.underReview) status = 'Under Review'
-    if (latestVersion.inProduction) status = 'In Production'
-    if (latestVersion.published) status = 'Published'
-    if (question.rejected) status = 'Rejected'
-
-    return {
-      metadata: [
-        { label: 'topic', value: topics.topics },
-        { label: 'subtopic', value: topics.subtopics },
-        // question type: how do we know that data ?? what if it's more than one?
-        { label: "bloom's level", value: cognitiveDisplayValue },
-        ...(tab === 'editor'
-          ? [{ label: 'author', value: question?.author?.displayName }]
-          : []),
-        {
-          label: 'published date',
-          value: publicationDate && (
-            <DateParser dateFormat="MMMM DD, YYYY" timestamp={publicationDate}>
-              {timestamp => timestamp}
-            </DateParser>
-          ),
-        },
-      ],
-      content: parsedContent,
-      status,
-      href: `/question/${id}`,
-      id,
-      courses,
-    }
-  })
 }
 
 const DashboardPage = () => {
@@ -231,7 +165,9 @@ const DashboardPage = () => {
       label: 'Authored Questions',
       value: 'author',
       questions:
-        authorData && metadata ? transform(authorData.result, metadata) : [],
+        authorData && metadata
+          ? dashboardDataMapper(authorData.result, metadata, [], true, false)
+          : [],
       totalCount: authorData && authorData.totalCount,
       showBulkActions: false,
       loading: authorLoading,
@@ -241,7 +177,7 @@ const DashboardPage = () => {
       value: 'editor',
       questions:
         editorData && metadata
-          ? transform(editorData.result, metadata, 'editor')
+          ? dashboardDataMapper(editorData.result, metadata, [], true, true)
           : [],
       totalCount: editorData && editorData.totalCount,
       showBulkActions: false,
