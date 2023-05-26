@@ -69,7 +69,6 @@ Cypress.Commands.add('signup', ({ firstName, lastName, email, password }) => {
   cy.get('[id="agreedTc"]').click()
   cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('waitForSignup')
   cy.get('[type="submit"]').click()
-  cy.wait('@waitForSignup')
   cy.contains('div', 'Sign up successful!')
   cy.contains(
     'div',
