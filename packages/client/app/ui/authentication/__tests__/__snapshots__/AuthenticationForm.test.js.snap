@@ -2,7 +2,7 @@
 
 exports[`AuthenticationForm matches snapshot 1`] = `
 <div
-  className="sc-ihEcPi"
+  className="sc-ebLpKB"
 >
   <div
     className="sc-kFuwaP eKsANT"
@@ -40,7 +40,7 @@ exports[`AuthenticationForm matches snapshot 1`] = `
         />
       </div>
       <button
-        className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-ebLpKB ijrffI"
+        className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-hApOIs fweqnK"
         disabled={false}
         onClick={[Function]}
         status={null}
@@ -53,13 +53,13 @@ exports[`AuthenticationForm matches snapshot 1`] = `
     </form>
   </div>
   <div
-    className="sc-hApOIs cOxIyC"
+    className="sc-ioSQQX iFPzHz"
   >
     <div
-      className="sc-ybGpS cOlmvW"
+      className="sc-bPAPIF boIOKx"
     >
       <a
-        className="sc-fiabOi kmwAVj"
+        className="sc-geSwfA bMNTuE"
         href="/alt-link"
         onClick={[Function]}
       >

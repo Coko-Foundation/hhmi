@@ -34,6 +34,8 @@ import {
   TeamManager,
   UserProfile,
   DeactivatedUser,
+  Lists,
+  ListContent,
 } from './pages'
 
 import { CURRENT_USER } from './graphql'
@@ -313,6 +315,26 @@ const routes = (
               />
 
               <Route component={Discover} exact path="/discover" />
+
+              <Route
+                exact
+                path="/lists"
+                render={() => (
+                  <Authenticated>
+                    <Lists />
+                  </Authenticated>
+                )}
+              />
+
+              <Route
+                exact
+                path="/list/:id"
+                render={() => (
+                  <Authenticated>
+                    <ListContent />
+                  </Authenticated>
+                )}
+              />
 
               <Route
                 exact

@@ -91,6 +91,10 @@ const StyledCheckbox = styled(Checkbox)`
   flex-direction: column-reverse;
   white-space: nowrap;
 
+  .ant-checkbox {
+    align-self: auto;
+  }
+
   &::after {
     display: none;
   }

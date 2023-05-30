@@ -124,6 +124,14 @@ export const CREATE_QUESTION = gql`
   }
 `
 
+export const DUPLICATE_QUESTION = gql`
+  mutation DuplicateQuestion($questionId: ID!) {
+    duplicateQuestion(questionId: $questionId) {
+      id
+    }
+  }
+`
+
 export const QUESTION = gql`
   query Question($id: ID!, $published: Boolean) {
     question(id: $id) {

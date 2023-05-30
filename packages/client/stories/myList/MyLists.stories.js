@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { uniqueId } from 'lodash'
 import { lorem, date } from 'faker'
+import { Link } from 'ui'
 import MyLists from '../../app/ui/myList/MyLists'
 import { createData } from '../../app/utilities/_helpers'
 import { Empty } from '../../app/ui/common'
@@ -13,15 +14,37 @@ const mockDelay = time => new Promise(resolve => setTimeout(resolve, time))
 
 export const Base = () => {
   const makeData = n =>
-    createData(n, () => ({
-      key: uniqueId(),
-      name: lorem.word(6),
-      createdAt: date.future(10).toLocaleDateString('en-US'),
-    }))
+    createData(n, () => {
+      const id = uniqueId()
+      const titleText = lorem.word(6)
+      return {
+        key: id,
+        title: <Link to="/">{titleText}</Link>,
+        created: date.future(10).toLocaleDateString('en-US'),
+        titleText,
+        onRenameList: handleRenameList,
+      }
+    })
 
   const [data, setData] = useState(makeData(PAGE_SIZE))
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(false)
+
+  async function handleRenameList(id, renameList) {
+    setData(currentData =>
+      currentData.map(d => {
+        if (d.key === id) {
+          return {
+            ...d,
+            title: <Link to="/">{renameList}</Link>,
+            titleText: renameList,
+          }
+        }
+
+        return d
+      }),
+    )
+  }
 
   const handleDelete = async selectedRows => {
     setLoading(true)
@@ -40,8 +63,10 @@ export const Base = () => {
       ...curentData,
       {
         key: uniqueId(),
-        name: listName,
-        createdAt: new Date().toLocaleDateString('en-US'),
+        title: <Link to="/">{listName}</Link>,
+        created: new Date().toLocaleDateString('en-US'),
+        titleText: listName,
+        onRenameList: handleRenameList,
       },
     ])
 

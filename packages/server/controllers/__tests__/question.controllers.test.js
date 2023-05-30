@@ -4,6 +4,7 @@ const {
   generateScormZip,
   getQuestionVersions,
   updateQuestion,
+  duplicateQuestion: duplicateQuestionController,
 } = require('../question.controllers')
 
 const {
@@ -13,7 +14,7 @@ const {
 } = require('./__helpers__/questions')
 
 const clearDb = require('../../models/__tests__/_clearDb')
-const { QuestionVersion } = require('../../models/index')
+const { Question, QuestionVersion, Team, User } = require('../../models/index')
 
 describe('Question Controller', () => {
   beforeEach(() => clearDb())
@@ -22,6 +23,38 @@ describe('Question Controller', () => {
     await clearDb()
     const knex = QuestionVersion.knex()
     knex.destroy()
+  })
+
+  test('duplicates existing question and sets correct author', async () => {
+    const question = await Question.insert({})
+    const user1 = await User.insert({})
+    const user2 = await User.insert({})
+
+    const questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    const authorTeam = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(authorTeam.id, user1.id)
+
+    await questionVersion.patch({
+      published: true,
+    })
+
+    const duplicateQuestion = await duplicateQuestionController(
+      user2.id,
+      question.id,
+    )
+
+    const author = await Question.getAuthor(duplicateQuestion.id)
+    expect(author.id).not.toBe(user1.id)
+    expect(author.id).toBe(user2.id)
   })
 
   test('generateScormZip fails to export an empty question', async () => {
