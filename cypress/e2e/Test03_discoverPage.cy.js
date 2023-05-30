@@ -71,12 +71,18 @@ describe('Discover page tests', () => {
     cy.get('[title="Date (descending)"]').first().click({ force: true })
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
+      .should('be.visible')
+
       .contains('[data-testid="published date-value"]', getDateInFormat(-1))
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(1)
+      .should('be.visible')
+
       .contains('[data-testid="published date-value"]', getDateInFormat(-2))
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(2)
+      .should('be.visible')
+
       .contains('[data-testid="published date-value"]', getDateInFormat(-3))
 
     // [segment]: Ascending order
@@ -85,36 +91,39 @@ describe('Discover page tests', () => {
     cy.get('[title="Date (ascending)"]').first().click({ force: true })
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
+      .should('be.visible')
       .contains('[data-testid="published date-value"]', getDateInFormat(-3))
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(1)
+      .should('be.visible')
+
       .contains('[data-testid="published date-value"]', getDateInFormat(-2))
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(2)
+      .should('be.visible')
+
       .contains('[data-testid="published date-value"]', getDateInFormat(-1))
   })
 
-  // wait for fixes to be merged
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('search functionality', () => {
+  it('search functionality', () => {
     cy.wait('@GQLReq')
     cy.get('[placeholder="Search..."]', { timeout: 10000 }).type(
-      'Energy: carbohydrates{enter}',
-    )
-    cy.contains(
-      '[data-testid="topic-value"]',
-      'Biochemistry & Molecular Biology',
+      'bacillus{enter}',
     )
 
-    cy.get('[class="ant-list-items"]')
-      .find('.List__ListItemWrapper-dan8sa-6')
-      .should('have.length', 1)
-    cy.contains(
-      '[data-testid="list-item-wrapper"]',
-      'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
-    )
-    cy.contains('[data-testid="subtopic-value"]', 'General Chemistry')
-    cy.contains(`[data-testid="bloom's level-value"]`, 'Create')
+    cy.get('[data-testid="list-item-wrapper"]').should('have.length', 1)
+    cy.get('[data-testid="list-item-wrapper"]')
+      .eq(0)
+      .should('be.visible')
+      .contains(
+        '.ProseMirror',
+        'What substance from Bacillus thuringiensis was most likely inserted into rice plants',
+      )
+    cy.contains('[data-testid="topic-value"]', 'Anatomy & Physiology')
+
+    cy.contains('[data-testid="subtopic-value"]', 'Cardiovascular System')
+    cy.contains(`[data-testid="bloom's level-value"]`, 'Analyze')
+    cy.contains('[data-testid="author-value"]', 'user')
     cy.get('[placeholder="Search..."]').clear().type('{enter}')
   })
 
@@ -153,9 +162,11 @@ describe('Discover page tests', () => {
   it('checking the question', () => {
     // cy.login({ ...contact, visitUrl: discover })
     cy.visit(discover)
+    cy.wait('@GQLReq')
 
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(2)
+      .should('be.visible')
       .contains('p')
       .first()
       .click()
@@ -213,7 +224,7 @@ describe('Discover page tests', () => {
 
       cy.log(downloadsFolder, `${id}.docx`)
       cy.readFile(path.join(downloadsFolder, `${id}.docx`), {
-        timeout: 90000,
+        timeout: 100000,
       })
       cy.task('readF', path.join(downloadsFolder, `${id}.docx`)).then(data => {
         // eslint-disable-next-line jest/valid-expect

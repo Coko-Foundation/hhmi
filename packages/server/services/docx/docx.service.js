@@ -73,7 +73,7 @@ class WaxToDocxConverter {
 
     this.imageData = imageData
 
-    this.baseFontSize = options.baseFontSize || 22
+    this.baseFontSize = options.baseFontSize || 24
     this.fontFamily = options.fontFamily || 'calibri'
     this.listIndentFirstLevelLeft = convertMillimetersToTwip(12.7)
     this.listIndentFirstLevelHanging = convertMillimetersToTwip(6.3)
@@ -85,6 +85,14 @@ class WaxToDocxConverter {
 
     this.config = {
       styles: {
+        default: {
+          listParagraph: {
+            run: {
+              font: this.fontFamily,
+              size: 22,
+            },
+          },
+        },
         paragraphStyles: [
           {
             name: 'Normal',
@@ -94,6 +102,21 @@ class WaxToDocxConverter {
             },
             paragraph: {
               alignment: AlignmentType.JUSTIFIED,
+              spacing: {
+                after: this.paragraphSpacingAfter,
+              },
+            },
+          },
+          {
+            id: 'questionCounter',
+            name: 'Question Counter',
+            run: {
+              font: this.fontFamily,
+              size: 20,
+              bold: true,
+            },
+            paragraph: {
+              alignment: AlignmentType.LEFT,
               spacing: {
                 after: this.paragraphSpacingAfter,
               },

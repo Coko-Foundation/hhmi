@@ -13,6 +13,10 @@ const Empty = styled(AntEmpty)`
     fill: ${th('colorBackgroundHue')};
     stroke: ${th('colorBackgroundHue')};
   }
+
+  .ant-empty-description {
+    color: ${th('colorText')};
+  }
 `
 
 export default Empty

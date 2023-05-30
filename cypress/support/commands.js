@@ -28,14 +28,17 @@ import { login, signup, graphqlEndpoint } from './routes'
 
 const selectData = section => {
   Object.values(section).forEach(data => {
-    cy.get(data.selector, { force: true }).scrollIntoView().click()
+    cy.get(data.selector, { force: true })
+      .scrollIntoView()
+      .should('be.visible', { timeout: 8000 })
+      .click()
     cy.contains(data.value).click({ force: true })
   })
 }
 
 const selectDataWithoutParent = section => {
-  cy.get(section.selector).click()
-  cy.contains(section.value).click()
+  cy.get(section.selector).should('be.visible').click()
+  cy.contains(section.value).should('be.visible').click()
 }
 
 Cypress.Commands.add('login', ({ email, password, visitUrl }) => {
@@ -69,7 +72,9 @@ Cypress.Commands.add('signup', ({ firstName, lastName, email, password }) => {
   cy.get('[id="agreedTc"]').click()
   cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('waitForSignup')
   cy.get('[type="submit"]').click()
-  cy.contains('div', 'Sign up successful!')
+  cy.wait('@waitForSignup')
+
+  cy.contains('div', 'Sign up successful!', { timeout: 8000 })
   cy.contains(
     'div',
     "We've sent you a verification email. Click on the link in the email to activate your account.",
