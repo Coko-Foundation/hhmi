@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react'
 import styled from 'styled-components'
@@ -90,9 +91,18 @@ const Wrapper = styled.div`
 
 const sidebarText = lorem.sentences(7)
 
+const createLists = n =>
+  range(n).map(i => ({
+    value: `list-${i}`,
+    label: lorem.words(Math.random() > 0.5 ? 2 : 3),
+  }))
+
 export const DiscoverPage = args => {
   const [searchResults, setSearchResults] = useState([])
   const [loading, setLoading] = useState(false)
+  const [existingLists, setExistingLists] = useState(createLists(6))
+  const [loadingAddToList, setLoadingAddToList] = useState(false)
+  const [loadingCreateList, setLoadingCreateList] = useState(false)
 
   const handleSearch = async params => {
     setLoading(true)
@@ -104,9 +114,37 @@ export const DiscoverPage = args => {
     }, 500)
   }
 
-  const handleAddToList = () => {}
+  const handleAddToList = (title, questionIds) => {
+    console.log(`add the following questions to existing list list "${title}"`)
+    console.log(questionIds)
 
-  const handleCreateList = () => {}
+    // return a promise so that form field is reset
+    return new Promise(resolve => {
+      setLoadingAddToList(true)
+      setTimeout(() => {
+        setLoadingAddToList(false)
+        resolve()
+      }, 3000)
+    })
+  }
+
+  const handleCreateList = (title, questionIds) => {
+    console.log(`add the following questions to new list "${title}"`)
+    console.log(questionIds)
+
+    // return a promise so that form field is reset
+    return new Promise(resolve => {
+      setLoadingCreateList(true)
+      setTimeout(() => {
+        setLoadingCreateList(false)
+        setExistingLists(current => [
+          ...current,
+          { value: `list-${current.length}`, label: title },
+        ])
+        resolve()
+      }, 3000)
+    })
+  }
 
   const handleDuplicateQuestion = () => {}
 
@@ -114,7 +152,10 @@ export const DiscoverPage = args => {
     <Wrapper>
       <Discover
         {...args}
+        existingListsOptions={existingLists}
         loading={loading}
+        loadingAddToList={loadingAddToList}
+        loadingCreateList={loadingCreateList}
         onAddToList={handleAddToList}
         onCreateList={handleCreateList}
         onDuplicate={handleDuplicateQuestion}

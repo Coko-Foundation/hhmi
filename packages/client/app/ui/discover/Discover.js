@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
+import { CheckOutlined } from '@ant-design/icons'
 
 import Sidebar from './Sidebar'
 import {
@@ -13,9 +14,10 @@ import {
   Form,
   Empty,
   Button,
+  Modal,
   Popup,
+  Select,
 } from '../common'
-import theme from '../../theme'
 import useBreakpoint from '../_helpers/useBreakpoint'
 
 const Wrapper = styled.div`
@@ -25,7 +27,7 @@ const Wrapper = styled.div`
   height: 100%;
 
   > aside {
-    border-right: 1px solid ${props => props.theme.colorSecondary};
+    border-right: 1px solid ${th('colorSecondary')};
   }
 
   @media screen and (max-width: 900px) {
@@ -39,8 +41,9 @@ const Wrapper = styled.div`
 `
 
 const StyledPopup = styled(Popup)`
+  border-radius: 0;
+  inline-size: 300px;
   margin-block-end: ${grid(2)};
-  min-inline-size: 300px;
 `
 
 const PopupContentWrapper = styled.div`
@@ -56,24 +59,48 @@ const ActionWrapper = styled.div`
   flex-direction: row;
 `
 
-const InputWrapper = styled.div`
+const StyledForm = styled(Form)`
   display: grid;
-  grid-template-columns: 1fr ${grid(18)};
+  grid-template-columns: minmax(0, 1fr) ${grid(18)};
+  grid-template-rows: 1fr 1fr;
 
-  &:nth-child(2) {
-    border-top: 1px solid ${th('colorBorder')};
-  }
-
-  > button {
+  > div {
     align-self: end;
-    padding-inline: unset;
-  }
-`
+    grid-row: span 2;
+    margin-bottom: 0;
+    width: 100%;
 
-const StyledLabel = styled.label`
-  color: ${theme.colorPrimary};
-  font-weight: bold;
-  margin: 0;
+    label {
+      font-weight: bold;
+
+      &.ant-form-item-required::before {
+        /* stylelint-disable-next-line declaration-no-important */
+        display: none !important;
+      }
+    }
+
+    .ant-form-item-control-input + div {
+      order: -1;
+    }
+  }
+
+  /* stylelint-disable-next-line string-quotes */
+  > button[type='submit'] {
+    align-self: end;
+    grid-area: 2 /2;
+    padding-inline: unset;
+    width: unset;
+  }
+
+  > span {
+    align-self: end;
+    color: ${th('colorSuccess')};
+    direction: rtl;
+    overflow: visible;
+    padding-block-end: ${grid(2)};
+    text-align: end;
+    white-space: nowrap;
+  }
 `
 
 const StyledDivider = styled(Divider)`
@@ -81,11 +108,19 @@ const StyledDivider = styled(Divider)`
   margin-block: ${grid(4)};
 `
 
+const ModalContext = React.createContext(null)
+const ModalHeader = Modal.header
+const ModalFooter = Modal.footer
+
 export const Discover = props => {
   const {
     className,
+    existingListsOptions,
     isUserLoggedIn,
     loading,
+    loadingAddToList,
+    loadingCreateList,
+    loadingDuplicateQuestion,
     locale,
     questions,
     sidebarText,
@@ -105,6 +140,34 @@ export const Discover = props => {
   // form control instance for Sidebar filters, here to preserve its state between Sidebar rerenders
   const [filtersForm] = Form.useForm()
   const [selectedRows, setSelectedRows] = useState([])
+
+  // form instances for add to list/create new list popup operations
+  const [existingListForm] = Form.useForm()
+  const [newListForm] = Form.useForm()
+  const [showListUpdateSuccess, setShowListUpdateSuccess] = useState(false)
+  const [showListCreatedSuccess, setShowListCreatedSuccess] = useState(false)
+
+  // modal instances
+  const [modal, contextHolder] = Modal.useModal()
+  const { confirm } = modal
+
+  useEffect(() => {
+    if (!loadingAddToList) {
+      setShowListUpdateSuccess(true)
+      setTimeout(() => {
+        setShowListUpdateSuccess(false)
+      }, 3000)
+    }
+  }, [loadingAddToList])
+
+  useEffect(() => {
+    if (!loadingCreateList) {
+      setShowListCreatedSuccess(true)
+      setTimeout(() => {
+        setShowListCreatedSuccess(false)
+      }, 3000)
+    }
+  }, [loadingCreateList])
 
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -181,92 +244,200 @@ export const Discover = props => {
     ...locale,
   }
 
+  const confirmDuplication = () => {
+    const confirmDialog = confirm()
+    confirmDialog.update({
+      title: <ModalHeader>Duplicate Question</ModalHeader>,
+      content:
+        "You're duplicating this question. Duplicating a question will create a new copy of the question with you as the author. By doing so, you will have an independent version that you can modify without affecting the original question.",
+      footer: (
+        <ModalFooter key="footer">
+          <Button onClick={() => confirmDialog.destroy()}>Close</Button>
+          <Button
+            autoFocus
+            onClick={() => {
+              confirmDialog.destroy()
+              handleDuplicateQuestion()
+            }}
+            status="danger"
+          >
+            Duplicate
+          </Button>
+        </ModalFooter>
+      ),
+    })
+  }
+
+  const handleAddToList = ({ existingList }) => {
+    onAddToList(existingList, selectedRows).then(() =>
+      existingListForm.resetFields(),
+    )
+  }
+
+  const handleDuplicateQuestion = () => {
+    onDuplicate(selectedRows[0])
+  }
+
+  const handleCreateNewList = ({ newList }) =>
+    onCreateList(newList, selectedRows).then(() => newListForm.resetFields())
+
   const BulkAction = (
     <ActionWrapper>
       <StyledPopup
         id="list-popup"
         popupPlacement="top"
         toggle={
-          <Button disabled={selectedRows.length === 0} type="primary">
+          <Button
+            data-testid="add-to-list-btn"
+            disabled={selectedRows.length === 0}
+            type="primary"
+          >
             Add to list
           </Button>
         }
       >
         <PopupContentWrapper>
-          <InputWrapper>
-            <StyledLabel>
-              Existing list
-              <Input placeholder="List name" />
-            </StyledLabel>
-            <Button onClick={onAddToList} type="primary">
-              Add
+          <StyledForm
+            form={existingListForm}
+            layout="vertical"
+            onFinish={handleAddToList}
+            onValuesChange={() =>
+              existingListForm.validateFields(['existingList'])
+            }
+          >
+            <Form.Item
+              label="Existing list"
+              name="existingList"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please select a list',
+                },
+              ]}
+              validateTrigger="onSubmit"
+            >
+              <Select
+                data-testid="select-existing-list"
+                optionFilterProp="label"
+                options={existingListsOptions}
+                placeholder="Find list"
+                showSearch
+              />
+            </Form.Item>
+            {showListUpdateSuccess ? (
+              <span aria-live="polite" role="status">
+                List updated <CheckOutlined />
+              </span>
+            ) : null}
+            <Button
+              data-testid="add-btn"
+              htmlType="submit"
+              loading={loadingAddToList}
+              type="primary"
+            >
+              {loadingAddToList ? null : 'Add'}
             </Button>
-          </InputWrapper>
+          </StyledForm>
           <StyledDivider />
-          <InputWrapper>
-            <StyledLabel>
-              A new list
+          <StyledForm
+            form={newListForm}
+            layout="vertical"
+            onFinish={handleCreateNewList}
+            onValuesChange={() => newListForm.validateFields(['newList'])}
+          >
+            <Form.Item
+              label="New list"
+              name="newList"
+              rules={[
+                {
+                  required: true,
+                  message: 'List name is required',
+                },
+              ]}
+              validateTrigger="onSubmit"
+            >
               <Input placeholder="List name" />
-            </StyledLabel>
-            <Button onClick={onCreateList} type="primary">
-              Create
+            </Form.Item>
+            {showListCreatedSuccess ? (
+              <span aria-live="polite" role="status">
+                List created <CheckOutlined />
+              </span>
+            ) : null}
+            <Button
+              data-testid="create-btn"
+              htmlType="submit"
+              loading={loadingCreateList}
+              type="primary"
+            >
+              {loadingCreateList ? null : 'Create'}
             </Button>
-          </InputWrapper>
+          </StyledForm>
         </PopupContentWrapper>
       </StyledPopup>
       <Button
+        data-testid="duplicate-question"
         disabled={selectedRows.length !== 1}
-        onClick={onDuplicate}
+        loading={loadingDuplicateQuestion}
+        onClick={confirmDuplication}
         type="primary"
       >
-        Duplicate
+        {loadingDuplicateQuestion ? null : 'Duplicate'}
       </Button>
     </ActionWrapper>
   )
 
   const onQuestionSelected = rows => setSelectedRows(rows)
   return (
-    <Wrapper className={className}>
-      {wrapFilters(
-        <Sidebar
-          form={filtersForm}
-          metadata={sidebarMetadata}
-          setFilters={setFilters}
-          text={sidebarText}
-        />,
-      )}
-      <section>
-        <VisuallyHiddenElement as="h2">
-          Search results: questions list
-        </VisuallyHiddenElement>
-        <QuestionList
-          bulkAction={isUserLoggedIn && BulkAction}
-          currentPage={searchParams.page}
-          key={listKey}
-          loading={loading}
-          locale={mergedLocale}
-          onPageChange={setSearchPage}
-          onQuestionSelected={onQuestionSelected}
-          onSearch={setSearchQuery}
-          onSortOptionChange={setSortOption}
-          questions={questions}
-          questionsPerPage={pageSize}
-          showRowCheckboxes={isUserLoggedIn}
-          showSort={showSort}
-          sortOptions={sortOptions}
-          totalCount={totalCount}
-        />
-      </section>
-    </Wrapper>
+    <ModalContext.Provider value={null}>
+      <Wrapper className={className}>
+        {wrapFilters(
+          <Sidebar
+            form={filtersForm}
+            metadata={sidebarMetadata}
+            setFilters={setFilters}
+            text={sidebarText}
+          />,
+        )}
+        <section>
+          <VisuallyHiddenElement as="h2">
+            Search results: questions list
+          </VisuallyHiddenElement>
+          <QuestionList
+            bulkAction={isUserLoggedIn && BulkAction}
+            currentPage={searchParams.page}
+            key={listKey}
+            loading={loading}
+            locale={mergedLocale}
+            onPageChange={setSearchPage}
+            onQuestionSelected={onQuestionSelected}
+            onSearch={setSearchQuery}
+            onSortOptionChange={setSortOption}
+            questions={questions}
+            questionsPerPage={pageSize}
+            showRowCheckboxes={isUserLoggedIn}
+            showSort={showSort}
+            sortOptions={sortOptions}
+            totalCount={totalCount}
+          />
+        </section>
+      </Wrapper>
+      {contextHolder}
+    </ModalContext.Provider>
   )
 }
 
 Discover.propTypes = {
+  existingListsOptions: PropTypes.arrayOf(
+    PropTypes.shape({ value: PropTypes.string, label: PropTypes.string }),
+  ),
   isUserLoggedIn: PropTypes.bool.isRequired,
   /** text for the sidebar */
   sidebarText: PropTypes.string,
   /** Loading search results. */
   loading: PropTypes.bool,
+  loadingAddToList: PropTypes.bool,
+  loadingCreateList: PropTypes.bool,
+  loadingDuplicateQuestion: PropTypes.bool,
   locale: PropTypes.shape(),
   /** Handle search */
   onAddToList: PropTypes.func.isRequired,
@@ -494,7 +665,11 @@ Discover.propTypes = {
 }
 
 Discover.defaultProps = {
+  existingListsOptions: [],
   loading: false,
+  loadingAddToList: false,
+  loadingCreateList: false,
+  loadingDuplicateQuestion: false,
   locale: null,
   pageSize: 10,
   questions: [],

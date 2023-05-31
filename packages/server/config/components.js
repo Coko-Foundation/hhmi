@@ -13,6 +13,8 @@ module.exports = [
   './models/questionVersion',
   './models/team',
   './models/user',
+  './models/list',
+  './models/listMember',
 
   // local api
   './api', // graphql

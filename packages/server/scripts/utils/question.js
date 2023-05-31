@@ -52,24 +52,25 @@ module.exports.createQuestion = async (
 
       const tm = await Team.addMember(authorTeam.id, user.id, { trx })
 
-      const questionVersion = await QuestionVersion.insert(
-        {
+      const questionVersion = await QuestionVersion.query(trx)
+        .patch({
           ...data,
           questionId: questionData.id,
           created: date,
           updated: date,
           publicationDate: date,
+          submitted: true,
           [questionStatus]: true,
-        },
-        { trx },
-      )
-      // temporary fix for created date issue
+        })
+        .where('question_id', questionData.id)
+        .returning('id')
 
+      // temporary fix for created date issue
       await Question.query(trx).findById(questionData.id).patch({
         created: date,
       })
 
-      await QuestionVersion.query().findById(questionVersion.id).patch({
+      await QuestionVersion.query(trx).findById(questionVersion[0].id).patch({
         created: date,
       })
 
