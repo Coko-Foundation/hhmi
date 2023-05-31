@@ -6,7 +6,6 @@ const team = require('./team')
 const file = require('./file')
 const metadata = require('./metadata')
 const resource = require('./resource')
-const list = require('./list')
 
 module.exports = {
   typeDefs: [
@@ -16,7 +15,6 @@ module.exports = {
     file.typeDefs,
     metadata.typeDefs,
     resource.typeDefs,
-    list.typeDefs,
   ].join(' '),
   resolvers: merge(
     {},
@@ -26,6 +24,5 @@ module.exports = {
     file.resolvers,
     metadata.resolvers,
     resource.resolvers,
-    list.resolvers,
   ),
 }

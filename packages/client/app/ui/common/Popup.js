@@ -127,7 +127,6 @@ const Popup = ({
         onKeyDown={handleKeyDown}
         position={position}
         ref={popupRef}
-        tabIndex="0"
         visible={visible}
         {...rest}
       >

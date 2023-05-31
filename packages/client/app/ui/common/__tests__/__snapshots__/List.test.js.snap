@@ -2,10 +2,10 @@
 
 exports[`list matches snapshot 1`] = `
 <div
-  className="sc-brKeYL hnsIgb"
+  className="sc-jsMahE hxmeGQ"
 >
   <div
-    className="ant-list ant-list-split sc-hIqOWS gCJLdU css-dev-only-do-not-override-1vtf12y"
+    className="ant-list ant-list-split sc-fmSAUk chczup css-dev-only-do-not-override-1vtf12y"
   >
     <div
       className="ant-spin-nested-loading css-dev-only-do-not-override-1vtf12y"
@@ -17,7 +17,7 @@ exports[`list matches snapshot 1`] = `
           className="ant-list-items"
         >
           <li
-            className="sc-dKfzgJ dQTjyQ"
+            className="sc-hAtEyd cWVVsj"
             data-testid="list-item-wrapper"
           >
             <div>
@@ -25,7 +25,7 @@ exports[`list matches snapshot 1`] = `
             </div>
           </li>
           <li
-            className="sc-dKfzgJ dQTjyQ"
+            className="sc-hAtEyd cWVVsj"
             data-testid="list-item-wrapper"
           >
             <div>
@@ -33,7 +33,7 @@ exports[`list matches snapshot 1`] = `
             </div>
           </li>
           <li
-            className="sc-dKfzgJ dQTjyQ"
+            className="sc-hAtEyd cWVVsj"
             data-testid="list-item-wrapper"
           >
             <div>
@@ -41,7 +41,7 @@ exports[`list matches snapshot 1`] = `
             </div>
           </li>
           <li
-            className="sc-dKfzgJ dQTjyQ"
+            className="sc-hAtEyd cWVVsj"
             data-testid="list-item-wrapper"
           >
             <div>
@@ -49,7 +49,7 @@ exports[`list matches snapshot 1`] = `
             </div>
           </li>
           <li
-            className="sc-dKfzgJ dQTjyQ"
+            className="sc-hAtEyd cWVVsj"
             data-testid="list-item-wrapper"
           >
             <div>
@@ -61,7 +61,7 @@ exports[`list matches snapshot 1`] = `
     </div>
   </div>
   <div
-    className="sc-kgKVFY jYbCq"
+    className="sc-fGFwAa fEWfbk"
   >
     <div />
     <nav

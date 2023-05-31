@@ -1,3 +1,4 @@
+const fs = require('fs')
 const path = require('path')
 const config = require('config')
 const cloneDeep = require('lodash/cloneDeep')
@@ -13,7 +14,6 @@ const {
 
 const { Question, QuestionVersion, Team } = require('../models')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
-const { clearTempImageFiles } = require('./helpers')
 const { labels } = require('./constants')
 const WaxToScormConverter = require('../services/scorm/scorm.service')
 const metadataResolver = require('./metadataHandler')
@@ -199,32 +199,6 @@ const createQuestion = async (userId, options = {}) => {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
     throw new Error(e)
   }
-}
-
-const duplicateQuestion = async (userId, questionId, options = {}) => {
-  const { trx } = options
-  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} duplicateQuestion:`
-  logger.info(
-    `${CONTROLLER_MESSAGE} Duplicating question  with id ${questionId}`,
-  )
-
-  return useTransaction(
-    async () => {
-      const question = await Question.duplicateQuestion(questionId, { trx })
-
-      const authorTeam = await Team.insert({
-        objectId: question.id,
-        objectType: 'question',
-        role: AUTHOR_TEAM.role,
-        displayName: AUTHOR_TEAM.displayName,
-      })
-
-      await Team.addMember(authorTeam.id, userId, { trx })
-
-      return question
-    },
-    { trx },
-  )
 }
 
 // update Question by id
@@ -437,16 +411,6 @@ const createNewQuestionVersion = async (questionId, options = {}) => {
 //   }
 // }
 
-const formatDate = date => {
-  if (!date) return 'N/A'
-
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
-
 const generateWordFile = async (questionVersionId, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} generateWordFile:`
   logger.info(
@@ -455,12 +419,54 @@ const generateWordFile = async (questionVersionId, options = {}) => {
 
   const imageData = {}
 
+  const clearTempImageFiles = async () => {
+    await Promise.all(
+      Object.keys(imageData).map(key => {
+        return new Promise((resolve, reject) => {
+          try {
+            const pathToDelete = imageData[key]
+            fs.unlink(pathToDelete, e => {
+              if (e) throw new Error(e)
+              logger.info(`${pathToDelete} deleted from temp folder`)
+            })
+            resolve()
+          } catch (e) {
+            if (e) {
+              logger.error(e)
+              reject(e)
+            }
+          }
+        })
+      }),
+    )
+  }
+
   try {
+    // fake long wait
+    // await new Promise(resolve => {
+    //   setTimeout(resolve, 2000)
+    // })
+
+    // fake error
+    // throw new Error('test')
+
     /* INIT */
 
     const { showFeedback, showMetadata } = options
 
     const version = await QuestionVersion.findById(questionVersionId)
+
+    const formatDate = date => {
+      if (!date) return 'N/A'
+
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    }
+
+    // console.log(version.content)
 
     const tempFolderPath = path.join(__dirname, '..', 'tmp')
 
@@ -525,10 +531,10 @@ const generateWordFile = async (questionVersionId, options = {}) => {
     const filePath = path.join(tempFolderPath, filename)
     await converter.writeToPath(filePath)
 
-    await clearTempImageFiles(imageData)
+    await clearTempImageFiles()
     return filename
   } catch (err) {
-    await clearTempImageFiles(imageData)
+    await clearTempImageFiles()
     logger.error(`${CONTROLLER_MESSAGE} ${err}`)
     throw new Error(err)
   }
@@ -599,7 +605,6 @@ module.exports = {
   getManagingEditorDashboard,
 
   createQuestion,
-  duplicateQuestion,
   updateQuestion,
 
   moveQuestionVersionToReview,
@@ -607,12 +612,12 @@ module.exports = {
   publishQuestionVersion,
   rejectQuestion,
   submitQuestion,
-  createNewQuestionVersion,
 
   metadataResolver,
   resourceResolver,
   generateScormZip,
   generateWordFile,
+  createNewQuestionVersion,
 
   uploadFiles,
   getImageUrls,

@@ -1,59 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`MyList Matches snapshot 1`] = `
-<section
-  className="sc-ebLpKB irNoYu"
+<div
+  className="sc-ihEcPi heUsLr"
 >
   <div
-    className="sc-kFuwaP eKsANT"
+    className="sc-hApOIs bNYIJb"
   >
-    <form
-      className="ant-form ant-form-horizontal css-dev-only-do-not-override-1vtf12y sc-ioSQQX gXtehD"
-      data-testid="form-content"
-      onReset={[Function]}
-      onSubmit={[Function]}
+    <div
+      className="sc-ioSQQX dbpdbK"
     >
       <div
-        className="ant-form-item css-dev-only-do-not-override-1vtf12y"
+        className="sc-fbJfA"
       >
-        <div
-          className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
+        <input
+          className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
+          disabled={false}
           onBlur={[Function]}
+          onChange={[Function]}
+          onFocus={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          placeholder="create your list"
           style={{}}
-        >
-          <div
-            className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-            style={{}}
-          >
-            <div
-              className="ant-form-item-control-input"
-            >
-              <div
-                className="ant-form-item-control-input-content"
-              >
-                <div
-                  className="sc-fbJfA"
-                >
-                  <input
-                    aria-required="true"
-                    className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
-                    disabled={false}
-                    id="newList"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    onFocus={[Function]}
-                    onKeyDown={[Function]}
-                    onSubmit={[Function]}
-                    placeholder="Create a new list"
-                    style={{}}
-                    type="text"
-                    value=""
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+          type="text"
+          value=""
+        />
       </div>
       <button
         className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX"
@@ -61,19 +33,19 @@ exports[`MyList Matches snapshot 1`] = `
         disabled={false}
         onClick={[Function]}
         status={null}
-        type="submit"
+        type="button"
       >
         <span>
           Create
         </span>
       </button>
-    </form>
+    </div>
   </div>
   <div
-    className="sc-TWmSL laiOgL"
+    className="sc-dKUvna bcsQhJ"
   >
     <div
-      className="sc-ddGhgk hNmOnK"
+      className="sc-TWmSL eakPvM"
     >
       <span
         className="ant-input-group-wrapper ant-input-search sc-blLsxD dtbdnh css-dev-only-do-not-override-1vtf12y"
@@ -194,7 +166,7 @@ exports[`MyList Matches snapshot 1`] = `
                             style={{}}
                           >
                             <label
-                              className="ant-checkbox-wrapper sc-jTrPJq fhnEky sc-ybGpS fYLMVR css-dev-only-do-not-override-1vtf12y"
+                              className="ant-checkbox-wrapper sc-jTrPJq fhnEky sc-ybGpS kNnVXe css-dev-only-do-not-override-1vtf12y"
                             >
                               <span
                                 className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
@@ -403,15 +375,6 @@ exports[`MyList Matches snapshot 1`] = `
                               </span>
                             </div>
                           </th>
-                          <td
-                            className="ant-table-cell"
-                            colSpan={null}
-                            onMouseEnter={[Function]}
-                            onMouseLeave={[Function]}
-                            rowSpan={null}
-                            scope={null}
-                            style={{}}
-                          />
                         </tr>
                       </thead>
                       <tbody
@@ -438,7 +401,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
                               >
                                 <input
-                                  aria-label="Select list [object Object]"
+                                  aria-label="Select list soluta"
                                   checked={false}
                                   className="ant-checkbox-input"
                                   disabled={false}
@@ -460,13 +423,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            <a
-                              className="sc-geSwfA bMNTuE"
-                              href="/"
-                              onClick={[Function]}
-                            >
-                              soluta
-                            </a>
+                            soluta
                           </td>
                           <td
                             className="ant-table-cell"
@@ -476,151 +433,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            7 years ago
-                          </td>
-                          <td
-                            className="ant-table-cell"
-                            colSpan={null}
-                            onMouseEnter={[Function]}
-                            onMouseLeave={[Function]}
-                            rowSpan={null}
-                            style={{}}
-                          >
-                            <div
-                              className="sc-cRZddA famnoL"
-                            >
-                              <button
-                                aria-controls="soluta-rename-popup"
-                                aria-expanded={false}
-                                aria-haspopup="dialog"
-                                aria-label="Rename list soluta"
-                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-circle ant-btn-default ant-btn-icon-only sc-hLseeU kWOTMC sc-fofoGw cakpTS"
-                                disabled={false}
-                                onClick={[Function]}
-                                status={null}
-                                type="button"
-                              >
-                                <span
-                                  aria-label="edit"
-                                  className="anticon anticon-edit"
-                                  role="img"
-                                >
-                                  <svg
-                                    aria-hidden="true"
-                                    data-icon="edit"
-                                    fill="currentColor"
-                                    focusable="false"
-                                    height="1em"
-                                    viewBox="64 64 896 896"
-                                    width="1em"
-                                  >
-                                    <path
-                                      d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-                                    />
-                                  </svg>
-                                </span>
-                              </button>
-                              <div
-                                className="sc-ehsgIH cNyrbu sc-jxMIFY dYJQia"
-                                id="soluta-rename-popup"
-                                onBlur={[Function]}
-                                onKeyDown={[Function]}
-                                tabIndex="0"
-                              >
-                                <div
-                                  className="sc-kFuwaP eKsANT"
-                                >
-                                  <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-1vtf12y sc-efWpTR ujrbf"
-                                    data-testid="form-content"
-                                    onReset={[Function]}
-                                    onSubmit={[Function]}
-                                  >
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <div
-                                                className="sc-fbJfA"
-                                              >
-                                                <input
-                                                  className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
-                                                  disabled={false}
-                                                  id="soluta-rename-input"
-                                                  name="renameList"
-                                                  onBlur={[Function]}
-                                                  onChange={[Function]}
-                                                  onFocus={[Function]}
-                                                  onKeyDown={[Function]}
-                                                  onSubmit={[Function]}
-                                                  placeholder="List name"
-                                                  style={
-                                                    {
-                                                      "width": "140px",
-                                                    }
-                                                  }
-                                                  type="text"
-                                                  value="soluta"
-                                                />
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <button
-                                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX"
-                                                data-testid="rename-btn"
-                                                disabled={false}
-                                                onClick={[Function]}
-                                                status={null}
-                                                type="submit"
-                                              >
-                                                <span>
-                                                  Rename
-                                                </span>
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
+                            11/20/2030
                           </td>
                         </tr>
                         <tr
@@ -644,7 +457,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
                               >
                                 <input
-                                  aria-label="Select list [object Object]"
+                                  aria-label="Select list quidem"
                                   checked={false}
                                   className="ant-checkbox-input"
                                   disabled={false}
@@ -666,13 +479,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            <a
-                              className="sc-geSwfA bMNTuE"
-                              href="/"
-                              onClick={[Function]}
-                            >
-                              quidem
-                            </a>
+                            quidem
                           </td>
                           <td
                             className="ant-table-cell"
@@ -682,151 +489,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            9 years ago
-                          </td>
-                          <td
-                            className="ant-table-cell"
-                            colSpan={null}
-                            onMouseEnter={[Function]}
-                            onMouseLeave={[Function]}
-                            rowSpan={null}
-                            style={{}}
-                          >
-                            <div
-                              className="sc-cRZddA famnoL"
-                            >
-                              <button
-                                aria-controls="quidem-rename-popup"
-                                aria-expanded={false}
-                                aria-haspopup="dialog"
-                                aria-label="Rename list quidem"
-                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-circle ant-btn-default ant-btn-icon-only sc-hLseeU kWOTMC sc-fofoGw cakpTS"
-                                disabled={false}
-                                onClick={[Function]}
-                                status={null}
-                                type="button"
-                              >
-                                <span
-                                  aria-label="edit"
-                                  className="anticon anticon-edit"
-                                  role="img"
-                                >
-                                  <svg
-                                    aria-hidden="true"
-                                    data-icon="edit"
-                                    fill="currentColor"
-                                    focusable="false"
-                                    height="1em"
-                                    viewBox="64 64 896 896"
-                                    width="1em"
-                                  >
-                                    <path
-                                      d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-                                    />
-                                  </svg>
-                                </span>
-                              </button>
-                              <div
-                                className="sc-ehsgIH cNyrbu sc-jxMIFY dYJQia"
-                                id="quidem-rename-popup"
-                                onBlur={[Function]}
-                                onKeyDown={[Function]}
-                                tabIndex="0"
-                              >
-                                <div
-                                  className="sc-kFuwaP eKsANT"
-                                >
-                                  <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-1vtf12y sc-efWpTR ujrbf"
-                                    data-testid="form-content"
-                                    onReset={[Function]}
-                                    onSubmit={[Function]}
-                                  >
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <div
-                                                className="sc-fbJfA"
-                                              >
-                                                <input
-                                                  className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
-                                                  disabled={false}
-                                                  id="quidem-rename-input"
-                                                  name="renameList"
-                                                  onBlur={[Function]}
-                                                  onChange={[Function]}
-                                                  onFocus={[Function]}
-                                                  onKeyDown={[Function]}
-                                                  onSubmit={[Function]}
-                                                  placeholder="List name"
-                                                  style={
-                                                    {
-                                                      "width": "140px",
-                                                    }
-                                                  }
-                                                  type="text"
-                                                  value="quidem"
-                                                />
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <button
-                                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX"
-                                                data-testid="rename-btn"
-                                                disabled={false}
-                                                onClick={[Function]}
-                                                status={null}
-                                                type="submit"
-                                              >
-                                                <span>
-                                                  Rename
-                                                </span>
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
+                            1/31/2032
                           </td>
                         </tr>
                         <tr
@@ -850,7 +513,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
                               >
                                 <input
-                                  aria-label="Select list [object Object]"
+                                  aria-label="Select list dolore"
                                   checked={false}
                                   className="ant-checkbox-input"
                                   disabled={false}
@@ -872,13 +535,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            <a
-                              className="sc-geSwfA bMNTuE"
-                              href="/"
-                              onClick={[Function]}
-                            >
-                              dolore
-                            </a>
+                            dolore
                           </td>
                           <td
                             className="ant-table-cell"
@@ -888,151 +545,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            5 years ago
-                          </td>
-                          <td
-                            className="ant-table-cell"
-                            colSpan={null}
-                            onMouseEnter={[Function]}
-                            onMouseLeave={[Function]}
-                            rowSpan={null}
-                            style={{}}
-                          >
-                            <div
-                              className="sc-cRZddA famnoL"
-                            >
-                              <button
-                                aria-controls="dolore-rename-popup"
-                                aria-expanded={false}
-                                aria-haspopup="dialog"
-                                aria-label="Rename list dolore"
-                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-circle ant-btn-default ant-btn-icon-only sc-hLseeU kWOTMC sc-fofoGw cakpTS"
-                                disabled={false}
-                                onClick={[Function]}
-                                status={null}
-                                type="button"
-                              >
-                                <span
-                                  aria-label="edit"
-                                  className="anticon anticon-edit"
-                                  role="img"
-                                >
-                                  <svg
-                                    aria-hidden="true"
-                                    data-icon="edit"
-                                    fill="currentColor"
-                                    focusable="false"
-                                    height="1em"
-                                    viewBox="64 64 896 896"
-                                    width="1em"
-                                  >
-                                    <path
-                                      d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-                                    />
-                                  </svg>
-                                </span>
-                              </button>
-                              <div
-                                className="sc-ehsgIH cNyrbu sc-jxMIFY dYJQia"
-                                id="dolore-rename-popup"
-                                onBlur={[Function]}
-                                onKeyDown={[Function]}
-                                tabIndex="0"
-                              >
-                                <div
-                                  className="sc-kFuwaP eKsANT"
-                                >
-                                  <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-1vtf12y sc-efWpTR ujrbf"
-                                    data-testid="form-content"
-                                    onReset={[Function]}
-                                    onSubmit={[Function]}
-                                  >
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <div
-                                                className="sc-fbJfA"
-                                              >
-                                                <input
-                                                  className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
-                                                  disabled={false}
-                                                  id="dolore-rename-input"
-                                                  name="renameList"
-                                                  onBlur={[Function]}
-                                                  onChange={[Function]}
-                                                  onFocus={[Function]}
-                                                  onKeyDown={[Function]}
-                                                  onSubmit={[Function]}
-                                                  placeholder="List name"
-                                                  style={
-                                                    {
-                                                      "width": "140px",
-                                                    }
-                                                  }
-                                                  type="text"
-                                                  value="dolore"
-                                                />
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <button
-                                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX"
-                                                data-testid="rename-btn"
-                                                disabled={false}
-                                                onClick={[Function]}
-                                                status={null}
-                                                type="submit"
-                                              >
-                                                <span>
-                                                  Rename
-                                                </span>
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
+                            6/23/2028
                           </td>
                         </tr>
                         <tr
@@ -1056,7 +569,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
                               >
                                 <input
-                                  aria-label="Select list [object Object]"
+                                  aria-label="Select list labore"
                                   checked={false}
                                   className="ant-checkbox-input"
                                   disabled={false}
@@ -1078,13 +591,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            <a
-                              className="sc-geSwfA bMNTuE"
-                              href="/"
-                              onClick={[Function]}
-                            >
-                              labore
-                            </a>
+                            labore
                           </td>
                           <td
                             className="ant-table-cell"
@@ -1094,151 +601,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            7 months ago
-                          </td>
-                          <td
-                            className="ant-table-cell"
-                            colSpan={null}
-                            onMouseEnter={[Function]}
-                            onMouseLeave={[Function]}
-                            rowSpan={null}
-                            style={{}}
-                          >
-                            <div
-                              className="sc-cRZddA famnoL"
-                            >
-                              <button
-                                aria-controls="labore-rename-popup"
-                                aria-expanded={false}
-                                aria-haspopup="dialog"
-                                aria-label="Rename list labore"
-                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-circle ant-btn-default ant-btn-icon-only sc-hLseeU kWOTMC sc-fofoGw cakpTS"
-                                disabled={false}
-                                onClick={[Function]}
-                                status={null}
-                                type="button"
-                              >
-                                <span
-                                  aria-label="edit"
-                                  className="anticon anticon-edit"
-                                  role="img"
-                                >
-                                  <svg
-                                    aria-hidden="true"
-                                    data-icon="edit"
-                                    fill="currentColor"
-                                    focusable="false"
-                                    height="1em"
-                                    viewBox="64 64 896 896"
-                                    width="1em"
-                                  >
-                                    <path
-                                      d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-                                    />
-                                  </svg>
-                                </span>
-                              </button>
-                              <div
-                                className="sc-ehsgIH cNyrbu sc-jxMIFY dYJQia"
-                                id="labore-rename-popup"
-                                onBlur={[Function]}
-                                onKeyDown={[Function]}
-                                tabIndex="0"
-                              >
-                                <div
-                                  className="sc-kFuwaP eKsANT"
-                                >
-                                  <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-1vtf12y sc-efWpTR ujrbf"
-                                    data-testid="form-content"
-                                    onReset={[Function]}
-                                    onSubmit={[Function]}
-                                  >
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <div
-                                                className="sc-fbJfA"
-                                              >
-                                                <input
-                                                  className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
-                                                  disabled={false}
-                                                  id="labore-rename-input"
-                                                  name="renameList"
-                                                  onBlur={[Function]}
-                                                  onChange={[Function]}
-                                                  onFocus={[Function]}
-                                                  onKeyDown={[Function]}
-                                                  onSubmit={[Function]}
-                                                  placeholder="List name"
-                                                  style={
-                                                    {
-                                                      "width": "140px",
-                                                    }
-                                                  }
-                                                  type="text"
-                                                  value="labore"
-                                                />
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <button
-                                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX"
-                                                data-testid="rename-btn"
-                                                disabled={false}
-                                                onClick={[Function]}
-                                                status={null}
-                                                type="submit"
-                                              >
-                                                <span>
-                                                  Rename
-                                                </span>
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
+                            12/17/2023
                           </td>
                         </tr>
                         <tr
@@ -1262,7 +625,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
                               >
                                 <input
-                                  aria-label="Select list [object Object]"
+                                  aria-label="Select list cumque"
                                   checked={false}
                                   className="ant-checkbox-input"
                                   disabled={false}
@@ -1284,13 +647,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            <a
-                              className="sc-geSwfA bMNTuE"
-                              href="/"
-                              onClick={[Function]}
-                            >
-                              cumque
-                            </a>
+                            cumque
                           </td>
                           <td
                             className="ant-table-cell"
@@ -1300,151 +657,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            5 years ago
-                          </td>
-                          <td
-                            className="ant-table-cell"
-                            colSpan={null}
-                            onMouseEnter={[Function]}
-                            onMouseLeave={[Function]}
-                            rowSpan={null}
-                            style={{}}
-                          >
-                            <div
-                              className="sc-cRZddA famnoL"
-                            >
-                              <button
-                                aria-controls="cumque-rename-popup"
-                                aria-expanded={false}
-                                aria-haspopup="dialog"
-                                aria-label="Rename list cumque"
-                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-circle ant-btn-default ant-btn-icon-only sc-hLseeU kWOTMC sc-fofoGw cakpTS"
-                                disabled={false}
-                                onClick={[Function]}
-                                status={null}
-                                type="button"
-                              >
-                                <span
-                                  aria-label="edit"
-                                  className="anticon anticon-edit"
-                                  role="img"
-                                >
-                                  <svg
-                                    aria-hidden="true"
-                                    data-icon="edit"
-                                    fill="currentColor"
-                                    focusable="false"
-                                    height="1em"
-                                    viewBox="64 64 896 896"
-                                    width="1em"
-                                  >
-                                    <path
-                                      d="M257.7 752c2 0 4-.2 6-.5L431.9 722c2-.4 3.9-1.3 5.3-2.8l423.9-423.9a9.96 9.96 0 000-14.1L694.9 114.9c-1.9-1.9-4.4-2.9-7.1-2.9s-5.2 1-7.1 2.9L256.8 538.8c-1.5 1.5-2.4 3.3-2.8 5.3l-29.5 168.2a33.5 33.5 0 009.4 29.8c6.6 6.4 14.9 9.9 23.8 9.9zm67.4-174.4L687.8 215l73.3 73.3-362.7 362.6-88.9 15.7 15.6-89zM880 836H144c-17.7 0-32 14.3-32 32v36c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-36c0-17.7-14.3-32-32-32z"
-                                    />
-                                  </svg>
-                                </span>
-                              </button>
-                              <div
-                                className="sc-ehsgIH cNyrbu sc-jxMIFY dYJQia"
-                                id="cumque-rename-popup"
-                                onBlur={[Function]}
-                                onKeyDown={[Function]}
-                                tabIndex="0"
-                              >
-                                <div
-                                  className="sc-kFuwaP eKsANT"
-                                >
-                                  <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-1vtf12y sc-efWpTR ujrbf"
-                                    data-testid="form-content"
-                                    onReset={[Function]}
-                                    onSubmit={[Function]}
-                                  >
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <div
-                                                className="sc-fbJfA"
-                                              >
-                                                <input
-                                                  className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
-                                                  disabled={false}
-                                                  id="cumque-rename-input"
-                                                  name="renameList"
-                                                  onBlur={[Function]}
-                                                  onChange={[Function]}
-                                                  onFocus={[Function]}
-                                                  onKeyDown={[Function]}
-                                                  onSubmit={[Function]}
-                                                  placeholder="List name"
-                                                  style={
-                                                    {
-                                                      "width": "140px",
-                                                    }
-                                                  }
-                                                  type="text"
-                                                  value="cumque"
-                                                />
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ant-form-item css-dev-only-do-not-override-1vtf12y"
-                                    >
-                                      <div
-                                        className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
-                                        onBlur={[Function]}
-                                        style={{}}
-                                      >
-                                        <div
-                                          className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
-                                          style={{}}
-                                        >
-                                          <div
-                                            className="ant-form-item-control-input"
-                                          >
-                                            <div
-                                              className="ant-form-item-control-input-content"
-                                            >
-                                              <button
-                                                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX"
-                                                data-testid="rename-btn"
-                                                disabled={false}
-                                                onClick={[Function]}
-                                                status={null}
-                                                type="submit"
-                                              >
-                                                <span>
-                                                  Rename
-                                                </span>
-                                              </button>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </form>
-                                </div>
-                              </div>
-                            </div>
+                            10/2/2028
                           </td>
                         </tr>
                       </tbody>
@@ -1459,7 +672,7 @@ exports[`MyList Matches snapshot 1`] = `
     </div>
     <nav
       aria-label="Pagination"
-      className="sc-dnwKUv kKzMli sc-mHYLV hSnepG"
+      className="sc-dnwKUv kKzMli sc-ddGhgk jkrGnL"
       role="navigation"
     >
       <ul
@@ -1534,12 +747,11 @@ exports[`MyList Matches snapshot 1`] = `
     </nav>
   </div>
   <div
-    className="sc-hApOIs iHrhXD"
+    className="sc-ebLpKB deyIJd"
   >
     <button
       className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU fUCNCZ"
       disabled={true}
-      id="exportToWord"
       onClick={[Function]}
       status={null}
       type="button"
@@ -1561,5 +773,5 @@ exports[`MyList Matches snapshot 1`] = `
       </span>
     </button>
   </div>
-</section>
+</div>
 `;

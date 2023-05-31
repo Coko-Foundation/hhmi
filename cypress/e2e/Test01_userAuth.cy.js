@@ -53,7 +53,6 @@ describe('Tests for user authentication', () => {
 
   it('forgot password', () => {
     cy.visit(requestPasswordReset)
-    cy.wait('@GQLReq')
     cy.get('[type="submit"]').click()
     cy.contains('[role="alert"]', 'Email is required')
     cy.contains('a[href="/login"]', 'Return to login form')
@@ -151,11 +150,10 @@ describe('Tests for user authentication', () => {
 
     cy.get('[type="submit"]').click()
     cy.wait('@GQLReq')
-    cy.contains('div', 'Thank you for submitting your profile!', {
-      timeout: 8000,
-    })
+    cy.contains('div', 'Thank you for submitting your profile!')
   })
 
+  // eslint-disable-next-line jest/no-commented-out-tests
   it('Team manager', () => {
     const addUserToRole = (role, username) => {
       cy.get(`[data-testid="select-${role}"]`).type(username)
@@ -167,7 +165,7 @@ describe('Tests for user authentication', () => {
     const removeUserFromRole = (role, username) => {
       cy.contains('div', username).click()
       cy.wait('@GQLReq')
-      cy.get(`[data-testid="remove-${role}"]`).click({ force: true })
+      cy.get(`[data-testid="remove-${role}"]`).click()
       cy.wait('@GQLReq')
     }
 
@@ -199,7 +197,6 @@ describe('Tests for user authentication', () => {
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
     cy.visit(manageUser, { method: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
   })
@@ -216,11 +213,9 @@ describe('Tests for user authentication', () => {
     cy.contains('a', ' Logout').should('not.exist')
 
     cy.visit(manageTeam, { methosd: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
     cy.visit(manageUser, { method: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
   })

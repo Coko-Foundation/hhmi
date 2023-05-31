@@ -5,8 +5,6 @@ const Question = require('./question/question.model')
 const QuestionVersion = require('./questionVersion/questionVersion.model')
 const Team = require('./team/team.model')
 const User = require('./user/user.model')
-const List = require('./list/list.model')
-const ListMember = require('./listMember/listMember.model')
 
 module.exports = {
   Question,
@@ -15,6 +13,4 @@ module.exports = {
   TeamMember,
   User,
   Identity,
-  List,
-  ListMember,
 }

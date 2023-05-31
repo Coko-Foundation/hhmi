@@ -10,7 +10,6 @@ const {
 
   createQuestion,
   updateQuestion,
-  duplicateQuestion,
   submitQuestion,
   rejectQuestion,
   moveQuestionVersionToReview,
@@ -46,10 +45,6 @@ const getManagingEditorDashboardResolver = async (_, args, ctx) => {
 
 const createQuestionResolver = async (_, __, ctx) => {
   return createQuestion(ctx.user)
-}
-
-const duplicateQuestionResolver = async (_, { questionId }, ctx) => {
-  return duplicateQuestion(ctx.user, questionId)
 }
 
 const updateQuestionResolver = async (
@@ -152,7 +147,6 @@ module.exports = {
   },
   Mutation: {
     createQuestion: createQuestionResolver,
-    duplicateQuestion: duplicateQuestionResolver,
     updateQuestion: updateQuestionResolver,
     submitQuestion: submitQuestionResolver,
     rejectQuestion: rejectQuestionResolver,

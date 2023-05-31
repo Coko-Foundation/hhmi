@@ -146,7 +146,6 @@ describe('Testing apps responsiveness', () => {
 
     it('discover page', () => {
       cy.visit('/discover')
-      cy.wait('@GQLReq')
       cy.get('[data-testid="filter-collapse"]').should('exist')
     })
   })
@@ -154,7 +153,6 @@ describe('Testing apps responsiveness', () => {
   describe('desktop view', () => {
     beforeEach(() => {
       cy.viewport(laptop.preset)
-      cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     })
 
     /* eslint-disable-next-line jest/no-disabled-tests */
@@ -179,7 +177,6 @@ describe('Testing apps responsiveness', () => {
 
     it('discover page', () => {
       cy.visit('/discover')
-      cy.wait('@GQLReq')
       cy.get('[data-testid="filter-collapse"]').should('not.exist')
     })
   })

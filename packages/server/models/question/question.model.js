@@ -61,46 +61,6 @@ class Question extends BaseModel {
     }
   }
 
-  static async duplicateQuestion(id, options = {}) {
-    const question = await this.insert({})
-
-    const originalQuestionVersions = await this.getVersions(id, {
-      latestOnly: true,
-      publishedOnly: true,
-    })
-
-    const {
-      content,
-      topics,
-      courses,
-      keywords,
-      biointeractiveResources,
-      cognitiveLevel,
-      affectiveLevel,
-      psychomotorLevel,
-      readingLevel,
-      questionType,
-    } = originalQuestionVersions.result[0]
-
-    await QuestionVersion.query(options.trx)
-      .patch({
-        questionId: question.id,
-        content,
-        submitted: false,
-        topics,
-        courses,
-        keywords,
-        biointeractiveResources,
-        cognitiveLevel,
-        affectiveLevel,
-        psychomotorLevel,
-        readingLevel,
-        questionType,
-      })
-      .where('question_id', question.id)
-    return question
-  }
-
   // TO DO -- if there is a previous versions, you should copy its contents
   static async createNewVersion(questionId, options = {}) {
     const previousVersions = await this.getVersions(questionId, {

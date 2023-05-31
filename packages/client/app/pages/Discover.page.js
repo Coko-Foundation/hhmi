@@ -1,22 +1,11 @@
 import React, { useState, useRef } from 'react'
 
 import { Discover, VisuallyHiddenElement } from 'ui'
-import { useQuery, useMutation } from '@apollo/client'
-import { useHistory } from 'react-router-dom'
-
-import { useCurrentUser } from '@coko/client'
+import { useQuery } from '@apollo/client'
 
 import { useMetadata, dashboardDataMapper } from '../utilities'
 
-import {
-  GET_PUBLISHED_QUESTIONS,
-  DUPLICATE_QUESTION,
-  GET_LISTS_OPTIONS,
-  ADD_TO_LIST,
-  CREATE_LIST,
-  GET_LISTS,
-  CURRENT_USER,
-} from '../graphql'
+import { GET_PUBLISHED_QUESTIONS } from '../graphql'
 
 const sortOptions = [
   {
@@ -45,11 +34,8 @@ const DiscoverPage = () => {
     ascending: false,
   })
 
-  const { currentUser } = useCurrentUser()
-
   const { metadata } = useMetadata()
   const initialRender = useRef(true)
-  const history = useHistory()
 
   const { data: questionsData, loading } = useQuery(GET_PUBLISHED_QUESTIONS, {
     variables: {
@@ -90,45 +76,6 @@ const DiscoverPage = () => {
     },
   })
 
-  const [duplicateQuestionMutation, { loading: loadingDuplicateQuestion }] =
-    useMutation(DUPLICATE_QUESTION, {
-      refetchQueries: [CURRENT_USER],
-      onCompleted: ({ duplicateQuestion }) => {
-        history.push(`/question/${duplicateQuestion.id}`)
-      },
-    })
-
-  const { data: { myLists: { result: existingLists } = {} } = {} } = useQuery(
-    GET_LISTS_OPTIONS,
-    {
-      fetchPolicy: 'network-only',
-    },
-  )
-
-  const [addToExistingListMutation, { loading: loadingAddToList }] =
-    useMutation(ADD_TO_LIST)
-
-  const [addToNewListMutation, { loading: loadingCreateList }] = useMutation(
-    CREATE_LIST,
-    {
-      refetchQueries: [
-        {
-          query: GET_LISTS,
-          variables: {
-            page: 0,
-            pageSize: 10,
-            searchQuery: '',
-            orderBy: 'created',
-            ascending: true,
-          },
-        },
-        {
-          query: GET_LISTS_OPTIONS,
-        },
-      ],
-    },
-  )
-
   const handleSearch = params => {
     setSearchParams({
       ...params,
@@ -137,58 +84,17 @@ const DiscoverPage = () => {
     })
   }
 
-  const handleAddToList = (existingList, questions) => {
-    const mutationData = {
-      variables: {
-        listId: existingList,
-        questionIds: questions,
-      },
-    }
+  const handleAddToList = () => {}
 
-    return addToExistingListMutation(mutationData).then(response => {
-      return new Promise((resolve, reject) => {
-        if (response?.data?.addToList) resolve()
-        else reject()
-      })
-    })
-  }
+  const handleCreateList = () => {}
 
-  const handleCreateList = (title, questions) => {
-    const mutationData = {
-      variables: {
-        title,
-        questions,
-      },
-    }
-
-    return addToNewListMutation(mutationData).then(response => {
-      return new Promise((resolve, reject) => {
-        if (response?.data?.createList?.id) resolve()
-        else reject()
-      })
-    })
-  }
-
-  const handleDuplicateQuestion = question => {
-    const mutationData = {
-      variables: {
-        questionId: question,
-      },
-    }
-
-    duplicateQuestionMutation(mutationData).catch(err => console.error(err))
-  }
+  const handleDuplicateQuestion = () => {}
 
   return (
     <>
       <VisuallyHiddenElement as="h1">Discover page</VisuallyHiddenElement>
       <Discover
-        existingListsOptions={existingLists}
-        isUserLoggedIn={!!currentUser}
         loading={loading}
-        loadingAddToList={loadingAddToList}
-        loadingCreateList={loadingCreateList}
-        loadingDuplicateQuestion={loadingDuplicateQuestion}
         onAddToList={handleAddToList}
         onCreateList={handleCreateList}
         onDuplicate={handleDuplicateQuestion}

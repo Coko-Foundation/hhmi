@@ -6,7 +6,7 @@ const {
   LevelFormat,
   Paragraph,
   TextRun,
-  BorderStyle,
+
   convertMillimetersToTwip,
 } = require('docx')
 
@@ -100,9 +100,6 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       essay_question: this.essayQuestionHandler,
       essay_prompt: this.essayFeedbackHandler,
       essay_answer: this.essayAnswerHandler,
-
-      question_list: this.questionListHandler,
-      question: this.questionHandler,
     }
 
     this.typeToHandlerMap = {
@@ -130,7 +127,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           style: {
             paragraph: {
               indent: {
-                left: convertMillimetersToTwip(10),
+                left: convertMillimetersToTwip(7),
                 hanging: this.listIndentFirstLevelHanging,
               },
               spacing: {
@@ -154,7 +151,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           style: {
             paragraph: {
               indent: {
-                left: convertMillimetersToTwip(10),
+                left: convertMillimetersToTwip(7),
                 hanging: this.listIndentFirstLevelHanging,
               },
               spacing: {
@@ -178,7 +175,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           style: {
             paragraph: {
               indent: {
-                left: convertMillimetersToTwip(10),
+                left: convertMillimetersToTwip(7),
                 hanging: this.listIndentFirstLevelHanging,
               },
               spacing: {
@@ -202,7 +199,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           style: {
             paragraph: {
               indent: {
-                left: convertMillimetersToTwip(10),
+                left: convertMillimetersToTwip(7),
                 hanging: this.listIndentFirstLevelHanging,
               },
               spacing: {
@@ -230,33 +227,21 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     this.showFeedback = options.showFeedback || false
     this.showMetadata = options.showMetadata || false
 
-    // initialize an empty array if we're dealing with a question list (questionListHandler will add an object of references for each question)
-    // otherwise, initialize array with 1 element
-    this.questionReference =
-      doc.content[0].type === 'question_list'
-        ? []
-        : [
-            {
-              multipleChoiceSolutions: {},
-              trueFalseSolutions: {},
+    this.multipleChoiceSolutions = {}
+    this.trueFalseSolutions = {}
 
-              fillTheGapSolutions: {},
-              fillTheGapFeedback: {},
+    this.fillTheGapSolutions = {}
+    this.fillTheGapFeedback = {}
 
-              matchingSolutions: {},
-              matchingFeedback: {},
+    this.matchingSolutions = {}
+    this.matchingFeedback = {}
 
-              multipleDropdownCounter: {},
-              multipleDropdownOptions: {},
-              multipleDropdownSolutions: {},
-              multipleDropdownFeedback: {},
-              essaySolutions: {},
-            },
-          ]
+    this.multipleDropdownCounter = {}
+    this.multipleDropdownOptions = {}
+    this.multipleDropdownSolutions = {}
+    this.multipleDropdownFeedback = {}
 
-    // if question_list initialize the counter to -1 (questionHandler will increment it by 1 for every question)
-    // otherwise set it to 0
-    this.questionCounter = doc.content[0].type === 'question_list' ? -1 : 0
+    this.essaySolutions = {}
 
     this.metadataSpacing = new TextRun({ text: '  ' })
   }
@@ -275,10 +260,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   multipleChoiceHandler = multipleChoice => {
     const groupId = multipleChoice.attrs.id
     this.listInstance += 1
-
-    this.questionReference[this.questionCounter].multipleChoiceSolutions[
-      groupId
-    ] = []
+    this.multipleChoiceSolutions[groupId] = []
 
     const lastItem = multipleChoice.content[multipleChoice.content.length - 1]
 
@@ -311,9 +293,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     const { /* id, */ correct, feedback } = multipleChoiceOption.attrs
     const { multipleChoiceGroupId } = options
 
-    this.questionReference[this.questionCounter].multipleChoiceSolutions[
-      multipleChoiceGroupId
-    ].push({
+    this.multipleChoiceSolutions[multipleChoiceGroupId].push({
       correct,
       feedback,
     })
@@ -330,9 +310,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     const groupId = trueFalse.attrs.id
     const { content } = trueFalse
     this.listInstance += 1
-
-    this.questionReference[this.questionCounter].trueFalseSolutions[groupId] =
-      []
+    this.trueFalseSolutions[groupId] = []
     let contentToParse
 
     if (content) {
@@ -371,9 +349,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     const { /* id, */ correct, feedback } = trueFalseOption.attrs
     const { trueFalseGroupId } = options
 
-    this.questionReference[this.questionCounter].trueFalseSolutions[
-      trueFalseGroupId
-    ].push({
+    this.trueFalseSolutions[trueFalseGroupId].push({
       correct,
       feedback,
     })
@@ -396,10 +372,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   // #region fill-the-gap
   fillTheGapContainerHandler = container => {
     const groupId = container.attrs.id
-    this.questionReference[this.questionCounter].fillTheGapSolutions[groupId] =
-      []
-    this.questionReference[this.questionCounter].fillTheGapFeedback[groupId] =
-      container.attrs.feedback
+    this.fillTheGapSolutions[groupId] = []
+    this.fillTheGapFeedback[groupId] = container.attrs.feedback
 
     return [
       new Paragraph({ children: [] }),
@@ -409,9 +383,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
   fillTheGapHandler = (gap, options = {}) => {
     const groupId = options.fillTheGapGroupId
-
-    const solutions =
-      this.questionReference[this.questionCounter].fillTheGapSolutions[groupId]
+    const solutions = this.fillTheGapSolutions[groupId]
 
     let solution
 
@@ -432,8 +404,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   // #region matching
   matchingContainerHanlder = node => {
     const { id, options, feedback } = node.attrs
-    this.questionReference[this.questionCounter].matchingSolutions[id] = []
-    this.questionReference[this.questionCounter].matchingFeedback[id] = feedback
+    this.matchingSolutions[id] = []
+    this.matchingFeedback[id] = feedback
 
     const questionRuns = []
     const optionRuns = []
@@ -452,9 +424,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
       const optionPositionAsLetter = convertListPositionToLetter(optionPosition)
 
-      this.questionReference[this.questionCounter].matchingSolutions[id].push(
-        optionPositionAsLetter,
-      )
+      this.matchingSolutions[id].push(optionPositionAsLetter)
 
       // create content
       questionRuns.push(
@@ -501,26 +471,20 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   // #region mulitple-dropdown
   multipleDropdownContainerHandler = node => {
     const { id, feedback } = node.attrs
-    this.questionReference[this.questionCounter].multipleDropdownCounter[id] =
-      -1
-    this.questionReference[this.questionCounter].multipleDropdownOptions[id] =
-      []
-    this.questionReference[this.questionCounter].multipleDropdownSolutions[id] =
-      []
-    this.questionReference[this.questionCounter].multipleDropdownFeedback[id] =
-      feedback
+    this.multipleDropdownCounter[id] = -1
+    this.multipleDropdownOptions[id] = []
+    this.multipleDropdownSolutions[id] = []
+    this.multipleDropdownFeedback[id] = feedback
 
-    // this line will go through the content and will populate this.questionReference[this.questionCounter].multipleDropdownOptions[id]
+    // this line will go through the content and will populate this.multipleDropdownOptions[id]
     const mainText = this.contentParser(node.content, { containerId: id })
 
     const optionsHeader = new Paragraph({
       children: [new TextRun({ text: 'Options:', bold: true })],
     })
 
-    // use now populated this.questionReference[this.questionCounter].multipleDropdownOptions[id]
-    const options = this.questionReference[
-      this.questionCounter
-    ].multipleDropdownOptions[id].map(nodeOptions => {
+    // use now populated this.multipleDropdownOptions[id]
+    const options = this.multipleDropdownOptions[id].map(nodeOptions => {
       const value = nodeOptions.map(o => o.label).join(', ')
 
       return this.paragraphHandler(
@@ -547,9 +511,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     const { containerId } = options
 
     // capture options
-    this.questionReference[this.questionCounter].multipleDropdownOptions[
-      containerId
-    ].push(node.attrs.options)
+    this.multipleDropdownOptions[containerId].push(node.attrs.options)
 
     // capture correct
     const correctOption = node.attrs.options.find(
@@ -557,20 +519,11 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     )
 
     const correctLabel = correctOption && correctOption.label
-    this.questionReference[this.questionCounter].multipleDropdownSolutions[
-      containerId
-    ].push(correctLabel)
+    this.multipleDropdownSolutions[containerId].push(correctLabel)
 
     // create lowercase numbering
-    this.questionReference[this.questionCounter].multipleDropdownCounter[
-      containerId
-    ] += 1
-
-    const position =
-      this.questionReference[this.questionCounter].multipleDropdownCounter[
-        containerId
-      ]
-
+    this.multipleDropdownCounter[containerId] += 1
+    const position = this.multipleDropdownCounter[containerId]
     const letter = convertListPositionToLetter(position, { lowerCase: true })
     const marker = `(${letter})`
 
@@ -581,7 +534,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   // #region essay
   essayContainerHandler = node => {
     const groupId = node.attrs.id
-    this.questionReference[this.questionCounter].essaySolutions[groupId] = []
+    this.essaySolutions[groupId] = []
 
     return [
       this.createEmptyParagraph(),
@@ -596,9 +549,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   essayFeedbackHandler = (node, options = {}) => {
     const groupId = options.essayGroupId
 
-    this.questionReference[this.questionCounter].essaySolutions[groupId].push(
-      ...node.content,
-    )
+    this.essaySolutions[groupId].push(...node.content)
   }
 
   essayAnswerHandler = node => {
@@ -611,9 +562,6 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           }),
         ],
       }),
-      this.createEmptyParagraph(),
-      this.createEmptyParagraph(),
-      this.createEmptyParagraph(),
       this.createEmptyParagraph(),
       this.createEmptyParagraph(),
     ]
@@ -633,314 +581,297 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       }),
     ]
 
-    this.questionReference.forEach((question, index, questionsArray) => {
-      if (questionsArray.length > 1) {
-        content.push(
+    const multipleChoiceSolutionKeys = Object.keys(this.multipleChoiceSolutions)
+
+    multipleChoiceSolutionKeys.forEach((groupId, i) => {
+      this.listInstance += 1
+      const groupSolutions = this.multipleChoiceSolutions[groupId]
+
+      let listContent = []
+
+      if (multipleChoiceSolutionKeys.length > 1) {
+        listContent.push(
           new Paragraph({
             children: [
               new TextRun({
-                text: `Question ${index + 1}`,
+                text: `Multiple choice question ${i + 1}`,
+                bold: true,
               }),
             ],
-            style: 'questionCounter',
           }),
         )
       }
 
-      const multipleChoiceSolutionKeys = Object.keys(
-        question.multipleChoiceSolutions,
-      )
-
-      multipleChoiceSolutionKeys.forEach((groupId, i) => {
-        this.listInstance += 1
-        const groupSolutions = question.multipleChoiceSolutions[groupId]
-
-        let listContent = []
-
-        if (multipleChoiceSolutionKeys.length > 1) {
-          listContent.push(
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `Multiple choice question ${i + 1}`,
-                  bold: true,
-                }),
-              ],
-            }),
-          )
-        }
-
-        groupSolutions.forEach(option => {
-          const isCorrect = new Paragraph({
-            children: [
-              new TextRun({
-                text: option.correct ? 'Correct' : 'Not correct',
-              }),
-            ],
-            numbering: {
-              reference: this.listTypes.MULTIPLE_CHOICE,
-              level: 0,
-              instance: this.listInstance,
-            },
-            spacing: {
-              after: 50,
-            },
-          })
-
-          const feedback = new Paragraph({
-            children: [new TextRun({ text: option.feedback })],
-            indent: {
-              left: convertMillimetersToTwip(7),
-            },
-          })
-
-          listContent = listContent.concat([isCorrect, feedback])
-        })
-
-        content = content.concat(listContent)
-      })
-
-      // TO DO -- refactor with multiple choice
-      const trueFalseSolutionKeys = Object.keys(question.trueFalseSolutions)
-
-      trueFalseSolutionKeys.forEach((groupId, i) => {
-        this.listInstance += 1
-        const groupSolutions = question.trueFalseSolutions[groupId]
-
-        let listContent = []
-
-        if (trueFalseSolutionKeys.length > 1) {
-          listContent.push(
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `Multiple choice question ${i + 1}`,
-                  bold: true,
-                }),
-              ],
-            }),
-          )
-        }
-
-        groupSolutions.forEach(option => {
-          const isCorrect = new Paragraph({
-            children: [
-              new TextRun({
-                text: option.correct ? 'Correct' : 'Not correct',
-              }),
-            ],
-            numbering: {
-              reference: this.listTypes.MULTIPLE_CHOICE,
-              level: 0,
-              instance: this.listInstance,
-            },
-            spacing: {
-              after: 50,
-            },
-          })
-
-          const feedback = new Paragraph({
-            children: [new TextRun({ text: option.feedback })],
-            indent: {
-              left: convertMillimetersToTwip(7),
-            },
-          })
-
-          listContent = listContent.concat([isCorrect, feedback])
-        })
-
-        content = content.concat(listContent)
-      })
-
-      const fillTheGapSolutionKeys = Object.keys(question.fillTheGapSolutions)
-
-      fillTheGapSolutionKeys.forEach((groupId, i) => {
-        this.listInstance += 1
-        const groupSolutions = question.fillTheGapSolutions[groupId]
-
-        const listContent = []
-
-        if (fillTheGapSolutionKeys.length > 1) {
-          listContent.push(
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `Fill the gap ${i + 1}`,
-                  bold: true,
-                }),
-              ],
-            }),
-          )
-        }
-
-        groupSolutions.forEach(gapSolution => {
-          const acceptedAnswers = gapSolution
-            .split(';')
-            .map(s => s.trim())
-            .join(', ')
-
-          const solution = new Paragraph({
-            children: [
-              new TextRun({
-                text: acceptedAnswers,
-              }),
-            ],
-            numbering: {
-              reference: this.listTypes.ORDERED,
-              level: 0,
-              instance: this.listInstance,
-            },
-            contextualSpacing: false,
-            indent: {
-              left: convertMillimetersToTwip(7),
-            },
-            spacing: {
-              after: 100,
-            },
-          })
-
-          listContent.push(solution)
-        })
-
-        const feedbackParagraph = new Paragraph({
+      groupSolutions.forEach(option => {
+        const isCorrect = new Paragraph({
           children: [
             new TextRun({
-              text: question.fillTheGapFeedback[groupId],
+              text: option.correct ? 'Correct' : 'Not correct',
             }),
           ],
+          numbering: {
+            reference: this.listTypes.MULTIPLE_CHOICE,
+            level: 0,
+            instance: this.listInstance,
+          },
+          spacing: {
+            after: 50,
+          },
         })
 
-        listContent.push(feedbackParagraph)
+        const feedback = new Paragraph({
+          children: [new TextRun({ text: option.feedback })],
+          indent: {
+            left: convertMillimetersToTwip(7),
+          },
+        })
 
-        content = content.concat(listContent)
+        listContent = listContent.concat([isCorrect, feedback])
       })
 
-      const matchingSolutionKeys = Object.keys(question.matchingSolutions)
+      content = content.concat(listContent)
+    })
 
-      matchingSolutionKeys.forEach((groupId, i) => {
-        this.listInstance += 1
-        const groupSolutions = question.matchingSolutions[groupId]
+    // TO DO -- refactor with multiple choice
+    const trueFalseSolutionKeys = Object.keys(this.trueFalseSolutions)
 
-        const listContent = []
+    trueFalseSolutionKeys.forEach((groupId, i) => {
+      this.listInstance += 1
+      const groupSolutions = this.trueFalseSolutions[groupId]
 
-        if (matchingSolutionKeys.length > 1) {
-          listContent.push(
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `Matching ${i + 1}`,
-                  bold: true,
-                }),
-              ],
-            }),
-          )
-        }
+      let listContent = []
 
-        groupSolutions.forEach(matchingSolution => {
-          const solution = new Paragraph({
+      if (trueFalseSolutionKeys.length > 1) {
+        listContent.push(
+          new Paragraph({
             children: [
               new TextRun({
-                text: matchingSolution,
+                text: `Multiple choice question ${i + 1}`,
+                bold: true,
               }),
             ],
-            numbering: {
-              reference: this.listTypes.ORDERED,
-              level: 0,
-              instance: this.listInstance,
-            },
-            contextualSpacing: false,
-            indent: {
-              left: convertMillimetersToTwip(7),
-            },
-            spacing: {
-              after: 100,
-            },
-          })
+          }),
+        )
+      }
 
-          listContent.push(solution)
-        })
-
-        const feedbackParagraph = new Paragraph({
+      groupSolutions.forEach(option => {
+        const isCorrect = new Paragraph({
           children: [
             new TextRun({
-              text: question.matchingFeedback[groupId],
+              text: option.correct ? 'Correct' : 'Not correct',
             }),
           ],
+          numbering: {
+            reference: this.listTypes.MULTIPLE_CHOICE,
+            level: 0,
+            instance: this.listInstance,
+          },
+          spacing: {
+            after: 50,
+          },
         })
 
-        listContent.push(feedbackParagraph)
+        const feedback = new Paragraph({
+          children: [new TextRun({ text: option.feedback })],
+          indent: {
+            left: convertMillimetersToTwip(7),
+          },
+        })
 
-        content = content.concat(listContent)
+        listContent = listContent.concat([isCorrect, feedback])
       })
 
-      const multipleDropdownSolutionKeys = Object.keys(
-        question.multipleDropdownSolutions,
-      )
+      content = content.concat(listContent)
+    })
 
-      multipleDropdownSolutionKeys.forEach((groupId, i) => {
-        this.listInstance += 1
-        const groupSolutions = question.multipleDropdownSolutions[groupId]
-        const listContent = []
+    const fillTheGapSolutionKeys = Object.keys(this.fillTheGapSolutions)
 
-        if (multipleDropdownSolutionKeys.length > 1) {
-          listContent.push(
-            new Paragraph({
-              children: [
-                new TextRun({
-                  text: `Multiple Dropdown ${i + 1}`,
-                  bold: true,
-                }),
-              ],
-            }),
-          )
-        }
+    fillTheGapSolutionKeys.forEach((groupId, i) => {
+      this.listInstance += 1
+      const groupSolutions = this.fillTheGapSolutions[groupId]
 
-        groupSolutions.forEach(multipleDropdownSolution => {
-          const solution = new Paragraph({
+      const listContent = []
+
+      if (fillTheGapSolutionKeys.length > 1) {
+        listContent.push(
+          new Paragraph({
             children: [
               new TextRun({
-                text: multipleDropdownSolution,
+                text: `Fill the gap ${i + 1}`,
+                bold: true,
               }),
             ],
-            numbering: {
-              reference: this.listTypes.MULTIPLE_DROPDOWN_OPTION,
-              level: 0,
-              instance: this.listInstance,
-            },
-            contextualSpacing: false,
-            indent: {
-              left: convertMillimetersToTwip(7),
-            },
-            spacing: {
-              after: 100,
-            },
-          })
+          }),
+        )
+      }
 
-          listContent.push(solution)
-        })
+      groupSolutions.forEach(gapSolution => {
+        const acceptedAnswers = gapSolution
+          .split(';')
+          .map(s => s.trim())
+          .join(', ')
 
-        const feedbackParagraph = new Paragraph({
+        const solution = new Paragraph({
           children: [
             new TextRun({
-              text: question.multipleDropdownFeedback[groupId],
+              text: acceptedAnswers,
             }),
           ],
+          numbering: {
+            reference: this.listTypes.ORDERED,
+            level: 0,
+            instance: this.listInstance,
+          },
+          contextualSpacing: false,
+          indent: {
+            left: convertMillimetersToTwip(7),
+          },
+          spacing: {
+            after: 100,
+          },
         })
 
-        listContent.push(feedbackParagraph)
-
-        content = content.concat(listContent)
+        listContent.push(solution)
       })
 
-      const essaySolutionKeys = Object.keys(question.essaySolutions)
-
-      essaySolutionKeys.forEach((groupId, i) => {
-        const feedback = question.essaySolutions[groupId]
-
-        const feedbackContent = this.contentParser(feedback)
-
-        content = content.concat(feedbackContent)
+      const feedbackParagraph = new Paragraph({
+        children: [
+          new TextRun({
+            text: this.fillTheGapFeedback[groupId],
+          }),
+        ],
       })
+
+      listContent.push(feedbackParagraph)
+
+      content = content.concat(listContent)
+    })
+
+    const matchingSolutionKeys = Object.keys(this.matchingSolutions)
+
+    matchingSolutionKeys.forEach((groupId, i) => {
+      this.listInstance += 1
+      const groupSolutions = this.matchingSolutions[groupId]
+
+      const listContent = []
+
+      if (matchingSolutionKeys.length > 1) {
+        listContent.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Matching ${i + 1}`,
+                bold: true,
+              }),
+            ],
+          }),
+        )
+      }
+
+      groupSolutions.forEach(matchingSolution => {
+        const solution = new Paragraph({
+          children: [
+            new TextRun({
+              text: matchingSolution,
+            }),
+          ],
+          numbering: {
+            reference: this.listTypes.ORDERED,
+            level: 0,
+            instance: this.listInstance,
+          },
+          contextualSpacing: false,
+          indent: {
+            left: convertMillimetersToTwip(7),
+          },
+          spacing: {
+            after: 100,
+          },
+        })
+
+        listContent.push(solution)
+      })
+
+      const feedbackParagraph = new Paragraph({
+        children: [
+          new TextRun({
+            text: this.matchingFeedback[groupId],
+          }),
+        ],
+      })
+
+      listContent.push(feedbackParagraph)
+
+      content = content.concat(listContent)
+    })
+
+    const multipleDropdownSolutionKeys = Object.keys(
+      this.multipleDropdownSolutions,
+    )
+
+    multipleDropdownSolutionKeys.forEach((groupId, i) => {
+      this.listInstance += 1
+      const groupSolutions = this.multipleDropdownSolutions[groupId]
+      const listContent = []
+
+      if (multipleDropdownSolutionKeys.length > 1) {
+        listContent.push(
+          new Paragraph({
+            children: [
+              new TextRun({
+                text: `Multiple Dropdown ${i + 1}`,
+                bold: true,
+              }),
+            ],
+          }),
+        )
+      }
+
+      groupSolutions.forEach(multipleDropdownSolution => {
+        const solution = new Paragraph({
+          children: [
+            new TextRun({
+              text: multipleDropdownSolution,
+            }),
+          ],
+          numbering: {
+            reference: this.listTypes.MULTIPLE_DROPDOWN_OPTION,
+            level: 0,
+            instance: this.listInstance,
+          },
+          contextualSpacing: false,
+          indent: {
+            left: convertMillimetersToTwip(7),
+          },
+          spacing: {
+            after: 100,
+          },
+        })
+
+        listContent.push(solution)
+      })
+
+      const feedbackParagraph = new Paragraph({
+        children: [
+          new TextRun({
+            text: this.multipleDropdownFeedback[groupId],
+          }),
+        ],
+      })
+
+      listContent.push(feedbackParagraph)
+
+      content = content.concat(listContent)
+    })
+
+    const essaySolutionKeys = Object.keys(this.essaySolutions)
+
+    essaySolutionKeys.forEach((groupId, i) => {
+      const feedback = this.essaySolutions[groupId]
+
+      const feedbackContent = this.contentParser(feedback)
+
+      content = content.concat(feedbackContent)
     })
 
     return content
@@ -1149,65 +1080,6 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     return content
   }
   // #endregion metadata
-
-  // #region question lists
-  /* eslint-disable-next-line class-methods-use-this */
-  questionListHandler = questionList => {
-    const numberedQuestions = []
-
-    for (let index = 0; index < questionList.content.length; index += 1) {
-      const question = cloneDeep(questionList.content[index])
-      question.index = index + 1
-      numberedQuestions.push(question)
-
-      this.questionReference.push({
-        multipleChoiceSolutions: {},
-        trueFalseSolutions: {},
-
-        fillTheGapSolutions: {},
-        fillTheGapFeedback: {},
-
-        matchingSolutions: {},
-        matchingFeedback: {},
-
-        multipleDropdownCounter: {},
-        multipleDropdownOptions: {},
-        multipleDropdownSolutions: {},
-        multipleDropdownFeedback: {},
-        essaySolutions: {},
-      })
-    }
-
-    const parsedList = this.contentParser(numberedQuestions)
-
-    return [...parsedList]
-  }
-
-  /* eslint-disable-next-line class-methods-use-this */
-  questionHandler = question => {
-    const { index } = question
-    this.questionCounter += 1
-
-    return [
-      new Paragraph({
-        children: [new TextRun({ text: `Question ${index}` })],
-        style: 'questionCounter',
-      }),
-      ...this.contentParser(question.content),
-      new Paragraph({
-        children: [],
-        border: {
-          bottom: {
-            color: 'auto',
-            space: 1,
-            style: BorderStyle.SINGLE,
-            size: 1,
-          },
-        },
-      }),
-    ]
-  }
-  // #endregion question lists
 
   buildDocx = () => {
     const sections = [

@@ -220,13 +220,12 @@ describe('Testing questions', () => {
     })
   })
 
-  it('editing the question', () => {
+  it('Editing the question', () => {
     cy.login(editorRole)
 
     cy.contains('.ant-tabs-tab', 'Editor Questions').click()
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
-      .should('be.visible')
       .contains('.ProseMirror', 'Question 1')
       .click()
     cy.contains('button[type="button"]', 'Edit Question').click()
@@ -259,50 +258,15 @@ describe('Testing questions', () => {
   })
 
   // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('duplicate question', () => {
-    cy.exec(
-      'docker exec hhmi_server_1 node ./scripts/seedQuestions.js create user -3 population published',
-    )
-    cy.login({ ...editorRole })
-    cy.get('a[href="/discover"]').click()
-    cy.wait('@GQLReq')
-
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(1)
-      .should('be.visible')
-      .get('input[type="checkbox"]', { timeout: 10000 })
-      .last()
-      .click()
-
-    cy.get('[data-testid="duplicate-question"]').click()
-    cy.contains(
-      'div[class="ant-modal-content"] button[type="button"]',
-      'Duplicate',
-    ).click()
-    cy.wait('@GQLReq')
-    cy.visit('/dashboard')
-    cy.wait('@GQLReq')
-    cy.contains('div[role="tab"]', 'Authored Questions').click()
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
-      .contains('p')
-      .should('contain', 'By 2040')
-    cy.contains('span[data-testid="question-status"]', 'Not Submitted')
-  })
-
-  // eslint-disable-next-line jest/no-disabled-tests
   it.skip('check alternative text for empty questions', () => {
     cy.login(contact)
     cy.get('[data-testid="create-question-btn"]').click()
     cy.wait('@GQLReq')
     cy.wait('@GQLReq')
     cy.visit('/dashboard', { method: 'GET' })
-    cy.wait('@GQLReq')
 
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
-      .should('be.visible')
       .contains('.ProseMirror', '(empty)')
       .click()
     cy.get('[id="file-upload"]').selectFile(
@@ -314,12 +278,9 @@ describe('Testing questions', () => {
     cy.wait(1000)
 
     cy.visit('/dashboard', { method: 'GET' })
-    cy.wait('@GQLReq')
 
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
-      .should('be.visible')
-
       .contains('.ProseMirror', 'image with no alt text')
       .click()
 
@@ -327,178 +288,5 @@ describe('Testing questions', () => {
     cy.get('[placeholder="Alt Text"]').type('alternative text')
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
-  })
-})
-
-describe('Testing lists', () => {
-  const { contact } = user
-
-  before(() => {
-    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
-      .its('stdout')
-      .should('contain', 'database cleared')
-    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
-      .its('stdout')
-      .should('contain', `Added global team "admin"`)
-      .should('contain', `Added global team "reviewer"`)
-      .should('contain', `Added global team "editor"`)
-
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmitted reviewer`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${contact.email}.`)
-      .should('contain', `user given reviewer role`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -10 biochemistry published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
-
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -20 population published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
-  })
-
-  beforeEach(() => {
-    cy.intercept('POST', graphqlEndpoint).as('GQLReq')
-    cy.viewport(laptop.preset)
-  })
-
-  it('creating a list and deleting a list', () => {
-    cy.login({ ...contact, visitUrl: '/lists' })
-
-    // [segment]: create a list
-    cy.get('[id="newList"]').type('list1')
-    cy.get('[data-testid="create-btn"]').click()
-    cy.get('.ant-table-row').eq(0).contains('.ant-table-cell', 'list1')
-
-    // [segment]: deleting a list
-  })
-
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('adding questions to new & existing list', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedList.js create new_list ${contact.username}`,
-    )
-      .its('stdout')
-      .should('contain', `created new_list with author as ${contact.username}`)
-
-    cy.login({ ...contact })
-    cy.get('a[href="/discover"]').click()
-    cy.wait('@GQLReq')
-
-    // [segment]: adding question to new lsit
-
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
-      .get('input[type="checkbox"]', { timeout: 10000 })
-      .first()
-      .click()
-    cy.get('button[data-testid="add-to-list-btn"]').click()
-    cy.get('input[id="newList"]').type('list2')
-    cy.get('button[data-testid="create-btn"]').click()
-    cy.contains('span', 'List created')
-
-    // [segment]: adding question to existing list
-
-    // making a random click to close the popup
-    cy.reload()
-    cy.wait('@GQLReq')
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(1)
-      .should('be.visible')
-      .get('input[type="checkbox"]', { timeout: 10000 })
-      .last()
-      .click()
-    cy.get('button[data-testid="add-to-list-btn"]').click()
-    cy.get('[data-testid="select-existing-list"]').click()
-    cy.contains('new_list').click()
-    cy.get('[data-testid="add-btn"]').click()
-
-    // [segment]: checking if the questions are displayed inside the list
-    cy.log('checking if the questions are displayed inside the list...')
-    // Existing list
-    cy.log('Existing list')
-    cy.visit('/lists', { method: 'GET' })
-    cy.wait('@GQLReq')
-
-    cy.contains('new_list').click()
-
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
-      .contains('p')
-      .should('contain', 'By 2040')
-    // New list
-    cy.log('new list')
-    cy.visit('/lists', { method: 'GET' })
-    cy.wait('@GQLReq')
-
-    cy.contains('list2').click()
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
-
-      .contains('p')
-      .should('contain', 'Energy: carbohydrates')
-  })
-
-  it('checking if export triggers download', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedList.js create list3 ${contact.username}`,
-    )
-      .its('stdout')
-      .should('contain', `created list3 with author as ${contact.username}`)
-    cy.login({ ...contact, visitUrl: '/dashboard' })
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
-      .contains('p')
-      .click()
-    cy.url().then(url => {
-      const qId = url.split('/')[4]
-      cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedList addToList list3 ${qId}`,
-      )
-        .its('stdout')
-        .should('contain', `added question with id - ${qId} to list list3`)
-    })
-    cy.visit('/lists')
-    cy.wait('@GQLReq')
-
-    cy.contains('list3').click()
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
-      .contains('p')
-      .should('contain', 'Energy: carbohydrates')
-  })
-
-  it('rename list', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedList.js create list4 ${contact.username}`,
-    )
-      .its('stdout')
-      .should('contain', `created list4 with author as ${contact.username}`)
-
-    cy.login({ ...contact, visitUrl: '/lists' })
-    cy.get('[aria-label="Rename list list4"]').click()
-    cy.get('div[id="list4-rename-popup"] input[name="renameList"]').type(
-      '{backspace}5',
-    )
-    cy.get(
-      'div[id="list4-rename-popup"] button[data-testid="rename-btn"]',
-    ).click()
-    cy.contains('a', 'list5')
   })
 })

@@ -194,7 +194,6 @@ extend type Query {
 
 extend type Mutation {
   createQuestion: Question!
-  duplicateQuestion(questionId: ID!): Question!
   rejectQuestion(questionId: ID!): Question!
   moveQuestionVersionToReview(questionVersionId: ID!): QuestionVersion!
   moveQuestionVersionToProduction(questionVersionId: ID!): QuestionVersion!

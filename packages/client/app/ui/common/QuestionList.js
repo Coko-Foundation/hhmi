@@ -50,10 +50,6 @@ const StyledList = styled(List)`
         border-bottom: 1px solid ${th('colorSecondary')};
       }
     }
-
-    .ant-checkbox {
-      align-self: auto;
-    }
   }
 `
 
@@ -79,7 +75,6 @@ const QuestionList = props => {
     onClickRow,
     draggable,
     onDragEnd,
-    selectedQuestions,
   } = props
 
   const itemSelection = showRowCheckboxes
@@ -117,7 +112,6 @@ const QuestionList = props => {
       pagination={pagination()}
       renderItem={item => <RenderItem item={item} onClickRow={onClickRow} />}
       searchPlaceholder="Search..."
-      selectedItems={selectedQuestions}
       showSearch={showSearch}
       showSort={showSort}
       showTotalCount={showTotalCount}
@@ -179,7 +173,6 @@ QuestionList.propTypes = {
   totalCount: PropTypes.number,
   draggable: PropTypes.bool,
   onDragEnd: PropTypes.func,
-  selectedQuestions: PropTypes.arrayOf(PropTypes.string),
 }
 
 QuestionList.defaultProps = {
@@ -202,7 +195,6 @@ QuestionList.defaultProps = {
   totalCount: 0,
   draggable: false,
   onDragEnd: () => {},
-  selectedQuestions: [],
 }
 
 export default QuestionList

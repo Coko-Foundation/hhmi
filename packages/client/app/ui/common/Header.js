@@ -372,7 +372,7 @@ const Header = props => {
       homepage,
       questions,
       dashboard,
-      lists,
+      // lists,
       about,
       learning,
       manageUsers,
@@ -498,15 +498,9 @@ const Header = props => {
                     <span>Dashboard</span>
                   </StyledLink>
                 </li>
-                <li>
-                  <StyledLink
-                    aria-current={currentPath === lists ? 'page' : false}
-                    onClick={() => setShowMenu(false)}
-                    to={lists}
-                  >
-                    <span>My Lists</span>
-                  </StyledLink>
-                </li>
+                {/* <li>
+                  <StyledLink to={lists}>My Lists</StyledLink>
+                </li> */}
               </>
             )}
           </StyledList>

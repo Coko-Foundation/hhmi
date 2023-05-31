@@ -13,7 +13,6 @@ import Search from './Search'
 import UISelect from './Select'
 import Pagination from './Pagination'
 import VisuallyHiddenElement from './VisuallyHiddenElement'
-import { Indicator } from './Spin'
 
 // #region styled
 const Wrapper = styled.div`
@@ -76,20 +75,6 @@ const ListItemWrapper = styled.li`
 const StyledList = styled(AntList)`
   flex-grow: 1;
   overflow: auto;
-
-  .ant-spin-nested-loading {
-    height: 100%;
-
-    .ant-spin {
-      display: grid;
-      max-height: unset;
-      place-content: center;
-    }
-  }
-`
-
-const StyledLoader = styled(Indicator)`
-  transform: translateY(-100%);
 `
 
 const FooterWrapper = styled.div`
@@ -210,7 +195,6 @@ const List = props => {
     totalCount,
     draggable,
     onDragEnd,
-    selectedItems: controlledSelectedItems,
     ...rest
   } = props
 
@@ -222,11 +206,12 @@ const List = props => {
       itemSelection.onChange(selectedItems)
   }, [selectedItems])
 
-  // Reset selected items to controlledSelectedItems when dataSource changes
-  // by default it will reset selection (controlledSelectedItems = [])
-  // to preserve it, keep track of selected items in the parent component, and pass it down via this prop
+  // Clears selection when new data comes in
+  // Necessary to clear the state after delete operations, otherwise the
+  // selection will now keep rows that no longer exist
+  // What we lose here is the ability to retain the selected rows if the data changes
   useEffect(() => {
-    setSelectedItems(controlledSelectedItems)
+    setSelectedItems([])
   }, [dataSource])
 
   const handleSelect = useFunction(id => {
@@ -384,11 +369,7 @@ const List = props => {
             <div {...provided.droppableProps} ref={provided.innerRef}>
               <AntList
                 dataSource={splitDataSource}
-                loading={
-                  loading
-                    ? { spinning: true, indicator: <StyledLoader /> }
-                    : { spinning: false, indicator: <StyledLoader /> }
-                }
+                loading={loading}
                 locale={locale}
                 renderItem={listItemToRender}
                 {...rest}
@@ -403,11 +384,7 @@ const List = props => {
   ) : (
     <StyledList
       dataSource={splitDataSource}
-      loading={
-        loading
-          ? { spinning: true, indicator: <StyledLoader /> }
-          : { spinning: false, indicator: <StyledLoader /> }
-      }
+      loading={loading}
       locale={locale}
       renderItem={listItemToRender}
       {...rest}
@@ -497,7 +474,6 @@ List.propTypes = {
   totalCount: PropTypes.number,
   onDragEnd: PropTypes.func,
   draggable: PropTypes.bool,
-  selectedItems: PropTypes.arrayOf(PropTypes.string),
 }
 
 List.defaultProps = {
@@ -516,7 +492,6 @@ List.defaultProps = {
   totalCount: null,
   onDragEnd: () => {},
   draggable: false,
-  selectedItems: [],
 }
 
 List.Item = AntList.Item

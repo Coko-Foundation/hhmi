@@ -50,7 +50,6 @@ describe('Question Workflows', () => {
     cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
     cy.viewport(laptop.preset)
   })
-
   it('Regular workflow', () => {
     const checkStage = (listItem, stage) => {
       const { operationBtn, prompt, success, QuestionStatus } =
@@ -58,7 +57,6 @@ describe('Question Workflows', () => {
 
       cy.get('[data-testid="list-item-wrapper"]')
         .eq(listItem)
-        .should('be.visible')
         .contains('p')
         .first()
         .click()
@@ -82,11 +80,9 @@ describe('Question Workflows', () => {
       cy.contains('[class="ant-modal-content"]', success.body)
       cy.contains('[class="ant-modal-body"] [type="button"]', 'Ok').click()
       cy.visit(dashboard, { method: 'GET' })
-      cy.wait('@GQLReq')
+
       cy.get('[data-testid="list-item-wrapper"]')
         .eq(listItem)
-        .should('be.visible')
-
         .contains('[data-testid="question-status"]', QuestionStatus)
     }
 
@@ -101,7 +97,6 @@ describe('Question Workflows', () => {
     cy.get('[class="ant-list-empty-text"]').should('exist')
 
     cy.contains('[class="ant-tabs-tab"]', 'Editor Questions').click()
-    cy.wait('@GQLReq')
     checkStage(1, 'reject')
     checkStage(0, 'review')
     checkStage(0, 'production')
@@ -110,8 +105,6 @@ describe('Question Workflows', () => {
     cy.log('checking question in production...')
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
-      .should('be.visible')
-
       .contains(
         'p',
         'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
@@ -120,7 +113,6 @@ describe('Question Workflows', () => {
 
     cy.get('[class="ProseMirror"]').first().type('Production edit')
     cy.visit(dashboard, { method: 'GET' })
-    cy.wait('@GQLReq')
 
     checkStage(0, 'publish')
 
@@ -132,8 +124,6 @@ describe('Question Workflows', () => {
 
     cy.get('[data-testid="list-item-wrapper"]')
       .eq(0)
-      .should('be.visible')
-
       .contains(
         'p',
         'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
@@ -159,7 +149,6 @@ describe('Question Workflows', () => {
     ).click()
     cy.wait('@GQLReq')
     cy.visit('/discover')
-    cy.wait('@GQLReq')
     cy.contains('[class="ProseMirror"]', 'Question 1')
   })
 })
