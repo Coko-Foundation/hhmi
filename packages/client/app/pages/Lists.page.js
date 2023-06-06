@@ -13,8 +13,8 @@ import {
 const PAGE_SIZE = 10
 
 const ListsPage = () => {
-  const [currentPage, setCurrentPage] = useState(1)
   const [searchQuery, setSearchQuery] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
 
   const [order, setOrder] = useState({
     orderBy: 'created',
