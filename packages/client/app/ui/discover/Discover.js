@@ -403,7 +403,7 @@ export const Discover = props => {
             Search results: questions list
           </VisuallyHiddenElement>
           <QuestionList
-            bulkAction={isUserLoggedIn && BulkAction}
+            bulkAction={(isUserLoggedIn && BulkAction) || null}
             currentPage={searchParams.page}
             key={listKey}
             loading={loading}
@@ -430,7 +430,7 @@ Discover.propTypes = {
   existingListsOptions: PropTypes.arrayOf(
     PropTypes.shape({ value: PropTypes.string, label: PropTypes.string }),
   ),
-  isUserLoggedIn: PropTypes.bool.isRequired,
+  isUserLoggedIn: PropTypes.bool,
   /** text for the sidebar */
   sidebarText: PropTypes.string,
   /** Loading search results. */
@@ -666,6 +666,7 @@ Discover.propTypes = {
 
 Discover.defaultProps = {
   existingListsOptions: [],
+  isUserLoggedIn: false,
   loading: false,
   loadingAddToList: false,
   loadingCreateList: false,

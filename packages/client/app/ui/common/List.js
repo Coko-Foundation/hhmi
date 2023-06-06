@@ -14,6 +14,7 @@ import UISelect from './Select'
 import Pagination from './Pagination'
 import VisuallyHiddenElement from './VisuallyHiddenElement'
 import { Indicator } from './Spin'
+import Empty from './Empty'
 
 // #region styled
 const Wrapper = styled.div`
@@ -376,6 +377,19 @@ const List = props => {
     value,
   }))
 
+  const mergedLocale = {
+    emptyText: !loading ? (
+      <Empty
+        description="No Data"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        role="status"
+      />
+    ) : (
+      <div role="status">Loading</div>
+    ),
+    ...locale,
+  }
+
   const ListToRender = draggable ? (
     <DragDropContext onDragEnd={onDragEnd}>
       <DroppableWrapper>
@@ -389,7 +403,7 @@ const List = props => {
                     ? { spinning: true, indicator: <StyledLoader /> }
                     : { spinning: false, indicator: <StyledLoader /> }
                 }
-                locale={locale}
+                locale={mergedLocale}
                 renderItem={listItemToRender}
                 {...rest}
                 pagination={false}
@@ -408,7 +422,7 @@ const List = props => {
           ? { spinning: true, indicator: <StyledLoader /> }
           : { spinning: false, indicator: <StyledLoader /> }
       }
-      locale={locale}
+      locale={mergedLocale}
       renderItem={listItemToRender}
       {...rest}
     />
