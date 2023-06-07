@@ -377,7 +377,7 @@ class WaxToDocxConverter {
   }
 
   imageHandler = image => {
-    const { id: dataId } = image.attrs
+    const { id: dataId, alt } = image.attrs
 
     if (!dataId || !this.imageData || !this.imageData[dataId]) {
       throw new Error('Missing image data')
@@ -396,6 +396,9 @@ class WaxToDocxConverter {
 
     return new ImageRun({
       data: fs.readFileSync(imagePath),
+      altText: {
+        title: alt,
+      },
       transformation: {
         width: scale > 1 ? width / scale : width,
         height: scale > 1 ? height / scale : height,
@@ -410,9 +413,7 @@ class WaxToDocxConverter {
     const { text } = caption.content[0]
 
     /* eslint-disable-next-line consistent-return */
-    return new Paragraph({
-      children: [new TextRun({ text })],
-    })
+    return new TextRun({ text: `Caption: ${text}` })
   }
   // #endregion images
 

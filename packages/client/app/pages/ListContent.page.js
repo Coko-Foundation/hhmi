@@ -21,7 +21,7 @@ const ListContentPage = () => {
   const [searchParams, setSearchParams] = useState({
     query: '',
     page: 1,
-    pageSize: PAGE_SIZE,
+    pageSize: 1000, // show all questions for 'custom' order, otherwise it would be PAGE_SIZE,
     orderBy: 'custom',
     ascending: false,
     key: 0,
@@ -44,9 +44,29 @@ const ListContentPage = () => {
       },
     },
     fetchPolicy: 'network-only',
+    onCompleted: ({ list: { title: listTitle } = {} }) => {
+      document.title = `${listTitle}, list page - Assessment Builder`
+      document.getElementById(
+        'page-announcement',
+      ).innerHTML = `${listTitle}, list page`
+    },
   })
 
   const [removeFromListMutation] = useMutation(REMOVE_FROM_LIST, {
+    onCompleted: ({ deleteFromList }) => {
+      const nrOfPages = Math.ceil(totalCount / searchParams.pageSize)
+      const usersInCurrentPage = questions.length
+
+      if (
+        searchParams.page === nrOfPages &&
+        usersInCurrentPage === deleteFromList.length
+      ) {
+        setSearchParams(currentQuery => ({
+          ...currentQuery,
+          page: searchParams.page - 1,
+        }))
+      }
+    },
     refetchQueries: [
       {
         query: GET_LIST,

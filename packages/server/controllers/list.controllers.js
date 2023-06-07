@@ -228,7 +228,7 @@ const exportQuestionsToWordFile = async (
     const findImages = async n => {
       if (!n) return
 
-      if (n.type === 'figure') {
+      if (n.type === 'figure' && n.content[0]?.attrs?.extraData) {
         const [image] = n.content
         const { fileId } = image.attrs.extraData
         const file = await File.findById(fileId)
@@ -361,7 +361,7 @@ const exportListToWordFile = async (
     const findImages = async n => {
       if (!n) return
 
-      if (n.type === 'figure') {
+      if (n.type === 'figure' && n.content[0]?.attrs?.extraData) {
         const [image] = n.content
         const { fileId } = image.attrs.extraData
         const file = await File.findById(fileId)

@@ -87,7 +87,7 @@ const ListContent = ({
   const [searchParams, setSearchParams] = useState({
     page: 1,
     orderBy: 'custom',
-    pageSize: questionsPerPage,
+    pageSize: 1000, // initially at 1000 for custom order
     query: '',
   })
 

@@ -64,6 +64,10 @@ const regexPaths = [
     name: 'Dashboard page',
   },
   {
+    path: /^\/lists$/,
+    name: 'Lists page',
+  },
+  {
     path: /^\/manage-users$/,
     name: 'User Manager page',
   },
