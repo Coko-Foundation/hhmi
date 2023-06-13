@@ -156,8 +156,8 @@ describe('Tests for user authentication', () => {
     })
   })
 
-/*
-  it('Team manager', () => {
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip('Team manager', () => {
     const addUserToRole = (role, username) => {
       cy.get(`[data-testid="select-${role}"]`).type(username)
       cy.contains('.ant-select-item-option-active', username).click()
@@ -184,7 +184,7 @@ describe('Tests for user authentication', () => {
 
     addUserToRole('editor', 'seconduser')
     addUserToRole('reviewer', 'firstuser')
-  })*/
+  })
   it('User with editor priveleges', () => {
     cy.login({
       email: 'seconduser@gmail.com',
@@ -345,5 +345,16 @@ describe('Tests for user authentication', () => {
     cy.contains('button[type="submit"]', 'Save').click({ force: true })
     cy.wait('@GQLReq')
     cy.contains('Profile updated successfully')
+  })
+  it('logout', () => {
+    cy.login(contact)
+    cy.logout()
+    cy.visit('/dashboard')
+    cy.location().should(location => {
+      // eslint-disable-next-line jest/valid-expect
+      expect(location.pathname).to.equal('/login')
+      // eslint-disable-next-line jest/valid-expect
+      expect(location.search).to.equal('?next=/dashboard')
+    })
   })
 })

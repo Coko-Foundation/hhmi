@@ -199,6 +199,53 @@ const StyledLink = styled(Link)`
   }
 `
 
+const StyledButton = styled(Button)`
+  background: none;
+  border: none;
+  color: ${th('colorTextReverse')};
+  display: inline-block;
+  font-size: inherit;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-x: hidden;
+  padding: 10px 0;
+  text-align: start;
+  transition: none;
+  width: 100%;
+
+  /* stylelint-disable-next-line no-descending-specificity */
+  span::after {
+    background-color: ${th('colorTertiary')};
+    content: '';
+    display: block;
+    height: 2px;
+    margin-top: 0;
+    transform: translateX(-101%);
+    transition: all 200ms ease-out;
+    width: 100%;
+  }
+
+  &:hover,
+  &:focus {
+    span {
+      color: ${th('colorTextReverse')};
+
+      &::after {
+        transform: translateX(0);
+      }
+    }
+  }
+
+  @media screen and (min-width: ${th('mediaQueries.large')}) {
+    line-height: 1.5;
+    padding: 0;
+
+    span::after {
+      background-color: ${th('colorTextReverse')};
+    }
+  }
+`
+
 const StyledLogin = styled(Link)`
   align-items: center;
   background-color: ${th('colorPrimary')};
@@ -605,17 +652,17 @@ const Header = props => {
                         </StyledLink>
                       </li>
                       <li role="none">
-                        <StyledLink
+                        <StyledButton
+                          data-testid="logout-btn"
                           onClick={() => {
                             setShowMenu(false)
                             setOpenUserMenu(false)
                             onLogout()
                           }}
                           role="menuitem"
-                          to="#"
                         >
-                          <span>Logout</span>
-                        </StyledLink>
+                          Logout
+                        </StyledButton>
                       </li>
                     </CollapsableMenu>
                   </UserMenuWrapper>
