@@ -258,8 +258,7 @@ describe('Testing questions', () => {
     cy.contains('[class="ant-modal-body"] [type="button"]', 'Ok').click()
   })
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('duplicate question', () => {
+  it('duplicate question', () => {
     cy.exec(
       'docker exec hhmi_server_1 node ./scripts/seedQuestions.js create user -3 population published',
     )
@@ -384,8 +383,7 @@ describe('Testing lists', () => {
     // [segment]: deleting a list
   })
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('adding questions to new & existing list', () => {
+  it('adding questions to new & existing list', () => {
     cy.exec(
       `docker exec hhmi_server_1 node ./scripts/seedList.js create new_list ${contact.username}`,
     )

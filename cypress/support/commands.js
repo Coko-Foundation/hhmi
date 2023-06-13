@@ -114,3 +114,8 @@ Cypress.Commands.add(
     cy.get('.ProseMirror').first().type('Question 1', { force: true })
   },
 )
+
+Cypress.Commands.add('logout', () => {
+  cy.get('[data-testid="usermenu-btn"]').click()
+  cy.get('[data-testid="logout-btn"]').click()
+})
