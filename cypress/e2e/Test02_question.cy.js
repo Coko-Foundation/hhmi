@@ -263,7 +263,7 @@ describe('Testing questions', () => {
       'docker exec hhmi_server_1 node ./scripts/seedQuestions.js create user -3 population published',
     )
     cy.login({ ...editorRole })
-    cy.get('a[href="/discover"]').click()
+    cy.contains('a[href="/discover"]', 'Browse Questions').click()
     cy.wait('@GQLReq')
 
     cy.get('[data-testid="list-item-wrapper"]')
@@ -391,7 +391,7 @@ describe('Testing lists', () => {
       .should('contain', `created new_list with author as ${contact.username}`)
 
     cy.login({ ...contact })
-    cy.get('a[href="/discover"]').click()
+    cy.contains('a[href="/discover"]', 'Browse Questions').click()
     cy.wait('@GQLReq')
 
     // [segment]: adding question to new lsit

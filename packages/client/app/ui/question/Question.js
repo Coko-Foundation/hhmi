@@ -1085,11 +1085,20 @@ const Question = props => {
       )}
       {isUnderReview && (
         <>
-          <StyledButton onClick={handleReject} status="danger" type="primary">
+          <StyledButton
+            id="doNotAccept"
+            onClick={handleReject}
+            status="danger"
+            type="primary"
+          >
             Do not accept
           </StyledButton>
 
-          <StyledButton onClick={handleMoveToProduction} type="primary">
+          <StyledButton
+            id="moveToProduction"
+            onClick={handleMoveToProduction}
+            type="primary"
+          >
             Move to production
           </StyledButton>
         </>
@@ -1105,10 +1114,19 @@ const Question = props => {
       )}
       {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
         <>
-          <StyledButton onClick={handleReject} status="danger" type="primary">
+          <StyledButton
+            id="doNotAccept"
+            onClick={handleReject}
+            status="danger"
+            type="primary"
+          >
             Do not accept
           </StyledButton>
-          <StyledButton onClick={handleMoveToReview} type="primary">
+          <StyledButton
+            id="moveToReview"
+            onClick={handleMoveToReview}
+            type="primary"
+          >
             Move to Review
           </StyledButton>
         </>
@@ -1147,11 +1165,20 @@ const Question = props => {
         )}
         {isUnderReview && (
           <>
-            <StyledButton onClick={handleReject} status="danger" type="primary">
+            <StyledButton
+              id="doNotAccept"
+              onClick={handleReject}
+              status="danger"
+              type="primary"
+            >
               Do not accept
             </StyledButton>
 
-            <StyledButton onClick={handleMoveToProduction} type="primary">
+            <StyledButton
+              id="moveToProduction"
+              onClick={handleMoveToProduction}
+              type="primary"
+            >
               Move to production
             </StyledButton>
           </>
@@ -1167,11 +1194,20 @@ const Question = props => {
         )}
         {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
           <>
-            <StyledButton onClick={handleReject} status="danger" type="primary">
+            <StyledButton
+              id="doNotAccept"
+              onClick={handleReject}
+              status="danger"
+              type="primary"
+            >
               Do not accept
             </StyledButton>
 
-            <StyledButton onClick={handleMoveToReview} type="primary">
+            <StyledButton
+              id="moveToReview"
+              onClick={handleMoveToReview}
+              type="primary"
+            >
               Move to Review
             </StyledButton>
           </>

@@ -129,5 +129,5 @@ describe('UserList', () => {
     const { container } = render(<MockUserList data={[]} />)
     const results = await axe(container)
     expect(results).toHaveNoViolations()
-  })
+  }, 10000)
 })

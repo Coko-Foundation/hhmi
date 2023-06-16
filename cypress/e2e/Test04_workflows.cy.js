@@ -62,12 +62,13 @@ describe('Question Workflows', () => {
         .contains('p')
         .first()
         .click()
-      cy.contains('[type="button"]', 'Export to Word')
+      cy.wait('@GQLReq')
+      cy.contains('[id="exportToWord"]', 'Export to Word')
 
       if (stage === 'publish') {
-        cy.contains('[type="button"]', 'Do not accept').should('not.exist')
+        cy.get('[id="doNotAccept"]').should('not.exist')
       } else {
-        cy.contains('[type="button"]', 'Do not accept')
+        cy.get('[id="doNotAccept"]').should('be.visible').should('exist')
       }
 
       cy.contains('[type="button"]', operationBtn).click()

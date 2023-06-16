@@ -44,6 +44,7 @@ describe('Testing apps responsiveness', () => {
 
     it('navigation bar', () => {
       cy.login(editorRole)
+      cy.wait('@GQLReq')
       cy.get('[href="/discover"]').should('not.be.visible')
       cy.get('[href="/dashboard"]').should('not.be.visible')
       cy.get('[href="/about"]').should('not.be.visible')
@@ -58,11 +59,12 @@ describe('Testing apps responsiveness', () => {
 
     it('question page', () => {
       cy.login(editorRole)
+      cy.wait('@GQLReq')
       cy.get('[data-testid="create-question-btn"]').click({ force: true })
       cy.get('[data-testid="editor-collapse"]').should('exist')
       cy.get('[data-testid="metadata-collapse"]').should('exist')
 
-      // [info]: making sure upload icon button is displayed instead of normal button
+      // [segment]: making sure upload icon button is displayed instead of normal button
       cy.log(
         'making sure upload icon button is displayed instead of normal button...',
       )
@@ -77,23 +79,27 @@ describe('Testing apps responsiveness', () => {
       cy.contains(
         'By 2040, the world s population is expected to rise to approximately 20 billion 10 billion 7 billion 9 billion',
       ).click()
+
+      cy.wait('@GQLReq')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(4000)
       cy.get('[aria-label="More actions"]').click()
 
       // [segment]: checking popup content in submission stage
       cy.log('checking popup content in submission stage...')
 
       cy.contains(
-        '[data-testid="editor-actions-popup"] [type="button"]',
+        '[data-testid="editor-actions-popup"] [id="exportToWord"]',
         'Export to Word',
       ).should('be.visible')
 
       cy.contains(
-        '[data-testid="editor-actions-popup"] [type="button"]',
+        '[data-testid="editor-actions-popup"] [id="doNotAccept"]',
         'Do not accept',
       ).should('be.visible')
 
       cy.contains(
-        '[data-testid="editor-actions-popup"] [type="button"]',
+        '[data-testid="editor-actions-popup"] [id="moveToReview"]',
         'Move to Review',
       ).click()
       cy.contains(
@@ -102,21 +108,22 @@ describe('Testing apps responsiveness', () => {
       ).click()
 
       cy.contains('[class="ant-modal-content"] [type="button"]', 'Ok').click()
+      cy.wait('@GQLReq')
 
       // [segment]: checking popup content in review stage
       cy.log('checking popup content in review stage...')
 
-      cy.get('[aria-label="More actions"]').click()
+      cy.get('[aria-label="More actions"]', { timeout: 8000 }).click()
       cy.contains(
-        '[data-testid="editor-actions-popup"] [type="button"]',
+        '[data-testid="editor-actions-popup"] [id="exportToWord"]',
         'Export to Word',
       )
       cy.contains(
-        '[data-testid="editor-actions-popup"] [type="button"]',
+        '[data-testid="editor-actions-popup"] [id="doNotAccept"]',
         'Do not accept',
       )
       cy.contains(
-        '[data-testid="editor-actions-popup"] [type="button"]',
+        '[data-testid="editor-actions-popup"] [id="moveToProduction"]',
         'Move to production',
       ).click()
       cy.contains(
@@ -124,11 +131,12 @@ describe('Testing apps responsiveness', () => {
         'Move to production',
       ).click()
       cy.contains('[class="ant-modal-content"] [type="button"]', 'Ok').click()
+      cy.wait('@GQLReq')
 
       // [segment]: checking popup content in production stage
       cy.log('checking popup content in production stage...')
 
-      cy.get('[aria-label="More actions"]').click()
+      cy.get('[aria-label="More actions"]', { timeout: 8000 }).click()
       cy.contains(
         '[data-testid="editor-actions-popup"] [type="button"]',
         'Export to Word',
@@ -157,10 +165,9 @@ describe('Testing apps responsiveness', () => {
       cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     })
 
-    /* eslint-disable-next-line jest/no-disabled-tests */
     it('navigation bar', () => {
       cy.login(editorRole)
-
+      cy.wait('@GQLReq')
       cy.get('[data-testid="nav-toggle"]').should('not.be.visible')
       cy.get('[href="/discover"]').should('be.visible')
       cy.get('[href="/dashboard"]').should('be.visible')
@@ -168,10 +175,9 @@ describe('Testing apps responsiveness', () => {
       cy.get('[href="/learning"]').should('be.visible')
     })
 
-    /* eslint-disable-next-line jest/no-disabled-tests */
     it('question page', () => {
       cy.login(editorRole)
-
+      cy.wait('@GQLReq')
       cy.get('[data-testid="create-question-btn"]').click({ force: true })
       cy.get('[data-testid="editor-collapse"]').should('not.exist')
       cy.get('[data-testid="metadata-collapse"]').should('not.exist')

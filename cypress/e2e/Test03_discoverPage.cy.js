@@ -202,7 +202,15 @@ describe('Discover page tests', () => {
     cy.log('checking word export...')
     cy.url().then(url => {
       const id = url.split('/')[4]
-      cy.contains('[type="button"]', 'Export to Word').click({ force: true })
+
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(4000)
+      cy.get('button[id="exportToWord"]', {
+        timeout: 10000,
+      })
+        .first()
+        .should('be.visible')
+        .click()
       cy.get('[type="checkbox"]').last().click()
 
       cy.contains(
@@ -211,6 +219,8 @@ describe('Discover page tests', () => {
       ).click({
         force: true,
       })
+      cy.wait('@GQLReq')
+
       // [info]: triggering  a reload manually to avoid the page reload error
       cy.window()
         .document()

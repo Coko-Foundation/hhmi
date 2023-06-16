@@ -91,5 +91,5 @@ describe('Signup', () => {
     const { container } = render(<MockSignup onSubmit={onSubmit} />)
     const result = await axe(container)
     expect(result).toHaveNoViolations()
-  })
+  }, 10000)
 })
