@@ -188,6 +188,7 @@ function useFunction(callback) {
 
 const List = props => {
   const {
+    autoFocusSearch,
     footerContent,
     className,
     // disable prop types for props that exist on the ant component anyway
@@ -434,6 +435,7 @@ const List = props => {
         <SearchWrapper>
           <Search
             aria-label="Enter text to search in list"
+            autoFocus={autoFocusSearch}
             loading={searchLoading}
             onSearch={onSearch}
             placeholder={searchPlaceholder}
@@ -488,6 +490,7 @@ const List = props => {
 }
 
 List.propTypes = {
+  autoFocusSearch: PropTypes.bool,
   footerContent: PropTypes.element,
   itemSelection: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
@@ -515,6 +518,7 @@ List.propTypes = {
 }
 
 List.defaultProps = {
+  autoFocusSearch: false,
   footerContent: null,
   itemSelection: null,
   loading: false,
