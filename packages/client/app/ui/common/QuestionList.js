@@ -59,6 +59,7 @@ const StyledList = styled(List)`
 
 const QuestionList = props => {
   const {
+    autoFocusSearch,
     bulkAction,
     currentPage,
     className,
@@ -104,6 +105,7 @@ const QuestionList = props => {
 
   return (
     <StyledList
+      autoFocusSearch={autoFocusSearch}
       className={className}
       dataSource={questions}
       draggable={draggable}
@@ -128,6 +130,7 @@ const QuestionList = props => {
 }
 
 QuestionList.propTypes = {
+  autoFocusSearch: PropTypes.bool,
   bulkAction: PropTypes.element,
   loading: PropTypes.bool,
   locale: PropTypes.shape(),
@@ -183,6 +186,7 @@ QuestionList.propTypes = {
 }
 
 QuestionList.defaultProps = {
+  autoFocusSearch: false,
   bulkAction: null,
   loading: false,
   locale: {},
