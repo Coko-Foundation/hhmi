@@ -10549,7 +10549,14 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-lib0@^0.2.31, lib0@^0.2.42, lib0@^0.2.52, lib0@^0.2.72:
+lib0@^0.2.28, lib0@^0.2.49:
+  version "0.2.78"
+  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.78.tgz#9aa34733075caafb3edf228da6e609d15ada0088"
+  integrity sha512-SV2nU43/6eaYnGH3l0lg2wg1ziB/TH3sAd2E8quXPGwrqo+aX98SNT2ZKucpUr5B8A52jD7ZMjAl+r87Fa/bLQ==
+  dependencies:
+    isomorphic.js "^0.2.4"
+
+lib0@^0.2.31, lib0@^0.2.42, lib0@^0.2.52:
   version "0.2.73"
   resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.73.tgz#af7d7ce9ad523fa3e241d437cc3ab1862f9a1f29"
   integrity sha512-aJJIElCLWnHMcYZPtsM07QoSfHwpxCy4VUzBYGXFYEmh/h2QS5uZNbCCfL0CqnkOE30b7Tp9DVfjXag+3qzZjQ==
@@ -12257,7 +12264,7 @@ prosemirror-state@1.4.2, prosemirror-state@^1.0.0, prosemirror-state@^1.2.2, pro
     prosemirror-transform "^1.0.0"
     prosemirror-view "^1.27.0"
 
-prosemirror-tables@^1.3.2:
+prosemirror-tables@1.3.2, prosemirror-tables@^1.3.2:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/prosemirror-tables/-/prosemirror-tables-1.3.2.tgz#ca208c6a55d510af14b652d23e800e00ba6bebd4"
   integrity sha512-/9JTeN6s58Zq66HXaxP6uf8PAmc7XXKZFPlOGVtLvxEd6xBP6WtzaJB9wBjiGUzwbdhdMEy7V62yuHqk/3VrnQ==
@@ -15006,7 +15013,7 @@ typedarray-to-buffer@^3.1.5:
   dependencies:
     is-typedarray "^1.0.0"
 
-typescript@^4.4.3:
+typescript@^4.4.3, typescript@^4.8.4:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
@@ -15394,10 +15401,10 @@ watchpack@^2.2.0, watchpack@^2.4.0:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
 
-wax-prosemirror-core@^0.8.5:
-  version "0.8.5"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-core/-/wax-prosemirror-core-0.8.5.tgz#56c01f0d37f448e28514207ad39731432420aebd"
-  integrity sha512-hsXdFULh82i/HvpvHIaGQ4AijSpwagG0aJh3hTYnj/113CgU6DyE8F9H4NhVseOwH3OAPP4irlnVu8016NU2mQ==
+wax-prosemirror-core@^0.8.6:
+  version "0.8.6"
+  resolved "https://registry.yarnpkg.com/wax-prosemirror-core/-/wax-prosemirror-core-0.8.6.tgz#1bc45328ef3954cfdd4d2fed42b41b7def043c2c"
+  integrity sha512-f5Kz5OznCy/w69BkOoNdn5s0X+60dRN7657CSveWnysdDXjvLlSUkvCbp4pa0iNNc93CMCDN3k4UOFUH4QSljw==
   dependencies:
     "@pubsweet/ui-toolkit" "^2.3.1"
     deepmerge "^4.2.2"
@@ -15420,10 +15427,10 @@ wax-prosemirror-core@^0.8.5:
     reflect-metadata "^0.1.13"
     uuid "^7.0.3"
 
-wax-prosemirror-services@^0.8.5:
-  version "0.8.5"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-services/-/wax-prosemirror-services-0.8.5.tgz#7071ce0c7a77e2c35ad58b5dc1075990dca26364"
-  integrity sha512-WBpPqcSNdiW5H8eLcln0zLdpXQ/q8o1Oh8hgFKzUCrqEKaD6hIkLojvDjiDbHOIwCutAf9t/AHNPYXwZ4AufBQ==
+wax-prosemirror-services@^0.8.6:
+  version "0.8.6"
+  resolved "https://registry.yarnpkg.com/wax-prosemirror-services/-/wax-prosemirror-services-0.8.6.tgz#daa04f308734c0d58c59cb5ef31c3813d0990dfb"
+  integrity sha512-Ctcn/+UzJYtPnUIDmFmI9br4JfbP/y95SUzbbUTcvXLaiHzhxx7PrcpfyOzDV8sfaN1C/2cLeER3yq8nWRvMgQ==
   dependencies:
     "@pubsweet/ui-toolkit" "^2.3.1"
     highlight.js "^10.1.1"
@@ -15440,7 +15447,7 @@ wax-prosemirror-services@^0.8.5:
     prosemirror-model "1.19.0"
     prosemirror-schema-list "1.3.0"
     prosemirror-state "1.4.2"
-    prosemirror-tables "^1.3.2"
+    prosemirror-tables "1.3.2"
     prosemirror-transform "1.7.1"
     prosemirror-view "1.30.2"
     rc-switch "^3.2.2"
@@ -15448,12 +15455,12 @@ wax-prosemirror-services@^0.8.5:
     use-deep-compare-effect "^1.3.1"
     use-dynamic-refs "^1.0.0"
     uuid "^7.0.3"
-    wax-prosemirror-core "^0.8.5"
-    y-prosemirror "^1.2.0"
-    y-protocols "^1.0.1"
-    y-webrtc "^10.2.0"
-    y-websocket "^1.4.5"
-    yjs "^13.5.38"
+    wax-prosemirror-core "^0.8.6"
+    y-prosemirror "1.2.0"
+    y-protocols "1.0.1"
+    y-webrtc "10.2.0"
+    y-websocket "1.4.5"
+    yjs "13.5.38"
 
 wbuf@^1.1.0, wbuf@^1.7.3:
   version "1.7.3"
@@ -15841,24 +15848,32 @@ y-leveldb@^0.1.0:
     level "^6.0.1"
     lib0 "^0.2.31"
 
-y-prosemirror@^1.2.0:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.2.1.tgz#a8b5c50b8fd445e556dfa831f295765f4ca022bd"
-  integrity sha512-czMBfB1eL2awqmOSxQM8cS/fsUOGE6fjvyPLInrh4crPxFiw67wDpwIW+EGBYKRa04sYbS0ScGj7ZgvWuDrmBQ==
+y-prosemirror@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/y-prosemirror/-/y-prosemirror-1.2.0.tgz#84771bd350834bc7759e946cd14c62ec26243a5c"
+  integrity sha512-t3uxuX4HIkb1GNt8jV+dplRbNH2OmQD/BNeCCbjLD3Mq0o6JEXxHedv58ZIPFDE6ma24jljlL+u8pGvN6B37XQ==
   dependencies:
     lib0 "^0.2.42"
+    typescript "^4.8.4"
 
-y-protocols@^1.0.1, y-protocols@^1.0.5:
+y-protocols@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/y-protocols/-/y-protocols-1.0.1.tgz#7855c900039a02b369590b8ae78bc6e1cbc13c9f"
+  integrity sha512-QP3fCM7c2gGfUi2nqf8gspyO4VW23zv3kNqPNdD3wNxMbuNQenMyoDVZYEo12jzR4RQ3aaDfPK62Sf31SVOmfg==
+  dependencies:
+    lib0 "^0.2.28"
+
+y-protocols@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/y-protocols/-/y-protocols-1.0.5.tgz#91d574250060b29fcac8f8eb5e276fbad594245e"
   integrity sha512-Wil92b7cGk712lRHDqS4T90IczF6RkcvCwAD0A2OPg+adKmOe+nOiT/N2hvpQIWS3zfjmtL4CPaH5sIW1Hkm/A==
   dependencies:
     lib0 "^0.2.42"
 
-y-webrtc@^10.2.0:
-  version "10.2.5"
-  resolved "https://registry.yarnpkg.com/y-webrtc/-/y-webrtc-10.2.5.tgz#ceb2f5d9bf9047ed56c290106b989ad95ed0ea18"
-  integrity sha512-ZyBNvTI5L28sQ2PQI0T/JvyWgvuTq05L21vGkIlcvNLNSJqAaLCBJRe3FHEqXoaogqWmRcEAKGfII4ErNXMnNw==
+y-webrtc@10.2.0:
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/y-webrtc/-/y-webrtc-10.2.0.tgz#dae1460a9f3ae677c072fedff783864452fac1be"
+  integrity sha512-YhHXJx46zc8En8Jpy5FUpAksAAndTV0dXbEKxJw/Zb8+Y6xVGaeB4+x44k0xo5i+SgZ00OjlXAQXgkJQesLc4Q==
   dependencies:
     lib0 "^0.2.42"
     simple-peer "^9.11.0"
@@ -15866,10 +15881,10 @@ y-webrtc@^10.2.0:
   optionalDependencies:
     ws "^7.2.0"
 
-y-websocket@^1.4.5:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/y-websocket/-/y-websocket-1.5.0.tgz#3c13ed205f1553185e1d144eac94150b5b5d55d6"
-  integrity sha512-A8AO6XtnQlYwWFytWdkDCeXg4l8ghRTIw5h2YUgUYDmEC9ugWGIwYNW80yadhSFAF7CvuWTEkQNEpevnH6EiZw==
+y-websocket@1.4.5:
+  version "1.4.5"
+  resolved "https://registry.yarnpkg.com/y-websocket/-/y-websocket-1.4.5.tgz#8da81b466997bcc4660059f542d0a6ce62581478"
+  integrity sha512-5d9LTSy0GQKqSd/FKRo5DMBlsiTlCipbKcIgPLlno+5xHtfT8bm3uQdcbY9JvLfckojilLZWauXJu0vzDZX05w==
   dependencies:
     lib0 "^0.2.52"
     lodash.debounce "^4.0.8"
@@ -15934,12 +15949,12 @@ yargs@^17.0.0, yargs@^17.3.1:
     y18n "^5.0.5"
     yargs-parser "^21.1.1"
 
-yjs@^13.5.38:
-  version "13.5.52"
-  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.5.52.tgz#aec0535e16d45ed4defd6489fffae2b17e30fdb3"
-  integrity sha512-wTajR70VeI6uztpUk4kMcXYHSRzuUlNyJPdBG9NII0EcFf27DwGduZEm3XbP7VSzlGx5n6uenBhOPX+YuPH/tA==
+yjs@13.5.38:
+  version "13.5.38"
+  resolved "https://registry.yarnpkg.com/yjs/-/yjs-13.5.38.tgz#58dc8d679c69bddaf7c62e74c909ca08a8e592c9"
+  integrity sha512-YCHj6DkgxhIRqdxqTI+htGAhvfmgkS974pz+/OOiuLOj0EgGfUKvtp4yYyQGg1Wf3m4oLet9x7gEvCrxaGiVZQ==
   dependencies:
-    lib0 "^0.2.72"
+    lib0 "^0.2.49"
 
 yn@3.1.1:
   version "3.1.1"
