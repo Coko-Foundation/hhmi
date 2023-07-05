@@ -41,7 +41,7 @@ const Login = props => {
             ]}
           >
             <Input
-              autoComplete="on"
+              autoComplete="email"
               placeholder="Please enter your email"
               type="email"
             />
@@ -53,7 +53,7 @@ const Login = props => {
             rules={[{ required: true, message: 'Password is required' }]}
           >
             <Input
-              autoComplete="on"
+              autoComplete="current-password"
               placeholder="Please enter your password"
               type="password"
             />

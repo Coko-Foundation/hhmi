@@ -64,7 +64,7 @@ exports[`Login matches snapshot 1`] = `
                     >
                       <input
                         aria-required="true"
-                        autoComplete="on"
+                        autoComplete="email"
                         className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
                         disabled={false}
                         id="email"
@@ -122,7 +122,7 @@ exports[`Login matches snapshot 1`] = `
                       >
                         <input
                           aria-required="true"
-                          autoComplete="on"
+                          autoComplete="current-password"
                           className="ant-input css-dev-only-do-not-override-1vtf12y"
                           disabled={false}
                           hidden={null}

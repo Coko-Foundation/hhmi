@@ -129,7 +129,10 @@ const Signup = props => {
               name="firstName"
               rules={[{ required: true, message: 'First name is required' }]}
             >
-              <Input placeholder="Fill in your first name" />
+              <Input
+                autoComplete="given-name"
+                placeholder="Fill in your first name"
+              />
             </Form.Item>
 
             <Form.Item
@@ -137,7 +140,10 @@ const Signup = props => {
               name="lastName"
               rules={[{ required: true, message: 'Last name is required' }]}
             >
-              <Input placeholder="Fill in your last name" />
+              <Input
+                autoComplete="family-name"
+                placeholder="Fill in your last name"
+              />
             </Form.Item>
 
             <Form.Item
@@ -154,7 +160,11 @@ const Signup = props => {
                 },
               ]}
             >
-              <Input placeholder="Fill in your email" type="email" />
+              <Input
+                autoComplete="email"
+                placeholder="Fill in your email"
+                type="email"
+              />
             </Form.Item>
 
             <Form.Item
@@ -162,7 +172,11 @@ const Signup = props => {
               name="password"
               rules={[{ required: true, message: 'Password is required' }]}
             >
-              <Input placeholder="Fill in your password" type="password" />
+              <Input
+                autoComplete="new-password"
+                placeholder="Fill in your password"
+                type="password"
+              />
             </Form.Item>
 
             <Form.Item
@@ -190,6 +204,7 @@ const Signup = props => {
               ]}
             >
               <Input
+                autoComplete="new-password"
                 placeholder="Fill in your password again"
                 type="password"
               />

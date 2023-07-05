@@ -96,7 +96,10 @@ const ProfileInfo = props => {
                   },
                 ]}
               >
-                <Input autoComplete="on" placeholder="Fill in your last name" />
+                <Input
+                  autoComplete="family-name"
+                  placeholder="Fill in your last name"
+                />
               </Form.Item>
             </Col>
 
@@ -112,7 +115,7 @@ const ProfileInfo = props => {
                 ]}
               >
                 <Input
-                  autoComplete="on"
+                  autoComplete="given-name"
                   placeholder="Fill in your first name"
                 />
               </Form.Item>
@@ -122,7 +125,10 @@ const ProfileInfo = props => {
               {/* QUESTION is this useful information? */}
               {/* QUESTION should this be required? */}
               <Form.Item label="Pronouns" name="pronouns">
-                <Input placeholder="Fill in your preferred pronouns" />
+                <Input
+                  autoComplete="sex"
+                  placeholder="Fill in your preferred pronouns"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -161,7 +167,7 @@ const ProfileInfo = props => {
                 ]}
               >
                 <Input
-                  autoComplete="on"
+                  autoComplete="tel"
                   placeholder="Fill in your phone number"
                 />
               </Form.Item>
@@ -185,7 +191,7 @@ const ProfileInfo = props => {
                 ]}
               >
                 <Input
-                  autoComplete="on"
+                  autoComplete="email"
                   placeholder="Fill in your email address"
                 />
               </Form.Item>
@@ -208,6 +214,7 @@ const ProfileInfo = props => {
                 ]}
               >
                 <Select
+                  autoComplete="country-name"
                   data-testid="select-country"
                   filterOption={(inputValue, option) => {
                     return (
@@ -240,6 +247,7 @@ const ProfileInfo = props => {
                   ]}
                 >
                   <Select
+                    autoComplete="address-level1"
                     data-testid="state-select"
                     filterOption={(inputValue, option) => {
                       return (
@@ -272,7 +280,9 @@ const ProfileInfo = props => {
                 ]}
               >
                 <Input
-                  autoComplete="on"
+                  autoComplete={
+                    showStates ? 'address-level2' : 'address-level1'
+                  }
                   placeholder="Enter the City where your Institution is located"
                 />
               </Form.Item>
@@ -280,7 +290,10 @@ const ProfileInfo = props => {
 
             <Col sm={12} xs={24}>
               <Form.Item label="Address" name="address">
-                <Input autoComplete="on" placeholder="Type your address" />
+                <Input
+                  autoComplete="street-address"
+                  placeholder="Type your address"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -288,7 +301,10 @@ const ProfileInfo = props => {
           <Row>
             <Col sm={12} xs={24}>
               <Form.Item label="ZIP code" name="zipCode">
-                <Input autoComplete="on" placeholder="Enter your ZIP code" />
+                <Input
+                  autoComplete="postal-code"
+                  placeholder="Enter your ZIP code"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -324,7 +340,7 @@ const ProfileInfo = props => {
                 ]}
               >
                 <Input
-                  autoComplete="on"
+                  autoComplete="organization"
                   placeholder="Type your Institution/Organization"
                 />
               </Form.Item>

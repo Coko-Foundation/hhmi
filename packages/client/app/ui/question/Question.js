@@ -178,7 +178,9 @@ const MetadataWrapper = styled.section`
   border-left: 1px solid ${th('colorBorder')};
   height: 100%;
   min-width: 0;
+  overflow-x: hidden;
   overflow-y: auto;
+  position: relative;
 `
 
 const ActionsWrapper = styled.div`
@@ -241,6 +243,22 @@ const ViewAsLabel = styled.label`
 
 const StyledSelect = styled(Select)`
   margin: 0 ${grid(2)};
+`
+
+const SkipToTop = styled.a`
+  background-color: ${th('colorTextDark')};
+  border-radius: ${grid(1)} 0 0 ${grid(1)};
+  color: ${th('colorTextReverse')};
+  height: 30px;
+  padding: ${grid(1)} ${grid(2)};
+  position: absolute;
+  right: -200px;
+  width: auto;
+  z-index: 3;
+
+  &:focus {
+    right: 0;
+  }
 `
 
 const WaxWrapper = props => {
@@ -1239,7 +1257,7 @@ const Question = props => {
   )
 
   const RightArea = (
-    <RightAreaWrapper>
+    <RightAreaWrapper id="question-actions" tabIndex="-1">
       {readOnly ? null : (
         <AutoSaving
           autoSaving={autoSaving}
@@ -1325,6 +1343,14 @@ const Question = props => {
     [agreedTc],
   )
 
+  const skipButtonText = () => {
+    if (!isSubmitted) {
+      return 'Jump to submit'
+    }
+
+    return 'Jump to action buttons'
+  }
+
   return (
     <ModalContext.Provider value={contextValue}>
       <Wrapper>
@@ -1368,6 +1394,17 @@ const Question = props => {
                             readOnly={readOnly}
                             resources={resources}
                           />
+                          <SkipToTop
+                            href="#question-actions"
+                            onClick={e => {
+                              e.preventDefault()
+                              document
+                                .getElementById('question-actions')
+                                .focus()
+                            }}
+                          >
+                            {skipButtonText()}
+                          </SkipToTop>
                         </MetadataWrapper>
                       }
                       showMetadata={showMetadata}

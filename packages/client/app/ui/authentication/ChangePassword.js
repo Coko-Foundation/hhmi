@@ -52,7 +52,11 @@ const ChangePassword = props => {
                   },
                 ]}
               >
-                <Input data-testid="currentPassword" type="password" />
+                <Input
+                  autoComplete="current-password"
+                  data-testid="currentPassword"
+                  type="password"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -86,7 +90,11 @@ const ChangePassword = props => {
                   }),
                 ]}
               >
-                <Input data-testid="newPassword" type="password" />
+                <Input
+                  autoComplete="new-password"
+                  data-testid="newPassword"
+                  type="password"
+                />
               </Form.Item>
             </Col>
 
@@ -115,7 +123,11 @@ const ChangePassword = props => {
                   }),
                 ]}
               >
-                <Input data-testid="newPasswordConfirmation" type="password" />
+                <Input
+                  autoComplete="new-password"
+                  data-testid="newPasswordConfirmation"
+                  type="password"
+                />
               </Form.Item>
             </Col>
           </Row>

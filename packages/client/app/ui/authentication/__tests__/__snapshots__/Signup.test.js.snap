@@ -64,6 +64,7 @@ exports[`Signup matches snapshot 1`] = `
                     >
                       <input
                         aria-required="true"
+                        autoComplete="given-name"
                         className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
                         disabled={false}
                         id="firstName"
@@ -117,6 +118,7 @@ exports[`Signup matches snapshot 1`] = `
                     >
                       <input
                         aria-required="true"
+                        autoComplete="family-name"
                         className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
                         disabled={false}
                         id="lastName"
@@ -170,6 +172,7 @@ exports[`Signup matches snapshot 1`] = `
                     >
                       <input
                         aria-required="true"
+                        autoComplete="email"
                         className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
                         disabled={false}
                         id="email"
@@ -227,6 +230,7 @@ exports[`Signup matches snapshot 1`] = `
                       >
                         <input
                           aria-required="true"
+                          autoComplete="new-password"
                           className="ant-input css-dev-only-do-not-override-1vtf12y"
                           disabled={false}
                           hidden={null}
@@ -322,6 +326,7 @@ exports[`Signup matches snapshot 1`] = `
                       >
                         <input
                           aria-required="true"
+                          autoComplete="new-password"
                           className="ant-input css-dev-only-do-not-override-1vtf12y"
                           disabled={false}
                           hidden={null}
