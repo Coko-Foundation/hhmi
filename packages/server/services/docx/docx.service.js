@@ -369,10 +369,17 @@ class WaxToDocxConverter {
   // #endregion tables
 
   // #region images
-  figureHandler = figure => {
+  figureHandler = (figure, options) => {
     return new Paragraph({
       children: this.contentParser(figure.content),
-      alignment: AlignmentType.CENTER,
+      numbering: {
+        reference: options.listType,
+        level: options.level,
+        instance: options.instance,
+      },
+      spacing: {
+        after: 200,
+      },
     })
   }
 
