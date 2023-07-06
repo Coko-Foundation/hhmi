@@ -297,9 +297,6 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       new Paragraph({ children: [] }),
       ...this.contentParser(contentToParse, {
         multipleChoiceGroupId: groupId,
-        instance: this.listInstance,
-        listType: this.listTypes.MULTIPLE_CHOICE,
-        level: 0,
       }),
     ]
   }
@@ -318,10 +315,31 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       feedback,
     })
 
-    return this.contentParser(multipleChoiceOption.content, {
-      ...options,
-      renderEmpty: true,
-    })
+    const mcOption = []
+
+    // apply numbering only to the 1st paragraph of the multiple choice option
+    mcOption.push(
+      ...this.contentParser([multipleChoiceOption.content[0]], {
+        instance: this.listInstance,
+        listType: this.listTypes.MULTIPLE_CHOICE,
+        level: 0,
+        renderEmpty: true,
+      }),
+    )
+
+    // render other possible paragraphs but without numbering
+    if (multipleChoiceOption.content.length > 1) {
+      mcOption.push(
+        ...this.contentParser(
+          multipleChoiceOption.content.slice(
+            1,
+            multipleChoiceOption.content.length,
+          ),
+        ),
+      )
+    }
+
+    return mcOption
   }
   // #endregion multiple-choice
 
