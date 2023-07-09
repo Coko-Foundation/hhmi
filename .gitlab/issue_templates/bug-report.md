@@ -2,11 +2,11 @@
 
 ## Expected behaviour
 
-<!-- Required. Tell us what should happen -->
+<!-- Required. Tell us what should happen. Link to docs if possible. -->
 
 ## Current behaviour
 
-<!-- Required. Tell us what happens instead of the expected behaviour -->
+<!-- Required. Tell us what happens instead of the expected behaviour. -->
 
 ## Steps to reproduce
 
@@ -17,22 +17,41 @@
 3.
 4.
 
-## Environment
+## Testing environment
 
-<!-- Required. Provide relevant information such as browser name and version, PC or Mac use, internet speed, etc.]-->
+<!-- Required. Provide the revevant below -->
+
+* Testing site: local / staging / production 
+* Testing url: 
+* Browser name and version: 
+* User machine: PC / Mac
+* Username: 
+
+
+## Error logs (if available)
+
+<!-- Provide the server or client logs -->
 
 ## Possible solution
 
 <!-- If known, provide details on how to fix the bug.-->
 
-<!-- Assignee and labels are added automatically. After creating this issue you can link other related or blocking issues with the Gitlab's Linked issues functionality. -->
+## QA Steps 
+
+[To be completed by Coko]
 
 ## Scheduling
 
-<!-- Select all the relevant options-->
+<!-- Include any known dependencies and an initial estimation (in hours) for this implementation. -->
 
-- [ ] This issue is blocking current user testing on staging stie
-- [ ] This issue occurs on the production site
+[To be completed by Coko]
+
+* Dependencies: [provide issue numbers]
+* Development estimate: [provide in hours]
+
+<!-- Bug label is added automatically. After creating this issue you can link other related or blocking issues with the Gitlab's Linked issues functionality. --> 
 
 /label ~bug
-/assign @dionementis
+/assign @DioneMentis
+
+
