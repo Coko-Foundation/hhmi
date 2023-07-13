@@ -19,7 +19,7 @@
 
 ## Testing environment
 
-<!-- Required. Provide the revevant below -->
+<!-- Required. Provide the relevant below -->
 
 * Testing site: local / staging / production 
 * Testing url: 
