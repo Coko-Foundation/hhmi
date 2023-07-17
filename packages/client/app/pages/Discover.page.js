@@ -92,7 +92,7 @@ const DiscoverPage = () => {
 
   const [duplicateQuestionMutation, { loading: loadingDuplicateQuestion }] =
     useMutation(DUPLICATE_QUESTION, {
-      refetchQueries: [CURRENT_USER],
+      refetchQueries: [{ query: CURRENT_USER, fetchPolicy: 'network-only' }],
       onCompleted: ({ duplicateQuestion }) => {
         history.push(`/question/${duplicateQuestion.id}`)
       },
