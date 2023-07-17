@@ -192,28 +192,32 @@ const createQuestion = async (userId, options = {}) => {
 }
 
 const duplicateQuestion = async (userId, questionId, options = {}) => {
-  const { trx } = options
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} duplicateQuestion:`
   logger.info(
     `${CONTROLLER_MESSAGE} Duplicating question  with id ${questionId}`,
   )
 
   return useTransaction(
-    async () => {
+    async trx => {
       const question = await Question.duplicateQuestion(questionId, { trx })
 
-      const authorTeam = await Team.insert({
-        objectId: question.id,
-        objectType: 'question',
-        role: AUTHOR_TEAM.role,
-        displayName: AUTHOR_TEAM.displayName,
-      })
+      const authorTeam = await Team.insert(
+        {
+          objectId: question.id,
+          objectType: 'question',
+          role: AUTHOR_TEAM.role,
+          displayName: AUTHOR_TEAM.displayName,
+        },
+        { trx },
+      )
 
       await Team.addMember(authorTeam.id, userId, { trx })
 
       return question
     },
-    { trx },
+    {
+      trx: options.trx,
+    },
   )
 }
 
