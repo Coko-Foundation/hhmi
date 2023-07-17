@@ -784,12 +784,13 @@ const Question = props => {
             <>
               <p>
                 Clicking &quot;Yes, publish&quot; will make the question
-                discoverable for all website visitors in the Discover page.
+                discoverable for all website visitors in the Browse Questions
+                Page.
               </p>
               {canAssignAuthor && (
                 <p>
-                  As an admin, you can assign another author for the questions
-                  you create right after publishing them.
+                  As an admin, you can reassign authorship of this question to
+                  another user after it is published.
                 </p>
               )}
             </>

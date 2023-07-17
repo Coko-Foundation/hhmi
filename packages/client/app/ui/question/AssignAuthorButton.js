@@ -46,7 +46,7 @@ const AssignAuthorButton = props => {
         const successModal = modal.success()
         successModal.update({
           afterClose: refetchUser,
-          title: 'Author Assigned',
+          title: 'Author assigned',
           content: `User ${
             authors.find(
               a => a.value === assignAuthorForm.getFieldValue('author'),
@@ -115,7 +115,7 @@ const AssignAuthorButton = props => {
               </>
             ) : (
               <Button autoFocus onClick={confirmAuthorship} type="primary">
-                Continue
+                Yes, assign author
               </Button>
             )}
           </ModalFooter>
@@ -130,7 +130,7 @@ const AssignAuthorButton = props => {
                     a => a.value === assignAuthorForm.getFieldValue('author'),
                   )?.label
                 } as author?`
-              : 'Assign Author'}
+              : 'Assign author'}
           </ModalHeader>
         }
       >
@@ -142,7 +142,7 @@ const AssignAuthorButton = props => {
           onValuesChange={() => assignAuthorForm.validateFields(['author'])}
         >
           <Form.Item
-            label="Find a user to assign as author for this question"
+            label="Select the author of this question"
             name="author"
             rules={[
               {
@@ -162,16 +162,17 @@ const AssignAuthorButton = props => {
             validateTrigger="onSubmit"
           >
             <Select
+              data-testid="author-select"
               defaultOpen={false}
               optionFilterProp="label"
               options={authors}
-              placeholder="Search for handling editors"
+              placeholder="Search authors"
               showSearch
             />
           </Form.Item>
           <Note>
-            <span>Note: </span>Make sure you select the correct user. Once the
-            author is changed, you cannot change it back.
+            <span>Note: </span>Make sure you select the correct user. The author
+            can only be assigned once.
           </Note>
         </StyledForm>
         <ConfirmationScreen visible={showConfirm}>
