@@ -1,64 +1,29 @@
 /* eslint-disable jest/expect-expect */
-
-import { user } from '../support/credentials'
-import { discover, graphqlEndpoint } from '../support/routes'
+import path from 'path'
+import { user2 } from '../support/credentials'
+import { discover as discoverPage, graphqlEndpoint } from '../support/routes'
 import { multipleChoiceQuestionString } from '../support/appData'
+import { listItemWrapper, submitButton } from '../support/selectors'
 import { getDateInFormat } from '../utils/helpers'
 import { laptop } from '../support/viewport'
 
-const path = require('path')
-
 describe('Discover page tests', () => {
-  const { contact } = user
-
   before(() => {
-    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
-      .its('stdout')
-      .should('contain', 'database cleared')
-    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
-      .its('stdout')
-      .should('contain', `Added global team "admin"`)
-      .should('contain', `Added global team "reviewer"`)
-      .should('contain', `Added global team "editor"`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmitted reviewer`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${contact.email}.`)
-      .should('contain', `user given reviewer role`)
+    cy.resetDB()
 
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -1 anatomy published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
+    cy.seedUser({ ...user2 })
 
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -2 biochemistry published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
+    cy.seedQuestion(user2.username, -1, 'anatomy', 'published')
 
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -3 population published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
+    cy.seedQuestion(user2.username, -2, 'biochemistry', 'published')
 
-    // cy.visit('/discover')
+    cy.seedQuestion(user2.username, -3, 'population', 'published')
+
+    // cy.visit('/discoverPage')
   })
 
   beforeEach(() => {
-    cy.visit('/discover')
+    cy.visit(discoverPage)
     cy.intercept('POST', graphqlEndpoint).as('GQLReq')
 
     cy.viewport(laptop.preset)
@@ -69,17 +34,17 @@ describe('Discover page tests', () => {
     cy.log('checking descedning order...')
     cy.get('[data-testid="sort-select"]').click({ force: true })
     cy.get('[title="Date (descending)"]').first().click({ force: true })
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
 
       .contains('[data-testid="published date-value"]', getDateInFormat(-1))
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(1)
       .should('be.visible')
 
       .contains('[data-testid="published date-value"]', getDateInFormat(-2))
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(2)
       .should('be.visible')
 
@@ -89,16 +54,16 @@ describe('Discover page tests', () => {
     cy.log('checking ascending order...')
     cy.get('[data-testid="sort-select"]').click({ force: true })
     cy.get('[title="Date (ascending)"]').first().click({ force: true })
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
       .contains('[data-testid="published date-value"]', getDateInFormat(-3))
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(1)
       .should('be.visible')
 
       .contains('[data-testid="published date-value"]', getDateInFormat(-2))
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(2)
       .should('be.visible')
 
@@ -111,8 +76,8 @@ describe('Discover page tests', () => {
       'bacillus{enter}',
     )
 
-    cy.get('[data-testid="list-item-wrapper"]').should('have.length', 1)
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper).should('have.length', 1)
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
       .contains(
@@ -123,17 +88,15 @@ describe('Discover page tests', () => {
 
     cy.contains('[data-testid="subtopic-value"]', 'Cardiovascular System')
     cy.contains(`[data-testid="bloom's level-value"]`, 'Analyze')
-    cy.contains('[data-testid="author-value"]', 'user')
+    cy.contains('[data-testid="author-value"]', user2.username)
     cy.get('[placeholder="Search..."]').clear().type('{enter}')
   })
 
   it('filter functionality', () => {
     cy.get('[data-testid="topic-select"]').type('biochemistry{enter}')
     cy.get('[data-testid="subtopic-select"]').type('General Chemistry{enter}')
-    cy.contains('button[type="submit"]', 'Update').click()
-    cy.get('[class="ant-list-items"]')
-      .find('.List__ListItemWrapper-sc-dan8sa-7')
-      .should('have.length', 1)
+    cy.contains(submitButton, 'Update').click()
+    cy.get(listItemWrapper).should('have.length', 1)
     cy.contains(
       '[data-testid="topic-value"]',
       'Biochemistry & Molecular Biology',
@@ -151,20 +114,18 @@ describe('Discover page tests', () => {
 
     cy.get('[data-testid="course-select"]').type('science{enter}')
     cy.get('[data-testid="course-unit-select"]').type('population{enter}')
-    cy.contains('button[type="submit"]', 'Update').click()
-    cy.get('[class="ant-list-items"]')
-      .find('.List__ListItemWrapper-sc-dan8sa-7')
-      .should('have.length', 1)
+    cy.contains(submitButton, 'Update').click()
+    cy.get(listItemWrapper).should('have.length', 1)
     cy.contains('[data-testid="topic-value"]', 'Environmental science')
     cy.contains('[data-testid="subtopic-value"]', 'Human Population & Impacts')
   })
 
   it('checking the question', () => {
-    // cy.login({ ...contact, visitUrl: discover })
-    cy.visit(discover)
+    // cy.login({ ...user2, visitUrl: discoverPage })
+    cy.visit(discoverPage)
     cy.wait('@GQLReq')
 
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(2)
       .should('be.visible')
       .contains('p')

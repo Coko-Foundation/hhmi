@@ -1,39 +1,23 @@
 /* eslint-disable jest/expect-expect */
 import { mobile, laptop } from '../support/viewport'
-import { editor as editorRole, generalUser } from '../support/credentials'
-import { graphqlEndpoint } from '../support/routes'
+import { editor as editorRole, user2 } from '../support/credentials'
+import {
+  navToggle,
+  buttonAntModalBody,
+  createQuestionButton,
+  submitQuestionButton,
+  exportToWordButton,
+  moreActionsToggle,
+  anchorTags,
+} from '../support/selectors'
+import { discover as discoverPage, graphqlEndpoint } from '../support/routes'
 
 describe('Testing apps responsiveness', () => {
   before(() => {
-    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
-      .its('stdout')
-      .should('contain', 'database cleared')
-    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
-      .its('stdout')
-      .should('contain', `Added global team "admin"`)
-      .should('contain', `Added global team "reviewer"`)
-      .should('contain', `Added global team "editor"`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${generalUser.email} profileSubmitted reviewer`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${generalUser.email}.`)
-      .should('contain', `user given reviewer role`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${editorRole.email} profileSubmitted editor`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${editorRole.email}.`)
-      .should('contain', `user given editor role`)
-
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${generalUser.username} -2 population submitted`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${generalUser.username}`,
-      )
+    cy.resetDB()
+    cy.seedUser({ ...user2 })
+    cy.seedUser({ ...editorRole })
+    cy.seedQuestion(user2.username, -2, 'population', 'submitted')
   })
 
   describe('mobile view', () => {
@@ -45,22 +29,22 @@ describe('Testing apps responsiveness', () => {
     it('navigation bar', () => {
       cy.login(editorRole)
       cy.wait('@GQLReq')
-      cy.get('[href="/discover"]').should('not.be.visible')
-      cy.get('[href="/dashboard"]').should('not.be.visible')
-      cy.get('[href="/about"]').should('not.be.visible')
-      cy.get('[href="/learning"]').should('not.be.visible')
-      cy.get('[data-testid="nav-toggle"]').click()
-      cy.get('[href="/discover"]').should('be.visible')
-      cy.get('[href="/dashboard"]').should('be.visible')
-      cy.get('[href="/about"]').should('be.visible')
-      cy.get('[href="/learning"]').should('be.visible')
-      cy.get('[data-testid="nav-toggle"]').click()
+      cy.get(anchorTags.discover).should('not.be.visible')
+      cy.get(anchorTags.dashboard).should('not.be.visible')
+      cy.get(anchorTags.about).should('not.be.visible')
+      cy.get(anchorTags.learning).should('not.be.visible')
+      cy.get(navToggle).click()
+      cy.get(anchorTags.discover).should('be.visible')
+      cy.get(anchorTags.dashboard).should('be.visible')
+      cy.get(anchorTags.about).should('be.visible')
+      cy.get(anchorTags.learning).should('be.visible')
+      cy.get(navToggle).click()
     })
 
     it('question page', () => {
       cy.login(editorRole)
       cy.wait('@GQLReq')
-      cy.get('[data-testid="create-question-btn"]').click({ force: true })
+      cy.get(createQuestionButton).click({ force: true })
       cy.get('[data-testid="editor-collapse"]').should('exist')
       cy.get('[data-testid="metadata-collapse"]').should('exist')
 
@@ -70,9 +54,9 @@ describe('Testing apps responsiveness', () => {
       )
 
       cy.get('[aria-label="upload"]').should('be.visible')
-      cy.get('[data-testid="submit-question-btn"]').should('not.exist')
-      cy.get('[data-testid="nav-toggle"]').click()
-      cy.get('[href="/dashboard"]').click()
+      cy.get(submitQuestionButton).should('not.exist')
+      cy.get(navToggle).click()
+      cy.get(anchorTags.dashboard).click()
       cy.contains('Editor Questions').click()
       cy.wait('@GQLReq')
 
@@ -83,15 +67,12 @@ describe('Testing apps responsiveness', () => {
       cy.wait('@GQLReq')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(4000)
-      cy.get('[aria-label="More actions"]').click()
+      cy.get(moreActionsToggle).click()
 
       // [segment]: checking popup content in submission stage
       cy.log('checking popup content in submission stage...')
 
-      cy.contains(
-        '[data-testid="editor-actions-popup"] [id="exportToWord"]',
-        'Export to Word',
-      ).should('be.visible')
+      cy.contains(exportToWordButton, 'Export to Word').should('be.visible')
 
       cy.contains(
         '[data-testid="editor-actions-popup"] [id="doNotAccept"]',
@@ -102,22 +83,16 @@ describe('Testing apps responsiveness', () => {
         '[data-testid="editor-actions-popup"] [id="moveToReview"]',
         'Move to review',
       ).click()
-      cy.contains(
-        '[class="ant-modal-body"] [type="button"]',
-        'Move to review',
-      ).click()
+      cy.contains(buttonAntModalBody, 'Move to review').click()
 
-      cy.contains('[class="ant-modal-content"] [type="button"]', 'Ok').click()
+      cy.contains(buttonAntModalBody, 'Ok').click()
       cy.wait('@GQLReq')
 
       // [segment]: checking popup content in review stage
       cy.log('checking popup content in review stage...')
 
-      cy.get('[aria-label="More actions"]', { timeout: 8000 }).click()
-      cy.contains(
-        '[data-testid="editor-actions-popup"] [id="exportToWord"]',
-        'Export to Word',
-      )
+      cy.get(moreActionsToggle, { timeout: 8000 }).click()
+      cy.contains(exportToWordButton, 'Export to Word')
       cy.contains(
         '[data-testid="editor-actions-popup"] [id="doNotAccept"]',
         'Do not accept',
@@ -126,17 +101,14 @@ describe('Testing apps responsiveness', () => {
         '[data-testid="editor-actions-popup"] [id="moveToProduction"]',
         'Move to production',
       ).click()
-      cy.contains(
-        '[class="ant-modal-content"] [type="button"]',
-        'Move to production',
-      ).click()
-      cy.contains('[class="ant-modal-content"] [type="button"]', 'Ok').click()
+      cy.contains(buttonAntModalBody, 'Move to production').click()
+      cy.contains(buttonAntModalBody, 'Ok').click()
       cy.wait('@GQLReq')
 
       // [segment]: checking popup content in production stage
       cy.log('checking popup content in production stage...')
 
-      cy.get('[aria-label="More actions"]', { timeout: 8000 }).click()
+      cy.get(moreActionsToggle, { timeout: 8000 }).click()
       cy.contains(
         '[data-testid="editor-actions-popup"] [type="button"]',
         'Export to Word',
@@ -145,15 +117,12 @@ describe('Testing apps responsiveness', () => {
         '[data-testid="editor-actions-popup"] [type="button"]',
         'Publish',
       ).click({ force: true })
-      cy.contains(
-        '[class="ant-modal-content"] [type="button"]',
-        'Yes, publish',
-      ).click()
-      cy.contains('[class="ant-modal-content"] [type="button"]', 'Ok').click()
+      cy.contains(buttonAntModalBody, 'Yes, publish').click()
+      cy.contains(buttonAntModalBody, 'Ok').click()
     })
 
     it('discover page', () => {
-      cy.visit('/discover')
+      cy.visit(discoverPage)
       cy.wait('@GQLReq')
       cy.get('[data-testid="filter-collapse"]').should('exist')
     })
@@ -168,23 +137,23 @@ describe('Testing apps responsiveness', () => {
     it('navigation bar', () => {
       cy.login(editorRole)
       cy.wait('@GQLReq')
-      cy.get('[data-testid="nav-toggle"]').should('not.be.visible')
-      cy.get('[href="/discover"]').should('be.visible')
-      cy.get('[href="/dashboard"]').should('be.visible')
-      cy.get('[href="/about"]').should('be.visible')
-      cy.get('[href="/learning"]').should('be.visible')
+      cy.get(navToggle).should('not.be.visible')
+      cy.get(anchorTags.discover).should('be.visible')
+      cy.get(anchorTags.dashboard).should('be.visible')
+      cy.get(anchorTags.about).should('be.visible')
+      cy.get(anchorTags.learning).should('be.visible')
     })
 
     it('question page', () => {
       cy.login(editorRole)
       cy.wait('@GQLReq')
-      cy.get('[data-testid="create-question-btn"]').click({ force: true })
+      cy.get(createQuestionButton).click({ force: true })
       cy.get('[data-testid="editor-collapse"]').should('not.exist')
       cy.get('[data-testid="metadata-collapse"]').should('not.exist')
     })
 
     it('discover page', () => {
-      cy.visit('/discover')
+      cy.visit(discoverPage)
       cy.wait('@GQLReq')
       cy.get('[data-testid="filter-collapse"]').should('not.exist')
     })

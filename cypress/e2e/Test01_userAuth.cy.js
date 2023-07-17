@@ -1,42 +1,35 @@
 /* eslint-disable jest/expect-expect */
 import { capitalize } from 'lodash'
-import { user, generalUser } from '../support/credentials'
+import { admin, user1, user2, editor, reviewer } from '../support/credentials'
+import {
+  alertContainer,
+  antModalConfirmTitle,
+  antTableCell,
+  buttonAntModalBody,
+  submitButton,
+  antTabs,
+  anchorTags,
+} from '../support/selectors'
 import { laptop } from '../support/viewport'
 import {
-  manageUser,
-  manageTeam,
-  requestPasswordReset,
-  login,
-  profile,
+  signup as signupPage,
+  dashboard as dashboardPage,
+  manageUser as manageUserPage,
+  manageTeam as manageTeamPage,
+  requestPasswordReset as requestPasswordResetPage,
+  login as loginPage,
+  profile as profilePage,
   graphqlEndpoint,
 } from '../support/routes'
 
 describe('Tests for user authentication', () => {
-  const { contact, address, school, reviewing } = user
+  const { contact, address, school, reviewing } = user1
 
   before(() => {
-    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
-      .its('stdout')
-      .should('contain', 'database cleared')
-    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
-      .its('stdout')
-      .should('contain', `Added global team "admin"`)
-      .should('contain', `Added global team "reviewer"`)
-      .should('contain', `Added global team "editor"`)
-
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmited admin`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${contact.email}.`)
-      .should('contain', `user given admin role`)
-
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create seconduser@gmail.com profileSubmitted editor`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - seconduser@gmail.com.`)
-      .should('contain', `user given editor role`)
+    cy.resetDB()
+    cy.seedUser({ ...admin })
+    cy.seedUser({ ...contact, profileSubmitted: false })
+    cy.seedUser({ ...editor })
   })
 
   beforeEach(() => {
@@ -45,15 +38,15 @@ describe('Tests for user authentication', () => {
   })
 
   it('forgot password', () => {
-    cy.visit(requestPasswordReset)
+    cy.visit(requestPasswordResetPage)
     cy.wait('@GQLReq')
-    cy.get('[type="submit"]').click()
-    cy.contains('[role="alert"]', 'Email is required')
-    cy.contains('a[href="/login"]', 'Return to login form')
+    cy.get(submitButton).click()
+    cy.contains(alertContainer, 'Email is required')
+    cy.contains(anchorTags.login, 'Return to login form')
 
     cy.contains('Request password reset')
-    cy.get('[id="email"]').type(contact.email)
-    cy.get('[type="submit"]').click()
+    cy.get('input[id="email"]').type(contact.email)
+    cy.get(submitButton).click()
     cy.contains('Request successful!')
     cy.contains(
       `An email has been sent to ${contact.email} containing further instructions`,
@@ -61,38 +54,52 @@ describe('Tests for user authentication', () => {
   })
 
   it('signup test', () => {
-    cy.signup(generalUser)
+    cy.visit(signupPage)
+    cy.get(submitButton).click()
+    cy.contains(alertContainer, 'First name is required')
+    cy.contains(alertContainer, 'Last name is required')
+    cy.contains(alertContainer, 'Email is required')
+    cy.contains(alertContainer, 'Password is required')
+    cy.contains(alertContainer, 'Please confirm your password!')
+    cy.signup(user2)
   })
 
   it('login & user profile', () => {
-    cy.login({ email: contact.email, password: 'Password@123' })
+    cy.visit(loginPage)
+    cy.get(submitButton).click()
+    cy.contains(alertContainer, 'Email is required')
+    cy.contains(alertContainer, 'Password is required')
+    cy.contains(anchorTags.requestPasswordRest, 'Forgot your password?')
+    cy.contains(anchorTags.signup, 'Do you want to signup instead?')
+
+    cy.login({ ...contact })
     cy.wait('@GQLReq')
     cy.contains('User profile')
-    cy.get('[type="submit"]').click()
-    cy.contains('[role="alert"]', 'Last name is required')
-    cy.contains('[role="alert"]', 'First name is required')
-    // cy.contains('[role="alert"]', 'You have to fill in your prefered pronouns')
-    cy.contains('[role="alert"]', 'Phone number is required')
+    cy.get(submitButton).click()
+    cy.contains(alertContainer, 'Last name is required')
+    cy.contains(alertContainer, 'First name is required')
+    // cy.contains(alertContainer, 'You have to fill in your prefered pronouns')
+    cy.contains(alertContainer, 'Phone number is required')
     cy.contains(
-      '[role="alert"]',
+      alertContainer,
       'Please select the country where your institution is located',
     )
     cy.contains(
-      '[role="alert"]',
+      alertContainer,
       'City where your Institution is located is required',
     )
-    cy.contains('[role="alert"]', 'You have to fill in you position')
+    cy.contains(alertContainer, 'You have to fill in you position')
     cy.contains(
-      '[role="alert"]',
+      alertContainer,
       'You have to fill in your Institution/Organization',
     )
-    cy.contains('[role="alert"]', 'You have to select your Type of Institution')
+    cy.contains(alertContainer, 'You have to select your Type of Institution')
     cy.contains(
-      '[role="alert"]',
+      alertContainer,
       'You have to select your years of teaching experience',
     )
-    cy.contains('[role="alert"]', 'Please select an option')
-    cy.contains('[role="alert"]', 'Please select an option')
+    cy.contains(alertContainer, 'Please select an option')
+    cy.contains(alertContainer, 'Please select an option')
 
     // [segment]: Contact
     cy.get('[id="lastName"]').type(contact.lastName)
@@ -142,11 +149,51 @@ describe('Tests for user authentication', () => {
     cy.contains('[id="assessmentTrainingInclusive"] span', 'No').click()
     cy.get('[id="source"]').type(reviewing.source)
 
-    cy.get('[type="submit"]').click()
+    cy.get(submitButton).click()
     cy.wait('@GQLReq')
     cy.contains('div', 'Thank you for submitting your profile!', {
       timeout: 8000,
     })
+  })
+
+  it('User with editor priveleges', () => {
+    cy.login({
+      ...editor,
+      visitUrl: loginPage,
+    })
+    cy.get('[data-testid="usermenu-btn"]').click()
+    cy.contains('a', 'Manage Users').should('not.exist')
+    cy.contains('a', 'Manage Teams').should('not.exist')
+    cy.visit(manageTeamPage, { method: 'GET' })
+    cy.wait('@GQLReq')
+    cy.contains('div', '403')
+    cy.contains('div', 'Sorry, you are not authorized to access this page.')
+    cy.visit(manageUserPage, { method: 'GET' })
+    cy.wait('@GQLReq')
+    cy.contains('div', '403')
+    cy.contains('div', 'Sorry, you are not authorized to access this page.')
+  })
+
+  it('User with Reviewer priveleges', () => {
+    cy.seedUser({ ...reviewer })
+
+    cy.login({
+      ...reviewer,
+      visitUrl: '/',
+    })
+    cy.contains('a', ' Manage Teams').should('not.exist')
+    cy.contains('a', ' Manage Users').should('not.exist')
+    cy.contains('a', ' Profile').should('not.exist')
+    cy.contains('a', ' Logout').should('not.exist')
+
+    cy.visit(manageTeamPage, { methosd: 'GET' })
+    cy.wait('@GQLReq')
+    cy.contains('div', '403')
+    cy.contains('div', 'Sorry, you are not authorized to access this page.')
+    cy.visit(manageUserPage, { method: 'GET' })
+    cy.wait('@GQLReq')
+    cy.contains('div', '403')
+    cy.contains('div', 'Sorry, you are not authorized to access this page.')
   })
 
   it('Team manager', () => {
@@ -165,108 +212,53 @@ describe('Tests for user authentication', () => {
       cy.wait('@GQLReq')
     }
 
-    cy.login({ ...contact, visitUrl: manageTeam })
+    cy.login({ ...admin, visitUrl: manageTeamPage })
     // cy.get('[data-testid="usermenu-btn"]').click()
     // cy.contains('a', 'Manage Teams').click()
 
     // cy.visit(manageTeam, { method: 'GET' })
     cy.contains('h1', 'Team Manager')
 
-    removeUserFromRole('editor', 'seconduser')
+    removeUserFromRole('editor', editor.username)
 
-    addUserToRole('editor', 'seconduser')
-  })
-
-  it('User with editor priveleges', () => {
-    cy.login({
-      email: 'seconduser@gmail.com',
-      password: 'Password@123',
-      visitUrl: login,
-    })
-    cy.get('[data-testid="usermenu-btn"]').click()
-    cy.contains('a', 'Manage Users').should('not.exist')
-    cy.contains('a', 'Manage Teams').should('not.exist')
-    cy.visit(manageTeam, { method: 'GET' })
-    cy.wait('@GQLReq')
-    cy.contains('div', '403')
-    cy.contains('div', 'Sorry, you are not authorized to access this page.')
-    cy.visit(manageUser, { method: 'GET' })
-    cy.wait('@GQLReq')
-    cy.contains('div', '403')
-    cy.contains('div', 'Sorry, you are not authorized to access this page.')
-  })
-
-  it('User with Reviewer priveleges', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create firstuser@gmail.com profileSubmitted reviewer`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - firstuser@gmail.com.`)
-      .should('contain', `user given reviewer role`)
-
-    cy.login({
-      email: 'firstuser@gmail.com',
-      password: 'Password@123',
-      visitUrl: '/',
-    })
-    cy.contains('a', ' Manage Teams').should('not.exist')
-    cy.contains('a', ' Manage Users').should('not.exist')
-    cy.contains('a', ' Profile').should('not.exist')
-    cy.contains('a', ' Logout').should('not.exist')
-
-    cy.visit(manageTeam, { methosd: 'GET' })
-    cy.wait('@GQLReq')
-    cy.contains('div', '403')
-    cy.contains('div', 'Sorry, you are not authorized to access this page.')
-    cy.visit(manageUser, { method: 'GET' })
-    cy.wait('@GQLReq')
-    cy.contains('div', '403')
-    cy.contains('div', 'Sorry, you are not authorized to access this page.')
+    addUserToRole('editor', editor.username)
   })
 
   it('Manage users', () => {
     cy.login({
-      email: contact.email,
-      password: contact.password,
-      visitUrl: manageUser,
+      ...admin,
+      visitUrl: manageUserPage,
     })
     cy.contains('User Manager')
-    cy.get('input[aria-label="Select user seconduser"]').click()
+    cy.get(`input[aria-label="Select user ${editor.username}"]`).click()
     cy.get("[data-testid='deactivate-btn']").click()
     cy.contains('Deactivate User')
     cy.contains('Are you sure you want to deactivate the selected user?')
-    cy.contains(
-      '[class="ant-modal-body"] [type="button"]',
-      'Deactivate',
-    ).click()
-    cy.contains('td[class="ant-table-cell"]', 'seconduser@gmail.com').should(
-      'not.exist',
-    )
+    cy.contains(buttonAntModalBody, 'Deactivate').click()
+    cy.contains(antTableCell, editor.email).should('not.exist')
 
-    cy.get('input[aria-label="Select user firstuser"]').click()
+    cy.get(`input[aria-label="Select user ${reviewer.username}"]`).click()
     cy.get("[data-testid='delete-btn']").click()
     cy.contains('Delete User')
     cy.contains('Are you sure you want to delete the selected user?')
-    cy.contains('[class="ant-modal-body"] [type="button"]', 'Delete').click()
-    cy.contains('td[class="ant-table-cell"]', 'firstuser@gmail.com').should(
-      'not.exist',
-    )
+    cy.contains(buttonAntModalBody, 'Delete').click()
+    cy.contains(antTableCell, reviewer.email).should('not.exist')
 
     // [segment]: user tries to deactivate or delete his own user from user manager list
-    cy.get(`[aria-label="Select user ${contact.displayName}"]`).click()
+    cy.get(`[aria-label="Select user ${admin.username}"]`).click()
     cy.get('[data-testid="delete-btn"]').click()
     cy.contains(
-      '[class="ant-modal-confirm-title"]',
+      antModalConfirmTitle,
       'Cannot delete or deactivate current user',
     )
     cy.contains(
       '[class="ant-modal-confirm-content"]',
       'You cannot delete or deactivate the user you are currently logged in as. Please deselect your current user and try again',
     )
-    cy.get('[class="ant-modal-body"] [type="button"]').click()
+    cy.get(buttonAntModalBody).click()
     cy.get('[data-testid="deactivate-btn"]').click()
     cy.contains(
-      '[class="ant-modal-confirm-title"]',
+      antModalConfirmTitle,
       'Cannot delete or deactivate current user',
     )
     cy.contains(
@@ -275,17 +267,15 @@ describe('Tests for user authentication', () => {
     )
     cy.get('[data-testid="show-inactive-users"]').click({ force: true })
 
-    cy.contains('td[class="ant-table-cell"]', 'seconduser@gmail.com').should(
-      'exist',
-    )
+    cy.contains(antTableCell, editor.email).should('exist')
   })
 
   it('updating user info', () => {
-    cy.login({ ...contact, visitUrl: profile })
+    cy.login({ ...contact, visitUrl: profilePage })
     // cy.get('a[href="/profile"]').click()
     cy.get('[id="phone"]').clear().type(contact.updatedPhone)
     cy.get('[id="address"]').clear().type(address.updatedAddress)
-    cy.contains('[type="submit"]', 'Save').click()
+    cy.contains(submitButton, 'Save').click()
     cy.wait('@GQLReq')
     cy.contains('Profile updated successfully')
     cy.reload()
@@ -336,24 +326,26 @@ describe('Tests for user authentication', () => {
   })
 
   it('password reset', () => {
-    cy.login({ ...contact, visitUrl: profile })
-    cy.contains('[class="ant-tabs-tab"]', 'Password').click()
+    cy.login({ ...contact, visitUrl: profilePage })
+    cy.contains(antTabs, 'Password').click()
     cy.get('[id="currentPassword"]').type(contact.password)
     cy.get('[id="newPassword"]').type(contact.updatedPassword)
     cy.get('[id="newPasswordConfirmation"]').type(contact.updatedPassword)
-    cy.contains('button[type="submit"]', 'Save').click({ force: true })
+    cy.contains(submitButton, 'Save').click({ force: true })
     cy.wait('@GQLReq')
     cy.contains('Profile updated successfully')
   })
+
   it('logout', () => {
     cy.login(contact)
     cy.logout()
-    cy.visit('/dashboard')
+    cy.wait('@GQLReq')
+    cy.visit(dashboardPage)
     cy.location().should(location => {
       // eslint-disable-next-line jest/valid-expect
-      expect(location.pathname).to.equal('/login')
+      expect(location.pathname).to.equal(loginPage)
       // eslint-disable-next-line jest/valid-expect
-      expect(location.search).to.equal('?next=/dashboard')
+      expect(location.search).to.equal(`?next=${dashboardPage}`)
     })
   })
 })

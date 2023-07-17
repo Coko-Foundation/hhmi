@@ -4,15 +4,51 @@ const randomNumber = setRandomNumbers
   ? Math.floor(Math.random() * (1000 - 100 + 1)) + 100
   : ''
 
-export const user = {
+export const admin = {
+  firstName: 'Galenos',
+  username: `galenosalexandra${randomNumber}`,
+  lastName: `Alexandra`,
+  email: `galenosalexandra${randomNumber}@gmail.com`,
+  password: 'Password@123',
+  role: `admin`,
+}
+
+export const editor = {
+  firstName: 'Ellery',
+  username: `elleryemil${randomNumber}`,
+  lastName: 'Emil',
+  email: `elleryemil${randomNumber}@gmail.com`,
+  password: 'Password@123',
+  role: 'editor',
+}
+
+export const handlingEditor = {
+  firstName: 'Nuadu',
+  username: `nuaduslaine${randomNumber}`,
+  lastName: 'Slaine',
+  email: `nuaduslaine${randomNumber}@gmail.com`,
+  password: 'Password@123',
+  role: 'handlingEditor',
+}
+
+export const reviewer = {
+  firstName: 'Clement',
+  lastName: 'Roman',
+  username: `clementroman${randomNumber}`,
+  email: `clementroman${randomNumber}@gmail.com`,
+  password: 'Password@123',
+  role: 'reviewer',
+}
+
+export const user1 = {
   contact: {
-    firstName: `User`,
+    username: `millaraypanther${randomNumber}`,
+    firstName: `Millaray`,
     middleName: 'jon',
-    lastName: randomNumber || 1,
+    lastName: 'Panther',
     pronouns: 'they/them',
-    displayName: `user${randomNumber}`,
-    email: `user${randomNumber}@gmail.com`,
-    username: `user${randomNumber}`,
+    displayName: `millaraypanther${randomNumber}`,
+    email: `millaraypanther${randomNumber}@gmail.com`,
     phone: `342${randomNumber}`,
     updatedPhone: `555${randomNumber}`,
     password: 'Password@123',
@@ -46,18 +82,10 @@ export const user = {
   },
 }
 
-export const generalUser = {
-  firstName: 'user1',
-  username: 'user1',
-  lastName: `lName${randomNumber}`,
-  email: `user1${randomNumber}@gmail.com`,
-  password: 'Password@123',
-}
-
-export const editor = {
-  firstName: 'editor',
-  username: 'editor',
-  lastname: randomNumber || 1,
-  email: `editor${randomNumber}@gmail.com`,
+export const user2 = {
+  username: `scarlettphoebe${randomNumber}`,
+  firstName: 'Scarlett',
+  lastName: `Phoebe`,
+  email: `scarlettphoebe${randomNumber}@gmail.com`,
   password: 'Password@123',
 }

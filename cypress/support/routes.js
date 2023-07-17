@@ -1,4 +1,5 @@
 export const profile = '/profile'
+export const lists = '/lists'
 export const manageUser = '/manage-users'
 export const manageTeam = '/manage-teams'
 export const dashboard = '/dashboard'

@@ -60,7 +60,9 @@ module.exports.createQuestion = async (
           updated: date,
           publicationDate: date,
           submitted: true,
-          [questionStatus]: true,
+          ...(questionStatus === 'notSubmitted'
+            ? { submitted: false }
+            : { [questionStatus]: true }),
         })
         .where('question_id', questionData.id)
         .returning('id')

@@ -74,7 +74,7 @@ const seedUser = async (email, profileSubmitted, username, role) => {
       verificationToken,
     })
 
-    await addToTeams(email, role)
+    if (role) await addToTeams(email, role)
 
     return true
   } catch (err) {

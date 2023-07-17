@@ -1,166 +1,167 @@
 /* eslint-disable jest/expect-expect */
 
-import { user, editor } from '../support/credentials'
+import { admin, editor } from '../support/credentials'
 import { workflowData, question } from '../support/appData'
 import { laptop } from '../support/viewport'
-import { dashboard, graphqlEndpoint } from '../support/routes'
+import {
+  createQuestionButton,
+  buttonAntModalBody,
+  antModalContent,
+  antTabs,
+  listItemWrapper,
+  antModalConfirmTitle,
+  submitQuestionButton,
+  exportToWordButton,
+  anchorTags,
+} from '../support/selectors'
+import {
+  dashboard as dashboardRoute,
+  discover as discoverPage,
+  graphqlEndpoint,
+} from '../support/routes'
 
 describe('Question Workflows', () => {
-  const { contact } = user
   before(() => {
-    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
-      .its('stdout')
-      .should('contain', 'database cleared')
-    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
-      .its('stdout')
-      .should('contain', `Added global team "admin"`)
-      .should('contain', `Added global team "reviewer"`)
-      .should('contain', `Added global team "editor"`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email}  profileSubmitted admin`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${contact.email}.`)
-      .should('contain', `user given admin role`)
-
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${editor.email} profileSubmitted editor`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${editor.email}.`)
-      .should('contain', `user given editor role`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -3 population`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -2 biochemistry`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
+    cy.resetDB()
+    cy.seedUser({ ...admin })
   })
   beforeEach(() => {
     cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
     cy.viewport(laptop.preset)
   })
+  describe('Editor worflow', () => {
+    before(() => {
+      cy.seedUser({ ...editor })
 
-  it('Regular workflow', () => {
-    const checkStage = (listItem, stage) => {
-      const { operationBtn, prompt, success, QuestionStatus } =
-        workflowData[stage]
+      cy.seedQuestion(admin.username, -3, 'population', 'submitted')
 
-      cy.get('[data-testid="list-item-wrapper"]')
-        .eq(listItem)
-        .should('be.visible')
-        .contains('p')
-        .first()
-        .click()
-      cy.wait('@GQLReq')
-      cy.contains('[id="exportToWord"]', 'Export to Word')
+      cy.seedQuestion(admin.username, -2, 'biochemistry', 'submitted')
+    })
+    after(() => {
+      cy.deleteAllQuestions()
+    })
+    context('Managing Editor functionalities', () => {
+      it('All submitted questions are listed', () => {
+        cy.login({ ...editor })
 
-      if (stage === 'publish') {
-        cy.get('[id="doNotAccept"]').should('not.exist')
-      } else {
-        cy.get('[id="doNotAccept"]').should('be.visible').should('exist')
-      }
+        // [segment]: if questions appear in editor's authored questions tab
+        cy.log("if questions appear in editor's authored questions tab...")
+        cy.contains(
+          '[class="ant-tabs-tab ant-tabs-tab-active"]',
+          'Authored Questions',
+        ).click()
+        cy.get('[class="ant-list-empty-text"]').should('exist')
 
-      cy.contains('[type="button"]', operationBtn).click()
-      cy.contains('[class="ant-modal-content"]', prompt.header)
-      cy.contains('[class="ant-modal-content"]', prompt.body)
-      cy.contains(
-        'div[class="ant-modal-content"] button[type="button"]',
-        prompt.okBtn,
-      ).click()
-      cy.wait('@GQLReq')
-      cy.contains('[class="ant-modal-content"]', success.header)
-      cy.contains('[class="ant-modal-content"]', success.body)
-      cy.contains('[class="ant-modal-body"] [type="button"]', 'Ok').click()
-      cy.visit(dashboard, { method: 'GET' })
-      cy.wait('@GQLReq')
-      cy.get('[data-testid="list-item-wrapper"]')
-        .eq(listItem)
-        .should('be.visible')
+        // [segment]: if all questions appear in editor questions tab
+        cy.log('if all questions appear in editor questions tab')
+        cy.contains(antTabs, 'Editor Questions').click()
+        cy.wait('@GQLReq')
+        cy.get(listItemWrapper).should('have.length', 2)
+      })
 
-        .contains('[data-testid="question-status"]', QuestionStatus)
-    }
+      it('overall flow', () => {
+        const checkStage = (listItem, stage) => {
+          const { operationBtn, prompt, success, QuestionStatus } =
+            workflowData[stage]
 
-    cy.login({ ...editor })
+          cy.get(listItemWrapper)
+            .eq(listItem)
+            .should('be.visible')
+            .contains('p')
+            .first()
+            .click()
 
-    // [segment]: Checking if questions don't appear in editor's authored questions
-    cy.log("checking if questions appear in editor's authored questions...")
-    cy.contains(
-      '[class="ant-tabs-tab ant-tabs-tab-active"]',
-      'Authored Questions',
-    ).click()
-    cy.get('[class="ant-list-empty-text"]').should('exist')
+          // [segment]: checking buttons that should be visible based on the question status
+          cy.contains(exportToWordButton, 'Export to Word')
 
-    cy.contains('[class="ant-tabs-tab"]', 'Editor Questions').click()
-    cy.wait('@GQLReq')
-    checkStage(1, 'reject')
-    checkStage(0, 'review')
-    checkStage(0, 'production')
+          if (stage === 'publish') {
+            cy.contains('[type="button"]', 'Do not accept').should('not.exist')
+          } else {
+            cy.contains('[type="button"]', 'Do not accept')
+          }
 
-    // [segment]: editing question in production
-    cy.log('checking question in production...')
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
+          cy.contains('[type="button"]', operationBtn).click()
+          cy.contains(antModalContent, prompt.header)
+          cy.contains(antModalContent, prompt.body)
+          cy.contains(
+            'div[class="ant-modal-content"] button[type="button"]',
+            prompt.okBtn,
+          ).click()
+          cy.wait('@GQLReq')
+          cy.contains(antModalContent, success.header)
+          cy.contains(antModalContent, success.body)
+          cy.contains(buttonAntModalBody, 'Ok').click()
+          cy.visit(dashboardRoute, { method: 'GET' })
+          cy.wait('@GQLReq')
+          cy.get(listItemWrapper)
+            .eq(listItem)
+            .should('be.visible')
 
-      .contains(
-        'p',
-        'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
-      )
-      .click()
+            .contains('[data-testid="question-status"]', QuestionStatus)
+        }
 
-    cy.get('[class="ProseMirror"]').first().type('Production edit')
-    cy.visit(dashboard, { method: 'GET' })
-    cy.wait('@GQLReq')
+        cy.login({ ...editor })
+        cy.contains(antTabs, 'Editor Questions').click()
+        cy.wait('@GQLReq')
+        checkStage(1, 'reject')
+        checkStage(0, 'review')
+        checkStage(0, 'production')
 
-    checkStage(0, 'publish')
+        // [segment]: editing question in production
+        cy.log('checking question in production...')
+        cy.get(listItemWrapper)
+          .eq(0)
+          .should('be.visible')
 
-    // [segment]: checking  published questions
-    cy.log('checking published questions...')
+          .contains(
+            'p',
+            'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
+          )
+          .click()
 
-    cy.get('a[href="/discover"]').click()
-    cy.wait('@GQLReq')
+        cy.get('[class="ProseMirror"]').first().type('Production edit')
+        cy.visit(dashboardRoute, { method: 'GET' })
+        cy.wait('@GQLReq')
 
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
+        checkStage(0, 'publish')
 
-      .contains(
-        'p',
-        'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
-      )
+        // [segment]: checking  published questions
+        cy.log('checking published questions...')
+
+        cy.get(anchorTags.discover).click()
+        cy.wait('@GQLReq')
+
+        cy.get(listItemWrapper)
+          .eq(0)
+          .should('be.visible')
+          .contains(
+            'p',
+            'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
+          )
+      })
+    })
   })
-  it('Admin workflow', () => {
-    cy.login({ ...contact })
-    cy.get('[data-testid="create-question-btn"]').click()
-    cy.get('[data-testid="submit-question-btn"]').should('not.exist')
-    cy.fillQuestion(question)
-    cy.get('[data-testid="publish-question-btn"]').first().click()
-    cy.contains(
-      '[class="ant-modal-confirm-title"]',
-      'Are you sure you want to publish this question version?',
-    )
-    cy.contains(
-      '[class="ant-modal-confirm-content"]',
-      'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Discover page',
-    )
-    cy.contains(
-      '[class="ant-modal-body"] [type="button"]',
-      'Yes, publish',
-    ).click()
-    cy.wait('@GQLReq')
-    cy.visit('/discover')
-    cy.wait('@GQLReq')
-    cy.contains('[class="ProseMirror"]', 'Question 1')
+
+  describe('Admin worflow', () => {
+    it('Publishing the question', () => {
+      cy.login({ ...admin })
+      cy.get(createQuestionButton).click()
+      cy.get(submitQuestionButton).should('not.exist')
+      cy.fillQuestion(question)
+      cy.get('[data-testid="publish-question-btn"]').first().click()
+      cy.contains(
+        antModalConfirmTitle,
+        'Are you sure you want to publish this question version?',
+      )
+      cy.contains(
+        '[class="ant-modal-confirm-content"]',
+        'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Discover page',
+      )
+      cy.contains(buttonAntModalBody, 'Yes, publish').click()
+      cy.wait('@GQLReq')
+      cy.visit(discoverPage)
+      cy.wait('@GQLReq')
+      cy.contains('[class="ProseMirror"]', 'Question 1')
+    })
   })
 })

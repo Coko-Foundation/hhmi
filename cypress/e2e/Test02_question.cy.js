@@ -1,12 +1,25 @@
 /* eslint-disable jest/expect-expect */
 
-import { user, editor as editorRole } from '../support/credentials'
+import { editor as editorRole, user2 } from '../support/credentials'
 import { editor, question } from '../support/appData'
-import { graphqlEndpoint } from '../support/routes'
+import {
+  antModalConfirmTitle,
+  listItemWrapper,
+  createQuestionButton,
+  buttonAntModalBody,
+  antModalContent,
+  antTableCell,
+  submitQuestionButton,
+  anchorTags,
+} from '../support/selectors'
+import {
+  dashboard as dashboardRoute,
+  graphqlEndpoint,
+  lists,
+} from '../support/routes'
 import { laptop } from '../support/viewport'
 
 describe('Testing questions', () => {
-  const { contact } = user
   const listItems = ['item1', 'item2', 'item3']
 
   const {
@@ -20,26 +33,9 @@ describe('Testing questions', () => {
   } = question
 
   before(() => {
-    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
-      .its('stdout')
-      .should('contain', 'database cleared')
-    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
-      .its('stdout')
-      .should('contain', `Added global team "admin"`)
-      .should('contain', `Added global team "reviewer"`)
-      .should('contain', `Added global team "editor"`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${editorRole.email} profileSubmitted editor`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${editorRole.email}.`)
-      .should('contain', `user given editor role`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmitted reviewer`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${contact.email}.`)
-      .should('contain', `user given reviewer role`)
+    cy.resetDB()
+    cy.seedUser({ ...editorRole })
+    cy.seedUser({ ...user2 })
   })
 
   beforeEach(() => {
@@ -47,41 +43,42 @@ describe('Testing questions', () => {
     cy.viewport(laptop.preset)
   })
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('checking the wax editor', () => {
-    cy.login(contact)
+  it('checking the wax editor', () => {
+    cy.login(user2)
 
-    cy.get('[data-testid="create-question-btn"]').click()
+    cy.get(createQuestionButton).click()
     cy.wait('@GQLReq')
 
     // [segment]: Checking if user can submit when question is empty
     cy.log('checking if user can submit when question is empty...')
     cy.get('[data-testid="accept-tnc"]').click()
-    cy.get('[data-testid="submit-question-btn"]').click()
-    cy.contains('[class="ant-modal-content"]', 'Question text cannot be empty')
+    cy.get(submitQuestionButton).click()
+    cy.contains(antModalContent, 'Question text cannot be empty')
     cy.contains(
-      '[class="ant-modal-content"]',
+      antModalContent,
       'Please provide some content for your question',
     )
-    cy.contains('[class="ant-modal-body"] [type="button"]', 'Ok').click()
+    cy.contains(buttonAntModalBody, 'Ok').click()
 
     // [segment]: question dropdown
     cy.log('checking question dropdown...')
     cy.contains('[aria-controls="questions-list"]', 'Question Type').click()
-    cy.contains('#questions-list  > :nth-child(1)', 'Multiple Choice')
+    cy.contains('#questions-list  > :nth-child(1)', 'Multiple choice')
     cy.contains(
       '#questions-list  > :nth-child(2)',
-      'Multiple Choice (single correct)',
+      'Multiple choice (single correct)',
     )
+
     cy.contains('#questions-list  > :nth-child(3)', 'True/False')
     cy.contains(
       '#questions-list  > :nth-child(4)',
       'True/False (single correct)',
     )
+
     cy.contains('#questions-list  > :nth-child(5)', 'Matching')
     cy.contains('#questions-list  > :nth-child(6)', 'Essay')
-    cy.contains('#questions-list  > :nth-child(7)', 'Multiple DropDown')
-    cy.contains('#questions-list  > :nth-child(8)', 'Fill The Gap')
+    cy.contains('#questions-list  > :nth-child(7)', 'Multiple dropdowns')
+    cy.contains('#questions-list  > :nth-child(8)', 'Fill in the blank')
 
     // [segment]: Testing text formats
     cy.log('testing text formats...')
@@ -131,17 +128,13 @@ describe('Testing questions', () => {
     cy.get('.ProseMirror').clear()
     cy.get('.ProseMirror').type('Question 2')
     cy.get('.ProseMirror').click({ force: true })
-    cy.exec(
-      'docker exec hhmi_server_1 node ./scripts/seedQuestions.js deleteAll',
-    )
-      .its('stdout')
-      .should('contain', 'Emptied questions and question_versions')
+    cy.deleteAllQuestions()
   })
 
-  it('create question', () => {
-    cy.login(contact)
+  it('creating a question & checking values in the UI', () => {
+    cy.login(user2)
 
-    cy.get('[data-testid="create-question-btn"]').click()
+    cy.get(createQuestionButton).click()
     cy.wait('@GQLReq')
     cy.wait('@GQLReq')
     cy.fillQuestion(question)
@@ -158,24 +151,23 @@ describe('Testing questions', () => {
 
     cy.get('[data-testid="accept-tnc"]').click()
 
-    cy.get('[data-testid="submit-question-btn"]').click()
+    cy.get(submitQuestionButton).click()
     cy.contains(
-      '[class="ant-modal-confirm-title"]',
+      antModalConfirmTitle,
       'Are you sure you want to submit the question?',
     )
     cy.contains(
       '[class="ant-modal-confirm-content"]',
       'This will make the question visible to editors an reviewers, and after a successful review it will be published for all users.',
     )
-    cy.contains('[class="ant-modal-body"] [type="button"]', 'Submit').click()
-    cy.wait('@GQLReq')
-  })
-
-  it('checking if the values selected from the UI are retained', () => {
-    cy.login({ ...contact, visitUrl: '/dashboard' })
+    cy.contains(buttonAntModalBody, 'Submit').click()
     cy.wait('@GQLReq')
 
-    // [segment]: Checking  dashboard
+    // [segment]: checking if the values are retained in the UI
+    cy.visit(dashboardRoute, { method: 'GET' })
+    cy.wait('@GQLReq')
+
+    // [segment]: Checking  dashboardRoute
     cy.log('checking in the dashboard...')
     cy.contains('.ProseMirror p.paragraph', 'Question 1')
     cy.contains('[data-testid="topic-value"]', mainTopic.topic.value)
@@ -215,42 +207,28 @@ describe('Testing questions', () => {
     // checkDataWithoutParent(psychomotorLevel)
     checkDataWithoutParent(cognitiveLevel)
 
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js deleteAll`,
-    )
-      .its('stdout')
-      .should('contain', 'Emptied questions and question_versions')
+    cy.deleteAllQuestions()
   })
 
   it('editing the question', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -3 ecology published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
+    cy.seedQuestion(user2.username, -3, 'ecology', 'published')
     cy.login(editorRole)
 
     cy.contains('.ant-tabs-tab', 'Editor Questions').click()
     cy.wait('@GQLReq')
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
       .contains('.ProseMirror', 'Plants growing under direct sunlight')
       .click()
     cy.wait('@GQLReq')
     cy.contains('button[type="button"]', 'Edit question').click()
-    cy.contains('[class="ant-modal-confirm-title"]', 'Warning!')
+    cy.contains(antModalConfirmTitle, 'Warning!')
     cy.contains(
       '[class="ant-modal-confirm-content"]',
       `You are editing a published question. Any changes you make will be automatically saved, but not automatically published. You will need to publish the question again for the edits to be reflected in the Discover page. After the edited question is published, the old one will not be available anymore in the Discover page. Do you wish to continue?`,
     )
-    cy.contains(
-      '[class="ant-modal-body"] [type="button"]',
-      'Create new version',
-    ).click()
+    cy.contains(buttonAntModalBody, 'Create new version').click()
     cy.wait('@GQLReq')
     cy.get('[contenteditable="true"]', {
       force: true,
@@ -259,30 +237,21 @@ describe('Testing questions', () => {
       .type('Edited')
     cy.contains('[type="button"]', 'Publish').click()
     cy.contains('[type="button"]', 'Yes, publish').click()
-    cy.contains(
-      '[class="ant-modal-confirm-title"]',
-      'Question published successfully',
-    )
+    cy.contains(antModalConfirmTitle, 'Question published successfully')
     cy.contains(
       '[class="ant-modal-confirm-content"]',
       'Question was published and is now available in the Discover page',
     )
-    cy.contains('[class="ant-modal-body"] [type="button"]', 'Ok').click()
+    cy.contains(buttonAntModalBody, 'Ok').click()
   })
+
   it('duplicate question', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -3 population published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
+    cy.seedQuestion(user2.username, -3, 'population', 'published')
     cy.login({ ...editorRole })
-    cy.contains('a[href="/discover"]', 'Browse Questions').click()
+    cy.contains(anchorTags.discover, 'Browse Questions').click()
     cy.wait('@GQLReq')
 
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(1)
       .should('be.visible')
       .get('input[type="checkbox"]', { timeout: 10000 })
@@ -291,14 +260,14 @@ describe('Testing questions', () => {
 
     cy.get('[data-testid="duplicate-question"]').click()
     cy.contains(
-      'div[class="ant-modal-content"] button[type="button"]',
+      'div[class="ant-modal-body"] button[type="button"]',
       'Duplicate',
     ).click()
     cy.wait('@GQLReq')
-    cy.visit('/dashboard')
+    cy.visit(dashboardRoute)
     cy.wait('@GQLReq')
     cy.contains('div[role="tab"]', 'Authored Questions').click()
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
       .contains('p')
@@ -309,14 +278,14 @@ describe('Testing questions', () => {
   // skipped due to #172
   // eslint-disable-next-line jest/no-disabled-tests
   it.skip('check alternative text for empty questions', () => {
-    cy.login(contact)
-    cy.get('[data-testid="create-question-btn"]').click()
+    cy.login(user2)
+    cy.get(createQuestionButton).click()
     cy.wait('@GQLReq')
     cy.wait('@GQLReq')
-    cy.visit('/dashboard', { method: 'GET' })
+    cy.visit(dashboardRoute, { method: 'GET' })
     cy.wait('@GQLReq')
 
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
       .contains('.ProseMirror', '(empty)')
@@ -329,10 +298,10 @@ describe('Testing questions', () => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000)
 
-    cy.visit('/dashboard', { method: 'GET' })
+    cy.visit(dashboardRoute, { method: 'GET' })
     cy.wait('@GQLReq')
 
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
 
@@ -347,41 +316,11 @@ describe('Testing questions', () => {
 })
 
 describe('Testing lists', () => {
-  const { contact } = user
-
   before(() => {
-    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
-      .its('stdout')
-      .should('contain', 'database cleared')
-    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
-      .its('stdout')
-      .should('contain', `Added global team "admin"`)
-      .should('contain', `Added global team "reviewer"`)
-      .should('contain', `Added global team "editor"`)
-
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${contact.email} profileSubmitted reviewer`,
-    )
-      .its('stdout')
-      .should('contain', `user created with email - ${contact.email}.`)
-      .should('contain', `user given reviewer role`)
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -10 biochemistry published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
-
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${contact.username} -20 population published`,
-    )
-      .its('stdout')
-      .should(
-        'contain',
-        `question created under the author ${contact.username}`,
-      )
+    cy.resetDB()
+    cy.seedUser({ ...user2 })
+    cy.seedQuestion(user2.username, -10, 'biochemistry', 'published')
+    cy.seedQuestion(user2.username, -20, 'population', 'published')
   })
 
   beforeEach(() => {
@@ -390,12 +329,12 @@ describe('Testing lists', () => {
   })
 
   it('creating a list and deleting a list', () => {
-    cy.login({ ...contact, visitUrl: '/lists' })
+    cy.login({ ...user2, visitUrl: lists })
 
     // [segment]: create a list
     cy.get('[id="newList"]').type('list1')
     cy.get('[data-testid="create-btn"]').click()
-    cy.get('.ant-table-row').eq(0).contains('.ant-table-cell', 'list1')
+    cy.get('.ant-table-row').eq(0).contains(antTableCell, 'list1')
 
     // [segment]: deleting a list
   })
@@ -403,19 +342,15 @@ describe('Testing lists', () => {
   // skipped due to logout button issue.
   // eslint-disable-next-line jest/no-disabled-tests
   it('adding questions to new & existing list', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedList.js create new_list ${contact.username}`,
-    )
-      .its('stdout')
-      .should('contain', `created new_list with author as ${contact.username}`)
+    cy.seedList('new_list', user2.username)
 
-    cy.login({ ...contact })
-    cy.contains('a[href="/discover"]', 'Browse Questions').click()
+    cy.login({ ...user2 })
+    cy.contains(anchorTags.discover, 'Browse Questions').click()
     cy.wait('@GQLReq')
 
     // [segment]: adding question to new lsit
 
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
       .get('input[type="checkbox"]', { timeout: 10000 })
@@ -431,7 +366,7 @@ describe('Testing lists', () => {
     // making a random click to close the popup
     cy.reload()
     cy.wait('@GQLReq')
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(1)
       .should('be.visible')
       .get('input[type="checkbox"]', { timeout: 10000 })
@@ -446,23 +381,23 @@ describe('Testing lists', () => {
     cy.log('checking if the questions are displayed inside the list...')
     // Existing list
     cy.log('Existing list')
-    cy.visit('/lists', { method: 'GET' })
+    cy.visit(lists, { method: 'GET' })
     cy.wait('@GQLReq')
 
     cy.contains('new_list').click()
 
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
       .contains('p')
       .should('contain', 'By 2040')
     // New list
     cy.log('new list')
-    cy.visit('/lists', { method: 'GET' })
+    cy.visit(lists, { method: 'GET' })
     cy.wait('@GQLReq')
 
     cy.contains('list2').click()
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
 
@@ -471,30 +406,18 @@ describe('Testing lists', () => {
   })
 
   it('checking if export triggers download', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedList.js create list3 ${contact.username}`,
-    )
-      .its('stdout')
-      .should('contain', `created list3 with author as ${contact.username}`)
-    cy.login({ ...contact, visitUrl: '/dashboard' })
-    cy.get('[data-testid="list-item-wrapper"]')
-      .eq(0)
-      .should('be.visible')
-      .contains('p')
-      .click()
+    cy.seedList('list3', user2.username)
+    cy.login({ ...user2, visitUrl: dashboardRoute })
+    cy.get(listItemWrapper).eq(0).should('be.visible').contains('p').click()
     cy.url().then(url => {
       const qId = url.split('/')[4]
-      cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedList addToList list3 ${qId}`,
-      )
-        .its('stdout')
-        .should('contain', `added question with id - ${qId} to list list3`)
+      cy.addQuestionToList('list3', qId)
     })
-    cy.visit('/lists')
+    cy.visit(lists)
     cy.wait('@GQLReq')
 
     cy.contains('list3').click()
-    cy.get('[data-testid="list-item-wrapper"]')
+    cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
       .contains('p')
@@ -502,13 +425,8 @@ describe('Testing lists', () => {
   })
 
   it('rename list', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedList.js create list4 ${contact.username}`,
-    )
-      .its('stdout')
-      .should('contain', `created list4 with author as ${contact.username}`)
-
-    cy.login({ ...contact, visitUrl: '/lists' })
+    cy.seedList('list4', user2.username)
+    cy.login({ ...user2, visitUrl: lists })
     cy.get('[aria-label="Rename list list4"]').click()
     cy.get('div[id="list4-rename-popup"] input[name="renameList"]').type(
       '{backspace}5',

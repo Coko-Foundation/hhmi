@@ -26,6 +26,7 @@ const {
 const validDataType = ['biochemistry', 'anatomy', 'population', 'ecology']
 
 const validQuestionStatus = [
+  'notSubmitted',
   'submitted',
   'underReview',
   'published',
@@ -92,7 +93,7 @@ const checkDataType = (validData, dataType) => {
         }
 
         logger.info(
-          `[seedQuestions]: question created under the author ${username}`,
+          `[seedQuestions]: question created under the author ${username} and is ${questionStatus}`,
         )
         break
       }
@@ -113,7 +114,7 @@ const checkDataType = (validData, dataType) => {
 
         if (result) {
           logger.info(
-            `[seedQuestions]: question ${questionId} updated to ${questionStatus}`,
+            `[seedQuestions]: status of question ${questionId} updated to ${questionStatus}`,
           )
         } else {
           logger.error(`[seedQuestions]: something wen't wrong!`)
