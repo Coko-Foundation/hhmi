@@ -1,4 +1,4 @@
-const { Team, User } = require('../index')
+const { Team, User, Question, TeamMember } = require('../index')
 const clearDb = require('./_clearDb')
 
 describe('Team Model', () => {
@@ -52,5 +52,25 @@ describe('Team Model', () => {
     expect(resultThree.find(u => u.id === userThree.id).id).toEqual(
       userThree.id,
     )
+  })
+
+  test('assigning author to a question', async () => {
+    const question = await Question.insert({})
+    const admin = await User.insert({})
+    const author = await User.insert({})
+
+    const team = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(team.id, admin.id)
+
+    const result = await Team.assignQuestionAuthor(question.id, author.id)
+    const fetchedTeam = await TeamMember.find({ teamId: team.id })
+    expect(fetchedTeam.result[0].userId).toEqual(author.id)
+    expect(result).toBe(true)
   })
 })

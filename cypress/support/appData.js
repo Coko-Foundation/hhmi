@@ -140,7 +140,7 @@ export const workflowData = {
     operationBtn: 'Publish',
     prompt: {
       header: 'Are you sure you want to publish this question version?',
-      body: 'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Discover page',
+      body: 'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Browse Questions Page.',
       cancelBtn: 'Cancel',
       okBtn: 'Yes, publish',
     },

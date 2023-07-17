@@ -155,13 +155,55 @@ describe('Question Workflows', () => {
       )
       cy.contains(
         '[class="ant-modal-confirm-content"]',
-        'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Discover page',
+        'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Browse Questions Page',
       )
       cy.contains(buttonAntModalBody, 'Yes, publish').click()
       cy.wait('@GQLReq')
       cy.visit(discoverPage)
       cy.wait('@GQLReq')
       cy.contains('[class="ProseMirror"]', 'Question 1')
+      cy.deleteAllQuestions()
     })
+
+    // eslint-disable-next-line jest/no-commented-out-tests
+    // it('Assign author to a question', () => {
+    //   cy.seedQuestion(admin.username, -2, 'biochemistry', 'published')
+
+    //   cy.login({ ...admin })
+    //   cy.get('[data-testid=list-item-wrapper]').eq(0).get('p').click()
+    //   cy.wait('@GQLReq')
+    //   cy.get('[id="assignAuthor"]').first().click()
+    //   cy.get('[data-testid="author-select"]').type(user2.username)
+    //   cy.contains('.ant-select-dropdown', user2.username).click()
+    //   cy.contains(
+    //     '[class="ant-modal-footer"] button[type="button"]',
+    //     'Yes, assign author',
+    //   ).click()
+    //   cy.contains(
+    //     '[class="ant-modal-body"]',
+    //     'This action is irreversible. You will not be able to change the author of this question again.',
+    //   )
+    //   cy.contains(
+    //     '[class="ant-modal-footer"] button[type="button"]',
+    //     'Assign',
+    //   ).click()
+    //   cy.wait('@GQLReq')
+    //   cy.contains(
+    //     '[class="ant-modal-confirm-content"]',
+    //     `User ${user2.username} has been assgined as the author of this question`,
+    //   )
+
+    //   cy.contains(
+    //     '[class="ant-modal-content"] button[type="button"]',
+    //     'Ok',
+    //   ).click()
+
+    //   cy.logout()
+    //   cy.login({ ...user2 })
+    //   cy.get('[data-testid="list-item-wrapper"]')
+    //     .eq(0)
+    //     .should('be.visible')
+    //     .contains('.ProseMirror', 'Energy: carbohydrates')
+    // })
   })
 })
