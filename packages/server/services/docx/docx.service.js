@@ -370,17 +370,22 @@ class WaxToDocxConverter {
 
   // #region images
   figureHandler = (figure, options) => {
-    return new Paragraph({
+    const { listType, level, instance } = options
+
+    const paragraphData = {
       children: this.contentParser(figure.content),
-      numbering: {
-        reference: options.listType,
-        level: options.level,
-        instance: options.instance,
-      },
-      spacing: {
-        after: 200,
-      },
-    })
+      alignment: AlignmentType.CENTER,
+    }
+
+    if (listType && Number.isInteger(level) && instance) {
+      paragraphData.numbering = {
+        reference: listType,
+        level,
+        instance,
+      }
+    }
+
+    return new Paragraph(paragraphData)
   }
 
   imageHandler = image => {
@@ -405,6 +410,8 @@ class WaxToDocxConverter {
       data: fs.readFileSync(imagePath),
       altText: {
         title: alt,
+        description: '',
+        name: '',
       },
       transformation: {
         width: scale > 1 ? width / scale : width,
