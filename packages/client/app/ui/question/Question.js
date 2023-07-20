@@ -1417,7 +1417,7 @@ const Question = props => {
                           layout={facultyView ? TestModeLayout : HhmiLayout}
                           onContentChange={handleQuestionContentChange}
                           onImageUpload={onImageUpload}
-                          published={isPublished}
+                          published={facultyView && isPublished}
                           readOnly={readOnly}
                           withFeedback={showMetadata}
                         />
