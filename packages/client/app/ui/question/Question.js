@@ -525,6 +525,7 @@ const Question = props => {
     submitting,
     updated,
     wordFileLoading,
+    canCreateNewVersion,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -1181,7 +1182,7 @@ const Question = props => {
           </StyledButton>
         </>
       )}
-      {isPublished && (
+      {isPublished && canCreateNewVersion && (
         <StyledButton onClick={showNewVersionModal} type="primary">
           Edit question
         </StyledButton>
@@ -1272,7 +1273,7 @@ const Question = props => {
           </>
         )}
 
-        {isPublished && (
+        {isPublished && canCreateNewVersion && (
           <StyledButton onClick={showNewVersionModal} type="primary">
             Edit question
           </StyledButton>
@@ -1322,6 +1323,11 @@ const Question = props => {
           onExport={onClickExportToScorm}
         />
       )}
+      {isPublished && canCreateNewVersion && (
+        <StyledButton onClick={showNewVersionModal} type="primary">
+          Edit question
+        </StyledButton>
+      )}
     </>
   )
 
@@ -1356,6 +1362,11 @@ const Question = props => {
               loading={scormZipLoading}
               onExport={onClickExportToScorm}
             />
+          )}
+          {isPublished && canCreateNewVersion && (
+            <StyledButton onClick={showNewVersionModal} type="primary">
+              Edit question
+            </StyledButton>
           )}
         </ActionsWrapper>
 
@@ -1497,7 +1508,7 @@ Question.propTypes = {
   onClickAssignHE: PropTypes.func,
   onClickExportToScorm: PropTypes.func,
   onClickExportToWord: PropTypes.func,
-
+  canCreateNewVersion: PropTypes.bool,
   editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool,
   submitting: PropTypes.bool,
@@ -1793,6 +1804,7 @@ Question.defaultProps = {
   resources: [],
   updated: '',
   isUserLoggedIn: true,
+  canCreateNewVersion: false,
 }
 
 export default Question

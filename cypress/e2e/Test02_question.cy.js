@@ -1,6 +1,6 @@
 /* eslint-disable jest/expect-expect */
 
-import { editor as editorRole, user2 } from '../support/credentials'
+import { admin, user2 } from '../support/credentials'
 import { editor, question } from '../support/appData'
 import {
   antModalConfirmTitle,
@@ -34,7 +34,7 @@ describe('Testing questions', () => {
 
   before(() => {
     cy.resetDB()
-    cy.seedUser({ ...editorRole })
+    cy.seedUser({ ...admin })
     cy.seedUser({ ...user2 })
   })
 
@@ -212,9 +212,9 @@ describe('Testing questions', () => {
 
   it('editing the question', () => {
     cy.seedQuestion(user2.username, -3, 'ecology', 'published')
-    cy.login(editorRole)
+    cy.login(admin)
 
-    cy.contains('.ant-tabs-tab', 'Editor Questions').click()
+    cy.get(anchorTags.discover).click()
     cy.wait('@GQLReq')
     cy.get(listItemWrapper)
       .eq(0)
@@ -247,7 +247,7 @@ describe('Testing questions', () => {
 
   it('duplicate question', () => {
     cy.seedQuestion(user2.username, -3, 'population', 'published')
-    cy.login({ ...editorRole })
+    cy.login({ ...user2 })
     cy.contains(anchorTags.discover, 'Browse Questions').click()
     cy.wait('@GQLReq')
 

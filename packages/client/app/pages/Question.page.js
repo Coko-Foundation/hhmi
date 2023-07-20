@@ -162,6 +162,9 @@ const QuestionPage = props => {
 
   const [createNewQuestionVersionMutation] = useMutation(CREATE_NEW_VERSION, {
     variables: { questionId: id },
+    onCompleted: () => {
+      history.push(`/question/${id}/`)
+    },
   })
 
   /* setup Prev/Next question functions */
@@ -560,9 +563,10 @@ const QuestionPage = props => {
       <Question
         authors={possibleAuthors}
         canAssignAuthor={isAdmin && isAuthor}
+        canCreateNewVersion={isAdmin}
         editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
-        editorView={(isEditor && !isAuthor) || (isAdmin && isAuthor)}
+        editorView={(isEditor && !isAuthor) || isAdmin}
         facultyView={testMode}
         initialMetadataValues={metadataApiToUi(version, testMode)}
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,

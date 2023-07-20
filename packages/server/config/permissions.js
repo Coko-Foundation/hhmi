@@ -165,7 +165,7 @@ const permissions = {
     moveQuestionVersionToReview: isEditor,
     moveQuestionVersionToProduction: isEditor,
     publishQuestionVersion: isEditorOrAdmin,
-    createNewQuestionVersion: isEditorOrAdmin,
+    createNewQuestionVersion: isAdmin,
     assignAuthorship: isAdminAndAuthor,
   },
   Query: {

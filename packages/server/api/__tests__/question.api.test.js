@@ -1105,7 +1105,7 @@ describe('Question API authorization', () => {
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
-  it('blocks users who are not editors from creating new question versions', async () => {
+  it('blocks users who are not admins from creating new question versions', async () => {
     const user = await User.insert({
       isActive: true,
     })
@@ -1121,21 +1121,21 @@ describe('Question API authorization', () => {
       },
     })
 
-    const isEditor = await user.hasGlobalRole('editor')
+    const isAdmin = await user.hasGlobalRole('admin')
     expect(user.isActive).toBe(true)
-    expect(isEditor).toBe(false)
+    expect(isAdmin).toBe(false)
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
-  it('allows active editors to create new question versions', async () => {
+  it('allows active admins to create new question versions', async () => {
     const user = await User.insert({
       isActive: true,
     })
 
     const globalTeam = await Team.insert({
-      role: 'editor',
-      displayName: 'Editor',
+      role: 'admin',
+      displayName: 'Admin',
       global: true,
     })
 
@@ -1155,10 +1155,10 @@ describe('Question API authorization', () => {
       },
     })
 
-    const isEditor = await user.hasGlobalRole('editor')
+    const isAdmin = await user.hasGlobalRole('admin')
 
     expect(user.isActive).toBe(true)
-    expect(isEditor).toBe(true)
+    expect(isAdmin).toBe(true)
     expect(result.errors).toBe(undefined)
     expect(result.data).not.toBe(null)
   })
