@@ -5,6 +5,7 @@ const {
   submitQuestionnaire,
   filterUsers,
   getDisplayName,
+  bioInteractiveLogin,
 } = require('../../controllers/user.controllers')
 
 const updateUserProfileResolver = async (_, { input }, ctx) => {
@@ -28,10 +29,20 @@ const displayNameResolver = async user => {
   return getDisplayName(user)
 }
 
+const bioInteractiveLoginResolver = async (_, { authCode }, ctx) => {
+  try {
+    return bioInteractiveLogin(authCode)
+  } catch (e) {
+    logger.error(`bioInteractiveLoginResolver error: ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   Mutation: {
     updateUserProfile: updateUserProfileResolver,
     submitQuestionnaire: submitQuestionnaireResolver,
+    bioInteractiveLogin: bioInteractiveLoginResolver,
   },
   Query: {
     filterUsers: filterUsersResolver,

@@ -44,6 +44,7 @@ const selectDataWithoutParent = section => {
 
 Cypress.Commands.add('login', ({ email, password, visitUrl }) => {
   cy.visit(visitUrl || login)
+  cy.contains('button[type="button"]', 'Log in with Email').click()
   cy.get('input[id="email"]').type(email)
   cy.get('input[id="password"]').type(password)
   cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('waitForLogin')

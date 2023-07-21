@@ -1,6 +1,8 @@
 export { default as AuthenticationForm } from './AuthenticationForm'
 export { default as AuthenticationHeader } from './AuthenticationHeader'
+export { default as AuthenticationMethod } from './AuthenticationMethod'
 export { default as AuthenticationWrapper } from './AuthenticationWrapper'
+export { default as BioInteractiveOauth } from './BioInteractiveOauth'
 export { default as DeactivatedUser } from './DeactivatedUser'
 export { default as Login } from './Login'
 export { default as ChangePassword } from './ChangePassword'

@@ -81,4 +81,5 @@ extend type Query {
 extend type Mutation {
   submitQuestionnaire(input: UserProfileInput!): User!
   updateUserProfile(input: UserProfileInput!): User!
+  bioInteractiveLogin(authCode: String!): LoginResult!
 }

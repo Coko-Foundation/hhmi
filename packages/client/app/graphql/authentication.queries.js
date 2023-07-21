@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 import { USER_FIELDS } from './user.queries'
 
-export const LOGIN = gql`
+export const EMAIL_LOGIN = gql`
   mutation Login($input: LoginInput!) {
     login(input: $input) {
       user {
@@ -11,6 +11,21 @@ export const LOGIN = gql`
     }
   }
   ${USER_FIELDS}
+`
+
+export const BIOINTERACTIVE_LOGIN = gql`
+  mutation BioInteractiveLogin($authCode: String!) {
+    bioInteractiveLogin(authCode: $authCode) {
+      user {
+        id
+        defaultIdentity {
+          id
+          isVerified
+        }
+      }
+      token
+    }
+  }
 `
 
 export const SIGNUP = gql`

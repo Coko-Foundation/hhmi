@@ -36,6 +36,7 @@ import {
   DeactivatedUser,
   Lists,
   ListContent,
+  BioInteractiveOauth,
 } from './pages'
 
 import { CURRENT_USER } from './graphql'
@@ -106,6 +107,10 @@ const regexPaths = [
   {
     path: /^\/ensure-verified-login$/,
     name: 'Email Not Verified page',
+  },
+  {
+    path: /^\/biointeractive-oauth+/,
+    name: 'BioInteractive login',
   },
 ]
 
@@ -405,6 +410,11 @@ const routes = (
                 component={VerifyCheck}
                 exact
                 path="/ensure-verified-login"
+              />
+              <Route
+                component={BioInteractiveOauth}
+                exact
+                path="/biointeractive-oauth"
               />
               <Route component={DeactivatedUser} path="/deactivated-user" />
               <Route component={() => <Redirect to="/dashboard" />} path="*" />

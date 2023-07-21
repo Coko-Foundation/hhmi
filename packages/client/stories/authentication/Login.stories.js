@@ -26,12 +26,17 @@ export const FailingLogin = () => {
     }, 2000)
   }
 
+  const dummyFunc = () => {}
+
   return (
     <Background>
       <Login
+        emailSelected
         errorMessage="This is not a valid user / password combination"
         hasError={hasError}
         loading={loading}
+        onBioInteractiveClick={dummyFunc}
+        onEmailClick={dummyFunc}
         onSubmit={handleSubmit}
       />
     </Background>

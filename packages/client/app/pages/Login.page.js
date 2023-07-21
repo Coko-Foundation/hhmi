@@ -1,17 +1,26 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useLocation, Redirect } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
-import { useCurrentUser } from '@coko/client'
+import { useCurrentUser, uuid } from '@coko/client'
 
 import { Login } from 'ui'
-import { LOGIN } from '../graphql'
+import { EMAIL_LOGIN } from '../graphql'
 
-const LoginPage = props => {
+const LoginPage = () => {
   const { search } = useLocation()
 
   const { currentUser, setCurrentUser } = useCurrentUser()
 
-  const [loginMutation, { data, loading, error }] = useMutation(LOGIN)
+  const [emailLoginMutation, { data, loading, error }] =
+    useMutation(EMAIL_LOGIN)
+
+  const [bioInteractiveLoading, setBioInteractiveLoading] = useState(false)
+
+  const {
+    CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID,
+    CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI,
+    CLIENT_SHOW_EMAIL_LOGIN_OPTION,
+  } = process.env
 
   const redirectUrl = new URLSearchParams(search).get('next') || '/dashboard'
 
@@ -22,7 +31,21 @@ const LoginPage = props => {
       },
     }
 
-    loginMutation(mutationData).catch(e => console.error(e))
+    emailLoginMutation(mutationData).catch(e => console.error(e))
+  }
+
+  const handleBioInteractiveClick = () => {
+    setBioInteractiveLoading(true)
+
+    const oauthState = uuid()
+    const clientId = CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID
+    const redirectUri = CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI
+
+    localStorage.setItem('oauthState', oauthState)
+
+    window.location.assign(
+      `https://www.biointeractive.org/oauth2/authorize/?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=openid&state=${oauthState}`,
+    )
   }
 
   if (currentUser) return <Redirect to={redirectUrl} />
@@ -47,10 +70,13 @@ const LoginPage = props => {
 
   return (
     <Login
+      bioInteractiveLoading={bioInteractiveLoading}
       errorMessage={errorMessage}
       hasError={!!error}
       loading={loading}
+      onBioInteractiveClick={handleBioInteractiveClick}
       onSubmit={login}
+      showEmailOption={CLIENT_SHOW_EMAIL_LOGIN_OPTION === 'true'}
     />
   )
 }
