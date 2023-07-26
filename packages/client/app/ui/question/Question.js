@@ -1008,10 +1008,10 @@ const Question = props => {
     </StyledPrevNextButton>
   )
 
-  const isMobile = useBreakpoint('(min-width: 550px)')
+  const isMobile = useBreakpoint('(max-width: 900px)')
 
   // eslint-disable-next-line no-nested-ternary
-  const RightAreaAuthor = isSubmitted ? null : isMobile ? (
+  const RightAreaAuthor = isSubmitted ? null : !isMobile ? (
     <>
       <StyledCheckbox
         aria-label="I accept the terms and conditions"
@@ -1280,21 +1280,23 @@ const Question = props => {
         )}
         {showNextQuestionLink && NextQuestion}
       </ActionsWrapper>
-      <Popup
-        alignment="end"
-        data-testid="editor-actions-popup"
-        position="block-end"
-        toggle={
-          <PopupToggle
-            aria-label="More actions"
-            icon={<EllipsisOutlined />}
-            title="More actions"
-            type="primary"
-          />
-        }
-      >
-        <PopupContentWrapper>{editorActionsDropdownMenu}</PopupContentWrapper>
-      </Popup>
+      {isMobile && (
+        <Popup
+          alignment="end"
+          data-testid="editor-actions-popup"
+          position="block-end"
+          toggle={
+            <PopupToggle
+              aria-label="More actions"
+              icon={<EllipsisOutlined />}
+              title="More actions"
+              type="primary"
+            />
+          }
+        >
+          <PopupContentWrapper>{editorActionsDropdownMenu}</PopupContentWrapper>
+        </Popup>
+      )}
     </>
   )
 
