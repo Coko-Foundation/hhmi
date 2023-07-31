@@ -1,0 +1,22 @@
+steps:
+  - label: Build App
+    command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
+    branches:
+      - live
+    env:
+      SERVER_URL: //www.assessmentbuilder-node.hhmi.byf1.dev
+
+  - label: Build App
+    command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
+    branches:
+      - main
+    env:
+      SERVER_URL: //stage.assessmentbuilder-node.hhmi.byf1.dev
+
+  - label: Build App
+    command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
+    branches:
+      - "!live"
+      - "!main"
+    env:
+      SERVER_URL: //dev.assessmentbuilder-node.hhmi.byf1.dev

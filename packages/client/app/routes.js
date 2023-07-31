@@ -37,6 +37,8 @@ import {
   Lists,
   ListContent,
   BioInteractiveOauth,
+  External,
+  PageNotFound,
 } from './pages'
 
 import { CURRENT_USER } from './graphql'
@@ -111,6 +113,18 @@ const regexPaths = [
   {
     path: /^\/biointeractive-oauth+/,
     name: 'BioInteractive login',
+  },
+  {
+    path: /^\/$/,
+    name: 'Home page',
+  },
+  {
+    path: /^\/about$/,
+    name: 'About',
+  },
+  {
+    path: /^\/learning$/,
+    name: 'Professional Learning',
   },
 ]
 
@@ -417,7 +431,33 @@ const routes = (
                 path="/biointeractive-oauth"
               />
               <Route component={DeactivatedUser} path="/deactivated-user" />
-              <Route component={() => <Redirect to="/dashboard" />} path="*" />
+              {/* Static pages hosted elsewhere */}
+              <Route
+                component={() => (
+                  <External ariaLabel="Home page" src="/drupal/" />
+                )}
+                exact
+                path="/"
+              />
+              <Route
+                component={() => (
+                  <External ariaLabel="About page" src="/drupal/about" />
+                )}
+                exact
+                path="/about"
+              />
+              <Route
+                component={() => (
+                  <External
+                    ariaLabel="Proffessional learning page"
+                    src="/drupal/professional-learning"
+                  />
+                )}
+                exact
+                path="/learning"
+              />
+              <Route component={PageNotFound} path="/404" />
+              <Route component={() => <Redirect to="/404" />} path="*" />
             </Switch>
           </StyledMain>
         </StyledPage>

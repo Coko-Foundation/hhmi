@@ -145,7 +145,7 @@ end to end tests:
     - docker compose --compatibility -f docker-compose.cypress-ci.yml up -d
     - docker compose ps
     - yarn install --frozen-lockfile
-    - wait-on --timeout 30000 http://localhost:3000/healthcheck && yarn cypress run --env CLIENT_SHOW_EMAIL_LOGIN_OPTION=true
+    - wait-on --timeout 30000 http://localhost:3000/healthcheck && yarn cypress run
 
 # PUBLISH PRODUCTION
 publish client:
