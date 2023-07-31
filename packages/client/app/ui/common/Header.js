@@ -561,12 +561,20 @@ const Header = props => {
           <LeftNavContainer>
             <StyledList>
               <li>
-                <StyledLink to={about}>
+                <StyledLink
+                  aria-current={currentPath === about ? 'page' : false}
+                  onClick={() => setShowMenu(false)}
+                  to={about}
+                >
                   <span>About</span>
                 </StyledLink>
               </li>
               <li>
-                <StyledLink to={learning}>
+                <StyledLink
+                  aria-current={currentPath === learning ? 'page' : false}
+                  onClick={() => setShowMenu(false)}
+                  to={learning}
+                >
                   <span>Professional Learning</span>
                 </StyledLink>
               </li>
