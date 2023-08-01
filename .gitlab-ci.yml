@@ -163,7 +163,7 @@ publish client:
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest
   only:
-    - master
+    - staging
 
 publish server:
   stage: Publish production
@@ -180,7 +180,7 @@ publish server:
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest
   only:
-    - master
+    - staging
 
 build & publish storybook:
   stage: Publish production
@@ -222,7 +222,7 @@ deploy production:
       docker pull $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest && \
       sudo systemctl restart hhmi.service"
   only:
-    - master
+    - staging
 
 deploy storybook:
   image: debian:bullseye-slim
