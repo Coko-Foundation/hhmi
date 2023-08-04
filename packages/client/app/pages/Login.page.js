@@ -1,26 +1,30 @@
 import React, { useState } from 'react'
 import { useLocation, Redirect } from 'react-router-dom'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { useCurrentUser, uuid } from '@coko/client'
 
 import { Login } from 'ui'
-import { EMAIL_LOGIN } from '../graphql'
+import { GET_LOGIN_CONFIG, EMAIL_LOGIN } from '../graphql'
 
 const LoginPage = () => {
   const { search } = useLocation()
 
   const { currentUser, setCurrentUser } = useCurrentUser()
 
+  const {
+    data: {
+      getLoginConfig: {
+        showEmailLogin,
+        biointeractiveOathClientId,
+        biointeractiveOathRedirectUri,
+      } = {},
+    } = {},
+  } = useQuery(GET_LOGIN_CONFIG)
+
   const [emailLoginMutation, { data, loading, error }] =
     useMutation(EMAIL_LOGIN)
 
   const [bioInteractiveLoading, setBioInteractiveLoading] = useState(false)
-
-  const {
-    CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID,
-    CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI,
-    CLIENT_SHOW_EMAIL_LOGIN_OPTION,
-  } = process.env
 
   const redirectUrl = new URLSearchParams(search).get('next') || '/dashboard'
 
@@ -38,8 +42,8 @@ const LoginPage = () => {
     setBioInteractiveLoading(true)
 
     const oauthState = uuid()
-    const clientId = CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID
-    const redirectUri = CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI
+    const clientId = biointeractiveOathClientId
+    const redirectUri = biointeractiveOathRedirectUri
 
     localStorage.setItem('oauthState', oauthState)
 
@@ -76,7 +80,7 @@ const LoginPage = () => {
       loading={loading}
       onBioInteractiveClick={handleBioInteractiveClick}
       onSubmit={login}
-      showEmailOption={CLIENT_SHOW_EMAIL_LOGIN_OPTION === 'true'}
+      showEmailOption={showEmailLogin}
     />
   )
 }
