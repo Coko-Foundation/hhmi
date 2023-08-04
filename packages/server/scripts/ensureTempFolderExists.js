@@ -10,11 +10,13 @@ const ensureTempFolderExists = () => {
 
   fs.stat(tempFolderPath, (err, stats) => {
     if (err || !stats.isDirectory()) {
-      logger.info('"tmp" folder does not exist. Creating...')
+      logger.info(
+        '[ensureTempFolderExists]: "tmp" folder does not exist. Creating...',
+      )
       fs.mkdirSync(tempFolderPath)
-      logger.info('"tmp" folder created')
+      logger.info('[ensureTempFolderExists]: "tmp" folder created')
     } else {
-      logger.info('"tmp" folder already exists')
+      logger.info('[ensureTempFolderExists]: "tmp" folder already exists')
     }
   })
 }

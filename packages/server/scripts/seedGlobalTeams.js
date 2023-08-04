@@ -23,7 +23,9 @@ const seedGlobalTeams = async () => {
       })
 
       if (exists) {
-        logger.info(`Global team "${teamData.role}" already exists`)
+        logger.info(
+          `[seedGlobalTeams]: Global team "${teamData.role}" already exists`,
+        )
         return
       }
 
@@ -32,7 +34,7 @@ const seedGlobalTeams = async () => {
         global: true,
       })
 
-      logger.info(`Added global team "${teamData.role}"`)
+      logger.info(`[seedGlobalTeams]: Added global team "${teamData.role}"`)
     }),
   )
 }
