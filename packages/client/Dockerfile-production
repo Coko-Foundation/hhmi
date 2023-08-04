@@ -15,6 +15,9 @@ RUN yarn install --frozen-lockfile --production
 COPY . .
 
 ARG server_url
+ARG show_email_login
+ARG oauth_client_id
+ARG oauth_redirect_uri
 
 ENV NODE_ENV='production'
 ENV CLIENT_PAGE_TITLE='HHMI Assessment Builder'
@@ -22,6 +25,9 @@ ENV CLIENT_FAVICON_PATH='../static/favicon.ico'
 ENV CLIENT_LANGUAGE='en-US'
 
 ENV SERVER_URL=$server_url
+ENV CLIENT_SHOW_EMAIL_LOGIN_OPTION=$show_email_login
+ENV CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID=$oauth_client_id
+ENV CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI=$oauth_redirect_uri
 
 RUN yarn coko-client-build
 

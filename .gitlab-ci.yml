@@ -145,7 +145,7 @@ end to end tests:
     - docker compose --compatibility -f docker-compose.cypress-ci.yml up -d
     - docker compose ps
     - yarn install --frozen-lockfile
-    - wait-on --timeout 30000 http://localhost:3000/healthcheck && yarn cypress run --env CLIENT_SHOW_EMAIL_LOGIN_OPTION=true
+    - wait-on --timeout 30000 http://localhost:3000/healthcheck && yarn cypress run --record --env CLIENT_SHOW_EMAIL_LOGIN_OPTION=true
 
 # PUBLISH PRODUCTION
 publish client:
@@ -163,7 +163,7 @@ publish client:
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest
   only:
-    - master
+    - staging
 
 publish server:
   stage: Publish production
@@ -180,7 +180,7 @@ publish server:
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest
   only:
-    - master
+    - staging
 
 build & publish storybook:
   stage: Publish production
@@ -222,7 +222,7 @@ deploy production:
       docker pull $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest && \
       sudo systemctl restart hhmi.service"
   only:
-    - master
+    - staging
 
 deploy storybook:
   image: debian:bullseye-slim
