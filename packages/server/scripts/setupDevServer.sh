@@ -4,5 +4,6 @@ set -x
 node_modules/.bin/pubsweet migrate
 node ./scripts/seedGlobalTeams.js
 node ./scripts/ensureTempFolderExists.js
+node ./scripts/seedAdmin0.js
 
 exec "$@"

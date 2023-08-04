@@ -22,7 +22,7 @@ const dbCleaner = async () => {
         return true
       }),
     )
-    logger.info('[truncateDB] database cleared')
+    logger.info('[truncateDB]: database cleared')
   }
 }
 

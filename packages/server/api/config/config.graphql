@@ -1,0 +1,9 @@
+type LoginConfig {
+  showEmailLogin: Boolean
+  biointeractiveOathClientId: String
+  biointeractiveOathRedirectUri: String
+}
+
+extend type Query {
+  getLoginConfig: LoginConfig!
+}
