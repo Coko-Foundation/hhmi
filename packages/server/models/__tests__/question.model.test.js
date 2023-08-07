@@ -47,7 +47,7 @@ describe('Question model', () => {
 
   test('creates new question version', async () => {
     const question = await Question.insert({})
-    await Question.createNewVersion(question.id)
+    await question.createNewVersion()
 
     const versions = await QuestionVersion.find({
       questionId: question.id,

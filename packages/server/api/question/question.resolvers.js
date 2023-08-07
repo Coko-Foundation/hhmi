@@ -2,6 +2,7 @@ const {
   getAuthor,
   getQuestion,
   getQuestionVersions,
+  getLeadingContentForQuestion,
   getPublishedQuestions,
   getAuthorDashboard,
   getReviewerDashboard,
@@ -49,8 +50,8 @@ const getManagingEditorDashboardResolver = async (_, args, ctx) => {
   return getManagingEditorDashboard(ctx.user, args)
 }
 
-const createQuestionResolver = async (_, __, ctx) => {
-  return createQuestion(ctx.user)
+const createQuestionResolver = async (_, { input }, ctx) => {
+  return createQuestion(ctx.user, input)
 }
 
 const duplicateQuestionResolver = async (_, { questionId }, ctx) => {
@@ -143,6 +144,10 @@ const authorResolver = async ({ id }) => {
   return getAuthor(id)
 }
 
+const leadingContentResolver = async version => {
+  return getLeadingContentForQuestion(version)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -174,5 +179,6 @@ module.exports = {
   QuestionVersion: {
     question: versionQuestionResolver,
     content: contentResolver,
+    leadingContent: leadingContentResolver,
   },
 }

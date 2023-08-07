@@ -321,6 +321,8 @@ const extractBloomsLevel = (cognitiveLevel, cognitiveValues) => {
   return allCognitiveOptions.find(o => o.value === cognitiveLevel)?.label
 }
 
+const extractComplexItemSet = (id, options) => options.find(o => o.value === id)
+
 const profileOptions = {
   institutionalSetting: [
     {
@@ -789,6 +791,7 @@ export {
   extractTopicsAndSubtopics,
   extractCourseAndObjectives,
   extractBloomsLevel,
+  extractComplexItemSet,
   flatAAMCMetadata,
   flatAPCoursesMetadata,
   flatIBCourseMetadata,

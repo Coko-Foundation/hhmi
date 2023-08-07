@@ -8,7 +8,7 @@ const ModalFooter = Modal.footer
 const ModalContext = React.createContext(null)
 
 const ExportListToWordButton = props => {
-  const { className, children, disabled, text, onExport } = props
+  const { className, children, customOrder, disabled, text, onExport } = props
 
   const [showModal, setShowModal] = useState(false)
   const [showFeedback, setShowFeedback] = useState(true)
@@ -64,7 +64,11 @@ const ExportListToWordButton = props => {
         title={<ModalHeader>Export to Word</ModalHeader>}
       >
         <div>
-          <p>{text}</p>
+          <p>
+            {customOrder
+              ? text
+              : 'Questions belonging to one complex item set will be grouped together in the exported word doc. Otherwise, the order will be same as currently specified'}
+          </p>
           <Checkbox
             checked={showFeedback}
             onClick={() => setShowFeedback(!showFeedback)}
@@ -79,11 +83,13 @@ const ExportListToWordButton = props => {
 }
 
 ExportListToWordButton.propTypes = {
+  customOrder: PropTypes.bool,
   disabled: PropTypes.bool,
   text: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   onExport: PropTypes.func,
 }
 ExportListToWordButton.defaultProps = {
+  customOrder: true,
   disabled: false,
   text: '',
   onExport: () => {},

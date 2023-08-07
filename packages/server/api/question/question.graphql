@@ -35,6 +35,8 @@ type QuestionVersion {
   readingLevel: String
 
   questionType: String
+  complexItemSetId: ID
+  leadingContent: String
   lastEdit: DateTime
 }
 
@@ -76,6 +78,7 @@ input UpdateQuestionInput {
   agreedTc: Boolean
   content: String
 
+  complexItemSetId: ID
   questionType: String
 
   topics: [TopicInput!]
@@ -124,6 +127,7 @@ input SidebarFilters {
 
   cognitiveLevel: [String]
   questionType: [String]
+  complexItemSet: [String]
 }
 
 input FilterQuestionsParams {
@@ -185,7 +189,7 @@ extend type Query {
 }
 
 extend type Mutation {
-  createQuestion: Question!
+  createQuestion(input: UpdateQuestionInput): Question!
   duplicateQuestion(questionId: ID!): Question!
   rejectQuestion(questionId: ID!): Question!
   moveQuestionVersionToReview(questionVersionId: ID!): QuestionVersion!

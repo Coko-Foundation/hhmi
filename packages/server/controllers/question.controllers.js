@@ -1,23 +1,16 @@
 const path = require('path')
 const config = require('config')
-const cloneDeep = require('lodash/cloneDeep')
 
-const {
-  createFile,
-  fileStorage,
-  logger,
-  uuid,
-  useTransaction,
-  File,
-} = require('@coko/server')
+const { createFile, logger, useTransaction } = require('@coko/server')
 
-const { Question, QuestionVersion, Team } = require('../models')
+const { Question, QuestionVersion, Team, ComplexItemSet } = require('../models')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const { clearTempImageFiles } = require('./helpers')
 const { labels } = require('./constants')
 const WaxToScormConverter = require('../services/scorm/scorm.service')
 const metadataResolver = require('./metadataHandler')
 const resources = require('./resourcesData')
+const { getImageUrls, findImages } = require('./utils')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
@@ -47,6 +40,26 @@ const getQuestionVersions = async (questionId, options = {}) => {
     })
 
     return res.result
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
+const getLeadingContentForQuestion = async version => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} getLeadingContentForQuestion:`
+  const { complexItemSetId } = version
+
+  if (!complexItemSetId) return ''
+
+  try {
+    const complexItemSet = await ComplexItemSet.findById(complexItemSetId)
+
+    const contentWithImageUrls = await getImageUrls(
+      complexItemSet.leadingContent,
+    )
+
+    return JSON.stringify(contentWithImageUrls)
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
     throw new Error(e)
@@ -158,14 +171,14 @@ const getManagingEditorDashboard = async (userId, options = {}) => {
  * Create question & first question version
  * Add user that created it to the author team
  */
-const createQuestion = async (userId, options = {}) => {
+const createQuestion = async (userId, versionData, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} createQuestion:`
   logger.info(`${CONTROLLER_MESSAGE} Create question by user with id ${userId}`)
 
   try {
     return useTransaction(
       async trx => {
-        const question = await Question.insert({}, { trx })
+        const question = await Question.insert({}, versionData, { trx })
 
         const authorTeam = await Team.insert(
           {
@@ -302,6 +315,8 @@ const updateQuestion = async (
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} updateQuestion:`
   logger.info(`${CONTROLLER_MESSAGE} updating question with id ${questionId}`)
 
+  await modifyQuestion(questionId, {}, options, CONTROLLER_MESSAGE)
+
   await modifyQuestionVersion(
     questionVersionId,
     { ...data, lastEdit: new Date() },
@@ -419,9 +434,12 @@ const createNewQuestionVersion = async (questionId, options = {}) => {
   try {
     return useTransaction(
       async trx => {
-        await Question.createNewVersion(questionId, {
-          trx,
-        })
+        await Question.createNewVersion(
+          { questionId },
+          {
+            trx,
+          },
+        )
 
         return getQuestion(questionId)
       },
@@ -482,40 +500,36 @@ const generateWordFile = async (questionVersionId, options = {}) => {
 
     const tempFolderPath = path.join(__dirname, '..', 'tmp')
 
-    const findImages = async n => {
-      if (!n) return
-
-      if (n.type === 'figure' && n.content[0]?.attrs?.extraData) {
-        const [image] = n.content
-        const { fileId } = image.attrs.extraData
-        const file = await File.findById(fileId)
-        const medium = file.storedObjects.find(o => o.type === 'medium')
-        const { extension, key, id } = medium
-
-        const downloadPath = path.join(
-          tempFolderPath,
-          `${id}-${uuid()}.${extension}`,
-        )
-
-        await fileStorage.download(key, downloadPath)
-        imageData[image.attrs.id] = downloadPath
-
-        return
-      }
-
-      if (!n.content) return
-
-      await Promise.all(n.content.map(async i => findImages(i)))
-    }
-
     await Promise.all(
-      version.content.content.map(async node => findImages(node)),
+      version.content.content.map(async node =>
+        findImages(node, imageData, tempFolderPath),
+      ),
     )
 
+    let complexItemSet
+
+    if (version.complexItemSetId) {
+      complexItemSet = await ComplexItemSet.findById(version.complexItemSetId)
+
+      await Promise.all(
+        complexItemSet.leadingContent.content.map(async node =>
+          findImages(node, imageData, tempFolderPath),
+        ),
+      )
+    }
+
     const converter = new WaxToDocxConverter(
-      version.content,
+      // prepend content from complex item set (if there is one) to the document
+      {
+        type: 'doc',
+        content: [
+          ...(complexItemSet ? complexItemSet.leadingContent.content : []),
+          ...version.content.content,
+        ],
+      },
       imageData,
       {
+        complexItemSet: complexItemSet?.title,
         questionType: version.questionType,
 
         topics: version.topics,
@@ -566,48 +580,10 @@ const uploadFiles = async files => {
   )
 }
 
-// Populates a wax document with valid image urls
-const getImageUrls = async document => {
-  try {
-    const findImages = async doc => {
-      if (!doc || !doc.content) return doc
-
-      const clonedDocument = cloneDeep(doc)
-
-      clonedDocument.content = await Promise.all(
-        doc.content.map(async item => {
-          if (item.type === 'figure') {
-            const clonedItem = cloneDeep(item)
-            const { attrs } = clonedItem.content[0]
-
-            if (!attrs.extraData || !attrs.extraData.fileId) {
-              logger.warn('Image without file id detected!')
-              return item
-            }
-
-            const { fileId } = attrs.extraData
-            const file = await File.findById(fileId)
-            const { key } = file.storedObjects.find(o => o.type === 'medium')
-            clonedItem.content[0].attrs.src = await fileStorage.getURL(key)
-            return clonedItem
-          }
-
-          return findImages(item)
-        }),
-      )
-
-      return clonedDocument
-    }
-
-    return findImages(document)
-  } catch (e) {
-    throw new Error(e)
-  }
-}
-
 module.exports = {
   getQuestion,
   getQuestionVersions,
+  getLeadingContentForQuestion,
   getPublishedQuestions,
   getPublishedQuestionsIds,
 

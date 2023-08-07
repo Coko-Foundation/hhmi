@@ -24,10 +24,10 @@
 
 <!-- Select the relevant option-->
 
-- [ ] This feature is requested for the Basline version
+- [ ] This feature is requested for the Phase 2
 - [ ] This feature is requested for future enhanced versions
 
-<!-- Assignee and labels are added automatically. After creating this issue you can link other related or blocking issues with the Gitlab's Linked issues functionality. -->
 
-/label ~feature
-/assign @dionementis
+
+/label ~feature ~scope
+/assign @Natasha

@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import { uuid, th, grid } from '@coko/client'
 
 import { DateParser } from '@pubsweet/ui'
+import { LinkOutlined } from '@ant-design/icons'
+
 import WaxWrapper from '../wax/Wax'
 import { DashLayout } from '../wax/layout'
 import { dashConfig } from '../wax/config'
@@ -46,8 +48,7 @@ const StatusContainer = styled.div`
   text-align: right;
 `
 
-const SecondRow = styled.div`
-  justify-content: space-evenly;
+const InfoRow = styled.div`
   margin-bottom: ${grid(2)};
 
   details {
@@ -81,7 +82,7 @@ const SecondRow = styled.div`
   }
 `
 
-const BottomRow = styled.table`
+const MetadataTable = styled.table`
   border: none;
   /* text-align: left; */
   width: 100%;
@@ -99,6 +100,7 @@ const BottomRow = styled.table`
 
       tr {
         display: flex;
+        flex: 1 1 0px;
         flex-direction: column;
       }
     }
@@ -131,8 +133,17 @@ const sortFunction = (a, b) =>
   courseOrder.indexOf(a.course.label) - courseOrder.indexOf(b.course.label)
 
 const QuestionItem = props => {
-  const { className, metadata, content, status, href, id, courses, state } =
-    props
+  const {
+    className,
+    metadata,
+    content,
+    status,
+    href,
+    id,
+    courses,
+    state,
+    complexItemSet,
+  } = props
 
   return (
     <Wrapper className={className} id={id}>
@@ -159,7 +170,7 @@ const QuestionItem = props => {
         ) : null}
       </FirstRow>
 
-      <SecondRow data-testid="courses">
+      <InfoRow data-testid="courses">
         {courses.sort(sortFunction).map(c => {
           return !c.course ? (
             <span key={uuid()}>Unknown course</span>
@@ -176,9 +187,17 @@ const QuestionItem = props => {
             </details>
           )
         })}
-      </SecondRow>
+      </InfoRow>
 
-      <BottomRow>
+      {complexItemSet && (
+        <InfoRow>
+          <Link to={complexItemSet.href}>
+            <LinkOutlined /> {complexItemSet.title}
+          </Link>
+        </InfoRow>
+      )}
+
+      <MetadataTable>
         <tbody>
           {metadata &&
             metadata.length &&
@@ -202,7 +221,7 @@ const QuestionItem = props => {
               </tr>
             ))}
         </tbody>
-      </BottomRow>
+      </MetadataTable>
     </Wrapper>
   )
 }
@@ -233,6 +252,10 @@ QuestionItem.propTypes = {
     }),
   ),
   state: PropTypes.shape(),
+  complexItemSet: PropTypes.shape({
+    href: PropTypes.string,
+    title: PropTypes.string,
+  }),
 }
 
 QuestionItem.defaultProps = {
@@ -242,6 +265,7 @@ QuestionItem.defaultProps = {
   id: uuid(),
   courses: [],
   state: null,
+  complexItemSet: null,
 }
 
 export default QuestionItem
