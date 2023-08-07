@@ -18,6 +18,7 @@ import {
   editorInitialContent,
   initialMetadataValues,
 } from '../../app/utilities/question/initialValues'
+import complexItemSet from '../../app/utilities/question/complexItemSets'
 
 const Wrapper = styled.div`
   border: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
@@ -118,6 +119,7 @@ export const Base = args => {
       <Question
         authors={authors}
         autoSaveInterval={5000}
+        complexItemSetOptions={complexItemSet}
         editorContent={editorContent}
         isSubmitted={submitted}
         isUserLoggedIn
@@ -225,6 +227,7 @@ export const EditorView = () => {
         Will have error on move to review/publish/reject
       </Checkbox>
       <Question
+        complexItemSetOptions={complexItemSet}
         editorContent={editorInitialContent}
         editorView
         initialMetadataValues={metadataApiToUi(initialMetadataValues)}
@@ -268,6 +271,7 @@ export const TestMode = () => {
   return (
     <Wrapper>
       <Question
+        complexItemSetOptions={complexItemSet}
         editorContent={editorInitialContent}
         facultyView
         initialMetadataValues={initialMetadataValues}

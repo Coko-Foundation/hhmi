@@ -2,7 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { extractTopicsAndSubtopics } from '../../utilities'
+import { LinkOutlined } from '@ant-design/icons'
+import {
+  extractTopicsAndSubtopics,
+  extractComplexItemSet,
+} from '../../utilities'
 import { Link, VisuallyHiddenElement } from '../common'
 
 const Wrapper = styled.div`
@@ -41,16 +45,31 @@ const StyledList = styled.ul`
 `
 
 const MetadataInfo = props => {
-  const { values, metadata, resources } = props
+  const { values, metadata, resources, complexItemSetOptions } = props
 
   const questionTopics = extractTopicsAndSubtopics(
     values.topics,
     metadata.topics,
   )
 
+  const complexItemSet = extractComplexItemSet(
+    values.complexItemSetId,
+    complexItemSetOptions,
+  )
+
   return (
     <Wrapper tabIndex={0}>
       <VisuallyHiddenElement as="h2">Question Metadata</VisuallyHiddenElement>
+      {complexItemSet && (
+        <>
+          <MetadataHeading>Complex item set</MetadataHeading>
+          <p>
+            <Link to={`/set/${complexItemSet.value}`}>
+              <LinkOutlined /> {complexItemSet.label}
+            </Link>
+          </p>
+        </>
+      )}
       <MetadataHeading>Question type</MetadataHeading>
       <p>
         {
@@ -243,6 +262,12 @@ const MetadataInfo = props => {
 }
 
 MetadataInfo.propTypes = {
+  complexItemSetOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.string,
+    }),
+  ),
   metadata: PropTypes.shape({
     questionTypes: PropTypes.arrayOf(
       PropTypes.shape({
@@ -436,6 +461,7 @@ MetadataInfo.propTypes = {
   }).isRequired,
   values: PropTypes.shape({
     questionType: PropTypes.string,
+    complexItemSetId: PropTypes.string,
     topics: PropTypes.arrayOf(
       PropTypes.shape({
         topic: PropTypes.string,
@@ -476,6 +502,8 @@ MetadataInfo.propTypes = {
   ).isRequired,
 }
 
-MetadataInfo.defaultProps = {}
+MetadataInfo.defaultProps = {
+  complexItemSetOptions: [],
+}
 
 export default MetadataInfo

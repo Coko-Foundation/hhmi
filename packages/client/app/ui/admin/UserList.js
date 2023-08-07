@@ -254,7 +254,9 @@ const UserList = props => {
                     selectedRows.length > 1 ? 's' : ''
                   } activated`
                   setTimeout(() => {
-                    document.getElementById('action-status').innerHTML = ''
+                    if (document.getElementById('action-status')) {
+                      document.getElementById('action-status').innerHTML = ''
+                    }
                   }, 3000)
                   setSelectedRows([])
                   confirmDialog.destroy()

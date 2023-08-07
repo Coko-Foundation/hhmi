@@ -32,6 +32,7 @@ const flattenedMetadata = flattenLabels()
 const labels = {
   ...flattenedMetadata,
 
+  complexItemSet: 'Complex Item Set',
   questionType: 'Question type',
 
   topics: 'Topics',
@@ -103,6 +104,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
       question_list: this.questionListHandler,
       question: this.questionHandler,
+      leading_content: this.leadingContentHandler,
     }
 
     this.typeToHandlerMap = {
@@ -1176,29 +1178,35 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   /* eslint-disable-next-line class-methods-use-this */
   questionListHandler = questionList => {
     const numberedQuestions = []
+    let questionsIndex = 1
 
-    for (let index = 0; index < questionList.content.length; index += 1) {
-      const question = cloneDeep(questionList.content[index])
-      question.index = index + 1
-      numberedQuestions.push(question)
+    questionList.content.forEach(item => {
+      const clonedItem = cloneDeep(item)
 
-      this.questionReference.push({
-        multipleChoiceSolutions: {},
-        trueFalseSolutions: {},
+      if (clonedItem.type === 'question') {
+        clonedItem.index = questionsIndex
+        questionsIndex += 1
 
-        fillTheGapSolutions: {},
-        fillTheGapFeedback: {},
+        this.questionReference.push({
+          multipleChoiceSolutions: {},
+          trueFalseSolutions: {},
 
-        matchingSolutions: {},
-        matchingFeedback: {},
+          fillTheGapSolutions: {},
+          fillTheGapFeedback: {},
 
-        multipleDropdownCounter: {},
-        multipleDropdownOptions: {},
-        multipleDropdownSolutions: {},
-        multipleDropdownFeedback: {},
-        essaySolutions: {},
-      })
-    }
+          matchingSolutions: {},
+          matchingFeedback: {},
+
+          multipleDropdownCounter: {},
+          multipleDropdownOptions: {},
+          multipleDropdownSolutions: {},
+          multipleDropdownFeedback: {},
+          essaySolutions: {},
+        })
+      }
+
+      numberedQuestions.push(clonedItem)
+    })
 
     const parsedList = this.contentParser(numberedQuestions)
 
@@ -1228,6 +1236,10 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         },
       }),
     ]
+  }
+
+  leadingContentHandler = leadingContent => {
+    return [...this.contentParser(leadingContent.content)]
   }
   // #endregion question lists
 

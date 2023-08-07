@@ -7,30 +7,16 @@ const {
     boolean,
     dateNullable,
     id,
+    idNullable,
     objectNullable,
     string,
     stringNullable,
   },
 } = require('@coko/server')
 
-const extractDocumentText = data => {
-  let allContent = ''
-
-  const extract = obj => {
-    const { content } = obj
-    if (!Array.isArray(content)) return
-
-    content.forEach(item => {
-      const { text, content: itemContent } = item
-
-      if (text) allContent += `${text} `
-      if (itemContent) extract(item)
-    })
-  }
-
-  extract(data)
-  return allContent
-}
+const { extractDocumentText } = require('../helpers')
+const Question = require('../question/question.model')
+const ComplexItemSet = require('../complexItemSet/complexItemSet.model')
 
 class QuestionVersion extends BaseModel {
   static get tableName() {
@@ -43,9 +29,6 @@ class QuestionVersion extends BaseModel {
   }
 
   static get relationMappings() {
-    // eslint-disable-next-line global-require
-    const Question = require('../question/question.model')
-
     return {
       question: {
         relation: BaseModel.BelongsToOneRelation,
@@ -53,6 +36,14 @@ class QuestionVersion extends BaseModel {
         join: {
           from: 'questionVersions.questionId',
           to: 'questions.id',
+        },
+      },
+      complexItemSet: {
+        relation: BaseModel.BelongsToOneRelation,
+        modelClass: ComplexItemSet,
+        join: {
+          from: 'question_versions.complexItemSetId',
+          to: 'complexItemSets.id',
         },
       },
     }
@@ -105,6 +96,7 @@ class QuestionVersion extends BaseModel {
     return {
       properties: {
         questionId: id,
+        complexItemSetId: idNullable,
 
         content: objectNullable,
         contentText: stringNullable,

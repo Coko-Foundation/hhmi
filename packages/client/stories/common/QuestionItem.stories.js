@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react'
-
 import { QuestionItem } from 'ui'
 import {
   generateMetadata,
@@ -8,12 +7,13 @@ import {
   questionContentExample3,
   getRandomCourse,
   getRandomObjectivesForCourse,
+  generateComplexItemSet,
 } from '../../app/utilities/question/_utils'
 
 const meta = generateMetadata()
 
 const courses = []
-const nrOfCourses = Math.floor(Math.random() * 3 + 1) // 1-3
+const nrOfCourses = Math.floor(Math.random() * 2 + 1) // 1-2
 
 const previousCourses = []
 
@@ -32,6 +32,7 @@ export const Base = args => (
   <QuestionItem
     status={getRandomStatus()}
     {...args}
+    complexItemSet={generateComplexItemSet()}
     content={questionContentExample3}
     courses={courses}
     metadata={meta}
