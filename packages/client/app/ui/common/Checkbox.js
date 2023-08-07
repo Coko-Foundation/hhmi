@@ -9,10 +9,6 @@ export const checkboxStyles = css`
   .ant-checkbox-inner::after {
     transition: all 0.2s;
   }
-
-  &.ant-checkbox-wrapper.ant-checkbox-wrapper-disabled > span {
-    color: ${props => `${props.theme.colorText}cc`};
-  }
 `
 
 const StyledCheckbox = styled(AntCheckbox)`

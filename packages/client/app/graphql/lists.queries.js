@@ -95,7 +95,6 @@ export const GET_LIST = gql`
             }
 
             cognitiveLevel
-            complexItemSetId
           }
         }
         totalCount

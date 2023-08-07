@@ -26,7 +26,6 @@ import {
   UPLOAD_FILES,
   FILTER_USERS_OPTIONS,
   ASSIGN_QUESTION_AUTHOR,
-  GET_COMPLEX_ITEM_SETS_OPTIONS,
 } from '../graphql'
 import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 
@@ -61,7 +60,6 @@ const metadataApiToUi = (values, testMode) => {
   return {
     ...values,
     courses: transformedCoursesData,
-    belongsToComplexItemSet: !!values.complexItemSetId,
   }
 }
 
@@ -100,10 +98,6 @@ const metadataUiToApi = values => {
     .map(course => coursesFields(course))
     .filter(Boolean)
 
-  const complexItemSetId = values.belongsToComplexItemSet
-    ? values.complexItemSetId
-    : null
-
   const metadataToSave = {
     topics,
     courses,
@@ -114,7 +108,6 @@ const metadataUiToApi = values => {
     psychomotorLevel: values.psychomotorLevel || null,
     readingLevel: values.readingLevel || null,
     questionType: values.questionType || null,
-    complexItemSetId,
   }
 
   return metadataToSave
@@ -141,10 +134,6 @@ const QuestionPage = props => {
   })
 
   const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
-
-  const {
-    data: { complexItemSets: { result: complexItemSetOptions } = {} } = {},
-  } = useQuery(GET_COMPLEX_ITEM_SETS_OPTIONS)
 
   const { data: { getResources } = {} } = useQuery(GET_RESOURCES)
 
@@ -575,40 +564,24 @@ const QuestionPage = props => {
         authors={possibleAuthors}
         canAssignAuthor={isAdmin && isAuthor}
         canCreateNewVersion={isAdmin}
-        complexItemSetOptions={complexItemSetOptions}
-        complexSetEditLink={
-          version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
-        }
         editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
         editorView={(isEditor && !isAuthor) || isAdmin}
         facultyView={testMode}
         initialMetadataValues={metadataApiToUi(version, testMode)}
+        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
+        // unless the question has already been published
         isInProduction={
           version?.inProduction || (isAdmin && isAuthor && !version?.published)
         }
         isPublished={version?.published}
-        // admins have editorial rights (publishing rights) on their own questions
         isRejected={question?.rejected}
-        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
         // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
+        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
         isUnderReview={version?.underReview}
         isUserLoggedIn={!!currentUser}
-        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
-        // unless the question has already been published
-        leadingContent={
-          version?.leadingContent.length
-            ? JSON.parse(version.leadingContent)
-            : null
-        }
         loadAuthors={getUsers}
-        loading={
-          loading ||
-          !version ||
-          !metadata ||
-          !getResources ||
-          !complexItemSetOptions
-        }
+        loading={loading || !version || !metadata || !getResources}
         metadata={metadata || {}}
         onAssignAuthor={handleAssignAuthor}
         onClickAssignHE={handleClickAssignHE}

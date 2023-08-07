@@ -130,7 +130,6 @@ export const Discover = props => {
     onSearch,
     pageSize,
     sidebarMetadata,
-    complexItemSetOptions,
     totalCount,
     showSort,
     sortOptions,
@@ -388,13 +387,11 @@ export const Discover = props => {
   )
 
   const onQuestionSelected = rows => setSelectedRows(rows)
-
   return (
     <ModalContext.Provider value={null}>
       <Wrapper className={className}>
         {wrapFilters(
           <Sidebar
-            complexItemSetOptions={complexItemSetOptions}
             form={filtersForm}
             metadata={sidebarMetadata}
             setFilters={setFilters}
@@ -475,12 +472,6 @@ Discover.propTypes = {
           ),
         }),
       ),
-    }),
-  ),
-  complexItemSetOptions: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
     }),
   ),
   sidebarMetadata: PropTypes.shape({
@@ -683,7 +674,6 @@ Discover.defaultProps = {
   locale: null,
   pageSize: 10,
   questions: [],
-  complexItemSetOptions: [],
   sidebarMetadata: null,
   sidebarText: '',
   totalCount: 0,

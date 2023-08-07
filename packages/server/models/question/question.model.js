@@ -40,21 +40,18 @@ class Question extends BaseModel {
     }
   }
 
-  static async insert(data, versionData, options = {}) {
+  static async insert(data, options = {}) {
     const question = await super.insert(data, options)
-    await this.createNewVersion(
-      { questionId: question.id, ...versionData },
-      { trx: options.trx },
-    )
+    await this.createNewVersion(question.id, { trx: options.trx })
     return question
   }
 
-  static async getQuestion(questionId, options = {}) {
+  static async getQuestion(id, options = {}) {
     try {
       const { trx } = options
       return Question.query(trx)
         .select('questions.*')
-        .findOne('questions.id', questionId)
+        .findOne('questions.id', id)
     } catch (err) {
       console.error(err)
       throw new Error(err)
@@ -102,16 +99,14 @@ class Question extends BaseModel {
   }
 
   // TO DO -- if there is a previous versions, you should copy its contents
-  static async createNewVersion(data, options = {}) {
-    const previousVersions = await this.getVersions(data.questionId, {
+  static async createNewVersion(questionId, options = {}) {
+    const previousVersions = await this.getVersions(questionId, {
       latestOnly: true,
       publishedOnly: true,
     })
 
     if (previousVersions.totalCount > 0) {
       const {
-        questionId,
-        complexItemSetId,
         content,
         submitted,
         topics,
@@ -128,7 +123,6 @@ class Question extends BaseModel {
       return QuestionVersion.insert(
         {
           questionId,
-          complexItemSetId,
           content,
           submitted,
           topics,
@@ -147,11 +141,11 @@ class Question extends BaseModel {
       )
     }
 
-    return QuestionVersion.insert(data, { trx: options.trx })
+    return QuestionVersion.insert({ questionId }, { trx: options.trx })
   }
 
-  async createNewVersion(data = {}, options = {}) {
-    return Question.createNewVersion({ ...data, questionId: this.id }, options)
+  async createNewVersion(options = {}) {
+    return Question.createNewVersion(this.id, options)
   }
 
   static async getVersions(questionId, options = {}) {
@@ -285,10 +279,6 @@ class Question extends BaseModel {
       if (filters.questionType && filters.questionType.length) {
         query.whereIn('questionType', filters.questionType)
       }
-
-      if (filters.complexItemSet && filters.complexItemSet.length) {
-        query.whereIn('complex_item_set_id', filters.complexItemSet)
-      }
     }
 
     if (searchQuery) {
@@ -326,7 +316,6 @@ class Question extends BaseModel {
           'question_versions.question_type',
           'question_versions.cognitive_level',
           'users.display_name as author',
-          'question_versions.complex_item_set_id',
         )
         .distinctOn('questions.id')
         .where({
@@ -510,7 +499,7 @@ class Question extends BaseModel {
     return applyListQueryOptions(parentQuery, options)
   }
 
-  static async getAuthor(questionId, options = {}) {
+  static async getAuthor(id, options = {}) {
     const { trx } = options
 
     try {
@@ -518,7 +507,7 @@ class Question extends BaseModel {
         .leftJoin('teams', 'questions.id', 'teams.object_id')
         .leftJoin('team_members', 'teams.id', 'team_members.team_id')
         .select('team_members.user_id')
-        .findOne({ 'teams.role': 'author', 'teams.objectId': questionId })
+        .findOne({ 'teams.role': 'author', 'teams.objectId': id })
 
       if (author.userId) {
         const user = await User.findById(author.userId)

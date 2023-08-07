@@ -8,7 +8,6 @@ const metadata = require('./metadata')
 const resource = require('./resource')
 const list = require('./list')
 const config = require('./config')
-const complexItemSet = require('./complexItemSet')
 
 module.exports = {
   typeDefs: [
@@ -20,7 +19,6 @@ module.exports = {
     resource.typeDefs,
     list.typeDefs,
     config.typeDefs,
-    complexItemSet.typeDefs,
   ].join(' '),
   resolvers: merge(
     {},
@@ -32,6 +30,5 @@ module.exports = {
     resource.resolvers,
     list.resolvers,
     config.resolvers,
-    complexItemSet.resolvers,
   ),
 }

@@ -4,7 +4,6 @@ import { Sidebar, Form } from 'ui'
 import { lorem } from 'faker'
 import metadata from '../../app/utilities/question/metadataValues'
 import { metadataTransformer } from '../../app/utilities/question/metadataTransformations'
-import complexItemSet from '../../app/utilities/question/complexItemSets'
 
 const Wrapper = styled.section``
 
@@ -21,7 +20,6 @@ export const Base = () => {
   return (
     <Wrapper>
       <Sidebar
-        complexItemSetOptions={complexItemSet}
         form={filtersForm}
         metadata={metadataTransformer(metadata)}
         setFilters={applyFilters}

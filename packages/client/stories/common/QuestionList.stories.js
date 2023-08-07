@@ -10,7 +10,6 @@ import {
   getRandomCourse,
   getRandomObjectivesForCourse,
   getRandomStatus,
-  generateComplexItemSet,
 } from '../../app/utilities/question/_utils'
 
 const courseData = () => {
@@ -52,7 +51,6 @@ const makeData = n =>
     metadata: generateMetadata(),
     courses: courseData(),
     status: getRandomStatus(),
-    complexItemSet: Math.random() < 0.3 ? generateComplexItemSet() : null,
   }))
 
 const sortOptions = [

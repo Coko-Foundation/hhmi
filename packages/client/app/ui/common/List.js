@@ -97,7 +97,7 @@ const FooterWrapper = styled.div`
   border: 1px solid ${th('colorBorder')};
   display: flex;
   justify-content: space-between;
-  padding: ${grid(2)};
+  padding: 5px;
 `
 
 const CheckBox = styled(UICheckBox)`

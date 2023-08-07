@@ -29,7 +29,6 @@ export const GET_AUTHOR_DASHBOARD = gql`
           published
           publicationDate
 
-          complexItemSetId
           topics {
             topic
             subtopic
@@ -89,7 +88,6 @@ export const GET_EDITOR_DASHBOARD = gql`
           published
           publicationDate
 
-          complexItemSetId
           topics {
             topic
             subtopic
@@ -119,8 +117,8 @@ export const GET_EDITOR_DASHBOARD = gql`
 `
 
 export const CREATE_QUESTION = gql`
-  mutation CreateQuestion($input: UpdateQuestionInput) {
-    createQuestion(input: $input) {
+  mutation CreateQuestion {
+    createQuestion {
       id
     }
   }
@@ -176,10 +174,7 @@ export const QUESTION = gql`
         readingLevel
 
         questionType
-        complexItemSetId
-        leadingContent
       }
-      #
     }
   }
 `
@@ -206,8 +201,6 @@ export const UPDATE_QUESTION = gql`
         inProduction
         published
 
-        leadingContent
-        complexItemSetId
         questionType
 
         topics {
@@ -358,7 +351,6 @@ export const GET_PUBLISHED_QUESTIONS = gql`
         versions(latestOnly: true, publishedOnly: true) {
           id
           content
-          complexItemSetId
 
           submitted
           underReview

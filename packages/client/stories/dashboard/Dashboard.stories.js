@@ -89,27 +89,23 @@ const searchFunction = params => {
 }
 
 export const AuthorDashboard = args => {
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const [author, setAuthorQuestions] = useState({
     questions: [],
     totalCount: 0,
   })
 
-  const handleSearch = params => {
-    const { query = '', page = 1, sortBy, role = 'author' } = params
+  const handleSearch = async params => {
+    const { query = '', page = 1, sortBy, role } = params
     console.log(`${query}, ${page}, ${sortBy}, ${role}`)
 
-    setAuthorQuestions({ questions: [], loading: true })
+    setLoading(true)
     setTimeout(() => {
       const data = searchFunction(params)
 
       if (role === 'author') {
-        setAuthorQuestions({
-          questions: data,
-          totalCount: totalResults,
-          loading: false,
-        })
+        setAuthorQuestions({ questions: data, totalCount: totalResults })
       }
 
       setLoading(false)
@@ -124,14 +120,12 @@ export const AuthorDashboard = args => {
       value: 'author',
       questions: author.questions,
       totalCount: author.totalCount,
-      loading: author.loading,
     },
   ]
 
   return (
     <Wrapper>
       <Dashboard
-        initialTabKey="author"
         loading={loading}
         onClickCreate={handleClickCreate}
         onSearch={handleSearch}
@@ -145,8 +139,7 @@ export const AuthorDashboard = args => {
 }
 
 export const EditorDashboard = args => {
-  const [loading, setLoading] = useState(true)
-  const [initialTabKey, setInitialTabKey] = useState('author')
+  const [loading, setLoading] = useState(false)
   const [selectedQuestions, setSelectedQuestions] = useState([])
 
   const [author, setAuthorQuestions] = useState({
@@ -164,29 +157,14 @@ export const EditorDashboard = args => {
     // eslint-disable-next-line no-console
     console.log(`${query}, ${page}, ${sortBy}, ${role}`)
 
-    setInitialTabKey(role)
-
-    if (role === 'author') {
-      setAuthorQuestions({ questions: [], loading: true })
-    } else if (role === 'editor') {
-      setEditorQuestions({ questions: [], loading: true })
-    }
-
+    setLoading(true)
     setTimeout(() => {
       const data = searchFunction(params)
 
       if (role === 'author') {
-        setAuthorQuestions({
-          questions: data,
-          totalCount: totalResults,
-          loading: false,
-        })
+        setAuthorQuestions({ questions: data, totalCount: totalResults })
       } else if (role === 'editor') {
-        setEditorQuestions({
-          questions: data,
-          totalCount: totalResults,
-          loading: false,
-        })
+        setEditorQuestions({ questions: data, totalCount: totalResults })
       }
 
       setLoading(false)
@@ -212,14 +190,12 @@ export const EditorDashboard = args => {
       value: 'author',
       questions: author.questions,
       totalCount: author.totalCount,
-      loading: author.loading,
     },
     {
       label: 'Editor Questions',
       value: 'editor',
       questions: editor.questions,
       totalCount: editor.totalCount,
-      loading: editor.loading,
       showBulkActions: true,
     },
   ]
@@ -228,15 +204,14 @@ export const EditorDashboard = args => {
     <Wrapper>
       <Dashboard
         bulkActions={BulkAction}
-        initialTabKey={initialTabKey}
         loading={loading}
         onClickCreate={handleClickCreate}
         onQuestionSelected={setSelectedQuestions}
         onSearch={handleSearch}
-        showSort
-        sortOptions={sortOptions}
         tabsContent={tabs}
         {...args}
+        showSort
+        sortOptions={sortOptions}
       />
     </Wrapper>
   )

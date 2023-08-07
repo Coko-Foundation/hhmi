@@ -419,7 +419,6 @@ const Header = props => {
       homepage,
       questions,
       dashboard,
-      sets,
       lists,
       about,
       learning,
@@ -544,15 +543,6 @@ const Header = props => {
                     to={dashboard}
                   >
                     <span>Dashboard</span>
-                  </StyledLink>
-                </li>
-                <li>
-                  <StyledLink
-                    aria-current={currentPath === sets ? 'page' : false}
-                    onClick={() => setShowMenu(false)}
-                    to={sets}
-                  >
-                    <span>Sets</span>
                   </StyledLink>
                 </li>
                 <li>
@@ -709,7 +699,6 @@ Header.propTypes = {
     homepage: PropTypes.string,
     questions: PropTypes.string,
     dashboard: PropTypes.string,
-    sets: PropTypes.string,
     lists: PropTypes.string,
     about: PropTypes.string,
     learning: PropTypes.string,
@@ -732,7 +721,6 @@ Header.defaultProps = {
     homepage: '#',
     questions: '#',
     dashboard: '#',
-    sets: '#',
     lists: '#',
     about: '#',
     learning: '#',

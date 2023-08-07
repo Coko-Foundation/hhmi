@@ -88,7 +88,7 @@ const Form = props => {
   const FeedbackElement = showRibbon && (
     <FeedbackComponent
       data-testid="feedback-element"
-      role="status"
+      role="alert"
       status={submissionStatus}
     >
       {ribbonMessage}

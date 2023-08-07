@@ -32,7 +32,6 @@ const flattenedMetadata = flattenLabels()
 const labels = {
   ...flattenedMetadata,
 
-  complexItemSet: 'Complex Item Set',
   questionType: 'Question type',
 
   topics: 'Topics',
@@ -104,7 +103,6 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
       question_list: this.questionListHandler,
       question: this.questionHandler,
-      leading_content: this.leadingContentHandler,
     }
 
     this.typeToHandlerMap = {
@@ -1178,35 +1176,29 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   /* eslint-disable-next-line class-methods-use-this */
   questionListHandler = questionList => {
     const numberedQuestions = []
-    let questionsIndex = 1
 
-    questionList.content.forEach(item => {
-      const clonedItem = cloneDeep(item)
+    for (let index = 0; index < questionList.content.length; index += 1) {
+      const question = cloneDeep(questionList.content[index])
+      question.index = index + 1
+      numberedQuestions.push(question)
 
-      if (clonedItem.type === 'question') {
-        clonedItem.index = questionsIndex
-        questionsIndex += 1
+      this.questionReference.push({
+        multipleChoiceSolutions: {},
+        trueFalseSolutions: {},
 
-        this.questionReference.push({
-          multipleChoiceSolutions: {},
-          trueFalseSolutions: {},
+        fillTheGapSolutions: {},
+        fillTheGapFeedback: {},
 
-          fillTheGapSolutions: {},
-          fillTheGapFeedback: {},
+        matchingSolutions: {},
+        matchingFeedback: {},
 
-          matchingSolutions: {},
-          matchingFeedback: {},
-
-          multipleDropdownCounter: {},
-          multipleDropdownOptions: {},
-          multipleDropdownSolutions: {},
-          multipleDropdownFeedback: {},
-          essaySolutions: {},
-        })
-      }
-
-      numberedQuestions.push(clonedItem)
-    })
+        multipleDropdownCounter: {},
+        multipleDropdownOptions: {},
+        multipleDropdownSolutions: {},
+        multipleDropdownFeedback: {},
+        essaySolutions: {},
+      })
+    }
 
     const parsedList = this.contentParser(numberedQuestions)
 
@@ -1236,10 +1228,6 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         },
       }),
     ]
-  }
-
-  leadingContentHandler = leadingContent => {
-    return [...this.contentParser(leadingContent.content)]
   }
   // #endregion question lists
 

@@ -8,7 +8,6 @@ import {
   GET_EDITOR_DASHBOARD,
   CREATE_QUESTION,
   CURRENT_USER,
-  GET_COMPLEX_ITEM_SETS_OPTIONS,
 } from '../graphql'
 import { hasGlobalRole, dashboardDataMapper, useMetadata } from '../utilities'
 
@@ -31,10 +30,6 @@ const DashboardPage = () => {
   const { metadata } = useMetadata()
 
   const { data: currentUserResponse } = useQuery(CURRENT_USER)
-
-  const {
-    data: { complexItemSets: { result: complexItemSetOptions } = {} } = {},
-  } = useQuery(GET_COMPLEX_ITEM_SETS_OPTIONS)
 
   // leave fetch policy to network until pagination is handled in the cache (with a merge function)
   const [
@@ -171,13 +166,7 @@ const DashboardPage = () => {
       value: 'author',
       questions:
         authorData && metadata
-          ? dashboardDataMapper(
-              authorData.result,
-              metadata,
-              complexItemSetOptions,
-              true, // show status
-              false, // show author
-            )
+          ? dashboardDataMapper(authorData.result, metadata, [], true, false)
           : [],
       totalCount: authorData && authorData.totalCount,
       showBulkActions: false,
@@ -188,13 +177,7 @@ const DashboardPage = () => {
       value: 'editor',
       questions:
         editorData && metadata
-          ? dashboardDataMapper(
-              editorData.result,
-              metadata,
-              complexItemSetOptions,
-              true,
-              true,
-            )
+          ? dashboardDataMapper(editorData.result, metadata, [], true, true)
           : [],
       totalCount: editorData && editorData.totalCount,
       showBulkActions: false,

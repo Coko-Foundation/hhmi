@@ -5,10 +5,6 @@ import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
 import VisuallyHiddenElement from '../../common/VisuallyHiddenElement'
-import { ComplexItemSetContext } from '../../question/QuestionEditor'
-import WaxWrapper from '../Wax'
-import LeadingContentLayout from './LeadingContentLayout'
-import { config } from '../config'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -35,18 +31,11 @@ const Wrapper = styled.div`
   ${props => props.fullScreen && fullScreenStyles}
 `
 
-const LeadingContentWrapper = styled.div`
-  border-bottom: 1px solid ${th('colorBorder')};
-  margin-inline: auto;
-  max-width: 100ch;
-  padding-block: ${grid(5)};
-  width: 100%;
-`
-
 const EditorWrapper = styled.div`
   background-color: ${th('colorBackground')};
-  display: block;
+  display: flex;
   flex-grow: 1;
+  justify-content: center;
   overflow-y: auto;
 `
 
@@ -94,24 +83,11 @@ const EditorArea = styled.div`
 const TestModeLayout = ({ editor }) => {
   const { options } = useContext(WaxContext)
   const { fullScreen } = options
-  const { leadingContent } = useContext(ComplexItemSetContext)
 
   return (
     <ThemeProvider theme={theme}>
       <Wrapper fullScreen={fullScreen}>
         <EditorWrapper tabIndex={0}>
-          {leadingContent && (
-            <LeadingContentWrapper>
-              <WaxWrapper
-                config={config}
-                content={leadingContent}
-                key={JSON.stringify(leadingContent)}
-                layout={LeadingContentLayout}
-                readOnly
-              />
-            </LeadingContentWrapper>
-          )}
-
           <VisuallyHiddenElement as="h2">
             Question content
           </VisuallyHiddenElement>

@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { name, lorem } from 'faker'
+import { name } from 'faker'
 import {
   topics as topicsMetadata,
   frameworks as frameworksMeta,
@@ -117,11 +117,6 @@ const generateMetadata = () => {
     },
   ]
 }
-
-const generateComplexItemSet = () => ({
-  href: '#',
-  title: lorem.words(4),
-})
 
 const getRandomLearningObjective = () => {
   const randomAPCourse = frameworksMeta[Math.floor(Math.random() * 2)]
@@ -452,7 +447,6 @@ const questionContentExample3 = {
 
 export {
   generateMetadata,
-  generateComplexItemSet,
   getRandomLearningObjective,
   getRandomUnderstanding,
   learningObjectivesAndUnderstandings,

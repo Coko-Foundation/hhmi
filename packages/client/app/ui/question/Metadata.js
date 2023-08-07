@@ -13,14 +13,13 @@ import {
   TopicAndSubtopic,
   IBCourseMetadata,
   VisuallyHiddenElement,
-  Checkbox,
   // VisionAndChangeMetadata,
   // AAMCFuturePhysiciansMetadata,
 } from '../common'
 import Resources from './Resources'
 import MetadataInfo from './MetadataInfo'
 
-const Wrapper = styled.section`
+const Wrapper = styled.div`
   padding: ${grid(4)};
 `
 
@@ -39,7 +38,6 @@ const Metadata = React.forwardRef((props, ref) => {
     editorView,
     resources,
     presentationMode,
-    complexItemSetOptions,
     /* eslint-disable-next-line react/prop-types */
     innerRef,
   } = props
@@ -49,7 +47,6 @@ const Metadata = React.forwardRef((props, ref) => {
   if (presentationMode) {
     return (
       <MetadataInfo
-        complexItemSetOptions={complexItemSetOptions}
         metadata={metadata}
         resources={resources}
         values={initialValues}
@@ -242,7 +239,7 @@ const Metadata = React.forwardRef((props, ref) => {
    */
 
   return (
-    <Wrapper aria-label="Question Metadata" className={className}>
+    <Wrapper className={className}>
       <VisuallyHiddenElement as="h2">Metadata Form</VisuallyHiddenElement>
       <Form
         autoSave
@@ -252,40 +249,6 @@ const Metadata = React.forwardRef((props, ref) => {
         onAutoSave={onAutoSave}
         onFinish={onFormFinish}
       >
-        <Form.Item name="belongsToComplexItemSet" valuePropName="checked">
-          <Checkbox disabled={readOnly}>
-            This question belongs to a complex item set{' '}
-          </Checkbox>
-        </Form.Item>
-
-        <Form.Item dependencies={['belongsToComplexItemSet']} noStyle>
-          {({ getFieldValue }) => {
-            if (getFieldValue('belongsToComplexItemSet')) {
-              return (
-                <Form.Item
-                  label="Select complex item set"
-                  name="complexItemSetId"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Complex item set is required',
-                    },
-                  ]}
-                >
-                  <Select
-                    disabled={readOnly}
-                    optionFilterProp="label"
-                    options={complexItemSetOptions}
-                    showSearch
-                  />
-                </Form.Item>
-              )
-            }
-
-            return null
-          }}
-        </Form.Item>
-
         <Form.Item
           label="Question Type"
           name="questionType"
@@ -768,12 +731,6 @@ Metadata.propTypes = {
     readingLevel: PropTypes.string,
   }),
   presentationMode: PropTypes.bool,
-  complexItemSetOptions: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
-    }),
-  ),
 }
 
 Metadata.defaultProps = {
@@ -783,7 +740,6 @@ Metadata.defaultProps = {
   readOnly: false,
   resources: [],
   presentationMode: false,
-  complexItemSetOptions: [],
 }
 
 export default Metadata

@@ -75,26 +75,6 @@ const applyListQueryOptions = async (query, options = {}) => {
   }
 }
 
-const extractDocumentText = data => {
-  let allContent = ''
-
-  const extract = obj => {
-    const { content } = obj
-    if (!Array.isArray(content)) return
-
-    content.forEach(item => {
-      const { text, content: itemContent } = item
-
-      if (text) allContent += `${text} `
-      if (itemContent) extract(item)
-    })
-  }
-
-  extract(data)
-  return allContent
-}
-
 module.exports = {
   applyListQueryOptions,
-  extractDocumentText,
 }

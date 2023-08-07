@@ -7,8 +7,7 @@ import { listItemWrapper, submitButton } from '../support/selectors'
 import { getDateInFormat } from '../utils/helpers'
 import { laptop } from '../support/viewport'
 
-// eslint-disable-next-line jest/no-disabled-tests
-describe.skip('Discover page tests', () => {
+describe('Discover page tests', () => {
   before(() => {
     cy.resetDB()
 

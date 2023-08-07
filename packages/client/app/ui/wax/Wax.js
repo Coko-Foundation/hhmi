@@ -59,7 +59,7 @@ WaxWrapper.propTypes = {
   onContentChange: PropTypes.func,
   onImageUpload: PropTypes.func,
   config: PropTypes.shape(),
-  layout: PropTypes.oneOfType([PropTypes.func, PropTypes.shape()]),
+  layout: PropTypes.func,
   readOnly: PropTypes.bool,
   innerRef: PropTypes.oneOfType([
     PropTypes.func,

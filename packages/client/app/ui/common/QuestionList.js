@@ -9,14 +9,16 @@ import QuestionItem from './QuestionItem'
 const RenderItem = ({ item }) => {
   return (
     <QuestionItem
-      complexItemSet={item.complexItemSet}
+      // additionalMetadata={item.additionalMetadata}
       content={item.content}
       courses={item.courses}
+      header={item.header}
       href={item.href}
       id={item.id}
       metadata={item.metadata}
       state={item.state}
       status={item.status}
+      title={item.title}
     />
   )
 }

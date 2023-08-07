@@ -1,17 +1,10 @@
 import React, { useContext } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
-import { LinkOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
 import VisuallyHiddenElement from '../../common/VisuallyHiddenElement'
-import Collapse from '../../common/Collapse'
-import Link from '../../common/HhmiLink'
-import { ComplexItemSetContext } from '../../question/QuestionEditor'
-import WaxWrapper from '../Wax'
-import LeadingContentLayout from './LeadingContentLayout'
-import { config } from '../config'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
@@ -60,19 +53,11 @@ const TopMenu = styled.div`
   }
 `
 
-const StyledLink = styled(Link)`
-  padding-inline: ${grid(5)};
-`
-
-const StyledCollapse = styled(Collapse)`
-  border: none;
-  width: 100%;
-`
-
 const EditorWrapper = styled.div`
   background-color: ${th('colorBackground')};
-  display: block;
+  display: flex;
   flex-grow: 1;
+  justify-content: center;
   overflow-y: auto;
 `
 
@@ -84,10 +69,11 @@ const EditorArea = styled.div`
   position: relative;
 
   .ProseMirror {
+    height: 100%;
     padding: 0 ${grid(5)} ${grid(12)};
 
     @media (min-width: ${th('mediaQueries.small')}) {
-      padding: ${grid(5)};
+      padding: ${grid(12)} ${grid(5)};
     }
     /* position: relative; */
 
@@ -156,10 +142,6 @@ const HhmiLayout = ({ editor }) => {
   const { options } = useContext(WaxContext)
   const { fullScreen } = options
 
-  const { leadingContent, complexSetEditLink } = useContext(
-    ComplexItemSetContext,
-  )
-
   return (
     <ThemeProvider theme={theme}>
       <Wrapper fullScreen={fullScreen}>
@@ -175,36 +157,6 @@ const HhmiLayout = ({ editor }) => {
         </TopMenu>
 
         <EditorWrapper tabIndex={0}>
-          {leadingContent && (
-            <>
-              <StyledCollapse defaultActiveKey={['leading-content']}>
-                <Collapse.Panel
-                  data-testid="leading-content-collapse"
-                  header="Leading content"
-                  key="leading-content"
-                >
-                  <WaxWrapper
-                    config={config}
-                    content={leadingContent}
-                    key={JSON.stringify(leadingContent)}
-                    layout={LeadingContentLayout}
-                    readOnly
-                  />
-                </Collapse.Panel>
-              </StyledCollapse>
-              {complexSetEditLink && (
-                <StyledLink
-                  to={{
-                    pathname: complexSetEditLink,
-                    state: { activeTab: 'edit' },
-                  }}
-                >
-                  <LinkOutlined /> Edit the leading content for this set
-                </StyledLink>
-              )}
-            </>
-          )}
-
           <VisuallyHiddenElement as="h2">Question editor</VisuallyHiddenElement>
           <EditorArea id="wax-editor">{editor}</EditorArea>
         </EditorWrapper>
