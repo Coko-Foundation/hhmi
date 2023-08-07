@@ -12,9 +12,9 @@ import {
 import { grid, th } from '@coko/client'
 import useBreakpoint from '../_helpers/useBreakpoint'
 import { HhmiLayout, TestModeLayout } from '../wax/layout'
-import { config } from '../wax/config'
 
 import Metadata from './Metadata'
+import QuestionEditor from './QuestionEditor'
 import ExportToWordButton from './ExportToWordButton'
 // import ExportToScormButton from './ExportToScormButton'
 import AutoSaving from './AutoSaveIndicator'
@@ -31,7 +31,6 @@ import {
   Spin,
   TabsStyled as Tabs,
 } from '../common'
-import Wax from '../wax/Wax'
 import { extractDocumentText } from '../../utilities'
 import AssignAuthorButton from './AssignAuthorButton'
 
@@ -42,6 +41,7 @@ const ModalHeader = Modal.header
 // #region styled
 const Wrapper = styled.div`
   height: 100%;
+  overflow: hidden;
 
   .ant-spin-nested-loading,
   .ant-spin-container {
@@ -179,7 +179,7 @@ const StyledTabs = styled(Tabs)`
   }
 `
 
-const MetadataWrapper = styled.section`
+const StyledMetadata = styled(Metadata)`
   background-color: ${th('colorBackground')};
   border-left: 1px solid ${th('colorBorder')};
   height: 100%;
@@ -207,35 +207,6 @@ const PopupToggle = styled(Button)`
   @media (min-width: ${th('mediaQueries.mediumPlus')}) {
     display: none;
   }
-`
-
-// #endregion styled
-
-// #region wax
-const EditorWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  margin: auto;
-  /* max-width: 75vw; */
-  overflow: hidden;
-  width: 100%;
-`
-
-const EditorScrollContainer = styled.div`
-  flex-grow: 1;
-  overflow: auto;
-`
-
-const SubmitTestBar = styled.div`
-  background-color: ${th('colorBackground')};
-  border-top: 1px solid ${th('colorBorder')};
-  display: flex;
-  justify-content: end;
-  margin: auto;
-  /* max-width: 100ch; */
-  padding: ${grid(2)} ${grid(2)};
-  width: 100%;
 `
 
 const ViewAsWrapper = styled.div`
@@ -266,137 +237,6 @@ const SkipToTop = styled.a`
     right: 0;
   }
 `
-
-const WaxWrapper = props => {
-  const {
-    content,
-    innerRef,
-    layout,
-    onContentChange,
-    onImageUpload,
-    readOnly,
-    published,
-    withFeedback,
-  } = props
-
-  const [showFeedBack, setShowFeedBack] = useState(false)
-  const [editorContent, setEditorContent] = useState(content)
-
-  const [testMode, setTestMode] = useState(
-    published && !showFeedBack && !withFeedback,
-  )
-
-  const [customValues, setCustomValues] = useState({ showFeedBack, testMode })
-
-  // only for users taking the test in student view
-  const preserveLocalState = published && !withFeedback
-
-  useEffect(() => {
-    setEditorContent(content)
-  }, [content])
-
-  useEffect(() => {
-    if (withFeedback) {
-      setShowFeedBack(false)
-      setTestMode(false)
-    } else {
-      setShowFeedBack(false)
-      setTestMode(true)
-    }
-
-    // reset original content after switching views
-    setEditorContent(content)
-  }, [withFeedback])
-
-  // changing customValues will rerender the editor
-  // avoid rerendering if testMode or showFeedBack don't change
-  // force rerendering when question is published and content changes (for next/previous navigation)
-  useEffect(() => {
-    if (
-      testMode !== customValues.testMode ||
-      showFeedBack !== customValues.showFeedBack ||
-      published
-    ) {
-      setCustomValues({ testMode, showFeedBack })
-    }
-  }, [testMode, showFeedBack, published, content])
-
-  const submitTest = () => {
-    setShowFeedBack(true)
-    setTestMode(false)
-
-    const contentFeedback = JSON.parse(
-      JSON.stringify(innerRef.current.getContent()),
-    )
-
-    setEditorContent(contentFeedback)
-  }
-
-  const resetTest = () => {
-    setShowFeedBack(false)
-    setTestMode(true)
-    setEditorContent(content)
-  }
-
-  return (
-    <EditorWrapper>
-      <EditorScrollContainer>
-        <Wax
-          config={config}
-          content={preserveLocalState ? editorContent : content}
-          customValues={customValues}
-          innerRef={innerRef}
-          layout={layout}
-          onContentChange={!testMode ? onContentChange : () => {}}
-          onImageUpload={onImageUpload}
-          readOnly={readOnly}
-        />
-      </EditorScrollContainer>
-
-      {!withFeedback && (
-        <SubmitTestBar>
-          {showFeedBack ? (
-            <Button onClick={resetTest} type="primary">
-              Reset
-            </Button>
-          ) : (
-            <Button onClick={submitTest} type="primary">
-              Submit
-            </Button>
-          )}
-        </SubmitTestBar>
-      )}
-    </EditorWrapper>
-  )
-}
-
-WaxWrapper.propTypes = {
-  content: PropTypes.shape(),
-  innerRef: PropTypes.oneOfType([
-    // Either a function
-    PropTypes.func,
-    // Or the instance of a DOM native element (see the note about SSR)
-    PropTypes.shape({
-      current: PropTypes.shape(),
-    }),
-  ]),
-  layout: PropTypes.elementType.isRequired,
-  onContentChange: PropTypes.func.isRequired,
-  onImageUpload: PropTypes.func,
-  readOnly: PropTypes.bool,
-  withFeedback: PropTypes.bool,
-  published: PropTypes.bool,
-}
-
-WaxWrapper.defaultProps = {
-  content: {},
-  readOnly: false,
-  innerRef: null,
-  onImageUpload: () => {},
-  published: false,
-  withFeedback: true,
-}
-// #endregion wax
 
 // #region Question Panel
 const StyledCollapse = styled(Collapse)`
@@ -487,7 +327,10 @@ PanelWrapper.propTypes = {
 const Question = props => {
   const {
     authors,
+    complexItemSetOptions,
     editorContent,
+    leadingContent,
+    complexSetEditLink,
     editorView,
     facultyView,
     onClickExportToWord,
@@ -1422,10 +1265,12 @@ const Question = props => {
                     <PanelWrapper
                       condition={false}
                       editor={
-                        <WaxWrapper
+                        <QuestionEditor
+                          complexSetEditLink={complexSetEditLink}
                           content={editorContent}
                           innerRef={waxRef}
                           layout={facultyView ? TestModeLayout : HhmiLayout}
+                          leadingContent={leadingContent}
                           onContentChange={handleQuestionContentChange}
                           onImageUpload={onImageUpload}
                           published={facultyView && isPublished}
@@ -1434,8 +1279,9 @@ const Question = props => {
                         />
                       }
                       metadata={
-                        <MetadataWrapper>
-                          <Metadata
+                        <>
+                          <StyledMetadata
+                            complexItemSetOptions={complexItemSetOptions}
                             editorView={editorView}
                             initialValues={initialMetadataValues}
                             innerRef={formRef}
@@ -1457,7 +1303,7 @@ const Question = props => {
                           >
                             {skipButtonText()}
                           </SkipToTop>
-                        </MetadataWrapper>
+                        </>
                       }
                       showMetadata={showMetadata}
                     />
@@ -1491,6 +1337,13 @@ Question.propTypes = {
       value: PropTypes.string,
     }),
   ),
+  complexItemSetOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
+  leadingContent: PropTypes.shape(),
   loading: PropTypes.bool.isRequired,
   loadAuthors: PropTypes.func,
   onAssignAuthor: PropTypes.func,
@@ -1767,10 +1620,12 @@ Question.propTypes = {
   updated: PropTypes.string,
   wordFileLoading: PropTypes.bool.isRequired,
   scormZipLoading: PropTypes.bool.isRequired,
+  complexSetEditLink: PropTypes.string,
 }
 
 Question.defaultProps = {
   authors: [],
+  complexItemSetOptions: [],
   onCreateNewVersion: () => {},
   onMoveToReview: () => {},
   onMoveToProduction: () => {},
@@ -1778,6 +1633,7 @@ Question.defaultProps = {
   onReject: () => {},
   onClickAssignHE: () => {},
   editorContent: {},
+  leadingContent: null,
   initialMetadataValues: {},
   onClickExportToScorm: null,
   onClickExportToWord: null,
@@ -1805,6 +1661,7 @@ Question.defaultProps = {
   updated: '',
   isUserLoggedIn: true,
   canCreateNewVersion: false,
+  complexSetEditLink: null,
 }
 
 export default Question

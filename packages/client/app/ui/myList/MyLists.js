@@ -406,7 +406,7 @@ const MyLists = props => {
               })
             },
           }}
-          searchPlaceholder="Search for list"
+          searchPlaceholder="Search..."
           showSearch
         />
         <ListActions>

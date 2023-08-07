@@ -8,6 +8,7 @@ import {
   REMOVE_FROM_LIST,
   EXPORT_QUESTIONS,
   REORDER_LIST,
+  GET_COMPLEX_ITEM_SETS_OPTIONS,
 } from '../graphql'
 import { useMetadata, dashboardDataMapper } from '../utilities'
 
@@ -54,6 +55,10 @@ const ListContentPage = () => {
       ).innerHTML = `${listTitle}, list page`
     },
   })
+
+  const {
+    data: { complexItemSets: { result: complexItemSetOptions } = {} } = {},
+  } = useQuery(GET_COMPLEX_ITEM_SETS_OPTIONS)
 
   const [removeFromListMutation] = useMutation(REMOVE_FROM_LIST, {
     onCompleted: ({ deleteFromList }) => {
@@ -153,36 +158,78 @@ const ListContentPage = () => {
 
   const handleDragEnd = result => {
     const { destination, source /* draggableId */ } = result
+    let hasErrors = false
 
     // check if no destination, or if no rearrangement happened
-    if (!destination) return
+    // if so, just return with no errors
+    if (!destination) return { hasErrors }
 
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     )
-      return
+      return { hasErrors }
 
     // reorder the question ids after dragging has ended
     const orderedQuestionIds = questions.map(question => question.id)
     const draggedElement = orderedQuestionIds.splice(source.index, 1)
     orderedQuestionIds.splice(destination.index, 0, ...draggedElement)
 
-    // sort questions so that they appear in the new order visually
-    questions.sort(
+    // get a temporary copy of the new order of questions
+    const sortedQuestions = [...questions].sort(
       (a, b) =>
         orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
     )
 
-    // prepare mutation data and run mutation to persist new order
-    const mutationData = {
-      variables: {
-        listId: id,
-        customOrder: orderedQuestionIds,
-      },
+    // check if questions belonging to a set are not back-to-back
+    const complexItemSets = sortedQuestions.map(
+      question => question.versions[0].complexItemSetId,
+    )
+
+    const uniqueSets = [...new Set(complexItemSets)].filter(s => !!s)
+
+    if (uniqueSets.length) {
+      // for each set, find index of first and last question of the set
+      // check all questions in between if they belong the the same set
+      // if not, set hasErrors = true
+      uniqueSets.forEach(setId => {
+        const firstItemIndex = sortedQuestions.findIndex(
+          q => q.versions[0].complexItemSetId === setId,
+        )
+
+        const lastItemIndex = sortedQuestions.findLastIndex(
+          q => q.versions[0].complexItemSetId === setId,
+        )
+
+        for (let i = firstItemIndex + 1; i < lastItemIndex; i += 1) {
+          if (sortedQuestions[i].versions[0].complexItemSetId !== setId) {
+            hasErrors = true
+            return
+          }
+        }
+      })
     }
 
-    reorderListMutation(mutationData)
+    if (!hasErrors) {
+      // sort questions so that they appear in the new order visually
+      questions.sort(
+        (a, b) =>
+          orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
+      )
+
+      // prepare mutation data and execute mutation to persist new order
+      const mutationData = {
+        variables: {
+          listId: id,
+          customOrder: orderedQuestionIds,
+        },
+      }
+
+      reorderListMutation(mutationData)
+      return { hasErrors }
+    }
+
+    return { hasErrors }
   }
 
   return (
@@ -197,7 +244,7 @@ const ListContentPage = () => {
           ? dashboardDataMapper(
               questions,
               metadata,
-              [],
+              complexItemSetOptions,
               false,
               false,
               relatedQuestionsIds,

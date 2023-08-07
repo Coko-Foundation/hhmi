@@ -2,25 +2,25 @@
 
 exports[`QuestionItem matches snapshot 1`] = `
 <article
-  className="sc-hdDbdj gJNqGw"
+  className="sc-cnbGa-D cdnnoQ"
   id="1"
 >
   <div
-    className="sc-dlfzSu cbnNPV"
+    className="sc-APXU gJNGmT"
   >
     <a
-      className="sc-icFLil ieWWoI sc-jWnMzg kZrFWZ"
+      className="sc-jmTFAL bfpGKx sc-iyYrcB aBAwc"
       data-testid="wax-container"
       href="#"
       onClick={[Function]}
     />
   </div>
   <div
-    className="sc-cTZEgG fGjuUq"
+    className="sc-bIWhlU fhaNYq"
     data-testid="courses"
   />
   <table
-    className="sc-dbvMr hYHQrt"
+    className="sc-jOBjDf yWkkB"
   >
     <tbody />
   </table>
