@@ -52,6 +52,6 @@
 <!-- Bug label is added automatically. After creating this issue you can link other related or blocking issues with the Gitlab's Linked issues functionality. --> 
 
 /label ~bug
-/assign @DioneMentis
+/assign @Natasha
 
 
