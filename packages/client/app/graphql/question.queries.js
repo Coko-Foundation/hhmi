@@ -150,6 +150,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
           published
           publicationDate
 
+          complexItemSetId
           topics {
             topic
             subtopic
