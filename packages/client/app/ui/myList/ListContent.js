@@ -247,6 +247,25 @@ const ListContent = ({
     setSearchParams({ ...searchParams, query, page: 1 })
   }
 
+  const handleDragEnd = data => {
+    const result = onDragEnd(data)
+
+    if (result.hasErrors) {
+      const errorDialog = error()
+      errorDialog.update({
+        title: 'Error during reorder',
+        content: `Make sure to not separate questions that belong to one complex item set from one another. You can change their position, but they must always be grouped together.`,
+        footer: [
+          <ModalFooter key="footer">
+            <Button autoFocus key="ok" onClick={() => errorDialog.destroy()}>
+              Ok
+            </Button>
+          </ModalFooter>,
+        ],
+      })
+    }
+  }
+
   useEffect(() => {
     onSearch(searchParams)
   }, [searchParams])
@@ -278,7 +297,7 @@ const ListContent = ({
                 draggable={draggable}
                 loading={loading}
                 locale={mergedLocale}
-                onDragEnd={onDragEnd}
+                onDragEnd={handleDragEnd}
                 onPageChange={setSearchPage}
                 onQuestionSelected={setSelectedQuestions}
                 onSearch={setSearchQuery}

@@ -29,6 +29,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
           published
           publicationDate
 
+          complexItemSetId
           topics {
             topic
             subtopic
@@ -130,7 +131,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
       ascending: $ascending
       page: $page
       pageSize: $pageSize
-      searchQuery: $searchQuery
+      filters: $filters
     ) {
       result {
         id
@@ -138,6 +139,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
         author {
           displayName
         }
+        heAssigned
         versions(latestOnly: true) {
           id
           content
@@ -176,94 +178,9 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
   }
 `
 
-export const ASSING_HANDLING_EDITORS = gql`
-  mutation assignHandlingEditors($questionIds: [ID!]!, $userIds: [ID!]!) {
-    assignHandlingEditors(questionIds: $questionIds, userIds: $userIds) {
-      questionId
-      hasAuthorshipConflict
-      members
-    }
-  }
-`
-
-export const UNASSING_HANDLING_EDITOR = gql`
-  mutation unassignHandlingEditor($questionId: ID!, $userId: ID!) {
-    unassignHandlingEditor(questionId: $questionId, userId: $userId)
-  }
-`
-
-export const GET_QUESTION_HANDLING_EDITORS = gql`
-  query getQuestionsHandlingEditors($questionId: ID!) {
-    getQuestionsHandlingEditors(questionId: $questionId) {
-      id
-      displayName
-    }
-  }
-`
-
-export const GET_PRODUCTION_DASHBOARD = gql`
-  query GetInProductionDashboard(
-    $orderBy: String
-    $ascending: Boolean
-    $page: Int
-    $pageSize: Int
-    $searchQuery: String
-  ) {
-    getInProductionDashboard(
-      orderBy: $orderBy
-      ascending: $ascending
-      page: $page
-      pageSize: $pageSize
-      searchQuery: $searchQuery
-    ) {
-      result {
-        id
-        rejected
-        author {
-          displayName
-        }
-        versions(latestOnly: false, productionOnly: true) {
-          id
-          content
-
-          submitted
-          underReview
-          inProduction
-          published
-          publicationDate
-
-          complexItemSetId
-          topics {
-            topic
-            subtopic
-          }
-
-          courses {
-            course
-            units {
-              # application
-              # courseTopic
-              # essentialKnowledge
-              learningObjective
-              # skill
-              understanding
-              # unit
-            }
-          }
-
-          cognitiveLevel
-          # affectiveLevel
-          # psychomotorLevel
-        }
-      }
-      totalCount
-    }
-  }
-`
-
 export const CREATE_QUESTION = gql`
-  mutation CreateQuestion {
-    createQuestion {
+  mutation CreateQuestion($input: UpdateQuestionInput) {
+    createQuestion(input: $input) {
       id
     }
   }
@@ -331,6 +248,8 @@ export const QUESTION = gql`
         readingLevel
 
         questionType
+        complexItemSetId
+        leadingContent
       }
 
       chatThreadId
@@ -361,6 +280,8 @@ export const UPDATE_QUESTION = gql`
         inProduction
         published
 
+        leadingContent
+        complexItemSetId
         questionType
 
         topics {
@@ -522,6 +443,7 @@ export const GET_PUBLISHED_QUESTIONS = gql`
         versions(latestOnly: true, publishedOnly: true) {
           id
           content
+          complexItemSetId
 
           submitted
           underReview

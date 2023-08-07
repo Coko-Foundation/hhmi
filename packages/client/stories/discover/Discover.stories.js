@@ -8,6 +8,7 @@ import { uuid } from '@coko/client'
 import { Discover } from 'ui'
 import metadata from '../../app/utilities/question/metadataValues'
 import { metadataTransformer } from '../../app/utilities/question/metadataTransformations'
+import complexItemSet from '../../app/utilities/question/complexItemSets'
 
 import {
   generateMetadata,
@@ -152,6 +153,7 @@ export const DiscoverPage = args => {
     <Wrapper>
       <Discover
         {...args}
+        complexItemSetOptions={complexItemSet}
         existingListsOptions={existingLists}
         loading={loading}
         loadingAddToList={loadingAddToList}

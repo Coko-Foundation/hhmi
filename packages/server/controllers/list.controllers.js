@@ -1,19 +1,20 @@
 const path = require('path')
 const { uniq } = require('lodash')
 
-const {
-  logger,
-  useTransaction,
-  fileStorage,
-  uuid,
-  File,
-} = require('@coko/server')
+const { logger, useTransaction } = require('@coko/server')
 
 const config = require('config')
 
-const { List, ListMember, Team, Question } = require('../models')
+const {
+  List,
+  ListMember,
+  Team,
+  Question,
+  ComplexItemSet,
+} = require('../models')
 
 const { clearTempImageFiles } = require('./helpers')
+const { findImages } = require('./utils')
 const { labels } = require('./constants')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const WaxToQTIConverter = require('../services/qti/qti.service')
@@ -208,136 +209,10 @@ const exportQuestionsToWordFile = async (
   )
 
   const imageData = {}
+  const tempFolderPath = path.join(__dirname, '..', 'tmp')
 
   try {
     const { showFeedback } = options
-
-    const versions = await Promise.all(
-      questionIds.map(async questionId => {
-        const versionsResult = await Question.getVersions(questionId, {
-          latestOnly: true,
-          publishedOnly: true,
-        })
-
-        return versionsResult.result[0]
-      }),
-    )
-
-    if (orderBy !== 'custom') {
-      // sort by ascending or descending (publication date)
-      versions.sort((a, b) => {
-        return ascending ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
-      })
-    } else {
-      const list = await List.findById(listId)
-
-      versions.sort((a, b) => {
-        // non-sorted items (new questions that were added later) go to the end
-        if (list.customOrder.indexOf(a.questionId) === -1) return 1000
-        if (list.customOrder.indexOf(b.questionId) === -1) return -1000
-
-        // the rest is sorted as per customOrder
-        return (
-          list.customOrder.indexOf(a.questionId) -
-          list.customOrder.indexOf(b.questionId)
-        )
-      })
-    }
-
-    const tempFolderPath = path.join(__dirname, '..', 'tmp')
-
-    const findImages = async n => {
-      if (!n) return
-
-      if (n.type === 'figure' && n.content[0]?.attrs?.extraData) {
-        const [image] = n.content
-        const { fileId } = image.attrs.extraData
-        const file = await File.findById(fileId)
-        const medium = file.storedObjects.find(o => o.type === 'medium')
-        const { extension, key, id } = medium
-
-        const downloadPath = path.join(
-          tempFolderPath,
-          `${id}-${uuid()}.${extension}`,
-        )
-
-        await fileStorage.download(key, downloadPath)
-        imageData[image.attrs.id] = downloadPath
-
-        return
-      }
-
-      if (!n.content) return
-
-      await Promise.all(n.content.map(async i => findImages(i)))
-    }
-
-    const allVersionsContent = versions.map(version => version.content.content)
-
-    await Promise.all(
-      allVersionsContent.flat().map(async node => findImages(node)),
-    )
-
-    const fullContent = {
-      type: 'doc',
-      content: [
-        {
-          type: 'question_list',
-          content: [],
-        },
-      ],
-    }
-
-    versions.forEach(version => {
-      fullContent.content[0].content.push({
-        type: 'question',
-        content: [...version.content.content],
-      })
-    })
-
-    const converter = new WaxToDocxConverter(
-      fullContent,
-      imageData,
-      {},
-      {
-        showFeedback,
-      },
-    )
-
-    const filename = `${listId}-partial.docx`
-    const filePath = path.join(tempFolderPath, filename)
-    await converter.writeToPath(filePath)
-    await clearTempImageFiles(imageData)
-    return filename
-  } catch (error) {
-    await clearTempImageFiles(imageData)
-    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
-    throw new Error(error)
-  }
-}
-
-const exportListToWordFile = async (
-  listId,
-  orderBy,
-  ascending,
-  options = {},
-) => {
-  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} exportListToWordFile:`
-  logger.info(
-    `${CONTROLLER_MESSAGE} generating word file for list with id ${listId}`,
-  )
-
-  const imageData = {}
-
-  try {
-    const { showFeedback } = options
-
-    const questions = await getListQuestions({
-      id: listId,
-      questionsOptions: { page: 0, pageSize: 1000 }, // all questions in a list
-    })
-
-    const questionIds = questions.result.map(question => question.id)
 
     const versions = await Promise.all(
       questionIds.map(async questionId => {
@@ -361,7 +236,6 @@ const exportListToWordFile = async (
         return ascending ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
       })
     } else {
-      // get list and sort versions by custom order specified in the list
       const list = await List.findById(listId)
 
       versions.sort((a, b) => {
@@ -377,38 +251,54 @@ const exportListToWordFile = async (
       })
     }
 
-    const tempFolderPath = path.join(__dirname, '..', 'tmp')
+    // check for version.complexItemSetId
+    const complexItemSets = versions.map(v => v.complexItemSetId)
 
-    const findImages = async n => {
-      if (!n) return
+    const uniqueSets = [...new Set(complexItemSets)].filter(s => !!s)
 
-      if (n.type === 'figure' && n.content[0]?.attrs?.extraData) {
-        const [image] = n.content
-        const { fileId } = image.attrs.extraData
-        const file = await File.findById(fileId)
-        const medium = file.storedObjects.find(o => o.type === 'medium')
-        const { extension, key, id } = medium
+    const map = new Map()
+    uniqueSets.forEach(key => {
+      map.set(
+        key,
+        versions.filter(v => v.complexItemSetId === key),
+      )
+    })
 
-        const downloadPath = path.join(
-          tempFolderPath,
-          `${id}-${uuid()}.${extension}`,
-        )
-
-        await fileStorage.download(key, downloadPath)
-        imageData[image.attrs.id] = downloadPath
-
-        return
+    let versionsSorted = []
+    versions.forEach(v => {
+      if (v.complexItemSetId === null) {
+        versionsSorted.push(v)
+      } else if (map.get(v.complexItemSetId)) {
+        versionsSorted.push(map.get(v.complexItemSetId))
+        map.delete(v.complexItemSetId)
       }
+    })
+    versionsSorted = versionsSorted.flat()
 
-      if (!n.content) return
+    // if any, fetch them and resolve if they have any images
+    const leadingContent = await Promise.all(
+      uniqueSets.map(async id => {
+        const set = await ComplexItemSet.findById(id)
+        return { id, type: 'complexItemSet', content: set.leadingContent }
+      }),
+    )
 
-      await Promise.all(n.content.map(async i => findImages(i)))
-    }
+    leadingContent.forEach(set => {
+      const firstVersionOfSet = versionsSorted.findIndex(
+        v => v.complexItemSetId === set.id,
+      )
 
-    const allVersionsContent = versions.map(version => version.content.content)
+      versionsSorted.splice(firstVersionOfSet, 0, set)
+    })
+
+    const allVersionsContent = versionsSorted.map(
+      version => version.content.content,
+    )
 
     await Promise.all(
-      allVersionsContent.flat().map(async node => findImages(node)),
+      allVersionsContent
+        .flat()
+        .map(async node => findImages(node, imageData, tempFolderPath)),
     )
 
     const fullContent = {
@@ -421,11 +311,18 @@ const exportListToWordFile = async (
       ],
     }
 
-    versions.forEach(version => {
-      fullContent.content[0].content.push({
-        type: 'question',
-        content: [...version.content.content],
-      })
+    versionsSorted.forEach((version, i) => {
+      if (version.type === 'complexItemSet') {
+        fullContent.content[0].content.push({
+          type: 'leading_content',
+          content: [...version.content.content],
+        })
+      } else {
+        fullContent.content[0].content.push({
+          type: 'question',
+          content: [...version.content.content],
+        })
+      }
     })
 
     const converter = new WaxToDocxConverter(
@@ -444,6 +341,38 @@ const exportListToWordFile = async (
     return filename
   } catch (error) {
     await clearTempImageFiles(imageData)
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const exportListToWordFile = async (
+  listId,
+  orderBy,
+  ascending,
+  options = {},
+) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} exportListToWordFile:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} generating word file for list with id ${listId}`,
+  )
+
+  try {
+    const questions = await getListQuestions({
+      id: listId,
+      questionsOptions: { page: 0, pageSize: 1000 }, // all questions in a list
+    })
+
+    const questionIds = questions.result.map(question => question.id)
+
+    return exportQuestionsToWordFile(
+      listId,
+      questionIds,
+      orderBy,
+      ascending,
+      options,
+    )
+  } catch (error) {
     logger.error(`${CONTROLLER_MESSAGE} ${error}`)
     throw new Error(error)
   }

@@ -39,6 +39,8 @@ import {
   BioInteractiveOauth,
   External,
   PageNotFound,
+  ComplexItemSet,
+  ComplexItemSetsList,
 } from './pages'
 
 import { CURRENT_USER } from './graphql'
@@ -234,6 +236,7 @@ const SiteHeader = () => {
     homepage: '/',
     questions: '/discover',
     dashboard: '/dashboard',
+    sets: '/sets',
     lists: '/lists',
     about: '/about',
     learning: '/learning',
@@ -425,11 +428,32 @@ const routes = (
                 exact
                 path="/ensure-verified-login"
               />
+              <Route component={DeactivatedUser} path="/deactivated-user" />
               <Route
                 component={BioInteractiveOauth}
                 exact
                 path="/biointeractive-oauth"
               />
+              <Route
+                exact
+                path="/sets"
+                render={() => (
+                  <Authenticated>
+                    <ComplexItemSetsList />
+                  </Authenticated>
+                )}
+              />
+              <Route
+                exact
+                path="/set/new"
+                render={() => (
+                  <Authenticated>
+                    <ComplexItemSet />
+                  </Authenticated>
+                )}
+              />
+              {/* individual sets and their questions can be viewed by all visitors */}
+              <Route exact path="/set/:id" render={() => <ComplexItemSet />} />
               <Route component={DeactivatedUser} path="/deactivated-user" />
               {/* Static pages hosted elsewhere */}
               <Route

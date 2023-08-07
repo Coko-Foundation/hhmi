@@ -13,6 +13,21 @@ const initialContent = {
   ],
 }
 
+const complexItemLeadingContent = {
+  type: 'doc',
+  content: [
+    {
+      type: 'paragraph',
+      content: [
+        {
+          type: 'text',
+          text: 'Leading content for the complex item set. Here is given the context for the following questions',
+        },
+      ],
+    },
+  ],
+}
+
 const editorInitialContent = {
   type: 'doc',
   content: [
@@ -179,6 +194,12 @@ const initialMetadataValues = {
     'cysticFibrosisMechanismAndTreatment',
   ],
   cognitiveLevel: 'higher-understand',
+  questionType: 'multipleChoice',
 }
 
-export { initialContent, editorInitialContent, initialMetadataValues }
+export {
+  initialContent,
+  complexItemLeadingContent,
+  editorInitialContent,
+  initialMetadataValues,
+}

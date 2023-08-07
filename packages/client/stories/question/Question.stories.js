@@ -126,6 +126,7 @@ export const Author = args => {
       <Question
         authors={authors}
         autoSaveInterval={5000}
+        complexItemSetOptions={complexItemSet}
         editorContent={editorContent}
         isSubmitted={submitted}
         isUserLoggedIn
@@ -358,6 +359,7 @@ export const TestMode = () => {
   return (
     <Wrapper>
       <Question
+        complexItemSetOptions={complexItemSet}
         editorContent={editorInitialContent}
         facultyView
         initialMetadataValues={initialMetadataValues}

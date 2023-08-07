@@ -10,7 +10,7 @@ exports[`AuthenticationForm matches snapshot 1`] = `
     <div
       className="sc-jsMahE gIRyYT sc-irTswW ixRkEE"
       data-testid="feedback-element"
-      role="alert"
+      role="status"
     >
       The error message
     </div>

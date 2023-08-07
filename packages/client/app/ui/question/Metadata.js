@@ -21,7 +21,7 @@ import {
 import Resources from './Resources'
 import MetadataInfo from './MetadataInfo'
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
   padding: ${grid(4)};
 `
 
@@ -44,6 +44,7 @@ const Metadata = React.forwardRef((props, ref) => {
     editorView,
     resources,
     presentationMode,
+    complexItemSetOptions,
     /* eslint-disable-next-line react/prop-types */
     innerRef,
   } = props
@@ -53,6 +54,7 @@ const Metadata = React.forwardRef((props, ref) => {
   if (presentationMode) {
     return (
       <MetadataInfo
+        complexItemSetOptions={complexItemSetOptions}
         metadata={metadata}
         resources={resources}
         values={initialValues}
@@ -224,7 +226,7 @@ const Metadata = React.forwardRef((props, ref) => {
    */
 
   return (
-    <Wrapper className={className}>
+    <Wrapper aria-label="Question Metadata" className={className}>
       <VisuallyHiddenElement as="h2">Metadata Form</VisuallyHiddenElement>
       <Form
         autoSave
@@ -751,6 +753,12 @@ Metadata.propTypes = {
     readingLevel: PropTypes.string,
   }),
   presentationMode: PropTypes.bool,
+  complexItemSetOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
 }
 
 Metadata.defaultProps = {
@@ -760,6 +768,7 @@ Metadata.defaultProps = {
   readOnly: false,
   resources: [],
   presentationMode: false,
+  complexItemSetOptions: [],
 }
 
 export default Metadata
