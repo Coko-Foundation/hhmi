@@ -1,3 +1,4 @@
+/* eslint-disable cypress/unsafe-to-chain-command */
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -81,8 +82,8 @@ Cypress.Commands.add(
     keywords,
     biointeractiveResources,
     cognitiveLevel,
-    affectiveLevel,
-    psychomotorLevel,
+    // affectiveLevel,
+    // psychomotorLevel,
   }) => {
     cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     selectData(mainTopic)
@@ -152,6 +153,14 @@ Cypress.Commands.add('seedQuestion', (username, date, metadata, status) => {
     )
 })
 
+Cypress.Commands.add('updateQuestionStatus', (questionId, status) => {
+  cy.exec(
+    `docker exec hhmi_server_1 node ./scripts/seedQuestions.js updateStatus ${questionId} ${status}`,
+  )
+    .its('stdout')
+    .should('contains', `question ${questionId} updated to published`)
+})
+
 Cypress.Commands.add('deleteAllQuestions', () => {
   cy.exec('docker exec hhmi_server_1 node ./scripts/seedQuestions.js deleteAll')
     .its('stdout')
@@ -175,4 +184,24 @@ Cypress.Commands.add('addQuestionToList', (listName, questionId) => {
       'contain',
       `added question with id - ${questionId} to list ${listName}`,
     )
+})
+
+Cypress.Commands.add(
+  'seedComplexItemSet',
+  (username, title, leadingContent) => {
+    cy.exec(
+      `docker exec hhmi_server_1 node ./scripts/seedComplexItemSet.js create ${username} "${title}" "${leadingContent}"`,
+    )
+      .its('stdout')
+      .should('contain', `set with title: "${title}" created!`)
+      .should('contain', `${username} set as author!`)
+  },
+)
+
+Cypress.Commands.add('addQuestionToComplexItemSet', (title, questionId) => {
+  cy.exec(
+    `docker exec hhmi_server_1 node ./scripts/seedComplexItemSet.js addQuestion "${title}" ${questionId}`,
+  )
+    .its('stdout')
+    .should('contains', ` question - ${questionId} added to set "${title}"`)
 })

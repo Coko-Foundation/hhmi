@@ -101,7 +101,7 @@ const ComplexItemSetForm = props => {
     }
   }
 
-  if (loadingData) return <StyledSpin spinning />
+  if (loadingData) return <StyledSpin data-testId="spinner" spinning />
 
   return (
     <ModalContext.Provider value={null}>

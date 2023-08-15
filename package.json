@@ -25,7 +25,7 @@
   "devDependencies": {
     "@coko/lint": "^2.0.0",
     "any-text": "^1.2.0",
-    "cypress": "^12.3.0",
+    "cypress": "^12.17.2",
     "lodash": "^4.17.21"
   }
 }

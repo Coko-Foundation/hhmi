@@ -105,7 +105,7 @@ const ComplexItemSet = props => {
             children: (
               <>
                 <Wrapper>
-                  <SetTitle>{title}</SetTitle>
+                  <SetTitle data-testid="set-title">{title}</SetTitle>
                   <Wax
                     autoFocus={false}
                     config={simpleConfig}

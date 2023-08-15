@@ -24,7 +24,11 @@ const Wrapper = styled.div`
 const LeadingContentLayout = ({ editor, className }) => {
   return (
     <ThemeProvider theme={theme}>
-      <Wrapper className={className} tabIndex={0}>
+      <Wrapper
+        className={className}
+        data-testid="leading-content-wrapper"
+        tabIndex={0}
+      >
         <VisuallyHiddenElement as="h2">
           Complex item set leading content
         </VisuallyHiddenElement>
