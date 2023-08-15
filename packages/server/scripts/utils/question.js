@@ -38,7 +38,7 @@ module.exports.createQuestion = async (
   const transactionCallback = async trx => {
     try {
       const user = await User.findOne({ username })
-      const questionData = await Question.insert({}, { trx })
+      const questionData = await Question.insert({})
 
       const authorTeam = await Team.insert(
         {
@@ -66,6 +66,7 @@ module.exports.createQuestion = async (
         })
         .where('question_id', questionData.id)
         .returning('id')
+      // temporary fix for created date issue
 
       // temporary fix for created date issue
       await Question.query(trx).findById(questionData.id).patch({
@@ -102,7 +103,14 @@ module.exports.updateStatus = async (id, status) => {
     try {
       const updatedQuestion = await QuestionVersion.query()
         .patch({
-          [status]: true,
+          ...(status === 'notSubmitted'
+            ? {
+                submitted: false,
+                published: false,
+                inProduction: false,
+                underReview: false,
+              }
+            : { [status]: true }),
         })
         .where('questionId', id)
 

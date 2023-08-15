@@ -101,7 +101,7 @@ const TestModeLayout = ({ editor }) => {
       <Wrapper fullScreen={fullScreen}>
         <EditorWrapper tabIndex={0}>
           {leadingContent && (
-            <LeadingContentWrapper>
+            <LeadingContentWrapper data-testid="leading-content-wrapper">
               <WaxWrapper
                 config={config}
                 content={leadingContent}

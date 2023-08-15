@@ -92,8 +92,8 @@ const EditorArea = styled.div`
     /* position: relative; */
 
     /* &:focus {
-      outline: none;
-    } */
+    outline: none;
+  } */
 
     /* .wax-selection-marker {
       background: ${th('colorPrimary')};
@@ -123,29 +123,29 @@ const EditorArea = styled.div`
   }
 
   /* .ProseMirror-gapcursor {
-    display: none;
-    pointer-events: none;
-    position: relative;
-  }
+  display: none;
+  pointer-events: none;
+  position: relative;
+}
 
-  .ProseMirror-gapcursor:after {
-    content: '';
-    display: block;
-    position: relative;
-    width: 20px;
-    border-top: 1px solid black;
-    animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
-  }
+.ProseMirror-gapcursor:after {
+  content: '';
+  display: block;
+  position: relative;
+  width: 20px;
+  border-top: 1px solid black;
+  animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
+}
 
-  @keyframes ProseMirror-cursor-blink {
-    to {
-      visibility: hidden;
-    }
+@keyframes ProseMirror-cursor-blink {
+  to {
+    visibility: hidden;
   }
+}
 
-  .ProseMirror-focused .ProseMirror-gapcursor {
-    display: block;
-  } */
+.ProseMirror-focused .ProseMirror-gapcursor {
+  display: block;
+} */
 `
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')

@@ -10,17 +10,17 @@ const {
 
 /**
  * @dev : Cmd arguements
- *            [2] - operationType [deleteAll,create] (required)
+ *            [2] - operationType [deleteAll,create,updateStatus] (required)
  * ---> when  [2] = create
  *                  [3] - username of the author
  *                  [4] - question dates(
  *                        Say we pass -2 it takes the date before 2 days from
  *                        the current date. This affects created,updated,publication_date.)
  *                  [5] - metadata type [biochemistry,anatomy,population]
- *                  [6] - question status [submitted,underReview,published,inProduction]
+ *                  [6] - question status [notSubmitted,submitted,underReview,published,inProduction] (default - notSubmitted)
  * ---> when [2] = updateStatus.
  *                 [3] - bookId
- *                 [4]- [submitted, underReview, published,inProduction]
+ *                 [4]- [notSubmitted,submitted, underReview, published,inProduction] (default - notSubmitted)
  */
 
 const validDataType = ['biochemistry', 'anatomy', 'population', 'ecology']

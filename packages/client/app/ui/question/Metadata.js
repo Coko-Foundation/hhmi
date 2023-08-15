@@ -253,7 +253,7 @@ const Metadata = React.forwardRef((props, ref) => {
         onFinish={onFormFinish}
       >
         <Form.Item name="belongsToComplexItemSet" valuePropName="checked">
-          <Checkbox disabled={readOnly}>
+          <Checkbox data-testid="belongs-to-set-checkbox" disabled={readOnly}>
             This question belongs to a complex item set{' '}
           </Checkbox>
         </Form.Item>
@@ -273,6 +273,7 @@ const Metadata = React.forwardRef((props, ref) => {
                   ]}
                 >
                   <Select
+                    data-testid="complexItemSet-select"
                     disabled={readOnly}
                     optionFilterProp="label"
                     options={complexItemSetOptions}

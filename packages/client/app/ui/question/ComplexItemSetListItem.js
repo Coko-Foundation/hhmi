@@ -87,7 +87,7 @@ const ComplexItemSetListItem = props => {
                 <th>
                   <MetadataLabel>{item.label}</MetadataLabel>
                 </th>
-                <MetadataValue>
+                <MetadataValue data-testid={`${item.label}-value`}>
                   {item.value && item.type === 'date' ? (
                     <DateParser
                       dateFormat="MMMM DD, YYYY"
