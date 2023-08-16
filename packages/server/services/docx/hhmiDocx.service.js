@@ -107,6 +107,22 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       leading_content: this.leadingContentHandler,
     }
 
+    this.config.styles.paragraphStyles.push({
+      id: 'questionCounter',
+      name: 'Question Counter',
+      run: {
+        font: this.fontFamily,
+        size: 20,
+        bold: true,
+      },
+      paragraph: {
+        alignment: AlignmentType.LEFT,
+        spacing: {
+          after: this.paragraphSpacingAfter,
+        },
+      },
+    })
+
     this.typeToHandlerMap = {
       ...this.typeToHandlerMap,
       ...newHandlers,
