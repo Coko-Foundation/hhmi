@@ -76,6 +76,10 @@ module.exports = {
         displayName: 'Admin',
         role: 'admin',
       },
+      production: {
+        displayName: 'Production',
+        role: 'production',
+      },
     },
     nonGlobal: {
       editor: {
