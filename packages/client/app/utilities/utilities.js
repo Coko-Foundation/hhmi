@@ -786,6 +786,20 @@ const dashboardDataMapper = (
   })
 }
 
+const setSafeHTML = (selectorString, htmlString, timeout) => {
+  const element = document.querySelector(selectorString)
+  if (!element) return
+
+  const writeOnElement = () =>
+    element && typeof htmlString === 'string'
+      ? (element.innerHTML = htmlString)
+      : (element.innerHTML = '')
+
+  typeof timeout !== 'number'
+    ? writeOnElement()
+    : setTimeout(writeOnElement, timeout)
+}
+
 export {
   extractDocumentText,
   extractTopicsAndSubtopics,
@@ -802,4 +816,5 @@ export {
   questionDataTransformer,
   questionTypes,
   dashboardDataMapper,
+  setSafeHTML,
 }

@@ -15,7 +15,7 @@ import {
   Empty,
   VisuallyHiddenElement,
 } from '../common'
-import { profileOptions } from '../../utilities'
+import { profileOptions, setSafeHTML } from '../../utilities'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -151,6 +151,11 @@ const UserList = props => {
     return { key: id, ...rest }
   })
 
+  const updateActionStatus = (content, delay = 3000) => {
+    setSafeHTML('#action-status', content)
+    setSafeHTML('#action-status', '', delay)
+  }
+
   const handleSelectionChange = selectedRowKeys => {
     setSelectedRows(selectedRowKeys)
   }
@@ -216,14 +221,11 @@ const UserList = props => {
 
   useEffect(() => {
     if (dataSource.length) {
-      document.getElementById('action-status').innerHTML = showDeactivated
-        ? `Loaded inactive users`
-        : `Loaded active users`
-      setTimeout(() => {
-        document.getElementById('action-status').innerHTML = ''
-      }, 3000)
+      updateActionStatus(
+        `Loaded ${showDeactivated ? 'inactive' : 'active'} users`,
+      )
     }
-  }, [JSON.stringify(dataSource)])
+  }, [showDeactivated])
 
   // #region modals
   const confirmActivate = () => {
@@ -250,14 +252,9 @@ const UserList = props => {
                 variables: { ids: selectedRows },
               })
                 .then(() => {
-                  document.getElementById('action-status').innerHTML = `User${
-                    selectedRows.length > 1 ? 's' : ''
-                  } activated`
-                  setTimeout(() => {
-                    if (document.getElementById('action-status')) {
-                      document.getElementById('action-status').innerHTML = ''
-                    }
-                  }, 3000)
+                  updateActionStatus(
+                    `User${selectedRows.length > 1 ? 's' : ''} activated`,
+                  )
                   setSelectedRows([])
                   confirmDialog.destroy()
                 })
@@ -302,12 +299,9 @@ const UserList = props => {
                 variables: { ids: selectedRows },
               })
                 .then(() => {
-                  document.getElementById('action-status').innerHTML = `User${
-                    selectedRows.length > 1 ? 's' : ''
-                  } deactivated`
-                  setTimeout(() => {
-                    document.getElementById('action-status').innerHTML = ''
-                  }, 3000)
+                  updateActionStatus(
+                    `User${selectedRows.length > 1 ? 's' : ''} deactivated`,
+                  )
                   setSelectedRows([])
                   confirmDialog.destroy()
                 })
@@ -352,12 +346,9 @@ const UserList = props => {
                 variables: { ids: selectedRows },
               })
                 .then(() => {
-                  document.getElementById('action-status').innerHTML = `User${
-                    selectedRows.length > 1 ? 's' : ''
-                  } deleted`
-                  setTimeout(() => {
-                    document.getElementById('action-status').innerHTML = ''
-                  }, 3000)
+                  updateActionStatus(
+                    `User${selectedRows.length > 1 ? 's' : ''} deleted`,
+                  )
                   setSelectedRows([])
                   confirmDialog.destroy()
                 })
