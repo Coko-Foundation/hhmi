@@ -103,27 +103,27 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
       async tr => {
         let tokenResponse
 
-        try {
-          const payload = {
-            grant_type: 'authorization_code',
-            code: authCode,
-            callback_url: BIOINTERACTIVE_OAUTH_REDIRECT_URI,
-            auth_url: BIOINTERACTIVE_OAUTH_AUTH_SERVER_URI,
-            access_token_url: BIOINTERACTIVE_OAUTH_TOKEN_URI,
-            client_id: BIOINTERACTIVE_OAUTH_CLIENT_ID,
-            client_secret: BIOINTERACTIVE_OAUTH_CLIENT_SECRET,
-            redirect_uri: BIOINTERACTIVE_OAUTH_REDIRECT_URI,
-            scope: 'openid',
-            state,
-          }
+        const payload = {
+          grant_type: 'authorization_code',
+          code: authCode,
+          callback_url: BIOINTERACTIVE_OAUTH_REDIRECT_URI,
+          auth_url: BIOINTERACTIVE_OAUTH_AUTH_SERVER_URI,
+          access_token_url: BIOINTERACTIVE_OAUTH_TOKEN_URI,
+          client_id: BIOINTERACTIVE_OAUTH_CLIENT_ID,
+          client_secret: BIOINTERACTIVE_OAUTH_CLIENT_SECRET,
+          redirect_uri: BIOINTERACTIVE_OAUTH_REDIRECT_URI,
+          scope: 'openid',
+          state,
+        }
 
+        try {
           tokenResponse = await axios.request({
             url: BIOINTERACTIVE_OAUTH_TOKEN_URI,
             method: 'post',
             data: qs.stringify(payload),
           })
         } catch (e) {
-          throw new Error(e)
+          throw new Error(JSON.stringify(payload))
         }
 
         const { access_token: accessToken, error: tokenError } =
