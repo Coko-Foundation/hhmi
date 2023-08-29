@@ -158,7 +158,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                     >
                       <span
                         aria-label="down"
-                        className="anticon anticon-down ant-select-suffix"
+                        className="anticon anticon-down"
                         role="img"
                       >
                         <svg
