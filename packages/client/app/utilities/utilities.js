@@ -786,18 +786,39 @@ const dashboardDataMapper = (
   })
 }
 
-const setSafeHTML = (selectorString, htmlString, timeout) => {
-  const element = document.querySelector(selectorString)
+const setSafeHTML = (selector, html, timeout) => {
+  const element = document.querySelector(selector)
   if (!element) return
 
   const writeOnElement = () =>
-    element && typeof htmlString === 'string'
-      ? (element.innerHTML = htmlString)
+    element && typeof html === 'string'
+      ? (element.innerHTML = html)
       : (element.innerHTML = '')
 
   typeof timeout !== 'number'
     ? writeOnElement()
     : setTimeout(writeOnElement, timeout)
+}
+
+const isFunction = cb => typeof cb === 'function'
+
+const safeCall = (cb, fb) => (isFunction(cb) ? cb() : isFunction(fb) && fb())
+
+const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1)
+
+const conditionalWord = (cased, options) => {
+  const text = () =>
+    options.condition() ? options.wordOnTrue : options.wordOnFalse
+
+  if (!cased) return text()
+
+  const caseMode = {
+    capital: () => capitalize(text()),
+    upper: () => text().toUpperCase(),
+    lower: () => text().toLowerCase(),
+  }
+
+  return safeCall(caseMode[cased], text)
 }
 
 export {
@@ -817,4 +838,8 @@ export {
   questionTypes,
   dashboardDataMapper,
   setSafeHTML,
+  isFunction,
+  safeCall,
+  capitalize,
+  conditionalWord,
 }
