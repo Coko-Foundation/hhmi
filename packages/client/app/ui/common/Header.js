@@ -118,8 +118,8 @@ const MainNav = styled.div`
 const NavWrapper = styled.div`
   height: 100%;
   margin: 0;
-  overflow: hidden auto;
-  padding: 1rem 0 0;
+  overflow: hidden ${p => (p.show ? 'auto' : 'hidden')};
+  padding: 1rem 0 1rem 1.5rem;
   top: 0;
   width: 100%;
 
@@ -149,13 +149,9 @@ const StyledList = styled.ul`
   justify-content: center;
   list-style: none;
   margin: 0;
-  padding: 0 0 0 1rem;
+  padding: 0;
   position: relative;
   width: 250px;
-
-  :nth-of-type(1) {
-    padding-left: 1.5rem;
-  }
 
   > li {
     color: ${th('colorTextDark')};
@@ -174,7 +170,7 @@ const StyledList = styled.ul`
     display: flex;
     flex-direction: row;
     height: 2.5rem;
-    padding: 0;
+    padding: 0 0 0 1rem;
     width: fit-content;
 
     > li {
@@ -741,7 +737,7 @@ const Header = props => {
           onClick={() => setShowMenu(!showMenu)}
         />
         <MainNav id="main-nav" show={showMenu}>
-          <NavWrapper>
+          <NavWrapper show={showMenu}>
             <StyledList>{renderLinks(linksUI.navigation)}</StyledList>
             <Separator />
             <RightNavContainer>

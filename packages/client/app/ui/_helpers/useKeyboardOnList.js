@@ -27,27 +27,21 @@ const useKeyboardOnList = ({
         const defaultSelectAction = () => document?.activeElement?.click()
 
         const selectByFirstChar = () => {
-          if (!selectByFirstLetter || key.length > 1) return
+          if (!selectByFirstLetter || key.length > 1) return setPrevKey('')
 
           const matches = menuItems.filter(item =>
             item.textContent?.toUpperCase().startsWith(key.toUpperCase()),
           )
 
-          if (matches.length === 0) return
+          if (matches.length === 0) return setPrevKey('')
 
-          const nextItem =
-            prevKey !== key
-              ? matches[0]
-              : matches[
-                  safeIndex(
-                    matches.indexOf(document.activeElement) + 1,
-                    'down',
-                    matches,
-                  )
-                ]
+          const nextItem = () => matches.indexOf(document.activeElement) + 1
 
-          nextItem.focus()
-          prevKey !== key && setPrevKey(key)
+          prevKey !== key
+            ? matches[0].focus()
+            : matches[safeIndex(nextItem(), 'down', matches)].focus()
+
+          return prevKey !== key && setPrevKey(key)
         }
 
         const actions = {
@@ -55,7 +49,7 @@ const useKeyboardOnList = ({
             !isOpen &&
               menuItems.filter(el => el === document.activeElement).length ===
                 0 &&
-              menuItems[0].focus()
+              actions.goToFirst()
             setOpen(true)
           },
           close: () => {
@@ -113,9 +107,9 @@ const useKeyboardOnList = ({
           ...additionalKeys(actions),
         }
 
-        const keys = isFunction(overrideKeys)
-          ? { ...overrideKeys(actions), ...additionalKeys(actions) }
-          : defaultKeys
+        const keys = !isFunction(overrideKeys)
+          ? defaultKeys
+          : { ...overrideKeys(actions), ...additionalKeys(actions) }
 
         return safeCall(keys[code], selectByFirstChar)
       }
