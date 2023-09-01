@@ -3,7 +3,14 @@ const config = require('config')
 
 const { createFile, logger, useTransaction } = require('@coko/server')
 
-const { Question, QuestionVersion, Team, ComplexItemSet } = require('../models')
+const {
+  Question,
+  QuestionVersion,
+  Team,
+  TeamMember,
+  ComplexItemSet,
+} = require('../models')
+
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const { clearTempImageFiles } = require('./helpers')
 const { labels } = require('./constants')
@@ -13,6 +20,7 @@ const resources = require('./resourcesData')
 const { getImageUrls, findImages } = require('./utils')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
+const HE_TEAM = config.teams.nonGlobal.handlingEditor
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
 
 const getQuestion = async (questionId, options = {}) => {
@@ -163,6 +171,19 @@ const getManagingEditorDashboard = async (userId, options = {}) => {
     pageSize,
     searchQuery,
     submittedOnly: true,
+    trx,
+  })
+}
+
+const getHandlingEditorDashboard = async (userId, options = {}) => {
+  const { orderBy, ascending, page, pageSize, searchQuery, trx } = options
+
+  return Question.findByRole(userId, 'handlingEditor', {
+    orderBy,
+    ascending,
+    page,
+    pageSize,
+    searchQuery,
     trx,
   })
 }
@@ -568,6 +589,134 @@ const generateWordFile = async (questionVersionId, options = {}) => {
 
 const resourceResolver = async () => resources
 
+const assignHandlingEditors = async (questionIds, userIds, options = {}) => {
+  const { trx } = options
+
+  const result = await Promise.all(
+    questionIds.map(async questionId => {
+      const existingTeam = await Team.findOne({
+        objectId: questionId,
+        role: HE_TEAM.role,
+      })
+
+      const authorTeam = await Team.findOne({
+        objectId: questionId,
+        role: AUTHOR_TEAM.role,
+      })
+
+      // filtering out HES who are authors of the current question
+      const author = await TeamMember.findOne({
+        teamId: authorTeam.id,
+      })
+
+      const hasAuthorshipConflict = userIds.includes(author.userId)
+
+      const filteredHEs = userIds.filter(userId => author.userId !== userId)
+
+      //
+
+      let members = []
+
+      if (existingTeam) {
+        members = await Promise.all(
+          filteredHEs.map(async userId => {
+            const existingMember = await TeamMember.findOne({
+              teamId: existingTeam.id,
+              userId,
+            })
+
+            if (existingMember) {
+              return existingMember.id
+            }
+
+            const assignedMember = await Team.addMember(existingTeam.id, userId)
+
+            return assignedMember.id
+          }),
+        )
+
+        return {
+          questionId,
+          hasAuthorshipConflict,
+          members,
+        }
+      }
+
+      const newTeam = await Team.insert(
+        {
+          objectId: questionId,
+          objectType: 'question',
+          role: HE_TEAM.role,
+          displayName: HE_TEAM.displayName,
+        },
+        { trx },
+      )
+
+      members = await Promise.all(
+        filteredHEs.map(async userId => {
+          const assignedMember = await Team.addMember(newTeam.id, userId)
+          return assignedMember.id
+        }),
+      )
+
+      return {
+        questionId,
+        hasAuthorshipConflict,
+        members,
+      }
+    }),
+  )
+
+  return result
+}
+
+const getQuestionsHandlingEditors = async (questionId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} assignHandlingEditor:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} getting handling editors for question ${questionId}`,
+  )
+
+  try {
+    return Question.getHandlingEditors(questionId, options)
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const unassignHandlingEditor = async (questionId, userId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} unassignHandlingEditor:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} removing user ${userId} as handling editor for question ${questionId}`,
+  )
+
+  try {
+    return useTransaction(
+      async trx => {
+        return Team.removeNonGlobalTeam(questionId, userId, { trx })
+      },
+      { trx: options.trx, passedTrxOnly: true },
+    )
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const getChatThreadForQuestion = async (questionId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} getChatThreadForQuestion:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} getting chat thread for question ${questionId}`,
+  )
+
+  try {
+    return Question.getChatThread(questionId, options)
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
 const uploadFiles = async files => {
   const filesData = await Promise.all(files)
 
@@ -591,6 +740,7 @@ module.exports = {
   getAuthorDashboard,
   getReviewerDashboard,
   getManagingEditorDashboard,
+  getHandlingEditorDashboard,
 
   createQuestion,
   duplicateQuestion,
@@ -608,6 +758,12 @@ module.exports = {
   resourceResolver,
   generateScormZip,
   generateWordFile,
+
+  assignHandlingEditors,
+  getQuestionsHandlingEditors,
+  unassignHandlingEditor,
+
+  getChatThreadForQuestion,
 
   uploadFiles,
   getImageUrls,

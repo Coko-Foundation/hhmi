@@ -27,6 +27,12 @@ import {
   FILTER_USERS_OPTIONS,
   ASSIGN_QUESTION_AUTHOR,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
+  FILTER_GLOBAL_TEAM_MEMBERS,
+  ASSING_HANDLING_EDITORS,
+  UNASSING_HANDLING_EDITOR,
+  GET_QUESTION_HANDLING_EDITORS,
+  GET_CHAT_THREAD,
+  SEND_MESSAGE,
 } from '../graphql'
 import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 
@@ -119,6 +125,25 @@ const metadataUiToApi = values => {
 
   return metadataToSave
 }
+
+const messagesApiToUi = (messages, currentUser = null) => {
+  return messages
+    ? messages.map(
+        ({
+          id,
+          timestamp,
+          content,
+          user: { id: userId, displayName } = {},
+        }) => ({
+          id,
+          content,
+          date: timestamp,
+          own: userId === currentUser,
+          user: displayName,
+        }),
+      )
+    : []
+}
 // #endregion transformations
 
 const QuestionPage = props => {
@@ -177,6 +202,29 @@ const QuestionPage = props => {
       history.push(`/question/${id}/`)
     },
   })
+
+  const [
+    filterGlobalTeamMembers,
+    {
+      loading: loadingSearchHE,
+      data: { filterGlobalTeamMembers: handlingEditors } = {},
+    },
+  ] = useLazyQuery(FILTER_GLOBAL_TEAM_MEMBERS)
+
+  const [
+    getQuestionsHandlingEditors,
+    { data: { getQuestionsHandlingEditors: currentHandlingEditors } = {} },
+  ] = useLazyQuery(GET_QUESTION_HANDLING_EDITORS, {
+    variables: {
+      questionId: id,
+    },
+    fetchPolicy: 'network-only',
+  })
+
+  const [getChatThread, { data: { chatThread } = {}, loading: chatLoading }] =
+    useLazyQuery(GET_CHAT_THREAD, {
+      fetchPolicy: 'network-only',
+    })
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -267,10 +315,40 @@ const QuestionPage = props => {
     useMutation(GENERATE_SCORM_ZIP)
 
   const [upload] = useMutation(UPLOAD_FILES)
+
+  const [assignHandlingEditor, { loading: assignHELoading }] = useMutation(
+    ASSING_HANDLING_EDITORS,
+    {
+      refetchQueries: [
+        {
+          query: GET_QUESTION_HANDLING_EDITORS,
+          variables: {
+            questionId: id,
+          },
+          fetchPolicy: 'network-only',
+        },
+      ],
+    },
+  )
+
+  const [unassignHandlingEditor] = useMutation(UNASSING_HANDLING_EDITOR, {
+    refetchQueries: [
+      {
+        query: GET_QUESTION_HANDLING_EDITORS,
+        variables: {
+          questionId: id,
+        },
+        fetchPolicy: 'network-only',
+      },
+    ],
+  })
+
+  const [sendMessage] = useMutation(SEND_MESSAGE)
   // #endregion hooks
 
   // #region user roles
   const isEditor = hasGlobalRole(currentUser, 'editor')
+  const isHandlingEditor = hasGlobalRole(currentUser, 'handlingEditor')
   const isAuthor = hasRole(currentUser, 'author', id)
   const isAdmin = hasGlobalRole(currentUser, 'admin')
   // #endregion user roles
@@ -338,7 +416,27 @@ const QuestionPage = props => {
     return submitQuestionMutation(mutationData)
   }
 
-  const handleClickAssignHE = () => {}
+  const handleClickAssignHE = users => {
+    const mutationData = {
+      variables: {
+        questionIds: id,
+        userIds: users.map(user => user.value),
+      },
+    }
+
+    return assignHandlingEditor(mutationData)
+  }
+
+  const handleUnassignHE = userId => {
+    const mutationData = {
+      variables: {
+        questionId: id,
+        userId,
+      },
+    }
+
+    return unassignHandlingEditor(mutationData)
+  }
 
   const handleGetQuestionButton = which => {
     if (relatedQuestionIds) {
@@ -535,6 +633,38 @@ const QuestionPage = props => {
     return assignAuthorship(mutationData)
   }
 
+  const handleSearchHE = async query => {
+    const variables = {
+      role: 'handlingEditor',
+      query,
+      options: {
+        orderBy: 'username',
+        ascending: true,
+      },
+    }
+
+    filterGlobalTeamMembers({ variables })
+  }
+
+  const onLoadChat = async () => {
+    const variables = {
+      id: question?.chatThreadId,
+    }
+
+    getChatThread({ variables })
+  }
+
+  const onSendMessage = async content => {
+    const variables = {
+      input: {
+        content,
+        chatThreadId: question?.chatThreadId,
+        userId: currentUser.id,
+      },
+    }
+
+    sendMessage({ variables })
+  }
   // #endregion handlers
 
   if (error) {
@@ -572,36 +702,35 @@ const QuestionPage = props => {
     <>
       <VisuallyHiddenElement as="h1">{pageTitle}</VisuallyHiddenElement>
       <Question
+        assignHELoading={assignHELoading}
         authors={possibleAuthors}
         canAssignAuthor={isAdmin && isAuthor}
-        canCreateNewVersion={isAdmin}
+        canCreateNewVersion={isAdmin || isEditor}
+        chatLoading={chatLoading}
         complexItemSetOptions={complexItemSetOptions}
         complexSetEditLink={
           version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
         }
+        currentHandlingEditors={currentHandlingEditors}
         editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
-        editorView={(isEditor && !isAuthor) || isAdmin}
+        editorView={isEditor || (isHandlingEditor && !isAuthor) || isAdmin}
         facultyView={testMode}
+        handlingEditors={handlingEditors?.result || []}
         initialMetadataValues={metadataApiToUi(version, testMode)}
         isInProduction={
           version?.inProduction || (isAdmin && isAuthor && !version?.published)
         }
-        isPublished={version?.published}
-        // admins have editorial rights (publishing rights) on their own questions
-        isRejected={question?.rejected}
-        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
-        // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
-        isUnderReview={version?.underReview}
-        isUserLoggedIn={!!currentUser}
-        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
-        // unless the question has already been published
         leadingContent={
           version?.leadingContent.length
             ? JSON.parse(version.leadingContent)
             : null
         }
+        loadAssignedHEs={getQuestionsHandlingEditors}
         loadAuthors={getUsers}
+        isUserLoggedIn={!!currentUser}
+        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
+        // unless the question has already been published
         loading={
           loading ||
           !version ||
@@ -609,6 +738,7 @@ const QuestionPage = props => {
           !getResources ||
           !complexItemSetOptions
         }
+        messages={messagesApiToUi(chatThread?.messages, currentUser?.id)}
         metadata={metadata || {}}
         onAssignAuthor={handleAssignAuthor}
         onClickAssignHE={handleClickAssignHE}
@@ -620,20 +750,33 @@ const QuestionPage = props => {
         onCreateNewVersion={handleCreateNewVersion}
         onEditorContentAutoSave={handleEditorContentAutoSave}
         onImageUpload={handleImageUpload}
+        onLoadChat={onLoadChat}
         onMetadataAutoSave={handleMetadataAutoSave}
         onMoveToProduction={handleMoveToProduction}
         onMoveToReview={handleMoveToReview}
         onPublish={handlePublish}
         onQuestionSubmit={handleQuestionSubmit}
         onReject={handleReject}
+        onSearchHE={handleSearchHE}
+        onSendMessage={onSendMessage}
+        onUnassignHandlingEditor={handleUnassignHE}
         questionAgreedTc={false} //
         refetchUser={refetchCurrentUser}
         resources={getResources}
         scormZipLoading={generateScormZipLoading}
-        showAssignHEButton={false} //
-        showNextQuestionLink={false} //
+        searchHELoading={loadingSearchHE}
+        showAssignHEButton={
+          version?.submitted && !version?.published && isEditor
+        }
+        showNextQuestionLink={false}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
+        isPublished={version?.published}
+        // admins have editorial rights (publishing rights) on their own questions
+        isRejected={question?.rejected}
+        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
+        // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
+        isUnderReview={version?.underReview}
       />
     </>
   )

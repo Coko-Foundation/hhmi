@@ -106,6 +106,21 @@ const UPDATE_GLOBAL_TEAMS = gql`
   }
 `
 
+const FILTER_GLOBAL_TEAM_MEMBERS = gql`
+  query FilterTeamMembers(
+    $role: String!
+    $query: String
+    $options: FilterTeamMembersInput
+  ) {
+    filterGlobalTeamMembers(role: $role, query: $query, options: $options) {
+      result {
+        value: id
+        label: displayName
+      }
+    }
+  }
+`
+
 export {
   TEAM,
   GLOBAL_TEAMS,
@@ -113,4 +128,5 @@ export {
   UPDATE_TEAM_MEMBERSHIP,
   NON_TEAM_MEMBER_USERS,
   UPDATE_GLOBAL_TEAMS,
+  FILTER_GLOBAL_TEAM_MEMBERS,
 }

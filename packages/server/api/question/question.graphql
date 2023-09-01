@@ -6,6 +6,7 @@ type Question {
   agreedTc: Boolean!
   rejected: Boolean!
   author: User
+  chatThreadId: ID
 }
 
 type QuestionVersion {
@@ -70,6 +71,12 @@ type QuestionsResponse {
   result: [Question!]!
   totalCount: Int
   relatedQuestionsIds: [ID]
+}
+
+type AssignHandlingEditorsResponse {
+  questionId: ID!
+  hasAuthorshipConflict: Boolean!
+  members: [ID!]!
 }
 
 # INPUTS
@@ -186,6 +193,16 @@ extend type Query {
     pageSize: Int
     searchQuery: String
   ): QuestionsResponse!
+
+  getHandlingEditorDashboard(
+    orderBy: String
+    ascending: Boolean
+    page: Int
+    pageSize: Int
+    searchQuery: String
+  ): QuestionsResponse!
+
+  getQuestionsHandlingEditors(questionId: ID!): [User!]!
 }
 
 extend type Mutation {
@@ -218,4 +235,10 @@ extend type Mutation {
   generateScormZip(questionVersionId: ID!): String!
   createNewQuestionVersion(questionId: ID!): Question!
   uploadFiles(files: [Upload!]!): [File!]!
+
+  assignHandlingEditors(
+    questionIds: [ID!]!
+    userIds: [ID!]!
+  ): [AssignHandlingEditorsResponse!]!
+  unassignHandlingEditor(questionId: ID!, userId: ID!): Boolean
 }

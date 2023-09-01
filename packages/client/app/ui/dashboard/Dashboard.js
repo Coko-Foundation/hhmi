@@ -11,6 +11,7 @@ import {
   Spin,
   Empty,
 } from '../common'
+import { AssignHEButton } from '../question'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -58,16 +59,18 @@ const StyledCreateQuestionButton = styled(Button)`
 // QUESTION how to handle search, filter and pagination with multiple sections
 const Dashboard = props => {
   const {
-    bulkActions,
     className,
+    handlingEditors,
     initialTabKey,
     loading,
+    loadingSearchHEs,
     locale,
+    onAssignHE,
     onClickCreate,
-    onQuestionSelected,
     onSearch,
     showSort,
     sortOptions,
+    onSearchHE,
     tabsContent,
   } = props
 
@@ -77,6 +80,8 @@ const Dashboard = props => {
     sortBy: 'date',
     role: initialTabKey,
   })
+
+  const [selectedQuestions, setSelectedQuestions] = useState([])
 
   const setSearchPage = page => {
     setSearchParams({ ...searchParams, page })
@@ -92,6 +97,23 @@ const Dashboard = props => {
 
   const setRole = role => {
     setSearchParams({ query: '', sortBy: 'date', page: 1, role })
+  }
+
+  const handleAssingHE = users => {
+    return onAssignHE(users, selectedQuestions)
+  }
+
+  const updateSelectedQuestions = questions => {
+    setSelectedQuestions(currentlySelectedQuestion =>
+      currentlySelectedQuestion.filter(
+        qId =>
+          !questions.some(
+            assignedQuestion =>
+              assignedQuestion.questionId === qId &&
+              assignedQuestion.hasAuthorshipConflict !== true,
+          ),
+      ),
+    )
   }
 
   useEffect(() => {
@@ -110,6 +132,23 @@ const Dashboard = props => {
       Create question
     </StyledCreateQuestionButton>
   )
+
+  // if there are selectedQuestions and none of them is published
+
+  const BulkAction = selectedQuestions.length > 0 &&
+    !tabsContent
+      .find(tab => tab.value === 'editor')
+      ?.questions.filter(q => selectedQuestions.indexOf(q.id) !== -1)
+      .some(q => q.status === 'Published') && (
+      <AssignHEButton
+        expanded
+        handlingEditors={handlingEditors}
+        loading={loadingSearchHEs}
+        onAssign={handleAssingHE}
+        onSearchHE={onSearchHE}
+        updateSelectedQuestions={updateSelectedQuestions}
+      />
+    )
 
   const isLoading = tabsContent.some(tab => tab.loading)
 
@@ -144,16 +183,17 @@ const Dashboard = props => {
               key: value,
               children: (
                 <QuestionList
-                  bulkAction={(showBulkActions && bulkActions) || null}
+                  bulkAction={(showBulkActions && BulkAction) || null}
                   currentPage={searchParams.page}
                   key={searchParams.role}
                   loading={tabLoading}
                   locale={mergedLocale}
                   onPageChange={setSearchPage}
-                  onQuestionSelected={onQuestionSelected}
+                  onQuestionSelected={setSelectedQuestions}
                   onSearch={setSearchQuery}
                   onSortOptionChange={setSortOption}
                   questions={questions}
+                  selectedQuestions={selectedQuestions}
                   showRowCheckboxes={!!showBulkActions}
                   showSort={showSort}
                   sortOptions={sortOptions}
@@ -171,16 +211,22 @@ const Dashboard = props => {
 }
 
 Dashboard.propTypes = {
-  /** custom component for bulk actions on selected questions */
-  bulkActions: PropTypes.element,
+  handlingEditors: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.string.isRequired,
+    }),
+  ),
   initialTabKey: PropTypes.string,
   loading: PropTypes.bool.isRequired,
+  loadingSearchHEs: PropTypes.bool,
   locale: PropTypes.shape(),
   /** create new question */
   onClickCreate: PropTypes.func.isRequired,
+  onAssignHE: PropTypes.func,
   /** handle selection and deselection of questions */
-  onQuestionSelected: PropTypes.func,
   onSearch: PropTypes.func.isRequired,
+  onSearchHE: PropTypes.func,
   showSort: PropTypes.bool,
   sortOptions: PropTypes.arrayOf(PropTypes.shape()),
   tabsContent: PropTypes.arrayOf(
@@ -224,10 +270,12 @@ Dashboard.propTypes = {
 }
 
 Dashboard.defaultProps = {
-  bulkActions: null,
+  handlingEditors: [],
   initialTabKey: null,
   locale: null,
-  onQuestionSelected: () => {},
+  loadingSearchHEs: false,
+  onAssignHE: () => {},
+  onSearchHE: () => {},
   showSort: false,
   sortOptions: [],
   tabsContent: [],
