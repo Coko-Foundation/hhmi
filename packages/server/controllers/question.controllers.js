@@ -10,21 +10,24 @@ const {
   Team,
   TeamMember,
   ComplexItemSet,
+  Review,
 } = require('../models')
 
 const CokoNotifier = require('../services/notify')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const { clearTempImageFiles } = require('./helpers')
-const { labels } = require('./constants')
+const { labels, REVIEWER_STATUSES } = require('./constants')
 const WaxToScormConverter = require('../services/scorm/scorm.service')
 const WaxToQTIConverter = require('../services/qti/qti.service')
 const metadataResolver = require('./metadataHandler')
 const resources = require('./resourcesData')
 const { getImageUrls, findImages } = require('./utils')
+const { inviteMaxReviewers } = require('./review.controller')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
 const EDITOR_TEAM = config.teams.nonGlobal.editor
+const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
 const PRODUCTION_TEAM = config.teams.global.production
 
@@ -153,7 +156,9 @@ const getAuthorDashboard = async (userId, options = {}) => {
 }
 
 const getReviewerDashboard = async (userId, options = {}) => {
-  const { orderBy, ascending, page, pageSize, searchQuery, trx } = options
+  const { orderBy, ascending, page, pageSize, filters, trx } = options
+
+  const { searchQuery } = filters
 
   return Question.findByRole(userId, 'reviewer', {
     orderBy,
@@ -161,6 +166,7 @@ const getReviewerDashboard = async (userId, options = {}) => {
     page,
     pageSize,
     searchQuery,
+    filters: { status: 'under_review', searchQuery },
     trx,
   })
 }
@@ -212,7 +218,11 @@ const getAuthorChatParticipants = async questionId => {
     })
     .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
 
-  return participants
+  const author = participants.find(p => p.role === 'author')
+
+  return participants.filter(
+    p => p.id !== author.id || (p.id === author.id && p.role === 'author'),
+  )
 }
 
 const getInProductionDashboard = async (userId, options = {}) => {
@@ -239,7 +249,7 @@ const getProductionChatParticipants = async questionId => {
     .whereIn('teams.role', [PRODUCTION_TEAM.role, EDITOR_TEAM.role])
     .orWhere(subquery => {
       subquery
-        .where('teams.role', HE_TEAM.role)
+        .whereIn('teams.role', [AUTHOR_TEAM.role, HE_TEAM.role])
         .whereExists(
           Team.query()
             .select(1)
@@ -250,7 +260,49 @@ const getProductionChatParticipants = async questionId => {
     })
     .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
 
-  return participants
+  const author = participants.find(p => p.role === 'author')
+
+  return participants.filter(p => p.id !== author.id)
+}
+
+const getReviewerChatParticipants = async questionId => {
+  const questionVersion = await QuestionVersion.findOne({ questionId })
+
+  const query = User.query()
+    .select('users.displayName', 'users.id', 'teams.role')
+    .leftJoin('team_members', 'users.id', 'team_members.user_id')
+    .leftJoin('teams', 'teams.id', 'team_members.team_id')
+    .where('teams.role', EDITOR_TEAM.role)
+    .orWhere(subquery => {
+      subquery
+        .whereIn('teams.role', [AUTHOR_TEAM.role, HE_TEAM.role])
+        .whereExists(
+          Team.query()
+            .select(1)
+            .from('questions')
+            .whereRaw('questions.id=teams.object_id')
+            .where('questions.id', questionId),
+        )
+    })
+    .orWhere(reviewerSubquery => {
+      reviewerSubquery
+        .where('teams.role', REVIEWER_TEAM.role)
+        .whereExists(
+          TeamMember.query()
+            .select(1)
+            .from('teams')
+            .whereRaw('team_members.team_id=teams.id')
+            .where('teams.object_id', questionVersion.id)
+            .where('team_members.status', REVIEWER_STATUSES.accepted),
+        )
+    })
+    .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
+
+  const participants = await query
+
+  const author = participants.find(p => p.role === 'author')
+
+  return participants.filter(p => p.id !== author.id)
 }
 
 /**
@@ -454,11 +506,18 @@ const moveQuestionVersionToReview = async (questionVersionId, options = {}) => {
     `${CONTROLLER_MESSAGE} moving question version with id ${questionVersionId} to review`,
   )
 
-  return modifyQuestionVersion(
+  const questionVersion = await modifyQuestionVersion(
     questionVersionId,
     { underReview: true },
     { trx: options.trx },
   )
+
+  const notifier = new CokoNotifier()
+  notifier.notify('hhmi.moveQuestionVersionToReview', {
+    questionVersion,
+  })
+
+  return questionVersion
 }
 
 const moveQuestionVersionToProduction = async (
@@ -889,6 +948,191 @@ const uploadFiles = async files => {
   )
 }
 
+const updateReviewerPool = async (questionVersionId, reviewerIds) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} updateReviewerPool:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} updating reviewer pool for version ${questionVersionId}`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      let reviewerTeam = await Team.findOne(
+        {
+          role: REVIEWER_TEAM.role,
+          objectId: questionVersionId,
+        },
+        { trx },
+      )
+
+      if (!reviewerTeam) {
+        reviewerTeam = await Team.insert(
+          {
+            objectId: questionVersionId,
+            objectType: 'questionVersion',
+            role: REVIEWER_TEAM.role,
+            displayName: REVIEWER_TEAM.displayName,
+          },
+          { trx },
+        )
+      }
+
+      await Team.updateMembershipByTeamId(reviewerTeam.id, reviewerIds, {
+        trx,
+        status: REVIEWER_STATUSES.added,
+      })
+
+      const teamMembers = await Promise.all(
+        reviewerIds.map(async rid => {
+          const member = await TeamMember.findOne(
+            {
+              teamId: reviewerTeam.id,
+              userId: rid,
+            },
+            { trx },
+          )
+
+          return member
+        }),
+      )
+
+      const updated = await QuestionVersion.patchAndFetchById(
+        questionVersionId,
+        { reviewerPool: teamMembers.map(t => t.id) },
+      )
+
+      return updated
+    })
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const changeAmountOfReviewers = async (questionVersionId, amount) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} changeAmountOfReviewers:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} changing amount of reviewers for version ${questionVersionId} to ${amount}`,
+  )
+
+  try {
+    return QuestionVersion.patchAndFetchById(questionVersionId, {
+      amountOfReviewers: amount,
+    })
+  } catch (e) {
+    logger.error(
+      `Question version resolver: Change amount of reviewers: Change failed!`,
+    )
+    throw new Error(e)
+  }
+}
+
+const changeReviewerAutomationStatus = async (questionVersionId, isAuto) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} changeReviewerAutomationStatus:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} changing automation of reviewers for version ${questionVersionId} to ${isAuto}`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      const updated = await QuestionVersion.patchAndFetchById(
+        questionVersionId,
+        { isReviewerAutomationOn: isAuto },
+        { trx },
+      )
+
+      if (isAuto) {
+        await inviteMaxReviewers(updated, { trx })
+      }
+
+      return updated
+    })
+  } catch (e) {
+    logger.error(
+      `Question version resolver: Change reviewer automation status: ${e}`,
+    )
+    throw new Error(e)
+  }
+}
+
+const reviewerStatus = async (questionVersionId, reviewerId) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} reviewerStatusForReviewer:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} fetching ${questionVersionId} question version reviewer status for ${reviewerId}`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      const team = await Team.findOne(
+        {
+          objectId: questionVersionId,
+          role: REVIEWER_TEAM.role,
+        },
+        { trx },
+      )
+
+      if (!team) return null
+
+      const teamMember = await TeamMember.findOne(
+        {
+          teamId: team.id,
+          userId: reviewerId,
+        },
+        { trx },
+      )
+
+      if (!teamMember) return null
+
+      return teamMember.status
+    })
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} error: ${e}`)
+    throw new Error(e)
+  }
+}
+
+const questionVersionReviews = async (
+  questionVersionId,
+  currentUserOnly,
+  userId,
+) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} questionVersionReviews:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} fetching ${questionVersionId} question version reviewers${
+      currentUserOnly ? ` for user ${userId}` : ''
+    }`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      const results = await Review.getReviewsForQuestionVersion(
+        questionVersionId,
+        currentUserOnly,
+        userId,
+        { trx },
+      )
+
+      return results
+    })
+  } catch (e) {
+    console.error(e)
+    throw new Error(e)
+  }
+}
+
+const reviewerPool = async questionVersion => {
+  const teamMemberIds = questionVersion.reviewerPool
+
+  const pool = await Promise.all(
+    teamMemberIds.map(async t => {
+      const member = await TeamMember.findById(t)
+
+      return member
+    }),
+  )
+
+  return pool
+}
+
 module.exports = {
   getQuestion,
   getQuestionVersions,
@@ -904,6 +1148,7 @@ module.exports = {
   getAuthorChatParticipants,
   getInProductionDashboard,
   getProductionChatParticipants,
+  getReviewerChatParticipants,
 
   createQuestion,
   duplicateQuestion,
@@ -932,4 +1177,11 @@ module.exports = {
 
   uploadFiles,
   getImageUrls,
+
+  updateReviewerPool,
+  changeAmountOfReviewers,
+  changeReviewerAutomationStatus,
+  reviewerStatus,
+  questionVersionReviews,
+  reviewerPool,
 }

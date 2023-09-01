@@ -18,7 +18,6 @@ describe('ChatInput', () => {
     const ChatInputComponent = renderer.create(<MockChatInput />).toJSON()
     expect(ChatInputComponent).toMatchSnapshot()
   })
-
   it("calls onSubmit on clicking send and doesn't allow empty message", async () => {
     const onSend = jest.fn()
     render(<MockChatInput onSend={onSend} />)
@@ -48,7 +47,6 @@ describe('ChatInput', () => {
     fireEvent.click(sendBtn)
     expect(input.value).toBe('')
   })
-
   it('renders without any accessibility error', async () => {
     const { container } = render(<MockChatInput />)
     const result = await axe(container)

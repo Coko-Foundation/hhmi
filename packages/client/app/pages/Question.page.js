@@ -1025,15 +1025,16 @@ const QuestionPage = props => {
         facultyView={testMode}
         handlingEditors={handlingEditors?.result || []}
         initialMetadataValues={metadataApiToUi(version, testMode)}
+        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
+        // unless the question has already been published
         isInProduction={
           version?.inProduction ||
           (isAdmin && isAuthor && !version?.published && !version?.unpublished)
         }
         isPublished={version?.published}
-        // admins have editorial rights (publishing rights) on their own questions
         isRejected={question?.rejected}
-        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
         // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
+        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
         isUnderReview={version?.underReview}
         isUnpublished={version?.unpublished}
         isUserLoggedIn={!!currentUser}
