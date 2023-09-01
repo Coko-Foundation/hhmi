@@ -1,5 +1,4 @@
 /* eslint-disable jest/expect-expect */
-import { capitalize } from 'lodash'
 import { admin, user1, user2, editor, reviewer } from '../support/credentials'
 import {
   alertContainer,
@@ -205,7 +204,7 @@ describe('Tests for user authentication', () => {
       cy.get(`[data-testid="select-${role}"]`).type(username)
       cy.wait('@GQLReq')
       cy.contains('.ant-select-item-option-active', username).click()
-      cy.get(`[aria-labelledby="${capitalize(role)}-team"]`).click()
+      cy.get(`[aria-labelledby="${role}-team"]`).click()
       cy.contains(`[data-testid="${role}-list"]`, username)
     }
 
@@ -223,9 +222,9 @@ describe('Tests for user authentication', () => {
     // cy.visit(manageTeam, { method: 'GET' })
     cy.contains('h1', 'Team Manager')
 
-    removeUserFromRole('editor', editor.username)
+    removeUserFromRole('managing-editor', editor.username)
 
-    addUserToRole('editor', editor.username)
+    addUserToRole('managing-editor', editor.username)
   })
 
   it('Manage users', () => {

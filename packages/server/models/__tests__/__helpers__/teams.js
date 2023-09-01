@@ -6,7 +6,7 @@ const createGlobalTeamWithUsers = async () => {
   try {
     const team = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: true,
     })
 
@@ -23,7 +23,7 @@ const createLocalTeamWithUsers = async () => {
   try {
     const team = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: false,
       objectId: uuid(),
       objectType: 'someObjectType',
@@ -62,7 +62,7 @@ const createChatThreadTeamWithUsers = async chatThreadId => {
   try {
     const team = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: false,
       objectId: chatThreadId,
       objectType: 'chatThread',
@@ -86,7 +86,7 @@ const createGlobalAuthorTeamWithUsers = async () => {
 }
 
 const createGlobalEditorTeamWithUsers = async () => {
-  return createGlobalBaseTeamwithUsers('editor', 'Editor')
+  return createGlobalBaseTeamwithUsers('editor', 'Managing Editor')
 }
 
 module.exports = {

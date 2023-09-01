@@ -4,6 +4,8 @@ const {
   // uuid,
 } = require('@coko/server')
 
+const { ChatThread } = require('@coko/server/src/models')
+
 const QuestionVersion = require('../questionVersion/questionVersion.model')
 const User = require('../user/user.model')
 const { applyListQueryOptions } = require('../helpers')
@@ -531,6 +533,36 @@ class Question extends BaseModel {
       // throw new Error(e)
       // return null to show question even when user does not exist
       return null
+    }
+  }
+
+  static async getHandlingEditors(questionId, options = {}) {
+    const { trx } = options
+
+    try {
+      return User.query(trx)
+        .leftJoin('team_members', 'users.id', 'team_members.user_id')
+        .leftJoin('teams', 'team_members.team_id', 'teams.id')
+        .select('users.*', 'teams.object_id')
+        .where({ 'teams.role': 'handlingEditor', 'teams.objectId': questionId })
+    } catch (e) {
+      console.error('Question model: getHandlingEditors failed', e)
+      throw new Error(e)
+    }
+  }
+
+  static async getChatThread(questionId, options = {}) {
+    const { trx } = options
+
+    try {
+      const chat = await ChatThread.query(trx)
+        .select('id')
+        .findOne({ relatedObjectId: questionId })
+
+      return chat?.id
+    } catch (e) {
+      console.error('Question model: getHandlingEditors failed', e)
+      throw new Error(e)
     }
   }
 }

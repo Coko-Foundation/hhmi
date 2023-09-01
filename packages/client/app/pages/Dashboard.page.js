@@ -4,11 +4,14 @@ import { useHistory } from 'react-router-dom'
 
 import { Dashboard, VisuallyHiddenElement } from 'ui'
 import {
+  ASSING_HANDLING_EDITORS,
   GET_AUTHOR_DASHBOARD,
   GET_EDITOR_DASHBOARD,
+  GET_HANDLING_EDITOR_DASHBOARD,
   CREATE_QUESTION,
   CURRENT_USER,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
+  FILTER_GLOBAL_TEAM_MEMBERS,
 } from '../graphql'
 import { hasGlobalRole, dashboardDataMapper, useMetadata } from '../utilities'
 
@@ -26,6 +29,7 @@ const DashboardPage = () => {
   const [currentTabKey, setCurrentTabKey] = useState(initialTabKey)
   const [currentPage, setCurrentPage] = useState(1)
   const [currentSearchQuery, setCurrentSearchQuery] = useState(null)
+
   const initialRender = useRef(true)
 
   const { metadata } = useMetadata()
@@ -76,6 +80,14 @@ const DashboardPage = () => {
   })
 
   const [
+    filterGlobalTeamMembers,
+    {
+      loading: loadingSearchHEs,
+      data: { filterGlobalTeamMembers: handlingEditors } = {},
+    },
+  ] = useLazyQuery(FILTER_GLOBAL_TEAM_MEMBERS)
+
+  const [
     editorQuery,
     { data: editorResponse, loading: editorLoading, called: editorCalled },
   ] = useLazyQuery(GET_EDITOR_DASHBOARD, {
@@ -104,17 +116,58 @@ const DashboardPage = () => {
     },
   })
 
+  const [
+    handlingEditorQuery,
+    {
+      data: heResponse,
+      loading: heLoading,
+      called: heCalled,
+      // fetchMore: fetchMoreHandlingEditor,
+    },
+  ] = useLazyQuery(GET_HANDLING_EDITOR_DASHBOARD, {
+    fetchPolicy: 'network-only',
+    variables: {
+      ...defaultSearchOptions,
+      page: 0,
+    },
+    onCompleted: data => {
+      // run only on update, not on first render
+      if (initialRender.current) initialRender.current = false
+      else {
+        const nrOfQuestions = data.getHandlingEditorDashboard.result.length
+        const total = data.getHandlingEditorDashboard.totalCount
+        let announcement = 'Results updated.'
+
+        if (total === 0) {
+          announcement = `${announcement} No results for your search query`
+        } else if (total <= 10) {
+          announcement = `${announcement} ${nrOfQuestions} questions`
+        } else {
+          announcement = `${announcement} Page ${currentPage} of ${Math.ceil(
+            total / 10,
+          )} with ${nrOfQuestions} questions from a total of ${total}`
+        }
+
+        document.querySelector('#search-results-update').innerHTML =
+          announcement
+      }
+    },
+  })
+
   const authorData = authorResponse && authorResponse.getAuthorDashboard
   const editorData = editorResponse && editorResponse.getManagingEditorDashboard
+  const handlingEditorData = heResponse && heResponse.getHandlingEditorDashboard
 
   const queryMapper = {
     query: {
       author: authorQuery,
       editor: editorQuery,
+      handlingEditor: handlingEditorQuery,
     },
     called: {
       author: authorCalled,
       editor: editorCalled,
+      handlingEditor: heCalled,
     },
   }
 
@@ -137,6 +190,8 @@ const DashboardPage = () => {
   const [createQuestionMutation] = useMutation(CREATE_QUESTION, {
     refetchQueries: [{ query: CURRENT_USER }],
   })
+
+  const [assingHandlingEditors] = useMutation(ASSING_HANDLING_EDITORS)
   // #endregion hooks
 
   // #region handlers
@@ -159,11 +214,41 @@ const DashboardPage = () => {
     localStorage.setItem('dashboardLastUsedTab', role)
     runQuery(query)
   }
+
+  const handleSearchHE = async query => {
+    const variables = {
+      role: 'handlingEditor',
+      query,
+      options: {
+        orderBy: 'username',
+        ascending: true,
+      },
+    }
+
+    filterGlobalTeamMembers({ variables })
+  }
+
+  const handleAssignHE = async (users, questionIds) => {
+    const mutationData = {
+      variables: {
+        questionIds,
+        userIds: users.map(user => user.value),
+      },
+    }
+
+    return assingHandlingEditors(mutationData)
+  }
+
   // #endregion handlers
 
   // #region data
   const loading = !currentUserResponse?.currentUser // question list loading is inside the tab
   const isEditor = hasGlobalRole(currentUserResponse?.currentUser, 'editor')
+
+  const isHandlingEditor = hasGlobalRole(
+    currentUserResponse?.currentUser,
+    'handlingEditor',
+  )
 
   const tabs = [
     {
@@ -197,8 +282,19 @@ const DashboardPage = () => {
             )
           : [],
       totalCount: editorData && editorData.totalCount,
-      showBulkActions: false,
+      showBulkActions: true,
       loading: editorLoading,
+    },
+    isHandlingEditor && {
+      label: 'Handling Editor Questions',
+      value: 'handlingEditor',
+      questions:
+        handlingEditorData && metadata
+          ? dashboardDataMapper(handlingEditorData.result, metadata, 'editor')
+          : [],
+      totalCount: handlingEditorData && handlingEditorData.totalCount,
+      showBulkActions: false,
+      loading: heLoading,
     },
   ].filter(Boolean)
 
@@ -208,12 +304,14 @@ const DashboardPage = () => {
     <>
       <VisuallyHiddenElement as="h1">Dashboard page</VisuallyHiddenElement>
       <Dashboard
-        // bulkActions
+        handlingEditors={handlingEditors?.result || []}
         initialTabKey={initialTabKey}
         loading={loading}
-        // onQuestionSelected
+        loadingSearchHEs={loadingSearchHEs}
+        onAssignHE={handleAssignHE}
         onClickCreate={handleCreateQuestion}
         onSearch={handleSearch}
+        onSearchHE={handleSearchHE}
         // showSort
         // sortOptions
         tabsContent={tabs}

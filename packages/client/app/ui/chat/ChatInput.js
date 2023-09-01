@@ -4,22 +4,20 @@ import styled from 'styled-components'
 
 import { SendOutlined } from '@ant-design/icons'
 
-import { Input } from '../common'
+import { Button, Input } from '../common'
 
 // const Wrapper = styled.div``
 
-const Send = styled(SendOutlined)`
+const SendButton = styled(Button)`
+  border: none;
   color: ${props => props.theme.colorPrimary};
-
-  &:hover {
-    cursor: pointer;
-  }
+  outline: none;
 `
 
 // TODO -- this needs to be a wax editor with two plugins (mention & task)
 
 const ChatInput = props => {
-  const { className, onSend } = props
+  const { className, onSend, ...rest } = props
 
   const [inputValue, setInputValue] = useState('')
 
@@ -27,19 +25,29 @@ const ChatInput = props => {
     setInputValue(value)
   }
 
-  const handleSend = () => onSend(inputValue)
+  const handleSend = () => {
+    if (inputValue.trim().length !== 0) {
+      onSend(inputValue)
+      setInputValue('')
+    }
+  }
 
-  const SendIcon = <Send onClick={handleSend} />
+  const SendIcon = (
+    <SendButton data-testid="send-btn" onClick={handleSend}>
+      <SendOutlined />
+    </SendButton>
+  )
 
   return (
-    // <Wrapper className={className}>
     <Input
       className={className}
       onChange={handleChange}
       onPressEnter={handleSend}
       suffix={SendIcon}
+      type="text"
+      value={inputValue}
+      {...rest}
     />
-    // </Wrapper>
   )
 }
 

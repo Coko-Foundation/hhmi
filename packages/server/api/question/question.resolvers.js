@@ -9,6 +9,7 @@ const {
   getManagingEditorDashboard,
   getPublishedQuestionsIds,
   assignAuthorship,
+  getHandlingEditorDashboard,
 
   createQuestion,
   updateQuestion,
@@ -21,6 +22,12 @@ const {
   generateWordFile,
   generateScormZip,
   createNewQuestionVersion,
+
+  assignHandlingEditors,
+  unassignHandlingEditor,
+  getQuestionsHandlingEditors,
+
+  getChatThreadForQuestion,
 
   uploadFiles,
   getImageUrls,
@@ -52,6 +59,10 @@ const getManagingEditorDashboardResolver = async (_, args, ctx) => {
 
 const createQuestionResolver = async (_, { input }, ctx) => {
   return createQuestion(ctx.user, input)
+}
+
+const getHandlingEditorDashboardResolver = async (_, args, ctx) => {
+  return getHandlingEditorDashboard(ctx.user, args)
 }
 
 const duplicateQuestionResolver = async (_, { questionId }, ctx) => {
@@ -148,6 +159,22 @@ const leadingContentResolver = async version => {
   return getLeadingContentForQuestion(version)
 }
 
+const assignHandlingEditorsResolver = async (_, { questionIds, userIds }) => {
+  return assignHandlingEditors(questionIds, userIds)
+}
+
+const getQuestionsHandlingEditorsResolver = async (_, { questionId }) => {
+  return getQuestionsHandlingEditors(questionId)
+}
+
+const unassignHandlingEditorResolver = async (_, { questionId, userId }) => {
+  return unassignHandlingEditor(questionId, userId)
+}
+
+const chatThreadResolver = async question => {
+  return getChatThreadForQuestion(question.id)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -156,6 +183,8 @@ module.exports = {
     getReviewerDashboard: getReviewerDashboardResolver,
     getManagingEditorDashboard: getManagingEditorDashboardResolver,
     getPublishedQuestionsIds: getPublishedQuestionsIdsResolver,
+    getHandlingEditorDashboard: getHandlingEditorDashboardResolver,
+    getQuestionsHandlingEditors: getQuestionsHandlingEditorsResolver,
   },
   Mutation: {
     createQuestion: createQuestionResolver,
@@ -171,10 +200,13 @@ module.exports = {
     generateScormZip: generateScormZipResolver,
     createNewQuestionVersion: createNewQuestionVersionResolver,
     uploadFiles: uploadFilesResolver,
+    assignHandlingEditors: assignHandlingEditorsResolver,
+    unassignHandlingEditor: unassignHandlingEditorResolver,
   },
   Question: {
     versions: versionsResolver,
     author: authorResolver,
+    chatThreadId: chatThreadResolver,
   },
   QuestionVersion: {
     question: versionQuestionResolver,

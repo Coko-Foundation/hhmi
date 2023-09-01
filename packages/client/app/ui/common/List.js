@@ -1,5 +1,6 @@
 import React, { useEffect, useState, memo, useCallback } from 'react'
 import PropTypes from 'prop-types'
+import { isEqual } from 'lodash'
 import styled from 'styled-components'
 import without from 'lodash/without'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
@@ -265,9 +266,12 @@ const List = props => {
   // Reset selected items to controlledSelectedItems when dataSource changes
   // by default it will reset selection (controlledSelectedItems = [])
   // to preserve it, keep track of selected items in the parent component, and pass it down via this prop
+
   useEffect(() => {
-    setSelectedItems(controlledSelectedItems)
-  }, [dataSource])
+    if (!isEqual(selectedItems, controlledSelectedItems)) {
+      setSelectedItems(controlledSelectedItems)
+    }
+  }, [JSON.stringify(dataSource), controlledSelectedItems])
 
   const handleSelect = useFunction(id => {
     setSelectedItems([...selectedItems, id])

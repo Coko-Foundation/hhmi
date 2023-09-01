@@ -316,7 +316,7 @@ describe('Question API authorization', () => {
 
     const editorTeam = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: true,
     })
 
@@ -624,7 +624,7 @@ describe('Question API authorization', () => {
 
     const globalTeam = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: true,
     })
 
@@ -810,7 +810,7 @@ describe('Question API authorization', () => {
 
     const globalTeam = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: true,
     })
 
@@ -891,7 +891,7 @@ describe('Question API authorization', () => {
 
     const globalTeam = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: true,
     })
 
@@ -973,7 +973,7 @@ describe('Question API authorization', () => {
 
     const globalTeam = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: true,
     })
 
@@ -1055,7 +1055,7 @@ describe('Question API authorization', () => {
 
     const globalTeam = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: true,
     })
 
