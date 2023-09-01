@@ -7,17 +7,7 @@ import styled from 'styled-components'
 import { th } from '@coko/client'
 
 import Search from './Search'
-
-// UTILS
-
-const fixedIndex = (index, direction, list, min = 0) => {
-  let finalIndex
-  const max = list.length - 1
-  if (direction === 'down') {
-    index > max ? (finalIndex = min) : (finalIndex = index)
-  } else index < min ? (finalIndex = max) : (finalIndex = index)
-  return finalIndex
-}
+import { safeIndex } from '../../utilities'
 
 // Styleds
 const popUpOnShowCss = `
@@ -304,7 +294,7 @@ const SearchFiltered = ({
 
   // HANDlERS
   const handleClick = () => {
-    !query && setShowPopup(true) // if !query show the popup too?
+    !query && setShowPopup(true)
   }
 
   const handleFocus = () => {
@@ -323,12 +313,12 @@ const SearchFiltered = ({
         }
 
         setFilterIndex(prev =>
-          prev !== null ? fixedIndex(prev + 1, 'down', filterList) : 0,
+          prev !== null ? safeIndex(prev + 1, 'down', filterList) : 0,
         )
       },
       ArrowUp: () => {
         showPopup &&
-          setFilterIndex(prev => fixedIndex(prev - 1, 'up', filterList))
+          setFilterIndex(prev => safeIndex(prev - 1, 'up', filterList))
       },
       Backspace: () => {
         if (searchRef.current.querySelector('input').value.length === 0) {

@@ -800,6 +800,22 @@ const setSafeHTML = (selector, html, timeout) => {
     : setTimeout(writeOnElement, timeout)
 }
 
+const safeIndex = (index, direction, list, min = 0) => {
+  let finalIndex
+  const max = list.length - 1
+
+  const options = {
+    down: () => (index > max ? (finalIndex = min) : (finalIndex = index)),
+    up: () => (index < min ? (finalIndex = max) : (finalIndex = index)),
+    'up-stop': () => (index < min ? (finalIndex = min) : (finalIndex = index)),
+    'down-stop': () =>
+      index > max ? (finalIndex = max) : (finalIndex = index),
+  }
+
+  safeCall(options[direction])
+  return finalIndex
+}
+
 const isFunction = cb => typeof cb === 'function'
 
 const safeCall = (cb, fb) => (isFunction(cb) ? cb() : isFunction(fb) && fb())
@@ -842,4 +858,5 @@ export {
   safeCall,
   capitalize,
   conditionalWord,
+  safeIndex,
 }
