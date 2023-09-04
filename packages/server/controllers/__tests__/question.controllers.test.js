@@ -9,7 +9,6 @@ const {
   duplicateQuestion: duplicateQuestionController,
   assignHandlingEditors,
   unassignHandlingEditor,
-  assignAuthorship,
 } = require('../question.controllers')
 
 const {
@@ -62,15 +61,6 @@ describe('Question Controller', () => {
     const author = await Question.getAuthor(duplicateQuestion.id)
     expect(author.id).not.toBe(user1.id)
     expect(author.id).toBe(user2.id)
-  })
-
-  test('assignAuthorship assign correct author to the question', async () => {
-    const question = await createEmptyQuestion()
-    const user = await User.insert({})
-    const assigned = await assignAuthorship(question.id, user.id)
-    const author = await Question.getAuthor(question.id)
-    expect(assigned).toBe(true)
-    expect(user.id).toBe(author.id)
   })
 
   test('generateScormZip fails to export an empty question', async () => {
