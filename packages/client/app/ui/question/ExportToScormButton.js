@@ -40,7 +40,7 @@ const ExportToScormButton = props => {
         onClick={handleExport}
         type="primary"
       >
-        Export to SCORM
+        Export to QTI
       </Button>
       {contextHolder}
     </ModalContext.Provider>

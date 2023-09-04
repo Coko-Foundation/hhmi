@@ -18,8 +18,8 @@ import QuestionEditor from './QuestionEditor'
 import { ChatThread } from '../chat'
 
 import ExportToWordButton from './ExportToWordButton'
-// import ExportToScormButton from './ExportToScormButton'
 import AssignHEButton from './AssignHEButton'
+import ExportToScormButton from './ExportToScormButton'
 import AutoSaving from './AutoSaveIndicator'
 import {
   Button,
@@ -121,10 +121,10 @@ const StyledWordExportButton = styled(ExportToWordButton)`
   width: 100%;
 `
 
-// const StyledScormExportButton = styled(ExportToScormButton)`
-//   margin-right: ${grid(2)};
-//   width: 100%;
-// `
+const StyledScormExportButton = styled(ExportToScormButton)`
+  margin-right: ${grid(2)};
+  width: 100%;
+`
 
 const StyledAssignHEButton = styled(AssignHEButton)`
   margin-right: ${grid(2)};
@@ -345,8 +345,8 @@ const Question = props => {
     facultyView,
     hasMoreMessages,
     onClickExportToWord,
-    // onClickExportToScorm,
     onFetchMoreMessages,
+    onClickExportToQti,
     initialMetadataValues,
     isUserLoggedIn,
     isPublished,
@@ -374,7 +374,7 @@ const Question = props => {
     questionAgreedTc,
     refetchUser,
     resources,
-    // scormZipLoading,
+    qtiZipLoading,
     showAssignHEButton,
     canAssignAuthor,
     showNextQuestionLink,
@@ -1189,12 +1189,12 @@ const Question = props => {
         onExport={onClickExportToWord}
         showMetadataOption={isUserLoggedIn}
       />
-      {/* {isUserLoggedIn && (
+      {isUserLoggedIn && (
         <StyledScormExportButton
-          loading={scormZipLoading}
-          onExport={onClickExportToScorm}
+          loading={qtiZipLoading}
+          onExport={onClickExportToQti}
         />
-      )} */}
+      )}
       {isPublished && canCreateNewVersion && (
         <StyledButton onClick={showNewVersionModal} type="primary">
           Edit question
@@ -1229,12 +1229,12 @@ const Question = props => {
             onExport={onClickExportToWord}
             showMetadataOption={isUserLoggedIn}
           />
-          {/* {isUserLoggedIn && (
+          {isUserLoggedIn && (
             <StyledScormExportButton
-              loading={scormZipLoading}
-              onExport={onClickExportToScorm}
+              loading={qtiZipLoading}
+              onExport={onClickExportToQti}
             />
-          )} */}
+          )}
           {isPublished && canCreateNewVersion && (
             <StyledButton onClick={showNewVersionModal} type="primary">
               Edit question
@@ -1417,7 +1417,7 @@ Question.propTypes = {
   onReject: PropTypes.func,
   onSendMessage: PropTypes.func,
   onClickAssignHE: PropTypes.func,
-  onClickExportToScorm: PropTypes.func,
+  onClickExportToQti: PropTypes.func,
   onClickExportToWord: PropTypes.func,
   canCreateNewVersion: PropTypes.bool,
   onFetchMoreMessages: PropTypes.func,
@@ -1677,8 +1677,8 @@ Question.propTypes = {
     readingLevel: PropTypes.string,
   }),
   updated: PropTypes.string,
-  wordFileLoading: PropTypes.bool.isRequired,
-  scormZipLoading: PropTypes.bool.isRequired,
+  wordFileLoading: PropTypes.bool,
+  qtiZipLoading: PropTypes.bool,
   complexSetEditLink: PropTypes.string,
   handlingEditors: PropTypes.arrayOf(
     PropTypes.shape({
@@ -1719,7 +1719,7 @@ Question.defaultProps = {
   editorContent: {},
   leadingContent: null,
   initialMetadataValues: {},
-  onClickExportToScorm: null,
+  onClickExportToQti: null,
   onClickExportToWord: null,
   onClickPreviousButton: () => {},
   onClickNextButton: () => {},
@@ -1745,6 +1745,8 @@ Question.defaultProps = {
   updated: '',
   isUserLoggedIn: true,
   canCreateNewVersion: false,
+  wordFileLoading: false,
+  qtiZipLoading: false,
   complexSetEditLink: null,
   handlingEditors: [],
   onSearchHE: () => {},

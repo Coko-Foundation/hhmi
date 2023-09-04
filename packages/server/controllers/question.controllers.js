@@ -15,6 +15,7 @@ const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const { clearTempImageFiles } = require('./helpers')
 const { labels } = require('./constants')
 const WaxToScormConverter = require('../services/scorm/scorm.service')
+const WaxToQTIConverter = require('../services/qti/qti.service')
 const metadataResolver = require('./metadataHandler')
 const resources = require('./resourcesData')
 const { getImageUrls, findImages } = require('./utils')
@@ -446,6 +447,48 @@ const generateScormZip = async questionVersionId => {
   }
 }
 
+const generateQtiZip = async questionVersionId => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} generateScormZip:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} exporting latest question version with question version id ${questionVersionId}`,
+  )
+
+  try {
+    const questionVersion = await QuestionVersion.findById(questionVersionId)
+
+    let complexItemSet
+
+    if (questionVersion.complexItemSetId) {
+      complexItemSet = await ComplexItemSet.findById(
+        questionVersion.complexItemSetId,
+      )
+    }
+
+    const qtiExporter = new WaxToQTIConverter(
+      [
+        {
+          ...questionVersion,
+          content: {
+            type: 'doc',
+            content: [
+              ...(complexItemSet ? complexItemSet.leadingContent.content : []),
+              ...questionVersion.content.content,
+            ],
+          },
+        },
+      ],
+      questionVersion.questionId,
+    )
+
+    const exportFilename = await qtiExporter.buildQtiExport()
+
+    return exportFilename
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 const createNewQuestionVersion = async (questionId, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} createNewQuestionVersion:`
   logger.info(
@@ -758,6 +801,7 @@ module.exports = {
   resourceResolver,
   generateScormZip,
   generateWordFile,
+  generateQtiZip,
 
   assignHandlingEditors,
   getQuestionsHandlingEditors,

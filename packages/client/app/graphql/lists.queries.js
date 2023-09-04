@@ -154,6 +154,28 @@ export const EXPORT_LIST = gql`
   }
 `
 
+export const EXPORT_QUESTIONS_QTI = gql`
+  mutation exportQuestionsQTI(
+    $listId: ID!
+    $questionIds: [ID!]!
+    $orderBy: String
+    $ascending: Boolean
+  ) {
+    exportQuestionsQTI(
+      listId: $listId
+      questionIds: $questionIds
+      orderBy: $orderBy
+      ascending: $ascending
+    )
+  }
+`
+
+export const EXPORT_LIST_QTI = gql`
+  mutation exportListQTI($listId: ID!, $orderBy: String, $ascending: Boolean) {
+    exportListQTI(listId: $listId, orderBy: $orderBy, ascending: $ascending)
+  }
+`
+
 export const REORDER_LIST = gql`
   mutation reorderList($listId: ID!, $customOrder: [ID!]!) {
     reorderList(listId: $listId, customOrder: $customOrder) {

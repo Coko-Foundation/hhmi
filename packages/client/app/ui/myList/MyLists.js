@@ -97,6 +97,12 @@ const PopupForm = styled(Form)`
   }
 `
 
+const ExportActionWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${grid(2)};
+`
+
 const ModalContext = createContext(null)
 
 const ModalFooter = Modal.footer
@@ -242,6 +248,7 @@ const MyLists = props => {
     onCreateNewList,
     onDeleteRows,
     onExport,
+    onExportQTI,
     onPageChange,
     onSearch,
     onSort,
@@ -252,7 +259,7 @@ const MyLists = props => {
   const [selectedRows, setSelectedRows] = useState([])
 
   const [modal, contextHolder] = Modal.useModal()
-  const { confirm } = modal
+  const { confirm, error } = modal
   const [newListForm] = Form.useForm()
 
   const handleSelectionChange = selectedRowKey => {
@@ -261,6 +268,32 @@ const MyLists = props => {
 
   const handleExportList = showFeedback => {
     return onExport(selectedRows[0], showFeedback)
+  }
+
+  const handleExportListQTI = () => {
+    onExportQTI(selectedRows[0])
+      .then(() => {})
+      .catch(e => {
+        const errorModal = error()
+        errorModal.update({
+          title: <ModalHeader>QTI export failed</ModalHeader>,
+          content: e,
+          footer: [
+            <ModalFooter key="footer">
+              <Button
+                autoFocus
+                data-testid="error-export-btn"
+                key="ok-error"
+                onClick={() => {
+                  errorModal.destroy()
+                }}
+              >
+                Ok
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      })
   }
 
   const handleDeleteRows = () => {
@@ -410,13 +443,40 @@ const MyLists = props => {
           showSearch
         />
         <ListActions>
-          <ExportListToWordButton
-            disabled={selectedRows.length !== 1}
-            onExport={handleExportList}
-            text="All questions of the list will be exported in the user defined (custom) order"
+          <Popup
+            id="export-popup"
+            popupPlacement="top"
+            toggle={
+              <Button
+                data-testid="add-to-list-btn"
+                disabled={selectedRows.length !== 1}
+                id="export-popup-toggle"
+                type="primary"
+              >
+                Export
+              </Button>
+            }
           >
-            Export
-          </ExportListToWordButton>
+            <ExportActionWrapper>
+              <ExportListToWordButton
+                afterClose={() =>
+                  document.body.querySelector('#export-popup-toggle').focus()
+                }
+                disabled={selectedRows.length !== 1}
+                onExport={handleExportList}
+                text="All questions of the list will be exported in the user defined (custom) order"
+              >
+                Export to Word
+              </ExportListToWordButton>
+              <Button
+                disabled={selectedRows.length !== 1}
+                onClick={handleExportListQTI}
+                type="primary"
+              >
+                Export to QTI
+              </Button>
+            </ExportActionWrapper>
+          </Popup>
           <Button
             data-testid="delete-btn"
             disabled={selectedRows.length === 0}
@@ -447,6 +507,7 @@ MyLists.propTypes = {
   onCreateNewList: PropTypes.func.isRequired,
   onDeleteRows: PropTypes.func.isRequired,
   onExport: PropTypes.func.isRequired,
+  onExportQTI: PropTypes.func.isRequired,
   onPageChange: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
   onSort: PropTypes.func.isRequired,

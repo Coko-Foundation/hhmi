@@ -6,9 +6,9 @@ import {
   TabsStyled as Tabs,
   QuestionList,
   Button,
-  ButtonGroup,
   Empty,
   Modal,
+  Popup,
 } from '../common'
 import ExportListToWordButton from './ExportModal'
 
@@ -36,6 +36,21 @@ const BulkActionWrapper = styled.div`
   align-items: center;
   display: flex;
   gap: ${grid(3)};
+
+  @media (max-width: 600px) {
+    align-items: stretch;
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+`
+
+const PopupContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${grid(2)};
 `
 
 const SelectionIndicator = styled.span`
@@ -68,6 +83,7 @@ const ListContent = ({
   loading,
   onDragEnd,
   onExport,
+  onExportQTI,
   onSearch,
   onRemoveFromList,
   questions,
@@ -78,7 +94,6 @@ const ListContent = ({
   ...rest
 }) => {
   const [modal, contextHolder] = Modal.useModal()
-  // eslint-disable-next-line no-unused-vars
   const { confirm, error } = modal
 
   const [selectedQuestions, setSelectedQuestions] = useState([])
@@ -93,6 +108,10 @@ const ListContent = ({
 
   const handleExport = showFeedback => {
     return onExport(selectedQuestions, searchParams.orderBy, showFeedback)
+  }
+
+  const handleExportQTI = showFeedback => {
+    return onExportQTI(selectedQuestions, searchParams.orderBy)
   }
 
   const confirmDelete = () => {
@@ -128,23 +147,48 @@ const ListContent = ({
 
   const BulkAction = (
     <BulkActionWrapper>
-      <ButtonGroup>
-        <ExportListToWordButton
-          customOrder={searchParams.orderBy === 'custom'}
-          disabled={selectedQuestions.length === 0}
-          onExport={handleExport}
-          text="Question will be exported in the order they are currently displayed in the list. Proceed?"
-        >
-          Export selection
-        </ExportListToWordButton>
-        <Button
-          disabled={selectedQuestions.length === 0}
-          onClick={confirmDelete}
-          type="primary"
-        >
-          Remove from list
-        </Button>
-      </ButtonGroup>
+      <Popup
+        id="export-popup"
+        popupPlacement="top"
+        toggle={
+          <Button
+            data-testid="add-to-list-btn"
+            disabled={selectedQuestions.length === 0}
+            id="export-popup-toggle"
+            type="primary"
+          >
+            Export
+          </Button>
+        }
+      >
+        <PopupContentWrapper>
+          <ExportListToWordButton
+            afterClose={() =>
+              document.body.querySelector('#export-popup-toggle').focus()
+            }
+            customOrder={searchParams.orderBy === 'custom'}
+            disabled={selectedQuestions.length === 0}
+            onExport={handleExport}
+            text="Question will be exported in the order they are currently displayed in the list. Proceed?"
+          >
+            Export to Word
+          </ExportListToWordButton>
+          <Button
+            disabled={selectedQuestions.length === 0}
+            onClick={handleExportQTI}
+            type="primary"
+          >
+            Export to QTI
+          </Button>
+        </PopupContentWrapper>
+      </Popup>
+      <Button
+        disabled={selectedQuestions.length === 0}
+        onClick={confirmDelete}
+        type="primary"
+      >
+        Remove from list
+      </Button>
       {selectedQuestions.length ? (
         <SelectionIndicator>
           {selectedQuestions.length} questions selected
@@ -256,6 +300,7 @@ ListContent.propTypes = {
   loading: PropTypes.bool,
   onDragEnd: PropTypes.func,
   onExport: PropTypes.func,
+  onExportQTI: PropTypes.func,
   onSearch: PropTypes.func,
   onRemoveFromList: PropTypes.func,
   questions: PropTypes.arrayOf(PropTypes.shape()),
@@ -270,6 +315,7 @@ ListContent.defaultProps = {
   loading: false,
   onDragEnd: () => {},
   onExport: () => {},
+  onExportQTI: () => {},
   onSearch: () => {},
   onRemoveFromList: () => {},
   questions: [],

@@ -8,7 +8,15 @@ const ModalFooter = Modal.footer
 const ModalContext = React.createContext(null)
 
 const ExportListToWordButton = props => {
-  const { className, children, customOrder, disabled, text, onExport } = props
+  const {
+    className,
+    children,
+    customOrder,
+    disabled,
+    text,
+    onExport,
+    afterClose,
+  } = props
 
   const [showModal, setShowModal] = useState(false)
   const [showFeedback, setShowFeedback] = useState(true)
@@ -49,7 +57,11 @@ const ExportListToWordButton = props => {
       </Button>
 
       <Modal
-        afterClose={() => document.body.querySelector('#exportToWord').focus()}
+        afterClose={() => {
+          afterClose
+            ? afterClose()
+            : document.body.querySelector('#exportToWord').focus()
+        }}
         destroyOnClose
         footer={[
           <ModalFooter key="footer">
@@ -87,12 +99,14 @@ ExportListToWordButton.propTypes = {
   disabled: PropTypes.bool,
   text: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   onExport: PropTypes.func,
+  afterClose: PropTypes.func,
 }
 ExportListToWordButton.defaultProps = {
   customOrder: true,
   disabled: false,
   text: '',
   onExport: () => {},
+  afterClose: null,
 }
 
 export default ExportListToWordButton

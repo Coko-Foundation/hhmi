@@ -21,6 +21,7 @@ const {
   publishQuestionVersion,
   generateWordFile,
   generateScormZip,
+  generateQtiZip,
   createNewQuestionVersion,
 
   assignHandlingEditors,
@@ -143,6 +144,10 @@ const generateScormZipResolver = async (_, { questionVersionId }) => {
   return generateScormZip(questionVersionId)
 }
 
+const generateQtiZipResolver = async (_, { questionVersionId }) => {
+  return generateQtiZip(questionVersionId)
+}
+
 const createNewQuestionVersionResolver = async (_, { questionId }) => {
   return createNewQuestionVersion(questionId)
 }
@@ -198,6 +203,7 @@ module.exports = {
     assignAuthorship: assignAuthorshipResolver,
     generateWordFile: generateWordFileResolver,
     generateScormZip: generateScormZipResolver,
+    generateQtiZip: generateQtiZipResolver,
     createNewQuestionVersion: createNewQuestionVersionResolver,
     uploadFiles: uploadFilesResolver,
     assignHandlingEditors: assignHandlingEditorsResolver,

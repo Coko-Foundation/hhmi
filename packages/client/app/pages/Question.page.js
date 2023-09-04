@@ -20,7 +20,7 @@ import {
   PUBLISH_QUESTION_VERSION,
   GET_PUBLISHED_QUESTIONS_IDS,
   GENERATE_WORD_FILE,
-  GENERATE_SCORM_ZIP,
+  GENERATE_QTI_ZIP,
   GET_RESOURCES,
   CREATE_NEW_VERSION,
   UPLOAD_FILES,
@@ -311,8 +311,8 @@ const QuestionPage = props => {
   const [generateWordFileMutation, { loading: generateWordFileLoading }] =
     useMutation(GENERATE_WORD_FILE)
 
-  const [generateScormZipMutation, { loading: generateScormZipLoading }] =
-    useMutation(GENERATE_SCORM_ZIP)
+  const [generateQtiZipMutation, { loading: generateQtiZipLoading }] =
+    useMutation(GENERATE_QTI_ZIP)
 
   const [upload] = useMutation(UPLOAD_FILES)
 
@@ -535,14 +535,14 @@ const QuestionPage = props => {
     return rejectQuestionMutation()
   }
 
-  const handleExportToScorm = () => {
+  const handleExportToQti = () => {
     const mutationVariables = {
       questionVersionId: version.id,
     }
 
-    return generateScormZipMutation({ variables: mutationVariables })
+    return generateQtiZipMutation({ variables: mutationVariables })
       .then(res => {
-        const filename = res.data.generateScormZip
+        const filename = res.data.generateQtiZip
         const url = `${serverUrl}/api/download/${filename}`
         window.location.assign(url)
       })
@@ -712,9 +712,6 @@ const QuestionPage = props => {
           version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
         }
         currentHandlingEditors={currentHandlingEditors}
-        editorContent={version && JSON.parse(version.content)}
-        // admins have editorial rights (publishing rights) on their own questions
-        editorView={isEditor || (isHandlingEditor && !isAuthor) || isAdmin}
         facultyView={testMode}
         handlingEditors={handlingEditors?.result || []}
         initialMetadataValues={metadataApiToUi(version, testMode)}
@@ -728,9 +725,6 @@ const QuestionPage = props => {
         }
         loadAssignedHEs={getQuestionsHandlingEditors}
         loadAuthors={getUsers}
-        isUserLoggedIn={!!currentUser}
-        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
-        // unless the question has already been published
         loading={
           loading ||
           !version ||
@@ -738,12 +732,15 @@ const QuestionPage = props => {
           !getResources ||
           !complexItemSetOptions
         }
+        isUserLoggedIn={!!currentUser}
+        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
+        // unless the question has already been published
         messages={messagesApiToUi(chatThread?.messages, currentUser?.id)}
         metadata={metadata || {}}
         onAssignAuthor={handleAssignAuthor}
         onClickAssignHE={handleClickAssignHE}
         onClickBackButton={handleClickBackButton}
-        onClickExportToScorm={testMode ? handleExportToScorm : null}
+        onClickExportToQti={testMode ? handleExportToQti : null}
         onClickExportToWord={handleExportToWord}
         onClickNextButton={() => handleGetQuestionButton('NEXT')}
         onClickPreviousButton={() => handleGetQuestionButton('PREV')}
@@ -760,10 +757,10 @@ const QuestionPage = props => {
         onSearchHE={handleSearchHE}
         onSendMessage={onSendMessage}
         onUnassignHandlingEditor={handleUnassignHE}
+        qtiZipLoading={generateQtiZipLoading}
         questionAgreedTc={false} //
         refetchUser={refetchCurrentUser}
         resources={getResources}
-        scormZipLoading={generateScormZipLoading}
         searchHELoading={loadingSearchHE}
         showAssignHEButton={
           version?.submitted && !version?.published && isEditor
@@ -771,6 +768,9 @@ const QuestionPage = props => {
         showNextQuestionLink={false}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
+        editorContent={version && JSON.parse(version.content)}
+        // admins have editorial rights (publishing rights) on their own questions
+        editorView={isEditor || (isHandlingEditor && !isAuthor) || isAdmin}
         isPublished={version?.published}
         // admins have editorial rights (publishing rights) on their own questions
         isRejected={question?.rejected}

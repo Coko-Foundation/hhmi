@@ -233,6 +233,7 @@ extend type Mutation {
   ): String!
 
   generateScormZip(questionVersionId: ID!): String!
+  generateQtiZip(questionVersionId: ID!): String!
   createNewQuestionVersion(questionId: ID!): Question!
   uploadFiles(files: [Upload!]!): [File!]!
 

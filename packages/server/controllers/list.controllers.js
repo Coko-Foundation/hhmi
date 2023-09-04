@@ -17,6 +17,7 @@ const { clearTempImageFiles } = require('./helpers')
 const { findImages } = require('./utils')
 const { labels } = require('./constants')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
+const WaxToQTIConverter = require('../services/qti/qti.service')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const BASE_MESSAGE = `${labels.LIST_CONTROLLERS}:`
@@ -377,6 +378,89 @@ const exportListToWordFile = async (
   }
 }
 
+const exportQuestionsToQti = async (
+  listId,
+  questionIds,
+  orderBy,
+  ascending,
+) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} exportQuestionsToQti:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} generating qti package for list of questions with ids ${questionIds}`,
+  )
+
+  try {
+    const versions = await Promise.all(
+      questionIds.map(async questionId => {
+        const versionsResult = await Question.getVersions(questionId, {
+          latestOnly: true,
+          publishedOnly: true,
+        })
+
+        return versionsResult.result[0]
+      }),
+    )
+
+    if (versions.length === 0) {
+      logger.error(`${CONTROLLER_MESSAGE} 'list is empty'`)
+      throw new Error("The list you're trying to export is empty")
+    }
+
+    if (orderBy !== 'custom') {
+      // sort by ascending or descending (publication date)
+      versions.sort((a, b) => {
+        return ascending ? a[orderBy] - b[orderBy] : b[orderBy] - a[orderBy]
+      })
+    } else {
+      const list = await List.findById(listId)
+
+      versions.sort((a, b) => {
+        // non-sorted items (new questions that were added later) go to the end
+        if (list.customOrder.indexOf(a.questionId) === -1) return 1000
+        if (list.customOrder.indexOf(b.questionId) === -1) return -1000
+
+        // the rest is sorted as per customOrder
+        return (
+          list.customOrder.indexOf(a.questionId) -
+          list.customOrder.indexOf(b.questionId)
+        )
+      })
+    }
+
+    // TODO: handle complex item set questions
+
+    const qtiExporter = new WaxToQTIConverter(versions, listId)
+
+    const exportFilename = await qtiExporter.buildQtiExport()
+
+    return exportFilename
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const exportListToQti = async (listId, orderBy, ascending) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} exportListToQti:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} generating qti package for list with id ${listId}`,
+  )
+
+  try {
+    const questions = await getListQuestions({
+      id: listId,
+      questionsOptions: { page: 0, pageSize: 1000 }, // all questions in a list
+    })
+
+    const questionIds = questions.result.map(question => question.id)
+
+    return exportQuestionsToQti(listId, questionIds, orderBy, ascending)
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
 const reorderList = async (listId, customOrder, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} reorderList:`
 
@@ -406,5 +490,7 @@ module.exports = {
   deleteFromList,
   exportQuestionsToWordFile,
   exportListToWordFile,
+  exportQuestionsToQti,
+  exportListToQti,
   reorderList,
 }

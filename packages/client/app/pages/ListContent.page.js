@@ -7,6 +7,7 @@ import {
   GET_LIST,
   REMOVE_FROM_LIST,
   EXPORT_QUESTIONS,
+  EXPORT_QUESTIONS_QTI,
   REORDER_LIST,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
 } from '../graphql'
@@ -94,6 +95,8 @@ const ListContentPage = () => {
 
   const [exportQuestionsMutation] = useMutation(EXPORT_QUESTIONS)
 
+  const [exportQuestionsToQTIMutation] = useMutation(EXPORT_QUESTIONS_QTI)
+
   const [reorderListMutation] = useMutation(REORDER_LIST, {
     refetchQueries: [
       {
@@ -152,6 +155,30 @@ const ListContentPage = () => {
         console.error(e)
         return new Promise((_resolve, reject) => {
           reject()
+        })
+      })
+  }
+
+  const handleExportToQTI = (questionIds, orderBy) => {
+    const mutationData = {
+      variables: {
+        listId: id,
+        questionIds,
+        orderBy: orderBy === 'custom' ? 'custom' : 'publicationDate',
+        ascending: orderBy !== 'date-desc',
+      },
+    }
+
+    exportQuestionsToQTIMutation(mutationData)
+      .then(res => {
+        const filename = res.data.exportQuestionsQTI
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject(e.message)
         })
       })
   }
@@ -237,6 +264,7 @@ const ListContentPage = () => {
       loading={loading}
       onDragEnd={handleDragEnd}
       onExport={handleExport}
+      onExportQTI={handleExportToQTI}
       onRemoveFromList={handleRemoveFromList}
       onSearch={handleSearch}
       questions={

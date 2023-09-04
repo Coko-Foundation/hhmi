@@ -493,6 +493,12 @@ export const GENERATE_SCORM_ZIP = gql`
   }
 `
 
+export const GENERATE_QTI_ZIP = gql`
+  mutation GenerateQtiZip($questionVersionId: ID!) {
+    generateQtiZip(questionVersionId: $questionVersionId)
+  }
+`
+
 export const UPLOAD_FILES = gql`
   mutation ($files: [Upload!]!) {
     uploadFiles(files: $files) {
