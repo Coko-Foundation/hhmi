@@ -40,11 +40,12 @@ const getQuestionVersions = async (questionId, options = {}) => {
   )
 
   try {
-    const { latestOnly, publishedOnly, trx } = options
+    const { latestOnly, publishedOnly, productionOnly, trx } = options
 
     const res = await Question.getVersions(questionId, {
       latestOnly,
       publishedOnly,
+      productionOnly,
       trx,
     })
 
@@ -180,6 +181,19 @@ const getHandlingEditorDashboard = async (userId, options = {}) => {
   const { orderBy, ascending, page, pageSize, searchQuery, trx } = options
 
   return Question.findByRole(userId, 'handlingEditor', {
+    orderBy,
+    ascending,
+    page,
+    pageSize,
+    searchQuery,
+    trx,
+  })
+}
+
+const getInProductionDashboard = async (userId, options = {}) => {
+  const { orderBy, ascending, page, pageSize, searchQuery, trx } = options
+
+  return Question.findByExcludingRole(userId, 'none', {
     orderBy,
     ascending,
     page,
@@ -799,6 +813,7 @@ module.exports = {
   getReviewerDashboard,
   getManagingEditorDashboard,
   getHandlingEditorDashboard,
+  getInProductionDashboard,
 
   createQuestion,
   duplicateQuestion,

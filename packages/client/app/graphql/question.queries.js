@@ -203,6 +203,66 @@ export const GET_QUESTION_HANDLING_EDITORS = gql`
   }
 `
 
+export const GET_PRODUCTION_DASHBOARD = gql`
+  query GetInProductionDashboard(
+    $orderBy: String
+    $ascending: Boolean
+    $page: Int
+    $pageSize: Int
+    $searchQuery: String
+  ) {
+    getInProductionDashboard(
+      orderBy: $orderBy
+      ascending: $ascending
+      page: $page
+      pageSize: $pageSize
+      searchQuery: $searchQuery
+    ) {
+      result {
+        id
+        rejected
+        author {
+          displayName
+        }
+        versions(latestOnly: true, publishedOnly: false, productionOnly: true) {
+          id
+          content
+
+          submitted
+          underReview
+          inProduction
+          published
+          publicationDate
+
+          complexItemSetId
+          topics {
+            topic
+            subtopic
+          }
+
+          courses {
+            course
+            units {
+              # application
+              # courseTopic
+              # essentialKnowledge
+              learningObjective
+              # skill
+              understanding
+              # unit
+            }
+          }
+
+          cognitiveLevel
+          # affectiveLevel
+          # psychomotorLevel
+        }
+      }
+      totalCount
+    }
+  }
+`
+
 export const CREATE_QUESTION = gql`
   mutation CreateQuestion($input: UpdateQuestionInput) {
     createQuestion(input: $input) {

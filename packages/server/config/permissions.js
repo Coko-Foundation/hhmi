@@ -235,6 +235,7 @@ const permissions = {
     getAuthorDashboard: isActive,
     getManagingEditorDashboard: isEditor,
     getHandlingEditorDashboard: isHandlingEditor,
+    getInProductionDashboard: isActive,
   },
 }
 

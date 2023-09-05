@@ -12,6 +12,7 @@ import {
   CURRENT_USER,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
   FILTER_GLOBAL_TEAM_MEMBERS,
+  GET_PRODUCTION_DASHBOARD,
 } from '../graphql'
 import {
   hasGlobalRole,
@@ -159,6 +160,39 @@ const DashboardPage = () => {
     },
   })
 
+  const [
+    productionQuery,
+    {
+      data: productionResponse,
+      loading: productionLoading,
+      called: productionCalled,
+    },
+  ] = useLazyQuery(GET_PRODUCTION_DASHBOARD, {
+    fetchPolicy: 'network-only',
+    onCompleted: data => {
+      // run only on update, not on first render
+      if (initialRender.current) initialRender.current = false
+      else {
+        const nrOfQuestions = data.getInProductionDashboard.result.length
+        const total = data.getInProductionDashboard.totalCount
+        let announcement = 'Results updated.'
+
+        if (total === 0) {
+          announcement = `${announcement} No results for your search query`
+        } else if (total <= 10) {
+          announcement = `${announcement} ${nrOfQuestions} questions`
+        } else {
+          announcement = `${announcement} Page ${currentPage} of ${Math.ceil(
+            total / 10,
+          )} with ${nrOfQuestions} questions from a total of ${total}`
+        }
+
+        document.querySelector('#search-results-update').innerHTML =
+          announcement
+      }
+    },
+  })
+
   const authorData = authorResponse && authorResponse.getAuthorDashboard
   const editorData = editorResponse && editorResponse.getManagingEditorDashboard
   const handlingEditorData = heResponse && heResponse.getHandlingEditorDashboard
@@ -194,16 +228,21 @@ const DashboardPage = () => {
         })
       : []
 
+  const productionData =
+    productionResponse && productionResponse.getInProductionDashboard
+
   const queryMapper = {
     query: {
       author: authorQuery,
       editor: editorQuery,
       handlingEditor: handlingEditorQuery,
+      production: productionQuery,
     },
     called: {
       author: authorCalled,
       editor: editorCalled,
       handlingEditor: heCalled,
+      production: productionCalled,
     },
   }
 
@@ -288,6 +327,11 @@ const DashboardPage = () => {
     'handlingEditor',
   )
 
+  const isProduction = hasGlobalRole(
+    currentUserResponse?.currentUser,
+    'production',
+  )
+
   const tabs = [
     {
       label: 'Authored Questions',
@@ -312,6 +356,23 @@ const DashboardPage = () => {
       totalCount: handlingEditorData?.totalCount,
       showBulkActions: false,
       loading: heLoading,
+    },
+    isProduction && {
+      label: 'Production Questions',
+      value: 'production',
+      questions:
+        productionData && metadata
+          ? dashboardDataMapper(
+              productionData.result,
+              metadata,
+              complexItemSetOptions,
+              false,
+              true,
+            )
+          : [],
+      totalCount: productionData && productionData.totalCount,
+      showBulkActions: false,
+      loading: productionLoading,
     },
   ].filter(Boolean)
 

@@ -203,7 +203,7 @@ const Wrapper = props => {
 
     document.addEventListener('keydown', keyDownListener)
 
-    return document.removeEventListener('kaydown', keyDownListener)
+    return document.removeEventListener('keydown', keyDownListener)
   }, [])
 
   return (

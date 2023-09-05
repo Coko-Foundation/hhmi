@@ -2,7 +2,11 @@
 
 type Question {
   id: ID!
-  versions(latestOnly: Boolean, publishedOnly: Boolean): [QuestionVersion!]!
+  versions(
+    latestOnly: Boolean
+    publishedOnly: Boolean
+    productionOnly: Boolean
+  ): [QuestionVersion!]!
   agreedTc: Boolean!
   rejected: Boolean!
   author: User
@@ -241,6 +245,14 @@ extend type Query {
   ): QuestionsResponse!
 
   getQuestionsHandlingEditors(questionId: ID!): [User!]!
+
+  getInProductionDashboard(
+    orderBy: String
+    ascending: Boolean
+    page: Int
+    pageSize: Int
+    searchQuery: String
+  ): QuestionsResponse!
 }
 
 extend type Mutation {

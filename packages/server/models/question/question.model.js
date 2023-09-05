@@ -162,9 +162,11 @@ class Question extends BaseModel {
     const { trx } = options
     const latestOnly = options.latestOnly || false
     const publishedOnly = options.publishedOnly || false
+    const productionOnly = options.productionOnly || false
 
     const where = { questionId }
     if (publishedOnly) where.published = true
+    if (productionOnly) where.inProduction = true
 
     const whereOptions = {
       orderBy: [
