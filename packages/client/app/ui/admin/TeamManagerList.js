@@ -19,6 +19,25 @@ const Wrapper = styled.div`
   }
 `
 
+const TitleWrapper = styled.div`
+  align-items: center;
+  background: linear-gradient(60deg, #00763a, #8ac341);
+  display: flex;
+  flex-direction: column;
+  height: 21%;
+  justify-content: center;
+  margin: 0;
+
+  & h1 {
+    color: #fff;
+    margin: 0;
+    text-shadow: 0 1px 5px #0006;
+  }
+
+  text-align: center;
+  width: 100%;
+`
+
 const PageHeader = styled(H1)`
   margin: 0 auto;
   text-align: center;
@@ -51,7 +70,9 @@ const TeamManagerList = props => {
   return (
     <Wrapper className={className}>
       <StyledSection>
-        <PageHeader>Team Manager</PageHeader>
+        <TitleWrapper>
+          <PageHeader>Team Manager</PageHeader>
+        </TitleWrapper>
 
         <List
           className={className}

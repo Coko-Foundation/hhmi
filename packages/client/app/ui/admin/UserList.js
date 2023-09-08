@@ -28,11 +28,28 @@ const Wrapper = styled.div`
   height: 100%;
 `
 
+const TitleWrapper = styled.div`
+  align-items: center;
+  background: linear-gradient(60deg, #00763a, #8ac341);
+  display: flex;
+  flex-direction: column;
+  height: 10rem;
+  justify-content: center;
+  margin: 0;
+
+  & h1 {
+    color: #fff;
+    margin: 0;
+    text-shadow: 0 1px 5px #0006;
+  }
+
+  text-align: center;
+  width: 100%;
+`
+
 const PageHeader = styled(H1)`
   color: #fff;
   margin: 0;
-  max-height: 10rem;
-  min-height: 10rem;
   text-align: center;
 `
 
@@ -321,7 +338,9 @@ const UserList = ({
     <ModalContext.Provider value={null}>
       <Wrapper className={className}>
         <StyledSection>
-          <PageHeader>User Manager</PageHeader>
+          <TitleWrapper>
+            <PageHeader>User Manager</PageHeader>
+          </TitleWrapper>
           <StyledTable
             columns={columns}
             dataSource={dataSource}
