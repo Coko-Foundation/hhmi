@@ -2,11 +2,11 @@
 
 exports[`ChatMessage matches snaphot 1`] = `
 <div
-  className="sc-NrEwa iHEzAW"
+  className="sc-kCtSUc fzNxeE"
   tabIndex={0}
 >
   <div
-    className="sc-gKWViP kxhbWe"
+    className="sc-fkDAhV SJqbI"
   />
   <p
     className="sc-gjTGSA fuiUoE"
@@ -14,12 +14,12 @@ exports[`ChatMessage matches snaphot 1`] = `
     said
   </p>
   <div
-    className="sc-kCtSUc"
+    className="sc-jQCNTa"
   >
     Reprehenderit quia praesentium non itaque ea et quia ut ab. Molestias et rem distinctio vel voluptatibus ratione ut.
   </div>
   <div
-    className="sc-fkDAhV eUauzi"
+    className="sc-eyMvgT kuzerQ"
   >
     <span>
       a few seconds

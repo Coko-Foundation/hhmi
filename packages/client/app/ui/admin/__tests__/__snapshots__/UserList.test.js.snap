@@ -161,29 +161,6 @@ exports[`UserList matches snapshot 1`] = `
                                   </span>
                                 </label>
                               </div>
-                              <div
-                                className="ant-table-selection"
-                              >
-                                <label
-                                  className="ant-checkbox-wrapper css-dev-only-do-not-override-1vtf12y"
-                                >
-                                  <span
-                                    className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
-                                  >
-                                    <input
-                                      aria-label="Select all"
-                                      checked={false}
-                                      className="ant-checkbox-input"
-                                      disabled={false}
-                                      onChange={[Function]}
-                                      type="checkbox"
-                                    />
-                                    <span
-                                      className="ant-checkbox-inner"
-                                    />
-                                  </span>
-                                </label>
-                              </div>
                             </th>
                             <th
                               className="ant-table-cell"
