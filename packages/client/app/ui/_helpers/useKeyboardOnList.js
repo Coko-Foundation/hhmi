@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { isBoolean } from 'lodash'
 import { safeIndex, isFunction, safeCall } from '../../utilities'
 
 const useKeyboardOnList = ({
@@ -13,7 +14,7 @@ const useKeyboardOnList = ({
   closeOnStart = true, // optionally close the menu if action is moveUp and the active element is the first
   closeOnEnd = false, // optionally close the menu if action is moveDown and the active element is the last
   closeOnSelect = false, // optionally close the menu when selecting a menu item
-  notPreventDefaultOnKeys = ['Tab', '229'], // array of keycode(s) strings that must not preventDefault (229 for mobile)
+  notPreventDefault = ['Tab', '229'], // boolean or array of keycode(s) strings that must not preventDefault (229 for mobile), if bool: FALSE: prevent on all keys, TRUE: dont prevent
 }) => {
   const [prevKey, setPrevKey] = useState('')
   const [open, setOpen] = useState(initialState)
@@ -29,10 +30,11 @@ const useKeyboardOnList = ({
     setOpen,
     handleBlur,
     e => {
-      if (!enabled) return null
+      if (!enabled || menuItems.length === 0) return null
       const { code, key } = e
-
-      !notPreventDefaultOnKeys.includes(code) && e.preventDefault()
+      isBoolean(notPreventDefault)
+        ? !notPreventDefault && e.preventDefault()
+        : !notPreventDefault.includes(code) && e.preventDefault()
 
       const currentIndex = () => menuItems.indexOf(document.activeElement)
       const atLastIndex = () => currentIndex() === menuItems.length - 1
@@ -47,11 +49,11 @@ const useKeyboardOnList = ({
 
         if (matches.length === 0) return setPrevKey('')
 
-        const nextItem = () => matches.indexOf(document.activeElement) + 1
+        const nextItem = matches.indexOf(document.activeElement) + 1
 
         prevKey !== key
           ? matches[0].focus()
-          : matches[safeIndex(nextItem(), 'down', matches)].focus()
+          : matches[safeIndex(nextItem, 'down', matches)].focus()
 
         return prevKey !== key && setPrevKey(key)
       }
@@ -116,12 +118,14 @@ const useKeyboardOnList = ({
         Space: actions.goToFirst,
         ArrowDown: actions.moveDownLoop,
         ArrowUp: actions.moveUp,
-        ...additionalKeys(actions),
+        PageUp: actions.goToFirst,
+        PageDown: actions.goToLast,
+        ...additionalKeys(actions, e),
       }
 
       const keys = !isFunction(overrideKeys)
         ? defaultKeys
-        : { ...overrideKeys(actions), ...additionalKeys(actions) }
+        : { ...overrideKeys(actions, e), ...additionalKeys(actions, e) }
 
       return safeCall(keys[code], selectByFirstChar)
     },

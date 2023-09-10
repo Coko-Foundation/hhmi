@@ -498,7 +498,6 @@ const CollapsableMenu = styled.ul`
         height: inherit;
         margin: 0 0.5rem;
         padding: ${grid(2)} 0;
-        transition: background-color 0.3s;
         width: inherit;
 
         &:focus,
@@ -506,9 +505,11 @@ const CollapsableMenu = styled.ul`
         &:active,
         &:focus-visible {
           color: #7fdbff;
+          outline-color: #0000;
 
           > span {
             color: #7fdbff;
+            outline-color: #0000;
           }
           /* outline-color: #0000; */
         }
@@ -587,12 +588,6 @@ const Header = props => {
       enabled: windowWidth >= 1200,
       menuItems: [...document.querySelectorAll('#user-menu .menu-link')],
       openButton: document.querySelector('button[aria-controls="user-menu"]'),
-      additionalKeys: action => {
-        return {
-          PageUp: action.goToFirst,
-          PageDown: action.goToLast,
-        }
-      },
     })
 
   const [showMenu, setShowMenu, mainNavBlur, mainNavKeyDown] =
@@ -600,16 +595,11 @@ const Header = props => {
       enabled: windowWidth < 1200,
       menuItems: [...document.querySelectorAll('#main-nav .menu-link')],
       openButton: document.querySelector('[aria-label="Menu"]'),
-      overrideKeys: action => {
+      additionalKeys: action => {
         return {
-          Escape: action.close,
-          Enter: action.select,
           ArrowUp: action.moveUpLoop,
-          ArrowDown: action.moveDownLoop,
           ArrowLeft: action.open,
           ArrowRight: action.close,
-          PageUp: action.goToFirst,
-          PageDown: action.goToLast,
         }
       },
     })
