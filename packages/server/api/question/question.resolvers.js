@@ -126,7 +126,11 @@ const versionsResolver = async (
   //   question.id,
   //   latestOnly,
   // )
-  return getQuestionVersions(question.id, { latestOnly, publishedOnly, productionOnly })
+  return getQuestionVersions(question.id, {
+    latestOnly,
+    publishedOnly,
+    productionOnly,
+  })
 }
 
 const versionQuestionResolver = async version => {
