@@ -455,7 +455,6 @@ class Question extends BaseModel {
       query.where({ inProduction: true })
     }
 
-    // create initial query for questions excluding author's ones
     query
       .distinctOn('questions.id')
       .orderBy([
