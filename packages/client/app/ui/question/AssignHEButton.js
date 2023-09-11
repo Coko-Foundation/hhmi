@@ -48,7 +48,6 @@ const AssignHEButton = props => {
     searchLoading,
     loadAssignedHEs,
     currentHandlingEditors,
-    expanded,
     updateSelectedQuestions,
   } = props
 
@@ -153,7 +152,7 @@ const AssignHEButton = props => {
         onClick={() => setShowModal(true)}
         type="primary"
       >
-        {expanded ? 'Assign handling editors' : 'Assign HE'}
+        Assign HE
       </Button>
 
       <Modal
@@ -254,7 +253,6 @@ const AssignHEButton = props => {
 }
 
 AssignHEButton.propTypes = {
-  expanded: PropTypes.bool,
   loading: PropTypes.bool,
   onAssign: PropTypes.func,
   onUnassign: PropTypes.func,
@@ -277,7 +275,6 @@ AssignHEButton.propTypes = {
 }
 
 AssignHEButton.defaultProps = {
-  expanded: false,
   loading: false,
   onAssign: () => {},
   onUnassign: () => {},
