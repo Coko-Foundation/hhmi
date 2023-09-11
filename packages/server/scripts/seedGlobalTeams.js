@@ -17,12 +17,16 @@ const seedGlobalTeams = async () => {
     Object.keys(configGlobalTeams).map(async k => {
       const teamData = configGlobalTeams[k]
 
-      const exists = await Team.findOne({
+      const existingTeam = await Team.findOne({
         global: true,
         role: teamData.role,
       })
 
-      if (exists) {
+      if (existingTeam) {
+        if (existingTeam.displayName !== teamData.displayName) {
+          await Team.query().findOne({ id: existingTeam.id }).patch(teamData)
+        }
+
         logger.info(
           `[seedGlobalTeams]: Global team "${teamData.role}" already exists`,
         )

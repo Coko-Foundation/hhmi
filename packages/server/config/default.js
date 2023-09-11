@@ -87,7 +87,7 @@ module.exports = {
     },
     nonGlobal: {
       editor: {
-        displayName: 'Editor',
+        displayName: 'Managing Editor',
         role: 'editor',
       },
       handlingEditor: {
