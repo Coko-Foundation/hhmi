@@ -726,7 +726,8 @@ const QuestionPage = props => {
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
         // unless the question has already been published
         isInProduction={
-          version?.inProduction || (isAdmin && isAuthor && !version?.published)
+          version?.inProduction ||
+          (isAdmin && (isAuthor || isProduction) && !version?.published)
         }
         isPublished={version?.published}
         isRejected={question?.rejected}
