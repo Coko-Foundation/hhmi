@@ -724,7 +724,8 @@ const QuestionPage = props => {
         handlingEditors={handlingEditors?.result || []}
         initialMetadataValues={metadataApiToUi(version, testMode)}
         isInProduction={
-          version?.inProduction || (isAdmin && isAuthor && !version?.published)
+          version?.inProduction ||
+          (isAdmin && (isAuthor || isProduction) && !version?.published)
         }
         isPublished={version?.published}
         // admins have editorial rights (publishing rights) on their own questions
