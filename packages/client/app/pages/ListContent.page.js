@@ -42,7 +42,7 @@ const ListContentPage = () => {
       id,
       questionsQuery: searchParams.query,
       questionsOptions: {
-        page: searchParams.page - 1,
+        page: Math.max(searchParams.page - 1, 0),
         pageSize: searchParams.pageSize,
         orderBy: searchParams.orderBy,
         ascending: searchParams.ascending,
