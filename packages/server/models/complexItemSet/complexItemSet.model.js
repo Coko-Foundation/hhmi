@@ -1,11 +1,12 @@
 const {
   BaseModel,
-  modelTypes: { objectNullable, stringNullable },
+  modelTypes: { boolean, objectNullable, stringNullable },
 } = require('@coko/server')
 
 const cloneDeep = require('lodash/cloneDeep')
 const { applyListQueryOptions, extractDocumentText } = require('../helpers')
 const QuestionVersion = require('../question/question.model')
+const User = require('../user/user.model')
 
 class ComplexItemSet extends BaseModel {
   static get tableName() {
@@ -78,6 +79,7 @@ class ComplexItemSet extends BaseModel {
         title: stringNullable,
         leadingContent: objectNullable,
         contentText: stringNullable,
+        isPublished: boolean,
       },
     }
   }
@@ -92,6 +94,51 @@ class ComplexItemSet extends BaseModel {
     }
 
     return applyListQueryOptions(query, options)
+  }
+
+  static async filterSetsForUser(userId, searchQuery, options) {
+    // userId will be null if user is not logged in or only public sets were requested
+    if (!userId) {
+      return ComplexItemSet.query().select('*').where('isPublished', true)
+    }
+
+    // otherwise, filter sets according to role
+    const userTeams = await User.getTeams(userId)
+
+    const isEditor = userTeams.some(
+      team =>
+        team.global &&
+        (team.role === 'editor' || team.role === 'handlingEditor'),
+    )
+
+    const authoredSets = userTeams
+      .filter(
+        team => team.role === 'author' && team.objectType === 'complexItemSet',
+      )
+      .map(team => team.objectId)
+
+    const query = ComplexItemSet.query()
+
+    if (isEditor) {
+      query.select('*')
+    } else {
+      query
+        .select('*')
+        .where(builder =>
+          builder.where('isPublished', true).orWhereIn('id', authoredSets),
+        )
+    }
+
+    if (searchQuery) {
+      query.andWhere(builder =>
+        builder
+          .where('title', 'ilike', `%${searchQuery}%`)
+          .orWhere('content_text', 'ilike', `%${searchQuery}%`),
+      )
+    }
+
+    // paginate result only if options were passed
+    return options ? applyListQueryOptions(query, options) : query
   }
 }
 

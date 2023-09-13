@@ -7,13 +7,13 @@ const { labels } = require('./constants')
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const BASE_MESSAGE = `${labels.SETS_CONTROLLERS}:`
 
-const getComplexItemSets = async (params = {}, options = {}) => {
+const getComplexItemSets = async (user, params = {}, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} getComplexItemSets:`
 
   const { searchQuery } = params
 
   try {
-    return ComplexItemSet.filterByQueryString(searchQuery, options)
+    return ComplexItemSet.filterSetsForUser(user, searchQuery, options)
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
     throw new Error(e)
@@ -25,6 +25,17 @@ const getComplexItemSet = async complexItemSetId => {
 
   try {
     return ComplexItemSet.findById(complexItemSetId)
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
+const getAvailableSets = async userId => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} getAvailableSets:`
+
+  try {
+    return ComplexItemSet.filterSetsForUser(userId)
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
     throw new Error(e)
@@ -92,14 +103,15 @@ const editComplexItemSet = async (id, title, leadingContent) => {
   }
 }
 
-const getQuestionForComplexItemSet = async (complexItemSetId, options = {}) => {
+const getQuestionForComplexItemSet = async (
+  complexItemSetId,
+  userId,
+  options = {},
+) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} getQuestionForComplexItemSet:`
 
   try {
-    return Question.filterPublishedQuestions(
-      { filters: { complexItemSet: [complexItemSetId] } },
-      options,
-    )
+    return Question.getSetsQuestionsForUser(complexItemSetId, userId, options)
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
     throw new Error(e)
@@ -162,6 +174,7 @@ const containsSubmissions = async complexItemSet => {
 module.exports = {
   getComplexItemSets,
   getComplexItemSet,
+  getAvailableSets,
   createComplexItemSet,
   editComplexItemSet,
   getQuestionForComplexItemSet,

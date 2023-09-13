@@ -167,9 +167,9 @@ const QuestionPage = props => {
 
   const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
 
-  const {
-    data: { complexItemSets: { result: complexItemSetOptions } = {} } = {},
-  } = useQuery(GET_COMPLEX_ITEM_SETS_OPTIONS)
+  const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
+    GET_COMPLEX_ITEM_SETS_OPTIONS,
+  )
 
   const { data: { getResources } = {} } = useQuery(GET_RESOURCES)
 
@@ -712,12 +712,23 @@ const QuestionPage = props => {
           version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
         }
         currentHandlingEditors={currentHandlingEditors}
+        editorContent={version && JSON.parse(version.content)}
+        // admins have editorial rights (publishing rights) on their own questions
+        editorView={isEditor || (isHandlingEditor && !isAuthor) || isAdmin}
         facultyView={testMode}
         handlingEditors={handlingEditors?.result || []}
         initialMetadataValues={metadataApiToUi(version, testMode)}
+        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
+        // unless the question has already been published
         isInProduction={
           version?.inProduction || (isAdmin && isAuthor && !version?.published)
         }
+        isPublished={version?.published}
+        isRejected={question?.rejected}
+        // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
+        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
+        isUnderReview={version?.underReview}
+        isUserLoggedIn={!!currentUser}
         leadingContent={
           version?.leadingContent.length
             ? JSON.parse(version.leadingContent)
@@ -725,6 +736,8 @@ const QuestionPage = props => {
         }
         loadAssignedHEs={getQuestionsHandlingEditors}
         loadAuthors={getUsers}
+        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
+        // unless the question has already been published
         loading={
           loading ||
           !version ||
@@ -732,9 +745,6 @@ const QuestionPage = props => {
           !getResources ||
           !complexItemSetOptions
         }
-        isUserLoggedIn={!!currentUser}
-        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
-        // unless the question has already been published
         messages={messagesApiToUi(chatThread?.messages, currentUser?.id)}
         metadata={metadata || {}}
         onAssignAuthor={handleAssignAuthor}
@@ -768,15 +778,6 @@ const QuestionPage = props => {
         showNextQuestionLink={false}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
-        editorContent={version && JSON.parse(version.content)}
-        // admins have editorial rights (publishing rights) on their own questions
-        editorView={isEditor || (isHandlingEditor && !isAuthor) || isAdmin}
-        isPublished={version?.published}
-        // admins have editorial rights (publishing rights) on their own questions
-        isRejected={question?.rejected}
-        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
-        // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
-        isUnderReview={version?.underReview}
       />
     </>
   )

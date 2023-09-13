@@ -13,6 +13,7 @@ const {
   Question,
   QuestionVersion,
   ComplexItemSet,
+  Team,
 } = require('../../models/index')
 
 const clearDb = require('../../models/__tests__/_clearDb')
@@ -98,30 +99,58 @@ describe('ComplexItemSet controller', () => {
     const user = await User.insert({})
     const complexItem = await createComplexItemSet(user.id, 'set 3', null)
 
+    // create question1 and set user as its author
     const question1 = await Question.insert({})
+
+    const authorTeam = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question1.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(authorTeam.id, user.id)
 
     await QuestionVersion.insert({
       ...exampleQuestionVersion,
-      published: true,
+      published: false,
       questionId: question1.id,
       complexItemSetId: complexItem.id,
     })
 
+    // create question2 where user is not its author
     const question2 = await Question.insert({})
 
     await QuestionVersion.insert({
       ...exampleQuestionVersion,
-      published: true,
+      published: false,
       questionId: question2.id,
 
       complexItemSetId: complexItem.id,
     })
-    const fetchedSet = await getQuestionForComplexItemSet(complexItem.id)
+
+    // create question3 where user is not its author but question is published
+    const question3 = await Question.insert({})
+
+    await QuestionVersion.insert({
+      ...exampleQuestionVersion,
+      published: true,
+      questionId: question3.id,
+
+      complexItemSetId: complexItem.id,
+    })
+
+    const fetchedSet = await getQuestionForComplexItemSet(
+      complexItem.id,
+      user.id,
+    )
+
     const fetchedIds = fetchedSet.result.map(c => c.id)
 
     expect(fetchedSet.result.length).toEqual(2)
     expect(fetchedIds.includes(question1.id)).toBe(true)
-    expect(fetchedIds.includes(question2.id)).toBe(true)
+    expect(fetchedIds.includes(question2.id)).toBe(false)
+    expect(fetchedIds.includes(question3.id)).toBe(true)
   })
 
   test('containsSubmissions checks if there are submitted questions in a set', async () => {

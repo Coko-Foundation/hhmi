@@ -1,18 +1,10 @@
 import { gql } from '@apollo/client'
 
 export const GET_COMPLEX_ITEM_SETS_OPTIONS = gql`
-  query GetComplexItemSets {
-    complexItemSets(
-      params: {}
-      options: {
-        page: 0
-        pageSize: 10000 # get all of them
-      }
-    ) {
-      result {
-        value: id
-        label: title
-      }
+  query GetAvailableSets($publishedOnly: Boolean) {
+    getAvailableSets(publishedOnly: $publishedOnly) {
+      value: id
+      label: title
     }
   }
 `
@@ -66,7 +58,7 @@ export const GET_COMPLEX_ITEM_SET = gql`
           author {
             displayName
           }
-          versions(latestOnly: true, publishedOnly: true) {
+          versions(latestOnly: true, publishedOnly: false) {
             id
             content
             publicationDate

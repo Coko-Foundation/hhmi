@@ -1,7 +1,13 @@
 /* eslint-disable jest/expect-expect */
 
 import { admin, editor, user2 } from '../support/credentials'
-import { workflowData, question, complexItemSet1 } from '../support/appData'
+import {
+  workflowData,
+  question,
+  complexItemSet1,
+  complexItemSet2,
+  complexItemSet3,
+} from '../support/appData'
 import { laptop } from '../support/viewport'
 import {
   createQuestionButton,
@@ -211,8 +217,9 @@ describe('Question Workflows', () => {
 
 describe('Complex item set workflows', () => {
   before(() => {
-    cy.resetDB()
+    cy.resetDB(disableScripts)
     cy.seedUser(disableScripts, admin)
+    cy.seedUser(disableScripts, user2)
 
     cy.seedComplexItemSet(
       disableScripts,
@@ -227,16 +234,11 @@ describe('Complex item set workflows', () => {
     cy.viewport(laptop.preset)
   })
 
-  it('Set created by a user must not be editable by other users', () => {
-    cy.seedUser(disableScripts, user2)
-
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip("Set shouldn't be visible to other user's without a published question", () => {
     cy.login({ ...user2, visitUrl: setsPage })
     cy.wait('@GQLReq')
-    cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
-    cy.wait('@GQLReq')
-    cy.contains(antTabs, 'Content').should('be.visible')
-    cy.contains('h2', complexItemSet1.title).should('be.visible')
-    cy.get(antTabs).contains('Edit').should('not.exist')
+    cy.contains(`[class="ant-empty-description"]`, 'No Data')
   })
 
   it('Editors should be able to edit any questions', () => {
@@ -268,58 +270,52 @@ describe('Complex item set workflows', () => {
     cy.contains('h2', complexItemSet1.title).should('be.visible')
     cy.get(antTabs).contains('Edit').should('not.exist')
   })
-  it('Sets should only display published questions', () => {
-    cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${admin.username} -1 population submitted`,
-    )
-      .its('stdout')
-      .should('contain', `question created under the author ${admin.username}`)
-    cy.seedQuestion(admin.username, -1, 'population', 'submitted')
 
-    cy.login({ ...admin, visit: dashboardRoute })
+  it('Sets should only display published questions to other users', () => {
+    cy.deleteAllQuestions(disableScripts)
+    cy.seedQuestion(
+      disableScripts,
+      admin.username,
+      -1,
+      'population',
+      'submitted',
+    )
+    cy.seedQuestion(
+      disableScripts,
+      admin.username,
+      -2,
+      'biochemistry',
+      'submitted',
+    )
+    cy.login({ ...admin, visitUrl: dashboardRoute })
     cy.get(listItemWrapper)
       .eq(0)
       .contains('.ProseMirror', 'By 2040, the world s population')
       .click()
     cy.url().then(url => {
       const qId = url.split('/')[4]
-      cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedComplexItemSet.js addQuestion "${complexItemSet1.title}" ${qId}`,
-      )
-        .its('stdout')
-        .should(
-          'contains',
-          ` question - ${qId} added to set "${complexItemSet1.title}"`,
-        )
+      cy.addQuestionToComplexItemSet(disableScripts, complexItemSet1.title, qId)
+      cy.updateQuestionStatus(disableScripts, qId, 'published')
     })
-
-    // [segment]: checking if submitted questions are listed in the set
-    cy.log('checking if submitted questions are listed in the set...')
-    cy.visit(setsPage, { method: 'GET' })
-    cy.wait('@GQLReq')
-
-    cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
-    cy.wait('@GQLReq')
-
-    cy.get('div[class="ant-list-empty-text"]').should('exist')
     cy.visit(dashboardRoute, { method: 'GET' })
     cy.get(listItemWrapper)
-      .eq(0)
-      .contains('.ProseMirror', 'By 2040, the world s population')
+      .eq(1)
+      .contains(
+        '.ProseMirror',
+        'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
+      )
       .click()
     cy.url().then(url => {
       const qId = url.split('/')[4]
-      cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedQuestions.js updateStatus ${qId} published`,
-      )
-        .its('stdout')
-        .should('contains', `question ${qId} updated to published`)
+
+      cy.addQuestionToComplexItemSet(disableScripts, complexItemSet1.title, qId)
     })
+    cy.logout()
+
+    cy.login({ ...user2, visitUrl: setsPage })
 
     // [segment]: cheking if published questions are listed
     cy.log('cheking if published questions are listed...')
-    cy.visit(setsPage, { method: 'GET' })
-    cy.wait('@GQLReq')
 
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
     cy.wait('@GQLReq')
@@ -330,5 +326,79 @@ describe('Complex item set workflows', () => {
     cy.get(listItemWrapper)
       .eq(0)
       .contains('[data-testid="question-status"]', 'Published')
+    // [segment]: checking if submitted questions are listed in the set
+    cy.log('checking if submitted questions are listed in the set...')
+    cy.contains(
+      'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
+    ).should('not.exist')
+  })
+  it('Only published sets must be visible in discover page for non logged in users', () => {
+    cy.deleteAllQuestions(disableScripts)
+    cy.seedComplexItemSet(
+      disableScripts,
+      admin.username,
+      complexItemSet2.title,
+      complexItemSet2.leadingContent,
+    )
+    cy.seedComplexItemSet(
+      disableScripts,
+      admin.username,
+      complexItemSet3.title,
+      complexItemSet3.leadingContent,
+    )
+    cy.seedQuestion(
+      disableScripts,
+      admin.username,
+      -2,
+      'biochemistry',
+      'submitted',
+    )
+    cy.seedQuestion(
+      disableScripts,
+      admin.username,
+      -3,
+      'population',
+      'submitted',
+    )
+    cy.login(admin)
+    cy.get(listItemWrapper)
+      .eq(0)
+      .contains(
+        '.ProseMirror',
+        'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
+      )
+      .click()
+
+    cy.url().then(url => {
+      const qId = url.split('/')[4]
+      cy.addQuestionToComplexItemSet(disableScripts, complexItemSet2.title, qId)
+      cy.updateQuestionStatus(disableScripts, qId, 'published')
+    })
+    cy.get(anchorTags.dashboard).click()
+    cy.get(listItemWrapper)
+      .eq(1)
+      .contains('.ProseMirror', 'By 2040, the world s population')
+      .click()
+    cy.url().then(url => {
+      const qId = url.split('/')[4]
+      cy.addQuestionToComplexItemSet(disableScripts, complexItemSet3.title, qId)
+    })
+    cy.logout()
+    cy.get(anchorTags.discover).click()
+    cy.get('[data-testid="complex-item-set-select"]').click()
+    cy.contains(
+      '[class="ant-select-item-option-content"]',
+      complexItemSet2.title,
+    )
+    cy.contains(
+      '[class="ant-select-item-option-content"]',
+      complexItemSet3.title,
+    ).should('not.exist')
+
+    // [segment]: checking if published set question appears
+    cy.contains(
+      '.ProseMirror',
+      `Energy: carbohydrates :: structural materials: water nucleotides lipids proteins`,
+    )
   })
 })

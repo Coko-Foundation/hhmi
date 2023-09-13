@@ -24,6 +24,7 @@ extend type Query {
     options: PageInput
   ): ComplexItemSetsResponse!
   complexItemSet(id: ID!, questionsOptions: QuestionPageInput): ComplexItemSet
+  getAvailableSets(publishedOnly: Boolean): [ComplexItemSet]!
 }
 
 extend type Mutation {

@@ -565,6 +565,49 @@ class Question extends BaseModel {
       throw new Error(e)
     }
   }
+
+  static async getSetsQuestionsForUser(complexItemSetId, userId, options = {}) {
+    const userTeams = await User.getTeams(userId, options.trx)
+
+    const isEditor = userTeams.some(
+      team =>
+        (team.global && team.role === 'editor') ||
+        team.role === 'handlingEditor',
+    )
+
+    const query = Question.query(options.trx)
+      .leftJoin(
+        'question_versions',
+        'questions.id',
+        'question_versions.question_id',
+      )
+      .distinctOn('questions.id')
+      .orderBy([
+        'questions.id',
+        { column: 'question_versions.created', order: 'desc' },
+      ])
+
+    if (!isEditor) {
+      query
+        .leftJoin('teams', 'questions.id', 'teams.object_id')
+        .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+        .where({
+          published: true,
+          complexItemSetId,
+        })
+        .orWhere({
+          complexItemSetId,
+          role: 'author',
+          userId,
+        })
+    } else {
+      query.where({ complexItemSetId })
+    }
+
+    query.debug()
+
+    return applyListQueryOptions(query, options)
+  }
 }
 
 module.exports = Question

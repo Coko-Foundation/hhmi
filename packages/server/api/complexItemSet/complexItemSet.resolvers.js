@@ -1,6 +1,7 @@
 const {
   getComplexItemSets,
   getComplexItemSet,
+  getAvailableSets,
   createComplexItemSet,
   editComplexItemSet,
   getQuestionForComplexItemSet,
@@ -10,19 +11,21 @@ const {
 
 const { getImageUrls } = require('../../controllers/utils')
 
-const complexItemSetsResolver = async (_, { params, options }) => {
-  return getComplexItemSets(params, options)
+const complexItemSetsResolver = async (_, { params, options }, ctx) => {
+  return getComplexItemSets(ctx.user, params, options)
 }
 
-const complexItemSetResolver = async (
-  _,
-  { id, onlyPublishedQuestions, questionsOptions },
-  ctx,
-) => {
+const complexItemSetResolver = async (_, { id, questionsOptions }, ctx) => {
   const complexItemSet = await getComplexItemSet(id)
-  complexItemSet.options = questionsOptions
-  complexItemSet.onlyPublishedQuestions = onlyPublishedQuestions
+  complexItemSet.filter = { userId: ctx.user, questionsOptions }
   return complexItemSet
+}
+
+const availableSetsResolver = async (_, { publishedOnly }, ctx) => {
+  // pass current user if we're asking for sets that a user can assign question to
+  // (so set that are not necessarily published)
+  const userId = publishedOnly ? null : ctx.user
+  return getAvailableSets(userId)
 }
 
 const createComplexItemSetResolver = async (
@@ -42,11 +45,8 @@ const editComplexItemSetResolver = async (
 }
 
 const complexItemSetQuestionsResolver = async complexItemSet => {
-  return getQuestionForComplexItemSet(
-    complexItemSet.id,
-    // complexItemSet.onlyPublishedQuestions,
-    complexItemSet.options,
-  )
+  const { id, filter: { userId, questionsOptions } = {} } = complexItemSet
+  return getQuestionForComplexItemSet(id, userId, questionsOptions)
 }
 
 const authorResolver = async complexItemSet => {
@@ -71,6 +71,7 @@ module.exports = {
   Query: {
     complexItemSets: complexItemSetsResolver,
     complexItemSet: complexItemSetResolver,
+    getAvailableSets: availableSetsResolver,
   },
   Mutation: {
     createComplexItemSet: createComplexItemSetResolver,

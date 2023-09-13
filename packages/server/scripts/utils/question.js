@@ -1,5 +1,12 @@
 const { logger, useTransaction } = require('@coko/server')
-const { Question, QuestionVersion, Team, User } = require('../../models')
+
+const {
+  Question,
+  QuestionVersion,
+  Team,
+  User,
+  ComplexItemSet,
+} = require('../../models')
 
 module.exports.EmptyQuestionVersions = async () => {
   try {
@@ -113,6 +120,16 @@ module.exports.updateStatus = async (id, status) => {
             : { [status]: true }),
         })
         .where('questionId', id)
+        .returning('*')
+        .first()
+
+      if (status === 'published') {
+        await ComplexItemSet.query()
+          .patch({
+            isPublished: true,
+          })
+          .where({ id: updatedQuestion.complexItemSetId })
+      }
 
       if (!updatedQuestion) {
         throw new Error("Something wen't wrong!")

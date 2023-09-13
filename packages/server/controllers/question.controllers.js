@@ -290,11 +290,26 @@ const modifyQuestionVersion = async (
   try {
     return useTransaction(
       async trx => {
-        return QuestionVersion.patchAndFetchById(
+        const questionVersion = await QuestionVersion.patchAndFetchById(
           questionVersionId,
           versionData,
           { trx },
         )
+
+        if (
+          questionVersion.complexItemSetId !== null &&
+          questionVersion.published
+        ) {
+          await ComplexItemSet.patchAndFetchById(
+            questionVersion.complexItemSetId,
+            { isPublished: true },
+            {
+              trx,
+            },
+          )
+        }
+
+        return questionVersion
       },
       {
         trx: options.trx,

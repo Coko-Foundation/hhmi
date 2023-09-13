@@ -453,7 +453,15 @@ const routes = (
                 )}
               />
               {/* individual sets and their questions can be viewed by all visitors */}
-              <Route exact path="/set/:id" render={() => <ComplexItemSet />} />
+              <Route
+                exact
+                path="/set/:id"
+                render={() => (
+                  <Authenticated>
+                    <ComplexItemSet />
+                  </Authenticated>
+                )}
+              />
               <Route component={DeactivatedUser} path="/deactivated-user" />
               {/* Static pages hosted elsewhere */}
               <Route

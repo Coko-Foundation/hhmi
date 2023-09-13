@@ -29,7 +29,7 @@ const ComplexItemSetPage = () => {
 
   const { metadata } = useMetadata()
 
-  const { data: complexItemSetOptions } = useQuery(
+  const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
   )
 
@@ -245,7 +245,7 @@ const ComplexItemSetPage = () => {
                 ascending: true,
                 orderBy: 'publication_date',
               },
-              true,
+              false,
             )
           : []
       }

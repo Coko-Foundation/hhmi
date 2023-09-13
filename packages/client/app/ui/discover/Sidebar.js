@@ -176,6 +176,7 @@ const Sidebar = props => {
               </Form.Item>
               <Form.Item label="Complex item set" name="complexItemSet">
                 <Select
+                  data-testid="complex-item-set-select"
                   mode="multiple"
                   optionFilterProp="label"
                   options={complexItemSetOptions}
