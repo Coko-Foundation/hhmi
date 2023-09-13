@@ -63,9 +63,9 @@ const DashboardPage = () => {
     }
   }
 
-  const {
-    data: { complexItemSets: { result: complexItemSetOptions } = {} } = {},
-  } = useQuery(GET_COMPLEX_ITEM_SETS_OPTIONS)
+  const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
+    GET_COMPLEX_ITEM_SETS_OPTIONS,
+  )
 
   // leave fetch policy to network until pagination is handled in the cache (with a merge function)
   const [
