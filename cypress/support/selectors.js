@@ -10,6 +10,8 @@ export const antTableCell = 'td[class="ant-table-cell"]'
 
 export const antModalConfirmTitle = '[class="ant-modal-confirm-title"]'
 
+export const antSelectItem = '.ant-select-item'
+
 export const antTabs = '.ant-tabs-tab-btn'
 
 export const exportToWordButton =

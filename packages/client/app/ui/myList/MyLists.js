@@ -470,6 +470,7 @@ const MyLists = props => {
               </ExportListToWordButton>
               <Button
                 disabled={selectedRows.length !== 1}
+                id="exportToQTI"
                 onClick={handleExportListQTI}
                 type="primary"
               >

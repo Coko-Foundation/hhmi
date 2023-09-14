@@ -1,3 +1,4 @@
+/* eslint-disable jest/no-disabled-tests */
 /* eslint-disable jest/expect-expect */
 import { admin, user1, user2, editor, reviewer } from '../support/credentials'
 import {
@@ -110,7 +111,6 @@ describe('Tests for user authentication', () => {
     cy.get('[id="firstName"]').type(contact.firstName)
     cy.get('[id="pronouns"]').type(contact.pronouns)
     // cy.get('[id="middleName"]').type(contact.middleName)
-
     cy.get('[id="displayName"]').clear().type(contact.displayName)
     cy.get('[id="phone"]').type(contact.phone)
 

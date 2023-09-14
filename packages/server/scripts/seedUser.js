@@ -12,7 +12,7 @@ const { seedUser, addToTeams } = require('./utils/user')
  *              [5] - role [admin,reviewer,editor] (default - editor)
  * --->   [2] = addToTeams
  *              [3] - email id
- *              [4] - role [admin,reviewer,editor]
+ *              [4] - role [admin,reviewer,editor,handlingEditor]
  */
 
 ;(async () => {

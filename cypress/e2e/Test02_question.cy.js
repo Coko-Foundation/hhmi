@@ -1,7 +1,10 @@
+/* eslint-disable jest/no-disabled-tests */
 /* eslint-disable jest/expect-expect */
+import path from 'path'
 
 import { admin, user2 } from '../support/credentials'
-import { editor, question } from '../support/appData'
+
+import { editor, question, listExportContent } from '../support/appData'
 import {
   antModalConfirmTitle,
   listItemWrapper,
@@ -43,7 +46,6 @@ describe('Testing questions', () => {
     cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     cy.viewport(laptop.preset)
   })
-
   it('checking the wax editor', () => {
     cy.login(user2)
     cy.get(createQuestionButton).click()
@@ -321,8 +323,6 @@ describe('Testing lists', () => {
     cy.get('.ant-table-row').eq(0).contains(antTableCell, 'list1')
     // [segment]: deleting a list
   })
-  // skipped due to logout button issue.
-  // eslint-disable-next-line jest/no-disabled-tests
   it('adding questions to new & existing list', () => {
     cy.seedList(disableScripts, 'new_list', user2.username)
     cy.login({ ...user2 })
@@ -393,6 +393,71 @@ describe('Testing lists', () => {
       .should('be.visible')
       .contains('p')
       .should('contain', 'Energy: carbohydrates')
+
+    // [segment]: export word
+    cy.log('export to word')
+
+    cy.url().then(url => {
+      const id = url.split('/')[4]
+
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(4000)
+      cy.contains('Select All').click()
+      cy.get('[data-testid="add-to-list-btn"]').click()
+      cy.get('[id="exportToWord"]').click()
+      cy.contains(
+        '[class="ant-modal-footer"] button[type="button"]',
+        'Export',
+      ).click()
+
+      // [info]: triggering  a reload manually to avoid the page reload error
+      cy.window()
+        .document()
+        .then(doc => {
+          setTimeout(() => {
+            doc.location.reload()
+          }, 1000)
+        })
+
+      const downloadsFolder = Cypress.config('downloadsFolder')
+
+      cy.log(downloadsFolder, `${id}.docx`)
+      cy.readFile(path.join(downloadsFolder, `${id}.docx`), {
+        timeout: 100000,
+      })
+      cy.task('readF', path.join(downloadsFolder, `${id}.docx`)).then(data => {
+        // eslint-disable-next-line jest/valid-expect
+        expect(data).to.equal(listExportContent)
+      })
+    })
+
+    // [segment]: export to QTI
+    cy.log('export to QTI')
+    cy.url().then(url => {
+      const id = url.split('/')[4]
+
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(4000)
+      cy.contains('Select All').click()
+      cy.get('[data-testid="add-to-list-btn"]').click()
+      cy.get('[id="exportToQTI"]').click()
+
+      // [info]: triggering  a reload manually to avoid the page reload error
+      cy.window()
+        .document()
+        .then(doc => {
+          setTimeout(() => {
+            doc.location.reload()
+          }, 1000)
+        })
+
+      const downloadsFolder = Cypress.config('downloadsFolder')
+
+      cy.log(downloadsFolder, `${id}.zip`)
+      cy.readFile(path.join(downloadsFolder, `${id}.zip`), {
+        timeout: 100000,
+      })
+    })
   })
   it('rename list', () => {
     cy.seedList(disableScripts, 'list4', user2.username)

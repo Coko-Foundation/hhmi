@@ -60,6 +60,11 @@ const addQuestionToSet = async (title, questionId) => {
         questionId,
       })
       .patch({ complexItemSetId: complexItemSet.id })
+      .returning('*')
+
+    if (res.published) {
+      await complexItemSet.patch({ isPublished: true })
+    }
 
     if (!res) {
       throw new Error('Check the question id that is passed!')

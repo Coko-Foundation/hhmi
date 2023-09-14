@@ -8,7 +8,6 @@ import { getDateInFormat } from '../utils/helpers'
 import { laptop } from '../support/viewport'
 
 const disableScripts = false
-// eslint-disable-next-line jest/no-disabled-tests
 describe('Discover page tests', () => {
   before(() => {
     cy.resetDB(disableScripts)

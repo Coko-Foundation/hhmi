@@ -178,13 +178,14 @@ const AssignHEButton = props => {
         {currentHandlingEditors.length > 0 ? (
           <>
             <h3>Current assigned handling editors:</h3>
-            <ol>
+            <ol data-testid="current-handling-editors">
               {currentHandlingEditors.map(he => (
                 <li key={he.id}>
                   <HeContainer>
                     {he.displayName}
                     <StyledButton
                       aria-label={`Unassign handling editor ${he.displayName}`}
+                      data-testid={`unassign-${he.displayName}`}
                       icon={<DeleteOutlined />}
                       onClick={() => handleUnassignHE(he)}
                     />
@@ -236,6 +237,7 @@ const AssignHEButton = props => {
             <Select
               // https://github.com/ant-design/ant-design/issues/19970#issuecomment-763139893
               async
+              data-testid="handlingEditor-select"
               defaultOpen={false}
               labelInValue
               loading={searchLoading}

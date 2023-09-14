@@ -174,3 +174,5 @@ export const complexItemSet3 = {
   leadingContent:
     'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.',
 }
+
+export const listExportContent = `Question 1Energy: carbohydrates :: structural materials:waternucleotideslipidsproteinsSolutionsNot correctNot correctNot correctCorrectcorrect answer`

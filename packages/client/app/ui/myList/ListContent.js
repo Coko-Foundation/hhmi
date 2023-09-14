@@ -175,6 +175,7 @@ const ListContent = ({
           </ExportListToWordButton>
           <Button
             disabled={selectedQuestions.length === 0}
+            id="exportToQTI"
             onClick={handleExportQTI}
             type="primary"
           >

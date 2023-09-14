@@ -151,18 +151,20 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'seedQuestion',
-  (disabled, username, date, metadata, status) => {
+  (disabled, username, date, metadata, status, handlingEditor = '') => {
     if (!disabled) {
       cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${username} ${date} ${metadata} ${status}`,
+        `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${username} ${date} ${metadata} ${status} ${handlingEditor}`,
       )
         .its('stdout')
         .should(
           'contain',
           `question created under the author ${username} and is ${status}`,
         )
-    } else {
-      cy.log(`seedQuestion is command disabled`)
+        .should(
+          `${handlingEditor.length > 0 ? '' : 'not.'}contain`,
+          `assigned ${handlingEditor} as handling editor`,
+        )
     }
   },
 )

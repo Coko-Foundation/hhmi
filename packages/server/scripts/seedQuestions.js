@@ -67,6 +67,8 @@ const checkDataType = (validData, dataType) => {
           process.argv[6],
         )
 
+        const HEUsername = process.argv[7]
+
         const questionStatus = isValidStatus
           ? validQuestionStatus[statusIndex]
           : validQuestionStatus[0]
@@ -82,6 +84,7 @@ const checkDataType = (validData, dataType) => {
             date,
             metadata[validDataType[typeIndex]],
             questionStatus,
+            HEUsername,
           )
         } else {
           createQuestion(
@@ -95,6 +98,10 @@ const checkDataType = (validData, dataType) => {
         logger.info(
           `[seedQuestions]: question created under the author ${username} and is ${questionStatus}`,
         )
+        if (HEUsername)
+          logger.info(
+            `[seedQuestions]: assigned ${HEUsername} as handling editor`,
+          )
         break
       }
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo, useCallback } from 'react'
-import PropTypes from 'prop-types'
 import { isEqual } from 'lodash'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import without from 'lodash/without'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
@@ -217,6 +217,7 @@ const selectAllCheckbox = (
     <CheckBox
       aria-checked={isChecked()}
       checked={datalgth > 0 && itemslgth === datalgth}
+      data-testid="select-all-checkbox"
       indeterminate={isChecked() === 'mixed'}
       onChange={toggle}
     >
