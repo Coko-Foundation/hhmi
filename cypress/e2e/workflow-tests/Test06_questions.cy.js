@@ -117,18 +117,18 @@ describe('Question Workflows', () => {
         cy.log("if questions appear in editor's authored questions tab...")
         cy.contains(
           '[class="ant-tabs-tab ant-tabs-tab-active"]',
-          'Authored Questions',
+          'Authored Items',
         ).click()
         cy.get('[class="ant-list-empty-text"]').should('exist')
         // [segment]: if all questions appear in editor questions tab
         cy.log('if all questions appear in editor questions tab')
-        cy.contains(antTabs, 'Editor Questions').click()
+        cy.contains(antTabs, 'Editor Items').click()
         cy.wait('@GQLReq')
         cy.get(listItemWrapper).should('have.length', 2)
       })
       it('Overall question flow', () => {
         cy.login({ ...editor })
-        cy.contains(antTabs, 'Editor Questions').click()
+        cy.contains(antTabs, 'Editor Items').click()
         cy.wait('@GQLReq')
         checkStage(1, 'reject')
         checkStage(0, 'review')
@@ -149,7 +149,7 @@ describe('Question Workflows', () => {
         checkStage(0, 'publish')
         // [segment]: checking  published questions
         cy.log('checking published questions...')
-        cy.contains(anchorTags.discover, 'Browse Questions').click()
+        cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.wait('@GQLReq')
         cy.get(listItemWrapper)
           .eq(0)
@@ -176,16 +176,12 @@ describe('Question Workflows', () => {
           'published',
         )
         cy.login(editor)
-        cy.contains(anchorTags.discover, 'Browse Questions').click()
+        cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
-        cy.contains('button[type="button"]', 'Edit question').should(
-          'not.exist',
-        )
-        cy.contains(anchorTags.discover, 'Browse Questions').click()
+        cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+        cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.get(listItemWrapper).eq(1).contains('p', 'What substance from')
-        cy.contains('button[type="button"]', 'Edit question').should(
-          'not.exist',
-        )
+        cy.contains('button[type="button"]', 'Edit item').should('not.exist')
       })
 
       context('Assign handling editor', () => {
@@ -209,7 +205,7 @@ describe('Question Workflows', () => {
         })
         beforeEach(() => {
           cy.login(editor)
-          cy.contains(antTabs, 'Editor Questions').click()
+          cy.contains(antTabs, 'Editor Items').click()
           cy.wait('@GQLReq')
         })
         it('Assign HE to a single question', () => {
@@ -220,7 +216,7 @@ describe('Question Workflows', () => {
           cy.wait('@GQLReq')
 
           // [segment]: checking if HE is able to handle their authored question
-          cy.log('checking if HE is able to handle their authored question...')
+          cy.log('checking if HE is able to handle their authored item...')
           cy.get('button[id="assignHE"]').first().click()
           cy.get('div[data-testid="handlingEditor-select"]').click()
           cy.contains(antSelectItem, handlingEditor1.username).click()
@@ -233,7 +229,7 @@ describe('Question Workflows', () => {
           cy.wait('@GQLReq')
           cy.contains(
             '[class="ant-modal-body"]',
-            `Selected Handling Editor couldn't be assigned for this question, because Handling editors cannot handle the questions they authored.`,
+            `Selected Handling Editor couldn't be assigned for this item, because Handling editors cannot handle the items they authored.`,
           )
 
           cy.contains(
@@ -257,7 +253,7 @@ describe('Question Workflows', () => {
 
           cy.contains(
             '[class="ant-modal-body"]',
-            `Handling editor assigned to the question successfully`,
+            `Handling editor assigned to the item successfully`,
           )
 
           cy.contains(anchorTags.dashboard, 'Dashboard', { force: true }).click(
@@ -290,7 +286,7 @@ describe('Question Workflows', () => {
           ).click()
           cy.contains(
             '[class="ant-modal-body"]',
-            `Some Handling Editors couldn't be assigned for selected questions, because Handling editors cannot handle the questions they authored.`,
+            `Some Handling Editors couldn't be assigned for selected items, because Handling editors cannot handle the items they authored.`,
           )
 
           cy.contains(
@@ -302,6 +298,7 @@ describe('Question Workflows', () => {
           cy.log('checking if question with conflict remains checked...')
           cy.get('[class="ant-checkbox-input"]').eq(1).should('be.checked')
         })
+
         it('unassign HE', () => {
           cy.seedQuestion(
             disableScripts,
@@ -345,10 +342,10 @@ describe('Question Workflows', () => {
         )
         cy.login({ ...handlingEditor1 })
         cy.log("if questions appear in editor's authored questions tab...")
-        cy.contains(antTabs, 'Authored Questions').click()
+        cy.contains(antTabs, 'Authored Items').click()
         cy.get('[class="ant-list-empty-text"]').should('exist')
         cy.log('if all questions appear in editor questions tab')
-        cy.contains(antTabs, 'Handling Editor Questions').click()
+        cy.contains(antTabs, 'Handling Editor Items').click()
 
         cy.wait('@GQLReq')
         cy.get(listItemWrapper).should('have.length', 1)
@@ -376,19 +373,15 @@ describe('Question Workflows', () => {
           'published',
         )
         cy.login(handlingEditor1)
-        cy.contains(anchorTags.discover, 'Browse Questions').click()
+        cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
-        cy.contains('button[type="button"]', 'Edit question').should(
-          'not.exist',
-        )
-        cy.contains(anchorTags.discover, 'Browse Questions').click()
+        cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+        cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.get(listItemWrapper)
           .eq(1)
           .contains('p', 'What substance from')
           .click()
-        cy.contains('button[type="button"]', 'Edit question').should(
-          'not.exist',
-        )
+        cy.contains('button[type="button"]', 'Edit item').should('not.exist')
       })
       it('Overall question workflow', () => {
         cy.deleteAllQuestions(disableScripts)
@@ -409,7 +402,7 @@ describe('Question Workflows', () => {
           handlingEditor1.username,
         )
         cy.login(handlingEditor1)
-        cy.contains(antTabs, 'Handling Editor Questions').click()
+        cy.contains(antTabs, 'Handling Editor Items').click()
         checkStage(1, 'reject')
         checkStage(0, 'review')
         checkStage(0, 'production')
@@ -427,11 +420,11 @@ describe('Question Workflows', () => {
       cy.get('[data-testid="publish-question-btn"]').first().click()
       cy.contains(
         antModalConfirmTitle,
-        'Are you sure you want to publish this question version?',
+        'Are you sure you want to publish this item version?',
       )
       cy.contains(
         '[class="ant-modal-confirm-content"]',
-        'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Browse Questions Page.',
+        'Clicking "Yes, publish" will make this item discoverable for all website visitors in the Browse Items Page.',
       )
       cy.contains(buttonAntModalBody, 'Yes, publish').click()
       cy.wait('@GQLReq')
@@ -460,7 +453,7 @@ describe('Question Workflows', () => {
       ).click()
       cy.contains(
         '[class="ant-modal-body"]',
-        'This action is irreversible. You will not be able to change the author of this question again.',
+        'This action is irreversible. You will not be able to change the author of this item again.',
       )
       cy.contains(
         '[class="ant-modal-footer"] button[type="button"]',
@@ -469,7 +462,7 @@ describe('Question Workflows', () => {
       cy.wait('@GQLReq')
       cy.contains(
         '[class="ant-modal-confirm-content"]',
-        `User ${user2.username} has been assgined as the author of this question`,
+        `User ${user2.username} has been assgined as the author of this item`,
       )
       cy.contains(
         '[class="ant-modal-content"] button[type="button"]',
@@ -499,12 +492,12 @@ describe('Question Workflows', () => {
         'published',
       )
       cy.login(admin)
-      cy.contains(anchorTags.discover, 'Browse Questions').click()
+      cy.contains(anchorTags.discover, 'Browse Items').click()
       cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
-      cy.contains('button[type="button"]', 'Edit question').should('not.exist')
-      cy.contains(anchorTags.discover, 'Browse Questions').click()
+      cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+      cy.contains(anchorTags.discover, 'Browse Items').click()
       cy.get(listItemWrapper).eq(1).contains('p', 'What substance from')
-      cy.contains('button[type="button"]', 'Edit question').should('not.exist')
+      cy.contains('button[type="button"]', 'Edit item').should('not.exist')
     })
   })
 })
