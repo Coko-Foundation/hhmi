@@ -58,7 +58,11 @@ class Team extends TeamModel {
             .from('users')
             .leftJoin('team_members', 'team_members.user_id', 'users.id')
             .leftJoin('teams', 'team_members.team_id', 'teams.id')
-            .where('teams.role', role)
+            .where({
+              'teams.role': role,
+              'teams.global': true,
+              'users.isActive': true,
+            })
         })
         .where('users.displayName', 'ilike', `%${query}%`)
 
