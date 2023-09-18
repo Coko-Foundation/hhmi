@@ -170,7 +170,7 @@ const ListContentPage = () => {
       },
     }
 
-    exportQuestionsToQTIMutation(mutationData)
+    return exportQuestionsToQTIMutation(mutationData)
       .then(res => {
         const filename = res.data.exportQuestionsQTI
         const url = `${serverUrl}/api/download/${filename}`

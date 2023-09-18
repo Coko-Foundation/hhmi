@@ -76,6 +76,7 @@ const sortOptions = [
 ]
 
 const ModalContext = React.createContext(null)
+const ModalHeader = Modal.header
 const ModalFooter = Modal.footer
 
 const ListContent = ({
@@ -111,7 +112,29 @@ const ListContent = ({
   }
 
   const handleExportQTI = showFeedback => {
-    return onExportQTI(selectedQuestions, searchParams.orderBy)
+    onExportQTI(selectedQuestions, searchParams.orderBy)
+      .then(() => {})
+      .catch(e => {
+        const errorModal = error()
+        errorModal.update({
+          title: <ModalHeader>QTI export failed</ModalHeader>,
+          content: e,
+          footer: [
+            <ModalFooter key="footer">
+              <Button
+                autoFocus
+                data-testid="error-export-btn"
+                key="ok-error"
+                onClick={() => {
+                  errorModal.destroy()
+                }}
+              >
+                Ok
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      })
   }
 
   const confirmDelete = () => {
