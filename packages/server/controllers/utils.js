@@ -1,4 +1,5 @@
 const path = require('path')
+const fs = require('fs').promises
 const cloneDeep = require('lodash/cloneDeep')
 const { logger, fileStorage, File, uuid } = require('@coko/server')
 
@@ -46,19 +47,44 @@ const findImages = async (n, imageData, tempFolderPath) => {
 
   if (n.type === 'figure') {
     const [image] = n.content
-    const { fileId } = image.attrs.extraData
-    const file = await File.findById(fileId)
-    const medium = file.storedObjects.find(o => o.type === 'medium')
-    const { extension, key, id } = medium
+    const { attrs } = image
 
-    const downloadPath = path.join(
-      tempFolderPath,
-      `${id}-${uuid()}.${extension}`,
-    )
+    if (attrs && attrs.extraData && attrs.extraData.fileId) {
+      const { fileId } = attrs.extraData
+      const file = await File.findById(fileId)
+      const medium = file.storedObjects.find(o => o.type === 'medium')
+      const { extension, key, id } = medium
 
-    await fileStorage.download(key, downloadPath)
-    // eslint-disable-next-line no-param-reassign
-    imageData[image.attrs.id] = downloadPath
+      const downloadPath = path.join(
+        tempFolderPath,
+        `${id}-${uuid()}.${extension}`,
+      )
+
+      await fileStorage.download(key, downloadPath)
+      // eslint-disable-next-line no-param-reassign
+      imageData[attrs.id] = downloadPath
+    } else {
+      // convert base64 string into an image and upload it to tempFolderPath
+      const matches = attrs.src.match(/^data:([A-Za-z-+/]+);base64,(.+)$/)
+
+      const ext = matches[1].substring(
+        matches[1].indexOf('/') + 1,
+        matches[1].length,
+      )
+
+      const buffer = Buffer.from(matches[2], 'base64')
+      attrs.id = uuid()
+
+      const downloadPath = path.join(tempFolderPath, `${attrs.id}.${ext}`)
+
+      try {
+        await fs.writeFile(downloadPath, buffer)
+        // eslint-disable-next-line no-param-reassign
+        imageData[attrs.id] = downloadPath
+      } catch (e) {
+        logger.error(e)
+      }
+    }
 
     return
   }
