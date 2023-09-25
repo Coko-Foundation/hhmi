@@ -1,5 +1,13 @@
 import { gql } from '@apollo/client'
 
+export const CREATE_CHAT_THREAD = gql`
+  mutation CreateChatThread($input: CreateChatThreadInput!) {
+    createChatThread(input: $input) {
+      id
+    }
+  }
+`
+
 export const GET_CHAT_THREAD = gql`
   query chatThread($id: ID!) {
     chatThread(id: $id) {
