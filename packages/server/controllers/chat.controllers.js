@@ -32,11 +32,11 @@ const getMessages = async (threadId, options = {}) => {
   try {
     return (
       await ChatMessage.query(options.trx).where('chatThreadId', threadId)
-    ).map(({ id, created, content, user }) => ({
+    ).map(({ id, created, content, userId }) => ({
       id,
       content,
       timestamp: created,
-      user,
+      userId,
     }))
   } catch (error) {
     logger.error(`${CONTROLLER_MESSAGE} getMessages: ${error.message}`)
