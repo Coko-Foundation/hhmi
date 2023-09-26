@@ -1348,20 +1348,23 @@ const Question = props => {
                   </>
                 ),
               },
-              isSubmitted && {
-                label: AuthorChatTab,
-                key: 1,
-                children: (
-                  <ChatThread
-                    announcementText={announcementText}
-                    hasMore={hasMoreMessages}
-                    isActive={activeKey === 1}
-                    messages={messages}
-                    onFetchMore={onFetchMoreMessages}
-                    onSendMessage={onSendMessage}
-                  />
-                ),
-              },
+
+              // temporarily disabled chat tab
+              isSubmitted &&
+                false && {
+                  label: AuthorChatTab,
+                  key: 1,
+                  children: (
+                    <ChatThread
+                      announcementText={announcementText}
+                      hasMore={hasMoreMessages}
+                      isActive={activeKey === 1}
+                      messages={messages}
+                      onFetchMore={onFetchMoreMessages}
+                      onSendMessage={onSendMessage}
+                    />
+                  ),
+                },
             ]}
             onChange={handleTabChange}
             renderTabBar={(tabProps, DefaultTabBar) => {
