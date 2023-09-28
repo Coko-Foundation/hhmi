@@ -9,6 +9,7 @@ const {
   duplicateQuestion: duplicateQuestionController,
   assignHandlingEditors,
   unassignHandlingEditor,
+  getQuestionParticipants,
 } = require('../question.controllers')
 
 const {
@@ -16,6 +17,10 @@ const {
   exampleQuestionVersion,
   exampleQuestionVersionTwo,
 } = require('./__helpers__/questions')
+
+const {
+  createGlobalEditorTeamWithUsers,
+} = require('../../models/__tests__/__helpers__/teams')
 
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
 
@@ -128,6 +133,58 @@ describe('Question Controller', () => {
     const exportFilename = await generateScormZip(questionVersion.id)
 
     expect(exportFilename).toBe(`${question.id}.zip`)
+  })
+
+  test('getQuestionParticipants gets correct question participants', async () => {
+    const { user: editor } = await createGlobalEditorTeamWithUsers()
+
+    const updatedEditor = await User.query()
+      .update({
+        displayName: 'editor1',
+        username: 'editor1',
+      })
+      .where({ id: editor.id })
+      .returning('username')
+
+    const author = await User.insert({
+      username: 'user1',
+      displayName: 'user 1',
+    })
+
+    const HE = await User.insert({
+      username: 'handlingEditor1',
+      displayName: 'HE1',
+    })
+
+    const question = await Question.insert({})
+
+    const authorTeam = await Team.insert({
+      objectId: question.id,
+      objectType: 'question',
+      role: 'author',
+      displayName: 'Author',
+    })
+
+    await Team.addMember(authorTeam.id, author.id)
+
+    const handlingEditorTeam = await Team.insert({
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(handlingEditorTeam.id, HE.id)
+
+    const participants = await getQuestionParticipants(question.id)
+
+    const participantUsernames = participants.map(
+      participant => participant.username,
+    )
+
+    expect(participantUsernames).toContain(updatedEditor[0].username)
+    expect(participantUsernames).toContain(HE.username)
+    expect(participantUsernames).toContain(author.username)
   })
 
   test('assignHandlingEditor assigns editor to correct team', async () => {
