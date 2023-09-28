@@ -34,6 +34,7 @@ import {
   GET_CHAT_THREAD,
   SEND_MESSAGE,
   CREATE_CHAT_THREAD,
+  GET_QUESTION_PARTICIPANTS,
 } from '../graphql'
 import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 
@@ -168,6 +169,13 @@ const QuestionPage = props => {
   })
 
   const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
+
+  const { data: { getQuestionParticipants: questionParticipants } = {} } =
+    useQuery(GET_QUESTION_PARTICIPANTS, {
+      variables: {
+        id,
+      },
+    })
 
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
@@ -678,12 +686,13 @@ const QuestionPage = props => {
     getChatThread({ variables })
   }
 
-  const onSendMessage = async content => {
+  const onSendMessage = async (content, mentions) => {
     const variables = {
       input: {
         content,
         chatThreadId: question?.chatThreadId,
         userId: currentUser.id,
+        mentions,
       },
     }
 
@@ -792,6 +801,7 @@ const QuestionPage = props => {
         onSendMessage={onSendMessage}
         onUnassignHandlingEditor={handleUnassignHE}
         qtiZipLoading={generateQtiZipLoading}
+        questionParticipants={questionParticipants}
         questionAgreedTc={false} //
         refetchUser={refetchCurrentUser}
         resources={getResources}
