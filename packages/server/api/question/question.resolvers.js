@@ -8,6 +8,7 @@ const {
   getReviewerDashboard,
   getManagingEditorDashboard,
   getPublishedQuestionsIds,
+  getQuestionParticipants,
   assignAuthorship,
   getHandlingEditorDashboard,
 
@@ -185,6 +186,10 @@ const heAssignedResolver = async question => {
   return assignedHEs.length > 0
 }
 
+const getQuestionParticipantsResolver = async (_, { id }) => {
+  return getQuestionParticipants(id)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -195,6 +200,7 @@ module.exports = {
     getPublishedQuestionsIds: getPublishedQuestionsIdsResolver,
     getHandlingEditorDashboard: getHandlingEditorDashboardResolver,
     getQuestionsHandlingEditors: getQuestionsHandlingEditorsResolver,
+    getQuestionParticipants: getQuestionParticipantsResolver,
   },
   Mutation: {
     createQuestion: createQuestionResolver,

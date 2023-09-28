@@ -1,5 +1,10 @@
 # TYPES
 
+type QuestionParticipantsResponse {
+  id: ID!
+  username: String!
+}
+
 type Question {
   id: ID!
   versions(latestOnly: Boolean, publishedOnly: Boolean): [QuestionVersion!]!
@@ -241,6 +246,7 @@ extend type Query {
   ): QuestionsResponse!
 
   getQuestionsHandlingEditors(questionId: ID!): [User!]!
+  getQuestionParticipants(id: ID!): [QuestionParticipantsResponse!]!
 }
 
 extend type Mutation {
