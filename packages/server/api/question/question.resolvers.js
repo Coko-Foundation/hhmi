@@ -180,6 +180,11 @@ const chatThreadResolver = async question => {
   return getChatThreadForQuestion(question.id)
 }
 
+const heAssignedResolver = async question => {
+  const assignedHEs = await getQuestionsHandlingEditors(question.id)
+  return assignedHEs.length > 0
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -213,6 +218,7 @@ module.exports = {
     versions: versionsResolver,
     author: authorResolver,
     chatThreadId: chatThreadResolver,
+    heAssigned: heAssignedResolver,
   },
   QuestionVersion: {
     question: versionQuestionResolver,

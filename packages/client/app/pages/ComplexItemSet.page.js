@@ -234,19 +234,19 @@ const ComplexItemSetPage = () => {
       onSave={handleSave}
       questions={
         data && metadata && complexItemSetOptions
-          ? dashboardDataMapper(
-              data?.complexItemSet.questions.result,
+          ? dashboardDataMapper({
+              questions: data?.complexItemSet.questions.result,
               metadata,
-              complexItemSetOptions?.complexItemSets,
-              !!currentUser,
-              true,
-              {
+              complexItemSetOptions: complexItemSetOptions?.complexItemSets,
+              showStatus: !!currentUser,
+              showAuthor: true,
+              relatedQuestionIds: {
                 filters: { complexItemSet: [id] },
                 ascending: true,
                 orderBy: 'publication_date',
               },
-              false,
-            )
+              testMode: true,
+            })
           : []
       }
       submissionMessage={submissionMessage}

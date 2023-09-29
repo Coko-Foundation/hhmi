@@ -270,15 +270,15 @@ const ListContentPage = () => {
       onSearch={handleSearch}
       questions={
         questions && metadata
-          ? dashboardDataMapper(
+          ? dashboardDataMapper({
               questions,
               metadata,
               complexItemSetOptions,
-              false,
-              false,
+              showStatus: false,
+              showAuthor: false,
               relatedQuestionsIds,
-              true,
-            )
+              testMode: true,
+            })
           : []
       }
       questionsPerPage={PAGE_SIZE}

@@ -692,7 +692,7 @@ const questionTypes = [
   },
 ]
 
-const dashboardDataMapper = (
+const dashboardDataMapper = ({
   questions,
   metadata,
   complexItemSetOptions,
@@ -700,7 +700,7 @@ const dashboardDataMapper = (
   showAuthor,
   relatedQuestionIds,
   testMode,
-) => {
+}) => {
   if (!questions) return null
 
   const renderStatus = (

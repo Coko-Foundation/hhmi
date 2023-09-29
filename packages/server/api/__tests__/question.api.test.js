@@ -43,14 +43,14 @@ const GET_EDITOR_DASHBOARD = `
     $ascending: Boolean
     $page: Int
     $pageSize: Int
-    $searchQuery: String
+    $filters: DashboardFilters
   ) {
     getManagingEditorDashboard(
       orderBy: $orderBy
       ascending: $ascending
       page: $page
       pageSize: $pageSize
-      searchQuery: $searchQuery
+      filters: $filters
     ) {
       result {
         id
@@ -273,7 +273,6 @@ describe('Question API authorization', () => {
         ascending: true,
         page: 1,
         pageSize: 10,
-        searchQuery: '',
       },
     })
 
@@ -297,7 +296,6 @@ describe('Question API authorization', () => {
         ascending: true,
         page: 1,
         pageSize: 10,
-        searchQuery: '',
       },
     })
 
@@ -334,7 +332,6 @@ describe('Question API authorization', () => {
         ascending: true,
         page: 1,
         pageSize: 10,
-        searchQuery: '',
       },
     })
 

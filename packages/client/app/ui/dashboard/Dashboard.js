@@ -1,6 +1,6 @@
 /* stylelint-disable string-quotes */
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
+import PropTypes, { oneOfType } from 'prop-types'
 import styled from 'styled-components'
 import { th } from '@coko/client'
 import { PlusOutlined } from '@ant-design/icons'
@@ -72,6 +72,8 @@ const Dashboard = props => {
     sortOptions,
     onSearchHE,
     tabsContent,
+    withFilters,
+    filters,
   } = props
 
   const [searchParams, setSearchParams] = useState({
@@ -88,7 +90,11 @@ const Dashboard = props => {
   }
 
   const setSearchQuery = query => {
-    setSearchParams({ ...searchParams, query, page: 1 })
+    setSearchParams({
+      ...searchParams,
+      query,
+      page: 1,
+    })
   }
 
   const setSortOption = sortBy => {
@@ -185,6 +191,7 @@ const Dashboard = props => {
                 <QuestionList
                   bulkAction={(showBulkActions && BulkAction) || null}
                   currentPage={searchParams.page}
+                  filters={filters}
                   key={searchParams.role}
                   loading={tabLoading}
                   locale={mergedLocale}
@@ -198,6 +205,7 @@ const Dashboard = props => {
                   showSort={showSort}
                   sortOptions={sortOptions}
                   totalCount={totalCount}
+                  withFilters={withFilters}
                 />
               ),
             }),
@@ -267,6 +275,10 @@ Dashboard.propTypes = {
       showBulkActions: PropTypes.bool,
     }),
   ),
+  filters: PropTypes.arrayOf(
+    oneOfType([PropTypes.string, PropTypes.bool, PropTypes.object]),
+  ),
+  withFilters: PropTypes.bool,
 }
 
 Dashboard.defaultProps = {
@@ -279,6 +291,8 @@ Dashboard.defaultProps = {
   showSort: false,
   sortOptions: [],
   tabsContent: [],
+  filters: null,
+  withFilters: false,
 }
 
 export default Dashboard

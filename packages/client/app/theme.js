@@ -1,23 +1,26 @@
 module.exports = {
-  colorBackground: 'white',
+  colorBackground: '#ffffff',
   colorBackgroundHue: '#f5f5f5',
-  colorBody: '#000',
+  colorBody: '#000000',
   colorPrimary: '#178387',
   colorSecondary: '#0a5c5f', // 'gainsboro',
   colorTertiary: '#8ac341',
-  colorBorder: '#777',
+  colorBorder: '#777777',
+  colorBorderAlt: '#319494',
   colorSelection: '#3fc2cd',
   colorPrimaryBorder: '#71ada9',
 
   colorInfo: '#178387',
   colorSuccess: '#00763a',
+  colorSuccessAlt: '#48a535',
   colorError: '#d43131',
+  colorErrorAlt: '#cc4747',
   colorWarning: '#a65b00',
 
   colorText: '#3F3F3F',
   colorTextDark: '#222222',
-  colorTextReverse: 'white',
-  colorTextPlaceholder: '#777',
+  colorTextReverse: '#ffffff',
+  colorTextPlaceholder: '#777777',
 
   fontInterface: 'Arial, sans-serif',
   // font sizes

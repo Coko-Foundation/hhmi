@@ -64,14 +64,14 @@ export const GET_EDITOR_DASHBOARD = gql`
     $ascending: Boolean
     $page: Int
     $pageSize: Int
-    $searchQuery: String
+    $filters: DashboardFilters
   ) {
     getManagingEditorDashboard(
       orderBy: $orderBy
       ascending: $ascending
       page: $page
       pageSize: $pageSize
-      searchQuery: $searchQuery
+      filters: $filters
     ) {
       result {
         id
@@ -79,6 +79,7 @@ export const GET_EDITOR_DASHBOARD = gql`
         author {
           displayName
         }
+        heAssigned
         versions(latestOnly: true) {
           id
           content
@@ -265,6 +266,7 @@ export const QUESTION = gql`
       }
 
       chatThreadId
+      heAssigned
     }
   }
 `

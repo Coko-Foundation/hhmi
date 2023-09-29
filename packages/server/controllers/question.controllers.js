@@ -162,7 +162,7 @@ const getReviewerDashboard = async (userId, options = {}) => {
 }
 
 const getManagingEditorDashboard = async (userId, options = {}) => {
-  const { orderBy, ascending, page, pageSize, searchQuery, trx } = options
+  const { orderBy, ascending, page, pageSize, filters, trx } = options
 
   // managing editor gets all questions apart from the ones they authored themselves
   return Question.findByExcludingRole(userId, 'author', {
@@ -170,8 +170,8 @@ const getManagingEditorDashboard = async (userId, options = {}) => {
     ascending,
     page,
     pageSize,
-    searchQuery,
     submittedOnly: true,
+    filters,
     trx,
   })
 }

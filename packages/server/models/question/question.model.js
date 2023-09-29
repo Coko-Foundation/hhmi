@@ -1,8 +1,10 @@
 const {
   BaseModel,
   modelTypes: { boolean },
-  // uuid,
 } = require('@coko/server')
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+const { db } = require('@pubsweet/db-manager')
 
 const { ChatThread } = require('@coko/server/src/models')
 
@@ -442,7 +444,9 @@ class Question extends BaseModel {
 
   // eg. find all questions apart from the ones this user is an author of
   static async findByExcludingRole(userId, role, options = {}) {
-    const { submittedOnly } = options
+    const { submittedOnly, filters = {} } = options
+
+    const { status, searchQuery, heAssigned, author } = filters
 
     const query = Question.query(options.trx).leftJoin(
       'question_versions',
@@ -450,23 +454,39 @@ class Question extends BaseModel {
       'question_versions.question_id',
     )
 
-    // if searchQuery, we need the author's display name
-    if (options.searchQuery) {
-      query
-        .leftJoin('teams', 'teams.object_id', 'questions.id')
-        .leftJoin('team_members', 'team_members.team_id', 'teams.id')
-        .leftJoin('users', 'users.id', 'team_members.user_id')
-    }
-
     const selectFields = ['questions.*', 'question_versions.submitted']
 
-    if (options.searchQuery) {
+    // if searchQuery, we'll need the question's content and keywords
+    if (searchQuery) {
+      selectFields.push(
+        ...['question_versions.content_text', 'question_versions.keywords'],
+      )
+    }
+
+    // if status, we'll need the status fields
+    if (status) {
       selectFields.push(
         ...[
-          'question_versions.content_text',
-          'question_versions.keywords',
-          'users.display_name as author',
+          'question_versions.under_review',
+          'question_versions.in_production',
+          'question_versions.published',
         ],
+      )
+    }
+
+    // if author, we'll need the question's author displayName, surname and first name
+    if (author) {
+      query
+        .leftJoin('teams', builder => {
+          builder
+            .on('teams.object_id', '=', 'questions.id')
+            .andOn('teams.role', '=', db.raw('?', ['author']))
+        })
+        .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+        .leftJoin('users', 'users.id', 'team_members.user_id')
+
+      selectFields.push(
+        ...['users.displayName', 'users.givenNames', 'users.surname'],
       )
     }
 
@@ -476,6 +496,7 @@ class Question extends BaseModel {
       query.where({ submitted: true })
     }
 
+    // create initial query for questions excluding author's ones
     query
       .distinctOn('questions.id')
       .orderBy([
@@ -496,14 +517,82 @@ class Question extends BaseModel {
 
     query.as('q1')
 
+    // get unique question versions per question
     const parentQuery = Question.query(options.trx).select('*').from(query)
 
-    if (options.searchQuery) {
-      parentQuery
-        .where('content_text', 'ilike', `%${options.searchQuery}%`)
-        .orWhere('author', 'ilike', `%${options.searchQuery}%`)
+    // apply additional filters by chaining `where` clauses
+    // status filter
+    switch (status) {
+      case '':
+      case null:
+      case undefined:
+        break
 
-      const queryStrings = options.searchQuery.split(' ')
+      case 'submitted':
+        parentQuery.where({
+          under_review: false,
+          in_production: false,
+          published: false,
+          rejected: false,
+        })
+        break
+
+      case 'rejected':
+        parentQuery.where({ rejected: true })
+        break
+
+      default:
+        // all other statuses: under_review, in_production or published
+        parentQuery.where(status, true)
+        break
+    }
+
+    // heAssigned filter
+    if (typeof heAssigned !== 'undefined' && heAssigned !== null) {
+      if (heAssigned) {
+        // fetch results for which exists a team_member for question's 'handlingEditor' team
+        parentQuery.whereExists(builder => {
+          builder
+            .select('*')
+            .from('team_members')
+            .leftJoin('teams', 'teams.id', 'team_members.team_id')
+            .where({
+              'teams.role': 'handlingEditor',
+              'teams.global': false,
+            })
+            .whereRaw('teams.object_id = q1.id')
+        })
+      } else {
+        // fetch results for which there is no team_member for question's 'handlingEditor' team
+        parentQuery.whereNotExists(builder => {
+          builder
+            .select('*')
+            .from('team_members')
+            .leftJoin('teams', 'teams.id', 'team_members.team_id')
+            .where({
+              'teams.role': 'handlingEditor',
+              'teams.global': false,
+            })
+            .whereRaw('teams.object_id = q1.id')
+        })
+      }
+    }
+
+    // author filter
+    if (author) {
+      parentQuery.where(builder => {
+        return builder
+          .where('givenNames', 'ilike', `%${author}%`)
+          .orWhere('surname', 'ilike', `%${author}%`)
+          .orWhere('displayName', 'ilike', `%${author}%`)
+      })
+    }
+
+    // search query filter
+    if (searchQuery) {
+      parentQuery.where('content_text', 'ilike', `%${searchQuery}%`)
+
+      const queryStrings = searchQuery.split(' ')
       queryStrings.forEach(queryString => {
         parentQuery.orWhereJsonSupersetOf('keywords', [queryString])
       })

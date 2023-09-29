@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo, useCallback } from 'react'
+import PropTypes, { oneOfType } from 'prop-types'
 import { isEqual } from 'lodash'
-import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import without from 'lodash/without'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
@@ -10,12 +10,13 @@ import { List as AntList } from 'antd'
 import { grid, th } from '@coko/client'
 
 import UICheckBox from './Checkbox'
-import Search from './Search'
+// import Search from './Search'
 import UISelect from './Select'
 import Pagination from './Pagination'
 import VisuallyHiddenElement from './VisuallyHiddenElement'
 import { Indicator } from './Spin'
 import Empty from './Empty'
+import Search from './Search'
 
 // #region styled
 const Wrapper = styled.div`
@@ -33,8 +34,7 @@ const DroppableWrapper = styled.div`
 
 const SearchWrapper = styled.div`
   align-self: center;
-  max-width: 1170px;
-  padding: 0 ${grid(2)};
+  padding: 0 ${grid(4)};
   width: 100%;
 `
 
@@ -194,7 +194,7 @@ function useFunction(callback) {
 // const EmptyList = () => {
 //   return 'no data'
 // }
-// Maybe we can add it as a util or turn it into a component inside and export it from Checkbox.js
+// Maybe we can add it as a util or turn it into a component and export it from Checkbox.js
 const selectAllCheckbox = (
   setItems,
   dataSource,
@@ -253,6 +253,8 @@ const List = props => {
     draggable,
     onDragEnd,
     selectedItems: controlledSelectedItems,
+    withFilters,
+    filters,
     ...rest
   } = props
 
@@ -479,9 +481,11 @@ const List = props => {
           <Search
             aria-label="Enter text to search in list"
             autoFocus={autoFocusSearch}
+            filters={filters}
             loading={searchLoading}
             onSearch={onSearch}
             placeholder={searchPlaceholder}
+            withFilters={withFilters}
           />
         </SearchWrapper>
       )}
@@ -560,6 +564,10 @@ List.propTypes = {
   onDragEnd: PropTypes.func,
   draggable: PropTypes.bool,
   selectedItems: PropTypes.arrayOf(PropTypes.string),
+  filters: PropTypes.arrayOf(
+    oneOfType([PropTypes.string, PropTypes.bool, PropTypes.object]),
+  ),
+  withFilters: PropTypes.bool,
 }
 
 List.defaultProps = {
@@ -580,6 +588,8 @@ List.defaultProps = {
   onDragEnd: () => {},
   draggable: false,
   selectedItems: [],
+  filters: [],
+  withFilters: false,
 }
 
 List.Item = AntList.Item

@@ -7,6 +7,7 @@ type Question {
   rejected: Boolean!
   author: User
   chatThreadId: ID
+  heAssigned: Boolean
 }
 
 type QuestionVersion {
@@ -149,6 +150,13 @@ input QuestionPageInput {
   page: Int
 }
 
+input DashboardFilters {
+  searchQuery: String
+  status: String
+  heAssigned: Boolean
+  author: String
+}
+
 enum AdjecentQuestion {
   NEXT
   PREV
@@ -191,7 +199,7 @@ extend type Query {
     ascending: Boolean
     page: Int
     pageSize: Int
-    searchQuery: String
+    filters: DashboardFilters
   ): QuestionsResponse!
 
   getHandlingEditorDashboard(

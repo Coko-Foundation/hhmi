@@ -14,6 +14,7 @@ import {
   FILTER_GLOBAL_TEAM_MEMBERS,
 } from '../graphql'
 import { hasGlobalRole, dashboardDataMapper, useMetadata } from '../utilities'
+import { dashboardEditorFilters } from '../ui/_helpers/searchFilters'
 
 const defaultSearchOptions = {
   orderBy: 'created',
@@ -24,7 +25,6 @@ const defaultSearchOptions = {
 const DashboardPage = () => {
   // #region hooks
   const history = useHistory()
-
   const initialTabKey = localStorage.getItem('dashboardLastUsedTab') || 'author'
   const [currentTabKey, setCurrentTabKey] = useState(initialTabKey)
   const [currentPage, setCurrentPage] = useState(1)
@@ -158,6 +158,36 @@ const DashboardPage = () => {
   const editorData = editorResponse && editorResponse.getManagingEditorDashboard
   const handlingEditorData = heResponse && heResponse.getHandlingEditorDashboard
 
+  const mappedDataHE =
+    handlingEditorData && metadata
+      ? dashboardDataMapper({
+          questions: handlingEditorData.result,
+          metadata,
+          complexItemSetOptions: 'editor',
+        })
+      : []
+
+  const mappedDataAuthor =
+    authorData && metadata
+      ? dashboardDataMapper({
+          questions: authorData.result,
+          metadata,
+          complexItemSetOptions,
+          showStatus: true,
+        })
+      : []
+
+  const mappedDataEditor =
+    editorData && metadata
+      ? dashboardDataMapper({
+          questions: editorData.result,
+          metadata,
+          complexItemSetOptions,
+          showStatus: true,
+          showAuthor: true,
+        })
+      : []
+
   const queryMapper = {
     query: {
       author: authorQuery,
@@ -180,7 +210,7 @@ const DashboardPage = () => {
       variables: {
         ...defaultSearchOptions,
         page: currentPage - 1,
-        searchQuery: query,
+        filters: query || {},
       },
     }
 
@@ -254,45 +284,24 @@ const DashboardPage = () => {
     {
       label: 'Authored Questions',
       value: 'author',
-      questions:
-        authorData && metadata
-          ? dashboardDataMapper(
-              authorData.result,
-              metadata,
-              complexItemSetOptions,
-              true, // show status
-              false, // show author
-            )
-          : [],
-      totalCount: authorData && authorData.totalCount,
+      questions: mappedDataAuthor,
+      totalCount: mappedDataAuthor.length,
       showBulkActions: false,
       loading: authorLoading,
     },
     isEditor && {
       label: 'Editor Questions',
       value: 'editor',
-      questions:
-        editorData && metadata
-          ? dashboardDataMapper(
-              editorData.result,
-              metadata,
-              complexItemSetOptions,
-              true,
-              true,
-            )
-          : [],
-      totalCount: editorData && editorData.totalCount,
+      questions: mappedDataEditor,
+      totalCount: mappedDataEditor.length,
       showBulkActions: true,
       loading: editorLoading,
     },
     isHandlingEditor && {
       label: 'Handling Editor Questions',
       value: 'handlingEditor',
-      questions:
-        handlingEditorData && metadata
-          ? dashboardDataMapper(handlingEditorData.result, metadata, 'editor')
-          : [],
-      totalCount: handlingEditorData && handlingEditorData.totalCount,
+      questions: mappedDataHE,
+      totalCount: mappedDataHE.length,
       showBulkActions: false,
       loading: heLoading,
     },
@@ -304,6 +313,7 @@ const DashboardPage = () => {
     <>
       <VisuallyHiddenElement as="h1">Dashboard page</VisuallyHiddenElement>
       <Dashboard
+        filters={dashboardEditorFilters}
         handlingEditors={handlingEditors?.result || []}
         initialTabKey={initialTabKey}
         loading={loading}
@@ -315,6 +325,7 @@ const DashboardPage = () => {
         // showSort
         // sortOptions
         tabsContent={tabs}
+        withFilters={currentTabKey === 'editor'}
       />
       <VisuallyHiddenElement
         aria-live="polite"

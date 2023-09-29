@@ -2,13 +2,13 @@
 
 exports[`ComplexItemSetForm matches snapshot 1`] = `
 <div
-  className="sc-NrEwa cyZHDt"
+  className="sc-fkDAhV fjHRts"
 >
   <div
     className="sc-iNmOIt hDXbYN"
   >
     <form
-      className="ant-form ant-form-vertical css-dev-only-do-not-override-1vtf12y sc-gKWViP vGsgG"
+      className="ant-form ant-form-vertical css-dev-only-do-not-override-1vtf12y sc-jQCNTa ftmChd"
       data-testid="form-content"
       onReset={[Function]}
       onSubmit={[Function]}
@@ -74,15 +74,15 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
          the content for the complex item set leading text in the editor below
       </h3>
       <div
-        className="sc-jQCNTa hIVykf"
+        className="sc-kndUNU jZAtpL"
       >
         <div
-          className="sc-dWSiPC fbGTni"
+          className="sc-dWSiPC iLTKkJ"
         >
           <div
             aria-controls="wax-editor"
             aria-label="Editor toolbar"
-            className="sc-hTnXLe jgfut"
+            className="sc-hTnXLe hfzhzC"
             role="toolbar"
           >
             <h2
@@ -92,7 +92,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
             </h2>
           </div>
           <div
-            className="sc-cLRoaB eqDnAm"
+            className="sc-cLRoaB hWKUhu"
             tabIndex={0}
           >
             <h2
@@ -101,7 +101,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
               Question editor
             </h2>
             <div
-              className="sc-hilkcu gCwojt"
+              className="sc-hilkcu LDClh"
               id="wax-editor"
             >
               <div
@@ -117,7 +117,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="sc-kCtSUc bFGyaY"
+        className="sc-eyMvgT iTnuFt"
       >
         <button
           className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-jIXSKn crwhTQ"

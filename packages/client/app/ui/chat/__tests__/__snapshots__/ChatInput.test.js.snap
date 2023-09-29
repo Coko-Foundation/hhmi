@@ -24,7 +24,7 @@ exports[`ChatInput matches snapshot 1`] = `
       className="ant-input-suffix"
     >
       <button
-        className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-default sc-hLseeU kWOTMC sc-NrEwa fhFiXx"
+        className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-default sc-hLseeU kWOTMC sc-fkDAhV hJMvTE"
         data-testid="send-btn"
         disabled={false}
         onClick={[Function]}

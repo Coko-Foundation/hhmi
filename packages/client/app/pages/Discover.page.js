@@ -207,15 +207,16 @@ const DiscoverPage = () => {
         pageSize={PAGE_SIZE}
         questions={
           questionsData && metadata && complexItemSetOptions
-            ? dashboardDataMapper(
-                questionsData.getPublishedQuestions.result,
+            ? dashboardDataMapper({
+                questions: questionsData.getPublishedQuestions.result,
                 metadata,
                 complexItemSetOptions,
-                false,
-                true,
-                questionsData.getPublishedQuestions.relatedQuestionsIds,
-                true, // test mode
-              )
+                showStatus: false,
+                showAuthor: true,
+                relatedQuestionIds:
+                  questionsData.getPublishedQuestions.relatedQuestionsIds,
+                testMode: true,
+              })
             : []
         }
         showSort
