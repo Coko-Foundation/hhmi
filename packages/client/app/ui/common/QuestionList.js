@@ -51,6 +51,9 @@ const StyledList = styled(List)`
 
     .ant-checkbox {
       align-self: auto;
+
+      // align with QuestionItem
+      margin-block-start: ${grid(4)};
     }
   }
 `

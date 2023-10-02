@@ -437,7 +437,7 @@ const Header = props => {
   const [openUserMenu, setOpenUserMenu] = useState(false)
 
   const userMenuOnKeyDown = e => {
-    e.preventDefault()
+    e.key !== 'Tab' && e.preventDefault()
     const { code } = e
 
     const listOfLinks = [
