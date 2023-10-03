@@ -31,6 +31,7 @@
     "@coko/client": "0.0.41",
     "@pubsweet/ui": "^12.6.13",
     "antd": "^5.1.0",
+    "dompurify": "^3.0.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "prop-types": "^15.7.2",
