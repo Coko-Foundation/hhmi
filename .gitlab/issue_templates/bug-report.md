@@ -19,13 +19,13 @@
 
 ## Testing environment
 
-<!-- Required. Provide the relevant below -->
+<!-- Required. Provide all the relevant below -->
 
-* Testing site: local / staging / production 
-* Testing url: 
+* Username of the user who experienced the problem: 
+* URL where the problem occured: 
 * Browser name and version: 
 * User machine: PC / Mac
-* Username: 
+
 
 
 ## Error logs (if available)
