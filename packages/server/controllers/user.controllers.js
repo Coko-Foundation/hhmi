@@ -123,7 +123,7 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
             data: qs.stringify(payload),
           })
         } catch (e) {
-          console.error('TOKEN ERROR:', e.response.data)
+          console.error(e)
         }
 
         const { access_token: accessToken, error: tokenError } =
