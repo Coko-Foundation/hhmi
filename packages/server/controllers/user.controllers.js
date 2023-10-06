@@ -153,28 +153,33 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
 
         // do we already have a user that is social?
         // no, set the user
-        const { sub: biointeractiveUserId } = userInfo
-
-        const identity = await Identity.query()
-          .select('*')
-          .whereJsonSupersetOf('profile_data', {
-            sub: biointeractiveUserId,
-          })
-          .where({
-            isSocial: true,
-            provider: 'biointeractive',
-          })
-          .first()
-
-        const details = {
-          userInfo,
-          identity,
-        }
+        // const { sub: biointeractiveUserId } = userInfo
 
         return {
           user,
-          token: JSON.stringify(details), // createJWT(user),
+          token: JSON.stringify(userInfo), // createJWT(user),
         }
+
+        // const identity = await Identity.query()
+        //   .select('*')
+        //   .whereJsonSupersetOf('profile_data', {
+        //     sub: biointeractiveUserId,
+        //   })
+        //   .where({
+        //     isSocial: true,
+        //     provider: 'biointeractive',
+        //   })
+        //   .first()
+
+        // const details = {
+        //   userInfo,
+        //   identity,
+        // }
+
+        // return {
+        //   user,
+        //   token: JSON.stringify(details), // createJWT(user),
+        // }
 
         // if (!identity) {
         //   const givenNames = userInfo.given_name.map(g => g.value).join(' ')
