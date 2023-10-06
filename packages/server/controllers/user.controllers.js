@@ -153,59 +153,70 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
 
         // do we already have a user that is social?
         // no, set the user
-        const { email } = userInfo
-        const givenNames = userInfo.given_name.map(g => g.value).join(' ')
-        const surname = userInfo.family_name.map(g => g.value).join(' ')
+        const { email, sub } = userInfo
 
-        const identity = await Identity.findOne({
-          email,
-          isSocial: true,
-        })
+        const identity = await Identity.query()
+          .select('*')
+          .whereJsonSupersetOf('profile_data', {
+            sub, // biointeractive user id
+          })
+          .where({
+            isSocial: true,
+            provider: 'biointeractive',
+          })
+          .first()
 
         if (!identity) {
-          const password = uuid()
-          const agreedTc = false
+          try {
+            const givenNames = userInfo.given_name.map(g => g.value).join(' ')
+            const surname = userInfo.family_name.map(g => g.value).join(' ')
 
-          logger.info('bioInteractiveLogin: creating user')
+            const password = uuid()
+            const agreedTc = false
 
-          user = await User.insert(
-            {
-              agreedTc,
-              givenNames,
-              password,
-              surname,
-              isActive: true,
-            },
-            { trx: tr },
-          )
+            logger.info('bioInteractiveLogin: creating user')
 
-          const verificationToken = crypto.randomBytes(64).toString('hex')
-          const verificationTokenTimestamp = new Date()
+            user = await User.insert(
+              {
+                agreedTc,
+                givenNames,
+                password,
+                surname,
+                isActive: true,
+              },
+              { trx: tr },
+            )
 
-          logger.info(
-            'bioInteractiveLogin: creating user local identity with fetched email',
-            user,
-          )
+            const verificationToken = crypto.randomBytes(64).toString('hex')
+            const verificationTokenTimestamp = new Date()
 
-          await Identity.insert(
-            {
-              userId: user.id,
-              email,
-              isSocial: true,
-              verificationToken,
-              verificationTokenTimestamp,
-              isVerified: true,
-              isDefault: true,
-              oauthAccessToken: accessToken,
-              provider: 'biointeractive',
-              profileData: userInfo,
-            },
-            { trx: tr },
-          )
+            logger.info(
+              'bioInteractiveLogin: creating user local identity with fetched email',
+              user,
+            )
 
-          return {
-            user,
-            token: createJWT(user),
+            await Identity.insert(
+              {
+                userId: user.id,
+                email,
+                isSocial: true,
+                verificationToken,
+                verificationTokenTimestamp,
+                isVerified: true,
+                isDefault: true,
+                oauthAccessToken: accessToken,
+                provider: 'biointeractive',
+                profileData: userInfo,
+              },
+              { trx: tr },
+            )
+
+            return {
+              user,
+              token: createJWT(user),
+            }
+          } catch (e) {
+            throw new Error('error creating new user')
           }
         }
 
