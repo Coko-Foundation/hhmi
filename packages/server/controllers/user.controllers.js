@@ -222,8 +222,7 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
 
         return {
           user,
-          token: JSON.stringify(identity.profileData),
-          // createJWT(user),
+          token: createJWT(user),
         }
       },
       { trx },

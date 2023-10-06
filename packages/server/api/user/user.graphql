@@ -74,12 +74,7 @@ extend input UsersQueryParams {
   search: String
 }
 extend type Identity {
-  profileData: profileData
-}
-
-type profileData {
-  sub: String!
-  email: String
+  profileData: String
 }
 
 extend type Query {
