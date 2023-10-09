@@ -27,16 +27,16 @@ export const dashboardEditorFilters = [
       { label: 'Is not', value: false, badgeBg: theme.colorErrorAlt },
     ],
   },
-  {
-    key: { label: 'Author', value: 'author' },
-    values: [
-      {
-        label: '%',
-        value: '%',
-        badgeBg: theme.colorSecondary,
-        ariaLabel:
-          'type the name of the author you want to search for (or part of it)',
-      },
-    ],
-  },
+  // {
+  //   key: { label: 'Author', value: 'author' },
+  //   values: [
+  //     {
+  //       label: '%',
+  //       value: '%',
+  //       badgeBg: theme.colorSecondary,
+  //       ariaLabel:
+  //         'type the name of the author you want to search for (or part of it)',
+  //     },
+  //   ],
+  // },
 ]

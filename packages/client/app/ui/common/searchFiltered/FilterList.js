@@ -305,6 +305,7 @@ const FilterList = ({
                 k?.label && !v?.label ? `Clear filter option: ${k?.label}` : ''
               }
               onClick={() => undoFilter(k?.label)}
+              onKeyDown={e => closeBadgeKeyDown(e, k?.label)}
               role="button"
               tabIndex={k?.label && !v?.label ? 0 : -1}
             />

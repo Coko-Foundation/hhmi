@@ -13,7 +13,12 @@ import {
   GET_COMPLEX_ITEM_SETS_OPTIONS,
   FILTER_GLOBAL_TEAM_MEMBERS,
 } from '../graphql'
-import { hasGlobalRole, dashboardDataMapper, useMetadata } from '../utilities'
+import {
+  hasGlobalRole,
+  dashboardDataMapper,
+  useMetadata,
+  callOn,
+} from '../utilities'
 import { dashboardEditorFilters } from '../ui/_helpers/searchFilters'
 
 const defaultSearchOptions = {
@@ -206,6 +211,8 @@ const DashboardPage = () => {
   }, [currentTabKey, currentPage])
 
   const runQuery = query => {
+    const { query: roleQuery } = queryMapper
+
     const queryVariables = {
       variables: {
         ...defaultSearchOptions,
@@ -214,7 +221,7 @@ const DashboardPage = () => {
       },
     }
 
-    queryMapper.query[currentTabKey](queryVariables)
+    callOn(currentTabKey, roleQuery, roleQuery.author)(queryVariables)
   }
 
   const [createQuestionMutation] = useMutation(CREATE_QUESTION, {

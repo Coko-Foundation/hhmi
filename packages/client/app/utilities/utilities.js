@@ -1002,6 +1002,31 @@ const conditionalWord = (cased, options) => {
   return safeCall(caseMode[cased], text)
 }
 
+/* callOn() DESCRIPTION:
+- uses strategy pattern to safely execute a callback (if exists) defined on the 'options' object
+ and returns its reference.
+ - the 'key' must be a string thst matches one of the 'options' keys
+ if not, the 'fallback' wll be returned
+ - in case that we not pass a value for fallback, or the value we pass is not (or not returns) a function ref,
+ it will return a ref to a default function that returns null
+ - USAGE: if we have a dynamic string, for example the typeof some data,
+ it can be implemented like this:
+    callOn(typeof data, {
+       string: () =>  console.log('is string'),
+       number: () =>  console.log('is number'),
+       object: somefunctionReference
+      }, () => console.log('not valid type of data'))(arguments)
+*/
+
+const callOn = (key = '', options = {}, fallback = () => null) => {
+  // eslint-disable-next-line no-nested-ternary
+  return isFunction(options[key])
+    ? options[key]
+    : isFunction(fallback)
+    ? fallback
+    : () => null
+}
+
 export {
   extractDocumentText,
   extractTopicsAndSubtopics,
@@ -1028,4 +1053,5 @@ export {
   capitalize,
   conditionalWord,
   safeIndex,
+  callOn,
 }
