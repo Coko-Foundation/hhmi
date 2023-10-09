@@ -2,8 +2,10 @@ import React from 'react'
 import ComplexItemSetForm from '../ComplexItemSetForm'
 import { axe, render, renderer, userEvent, waitFor } from '../../../testUtils'
 
+const onSave = jest.fn()
+
 const MockForm = props => {
-  return <ComplexItemSetForm {...props} />
+  return <ComplexItemSetForm onSave={onSave} {...props} />
 }
 
 const title = 'Test set 1'
@@ -43,11 +45,7 @@ describe('ComplexItemSetForm', () => {
   })
 
   it('calls onSave on submitting the form', async () => {
-    const onSave = jest.fn()
-
-    const { getByText, getByPlaceholderText } = render(
-      <MockForm onSave={onSave} />,
-    )
+    const { getByText, getByPlaceholderText } = render(<MockForm />)
 
     const titleInput = getByPlaceholderText(titlePlaceholder)
     await userEvent.type(titleInput, 'set 1')
@@ -65,11 +63,7 @@ describe('ComplexItemSetForm', () => {
   })
 
   it('displays popup when warning is true', async () => {
-    const onSave = jest.fn()
-
-    const { getByText } = render(
-      <MockForm onSave={onSave} title={title} warning />,
-    )
+    const { getByText } = render(<MockForm title={title} warning />)
 
     const saveBtn = getByText('Save')
     await userEvent.click(saveBtn)

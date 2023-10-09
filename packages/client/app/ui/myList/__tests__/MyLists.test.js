@@ -14,6 +14,7 @@ import { Empty, Link } from '../../common'
 const onCreateNewList = jest.fn()
 const onDeleteRows = jest.fn()
 const onExport = jest.fn()
+const onExportQTI = jest.fn()
 const onPageChange = jest.fn()
 const onSearch = jest.fn()
 const onSort = jest.fn()
@@ -66,6 +67,7 @@ const MockMyLists = props => (
       onCreateNewList={onCreateNewList}
       onDeleteRows={onDeleteRows}
       onExport={onExport}
+      onExportQTI={onExportQTI}
       onPageChange={onPageChange}
       onSearch={onSearch}
       onSort={onSort}

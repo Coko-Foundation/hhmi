@@ -138,19 +138,25 @@ class QuestionVersion extends BaseModel {
                   required: [],
                   additionalProperties: false,
                   properties: {
-                    application: stringNullable,
-                    coreCompetence: stringNullable,
-                    coreConcept: stringNullable,
+                    unit: stringNullable,
                     courseTopic: stringNullable,
+                    // AP courses
                     essentialKnowledge: stringNullable,
                     learningObjective: stringNullable,
+                    // IB courses
+                    application: stringNullable,
                     skill: stringNullable,
-                    subcompetence: stringNullable,
-                    subcompetenceStatement: stringNullable,
+                    understanding: stringNullable,
+                    // vision and change
+                    coreConcept: stringNullable,
                     subdiscipline: stringNullable,
                     subdisciplineStatement: stringNullable,
-                    understanding: stringNullable,
-                    unit: stringNullable,
+                    coreCompetence: stringNullable,
+                    subcompetence: stringNullable,
+                    subcompetenceStatement: stringNullable,
+                    // aamc metadata
+                    concept: stringNullable,
+                    category: stringNullable,
                   },
                 },
               },

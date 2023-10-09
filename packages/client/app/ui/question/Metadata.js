@@ -6,17 +6,18 @@ import styled from 'styled-components'
 import { grid } from '@coko/client'
 
 import {
-  APCourseMetadata,
   Select,
   Form,
   Button,
-  TopicAndSubtopic,
-  IBCourseMetadata,
   VisuallyHiddenElement,
   Checkbox,
-  // VisionAndChangeMetadata,
-  // AAMCFuturePhysiciansMetadata,
 } from '../common'
+import {
+  TopicAndSubtopic,
+  APCourseMetadata,
+  IBCourseMetadata,
+  IntroToBioCourseMetadata,
+} from '../metadataFields'
 import Resources from './Resources'
 import MetadataInfo from './MetadataInfo'
 
@@ -27,6 +28,10 @@ const Wrapper = styled.section`
 const StyledSupplementaryFieldsContainer = styled.div`
   margin-bottom: ${grid(6)};
 `
+
+const apCourses = ['apBiology', 'apEnvironmentalScience']
+const ibCourses = ['biBiology', 'biEnvironmentalScience']
+const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
 
 const Metadata = React.forwardRef((props, ref) => {
   const {
@@ -76,13 +81,14 @@ const Metadata = React.forwardRef((props, ref) => {
   const renderFrameworkFields = (getFieldValue, index = -1, key = '') => {
     const selectedCourse = getFieldValue([key, index, 'course'])
 
-    if (
-      selectedCourse === 'apBiology' ||
-      selectedCourse === 'apEnvironmentalScience'
-    ) {
+    const courseMetadata = metadata.frameworks.find(
+      f => f.value === selectedCourse,
+    )
+
+    if (apCourses.includes(selectedCourse)) {
       return (
         <APCourseMetadata
-          courseData={metadata.frameworks.find(f => f.value === selectedCourse)}
+          courseData={courseMetadata}
           getFieldValue={getFieldValue}
           index={index}
           isRequired
@@ -93,13 +99,10 @@ const Metadata = React.forwardRef((props, ref) => {
       )
     }
 
-    if (
-      selectedCourse === 'biBiology' ||
-      selectedCourse === 'biEnvironmentalScience'
-    ) {
+    if (ibCourses.includes(selectedCourse)) {
       return (
         <IBCourseMetadata
-          courseData={metadata.frameworks.find(f => f.value === selectedCourse)}
+          courseData={courseMetadata}
           getFieldValue={getFieldValue}
           index={index}
           isRequired
@@ -110,39 +113,20 @@ const Metadata = React.forwardRef((props, ref) => {
       )
     }
 
-    // if (
-    //   selectedCourse === 'introductoryBiologyForNonMajors' ||
-    //   selectedCourse === 'introductoryBiologyForMajors'
-    // ) {
-    //   return (
-    //     <>
-    //       <VisionAndChangeMetadata
-    //         conceptsAndCompetencies={metadata.introToBioMeta.find(
-    //           f => f.value === 'visionAndChange',
-    //         )}
-    //         getFieldValue={getFieldValue}
-    //         index={index}
-    //         isRequired
-    //         readOnly={readOnly}
-    //         setFieldsValue={form.setFieldsValue}
-    //         supplementaryKey={key}
-    //       />
-    //       {selectedCourse === 'introductoryBiologyForMajors' && (
-    //         <AAMCFuturePhysiciansMetadata
-    //           aamcMetadata={metadata.introToBioMeta.find(
-    //             f => f.value === 'aamcFuturePhysicians',
-    //           )}
-    //           getFieldValue={getFieldValue}
-    //           index={index}
-    //           isRequired
-    //           readOnly={readOnly}
-    //           setFieldsValue={form.setFieldsValue}
-    //           supplementaryKey={key}
-    //         />
-    //       )}
-    //     </>
-    //   )
-    // }
+    if (introBioCourses.includes(selectedCourse)) {
+      return (
+        <IntroToBioCourseMetadata
+          courseData={courseMetadata}
+          getFieldValue={getFieldValue}
+          index={index}
+          introToBioMeta={metadata.introToBioMeta}
+          isRequired
+          readOnly={readOnly}
+          setFieldsValue={form.setFieldsValue}
+          supplementaryKey={key}
+        />
+      )
+    }
 
     return null
   }

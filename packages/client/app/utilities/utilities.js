@@ -279,37 +279,45 @@ const extractCourseAndObjectives = (courses, frameworksMetadata) =>
       }
     }
 
-    const beginning = c.course.slice(0, 2).toLowerCase()
-    // const isIB = beginning === 'ib'
-    const isAP = beginning === 'ap'
-
-    const objectives = c.units.map(unit =>
-      unit.learningObjective
-        ? {
-            label: courseInValues?.learningObjectives?.find(
-              lo => lo.value === unit.learningObjective,
-            )?.label,
-          }
-        : null,
-    )
-
-    const understandings = c.units.map(unit =>
-      unit.understanding
-        ? {
-            label: courseInValues?.understandings?.find(
-              und => und.value === unit.understanding,
-            )?.label,
-          }
-        : null,
-    )
-
-    return {
+    const result = {
       course: {
         label: courseInValues.label,
       },
-      label: isAP ? 'learning objectives' : 'understandings',
-      objectives: isAP ? objectives : understandings,
     }
+
+    switch (c.course) {
+      case 'apBiology':
+      case 'apEnvironmentalScience':
+      case 'introBioForMajors':
+        result.label = 'learning objectives'
+        result.objectives = c.units.map(unit =>
+          unit.learningObjective
+            ? {
+                label: courseInValues?.learningObjectives?.find(
+                  lo => lo.value === unit.learningObjective,
+                )?.label,
+              }
+            : null,
+        )
+        break
+      case 'biBiology':
+      case 'biEnvironmentalScience':
+        result.label = 'understandings'
+        result.objectives = c.units.map(unit =>
+          unit.understanding
+            ? {
+                label: courseInValues?.understandings?.find(
+                  und => und.value === unit.understanding,
+                )?.label,
+              }
+            : null,
+        )
+        break
+      default:
+        break
+    }
+
+    return result
   })
 
 const extractBloomsLevel = (cognitiveLevel, cognitiveValues) => {
@@ -322,6 +330,127 @@ const extractBloomsLevel = (cognitiveLevel, cognitiveValues) => {
 }
 
 const extractComplexItemSet = (id, options) => options.find(o => o.value === id)
+
+const extractAPCourseMetadata = (unitData, courseMetadata) => {
+  const unit = courseMetadata.units.find(u => u.value === unitData.unit)?.label
+
+  const courseTopic = courseMetadata.topics.find(
+    u => u.value === unitData.courseTopic,
+  )?.label
+
+  const learningObjective = courseMetadata.learningObjectives.find(
+    l => l.value === unitData.learningObjective,
+  )?.label
+
+  const essentialKnowledge = courseMetadata.essentialKnowledge.find(
+    e => e.value === unitData.essentialKnowledge,
+  )?.label
+
+  return [
+    { label: 'Unit', value: unit },
+    { label: 'Topic', value: courseTopic },
+    { label: 'Learning objective', value: learningObjective },
+    { label: 'Essential knowledge', value: essentialKnowledge },
+  ]
+}
+
+const extractIBCourseMetadata = (unitData, courseMetadata) => {
+  const unit = courseMetadata.units.find(u => u.value === unitData.unit)?.label
+
+  const courseTopic = courseMetadata.topics.find(
+    u => u.value === unitData.courseTopic,
+  )?.label
+
+  const application = courseMetadata.applications.find(
+    a => a.value === unitData.application,
+  )?.label
+
+  const skill = courseMetadata.skills.find(
+    s => s.value === unitData.skill,
+  )?.label
+
+  const understanding = courseMetadata.understandings.find(
+    u => u.value === unitData.understanding,
+  )?.label
+
+  return [
+    { label: 'Unit', value: unit },
+    { label: 'Topic', value: courseTopic },
+    { label: 'Application', value: application },
+    { label: 'Skill', value: skill },
+    { label: 'Understanding', value: understanding },
+  ]
+}
+
+const extractIntroBioCourseMetadata = (
+  unitData,
+  courseMetadata,
+  extraFramewrok,
+) => {
+  const unit = courseMetadata.units.find(u => u.value === unitData.unit)?.label
+
+  const courseTopic = courseMetadata.topics.find(
+    u => u.value === unitData.courseTopic,
+  )?.label
+
+  const learningObjective = courseMetadata.learningObjectives.find(
+    l => l.value === unitData.learningObjective,
+  )?.label
+
+  const visionAndChange = extraFramewrok.find(
+    meta => meta.value === 'visionAndChange',
+  )
+
+  const aamc = extraFramewrok.find(
+    meta => meta.value === 'aamcFuturePhysicians',
+  )
+
+  const coreConcept = visionAndChange.coreConcepts.find(
+    c => c.value === unitData.coreConcept,
+  )?.label
+
+  const subdiscipline = visionAndChange.subdisciplines.find(
+    c => c.value === unitData.subdiscipline,
+  )?.label
+
+  const subdisciplineStatement = visionAndChange.subdisciplineStatements.find(
+    c => c.value === unitData.subdisciplineStatement,
+  )?.label
+
+  const coreCompetence = visionAndChange.coreCompetencies.find(
+    c => c.value === unitData.coreCompetence,
+  )?.label
+
+  const subcompetence = visionAndChange.subcompetencies.find(
+    c => c.value === unitData.subcompetence,
+  )?.label
+
+  const subcompetenceStatement = visionAndChange.subcompetenceStatements.find(
+    c => c.value === unitData.subcompetenceStatement,
+  )?.label
+
+  const concept = aamc.concepts.find(c => c.value === unitData.concept)?.label
+
+  const category = aamc.categories.find(
+    c => c.value === unitData.category,
+  )?.label
+
+  return [
+    { label: 'Unit', value: unit },
+    { label: 'Topic', value: courseTopic },
+    { label: 'Learning objective', value: learningObjective },
+    // vision and change
+    { label: 'Core concept', value: coreConcept },
+    { label: 'Subdiscipline', value: subdiscipline },
+    { label: 'Subdiscipline statement', value: subdisciplineStatement },
+    { label: 'Core competence', value: coreCompetence },
+    { label: 'Subcompetence', value: subcompetence },
+    { label: 'Subcompetence statement', value: subcompetenceStatement },
+    // aamc
+    { label: 'Concept', value: concept },
+    { label: 'Category', value: category },
+  ]
+}
 
 const profileOptions = {
   institutionalSetting: [
@@ -559,6 +688,42 @@ const flatIBCourseMetadata = data => {
     applications,
     skills,
     understandings,
+  }
+}
+
+const flatIntroBioCourseMetadata = data => {
+  const units = []
+  const topics = []
+  const learningObjectives = []
+
+  data.units.forEach(unit => {
+    units.push({
+      label: unit.label,
+      value: unit.value,
+    })
+
+    unit.topics.forEach(topic => {
+      topics.push({
+        label: topic.label,
+        value: topic.value,
+        unit: unit.value,
+      })
+
+      topic.learningObjectives.forEach(lo => {
+        learningObjectives.push({
+          label: lo.label,
+          value: lo.value,
+          unit: unit.value,
+          topic: topic.value,
+        })
+      })
+    })
+  })
+
+  return {
+    units,
+    topics,
+    learningObjectives,
   }
 }
 
@@ -843,9 +1008,13 @@ export {
   extractCourseAndObjectives,
   extractBloomsLevel,
   extractComplexItemSet,
+  extractAPCourseMetadata,
+  extractIBCourseMetadata,
+  extractIntroBioCourseMetadata,
   flatAAMCMetadata,
   flatAPCoursesMetadata,
   flatIBCourseMetadata,
+  flatIntroBioCourseMetadata,
   flatVisionAndChangeMetadata,
   objectCleaner,
   profileOptions,

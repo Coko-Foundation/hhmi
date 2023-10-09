@@ -1,6 +1,7 @@
 type Metadata {
   topics: [TopicsMetadata!]!
   frameworks: [FrameworksMetadata!]!
+  introToBioMeta: [IntroductoryBioMetadata!]!
   blooms: BloomsType
   questionTypes: [SimpleValueLabelPair]!
 }
@@ -79,6 +80,55 @@ type Understanding {
   label: String
   unit: String
   topic: String
+}
+
+type CoreConcept {
+  value: String
+  label: String
+  explanatoryItems: [String!]
+}
+
+type SubdisciplineStatement {
+  value: String
+  label: String
+  coreConcept: String
+  subdiscipline: String
+}
+
+type Subcompetence {
+  value: String
+  label: String
+  coreCompetence: String
+  explanation: String
+}
+
+type SubcompetenceStatement {
+  value: String
+  label: String
+  coreCompetence: String
+  subcompetence: String
+}
+
+type AAMCCategories {
+  value: String
+  label: String
+  concept: String
+  explanation: String
+}
+
+type IntroductoryBioMetadata {
+  value: String
+  label: String
+  # Vision and change metadata
+  coreConcepts: [CoreConcept!]
+  subdisciplines: [SimpleValueLabelPair!]
+  subdisciplineStatements: [SubdisciplineStatement!]
+  coreCompetencies: [SimpleValueLabelPair!]
+  subcompetencies: [Subcompetence!]
+  subcompetenceStatements: [SubcompetenceStatement!]
+  # AAMC future physicians metadata
+  concepts: [SimpleValueLabelPair!]
+  categories: [AAMCCategories!]
 }
 
 extend type Query {

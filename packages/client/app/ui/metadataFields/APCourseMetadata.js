@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { uniqBy } from 'lodash'
-import Form from './Form'
-import Select from './Select'
+import { Form, Select } from '../common'
 
 const APCourseMetadata = props => {
   const {
@@ -235,7 +234,7 @@ const APCourseMetadata = props => {
         ]}
       >
         <Select
-          // allowClear
+          allowClear={filterMode}
           data-testid="course-unit-select"
           disabled={readOnly}
           onChange={handleFrameworkUnitChange}
@@ -257,7 +256,7 @@ const APCourseMetadata = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               data-testid="course-topic-select"
               disabled={readOnly || (!filterMode && !getFieldValue(unitField))}
               onChange={handleFrameworkTopicChange}
@@ -282,7 +281,7 @@ const APCourseMetadata = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               data-testid="learning-objective-select"
               disabled={readOnly || (!filterMode && !getFieldValue(topicField))}
               onChange={handleFrameworkLearningObjectiveChange}
@@ -310,7 +309,7 @@ const APCourseMetadata = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               data-testid="essential-knowledge-select"
               disabled={
                 readOnly ||

@@ -2,13 +2,13 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { uuid } from '@coko/client/dist'
 import { uniqBy } from 'lodash'
-import Form from './Form'
-import Select from './Select'
+import { Form, Select } from '../common'
 
 const VisionAndChangeMetadata = props => {
   const {
     conceptsAndCompetencies,
     filterMode,
+    isRequired,
     getFieldValue,
     readOnly,
     setFieldsValue,
@@ -262,9 +262,17 @@ const VisionAndChangeMetadata = props => {
   return (
     <>
       <p>Vision and Change Framework</p>
-      <Form.Item label="Core concept" name={coreConceptName}>
+      <Form.Item
+        label="Core concept"
+        name={coreConceptName}
+        rules={[
+          isRequired
+            ? { required: true, message: 'Core concept is required' }
+            : {},
+        ]}
+      >
         <Select
-          // allowClear
+          allowClear={filterMode}
           disabled={readOnly}
           onChange={handleCoreConceptChange}
           optionFilterProp="label"
@@ -288,9 +296,17 @@ const VisionAndChangeMetadata = props => {
                 </ul>
               </div>
             )}
-            <Form.Item label="Subdiscipline" name={subdisciplineName}>
+            <Form.Item
+              label="Subdiscipline"
+              name={subdisciplineName}
+              rules={[
+                isRequired
+                  ? { required: true, message: 'Subdiscipline is required' }
+                  : {},
+              ]}
+            >
               <Select
-                // allowClear
+                allowClear={filterMode}
                 disabled={
                   readOnly || (!filterMode && !getFieldValue(coreConceptField))
                 }
@@ -309,9 +325,17 @@ const VisionAndChangeMetadata = props => {
           <Form.Item
             label="Subdiscipline Statement"
             name={subdisciplineStatementName}
+            rules={[
+              isRequired
+                ? {
+                    required: true,
+                    message: 'Subdiscipline Statement is required',
+                  }
+                : {},
+            ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               disabled={
                 readOnly || (!filterMode && !getFieldValue(subdisciplineField))
               }
@@ -323,10 +347,20 @@ const VisionAndChangeMetadata = props => {
           </Form.Item>
         )}
       </Form.Item>
-
-      <Form.Item label="Core competence" name={coreCompetenceName}>
+      <Form.Item
+        label="Core competence"
+        name={coreCompetenceName}
+        rules={[
+          isRequired
+            ? {
+                required: true,
+                message: 'Core competence is required',
+              }
+            : {},
+        ]}
+      >
         <Select
-          // allowClear
+          allowClear={filterMode}
           disabled={readOnly}
           onChange={handleCoreCompetenceChange}
           optionFilterProp="label"
@@ -335,11 +369,22 @@ const VisionAndChangeMetadata = props => {
           wrapOptionText
         />
       </Form.Item>
-      <Form.Item dependencies={[coreCompetenceField]}>
+      <Form.Item dependencies={[coreCompetenceField]} noStyle>
         {() => (
-          <Form.Item label="Subcompetence" name={subcompetenceName}>
+          <Form.Item
+            label="Subcompetence"
+            name={subcompetenceName}
+            rules={[
+              isRequired
+                ? {
+                    required: true,
+                    message: 'Subcompetence is required',
+                  }
+                : {},
+            ]}
+          >
             <Select
-              // allowClear
+              allowClear={filterMode}
               disabled={
                 readOnly || (!filterMode && !getFieldValue(coreCompetenceField))
               }
@@ -364,9 +409,17 @@ const VisionAndChangeMetadata = props => {
             <Form.Item
               label="Subcompetence Statement"
               name={subcompetenceStatementName}
+              rules={[
+                isRequired
+                  ? {
+                      required: true,
+                      message: 'Subcompetence Statement is required',
+                    }
+                  : {},
+              ]}
             >
               <Select
-                // allowClear
+                allowClear={filterMode}
                 disabled={
                   readOnly ||
                   (!filterMode && !getFieldValue(subcompetenceField))
@@ -388,6 +441,7 @@ VisionAndChangeMetadata.propTypes = {
   conceptsAndCompetencies: PropTypes.shape().isRequired,
   filterMode: PropTypes.bool,
   getFieldValue: PropTypes.func.isRequired,
+  isRequired: PropTypes.bool,
   readOnly: PropTypes.bool,
   setFieldsValue: PropTypes.func.isRequired,
   coreConceptKey: PropTypes.string,
@@ -402,6 +456,7 @@ VisionAndChangeMetadata.propTypes = {
 
 VisionAndChangeMetadata.defaultProps = {
   readOnly: false,
+  isRequired: false,
   filterMode: false,
   coreConceptKey: 'coreConcept',
   subdisciplineKey: 'subdiscipline',

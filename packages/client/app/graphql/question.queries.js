@@ -242,13 +242,25 @@ export const QUESTION = gql`
         courses {
           course
           units {
-            application
+            unit
             courseTopic
-            essentialKnowledge
+            # AP courses
             learningObjective
+            essentialKnowledge
+            # IB courses
+            application
             skill
             understanding
-            unit
+            # vision and change
+            coreCompetence
+            coreConcept
+            subcompetence
+            subcompetenceStatement
+            subdiscipline
+            subdisciplineStatement
+            # aamc
+            concept
+            category
           }
         }
 
@@ -311,6 +323,17 @@ export const UPDATE_QUESTION = gql`
             learningObjective
             skill
             understanding
+            unit
+            # vision and change
+            coreCompetence
+            coreConcept
+            subcompetence
+            subcompetenceStatement
+            subdiscipline
+            subdisciplineStatement
+            # aamc
+            concept
+            category
           }
         }
 

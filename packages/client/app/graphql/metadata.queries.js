@@ -76,6 +76,51 @@ export default gql`
           topic
         }
       }
+      introToBioMeta {
+        value
+        label
+        coreConcepts {
+          value
+          label
+          explanatoryItems
+        }
+        subdisciplines {
+          value
+          label
+        }
+        subdisciplineStatements {
+          value
+          label
+          coreConcept
+          subdiscipline
+        }
+        coreCompetencies {
+          value
+          label
+        }
+        subcompetencies {
+          value
+          label
+          coreCompetence
+          explanation
+        }
+        subcompetenceStatements {
+          value
+          label
+          coreCompetence
+          subcompetence
+        }
+        concepts {
+          value
+          label
+        }
+        categories {
+          value
+          label
+          concept
+          explanation
+        }
+      }
     }
   }
 `

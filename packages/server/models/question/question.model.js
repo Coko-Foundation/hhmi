@@ -198,89 +198,42 @@ class Question extends BaseModel {
         query.whereJsonSupersetOf('courses', [{ course: filters.course }])
       }
 
-      if (filters.unit) {
-        query.whereJsonSupersetOf('courses', [
-          {
-            units: [
-              {
-                unit: filters.unit,
-              },
-            ],
-          },
-        ])
-      }
+      // course meta filters
+      const courseMetaFilters = [
+        'unit',
+        'courseTopic',
+        'learningObjective',
+        'essentialKnowledge',
+        'application',
+        'skill',
+        'understanding',
+        'coreConcept',
+        'subdiscipline',
+        'subdisciplineStatement',
+        'coreCompetence',
+        'subcompetence',
+        'subcompetenceStatement',
+        'concept',
+        'category',
+      ]
 
-      if (filters.courseTopic) {
-        query.whereJsonSupersetOf('courses', [
-          {
-            units: [
-              {
-                courseTopic: filters.courseTopic,
-              },
-            ],
-          },
-        ])
-      }
+      // choose only applied metafilters
+      const appliedCourseMetaFilters = courseMetaFilters.filter(
+        f => f in filters && !!filters[f],
+      )
 
-      if (filters.learningObjective) {
+      // for each applied metafilter add a clause to the query
+      appliedCourseMetaFilters.forEach(filter => {
         query.whereJsonSupersetOf('courses', [
           {
             units: [
               {
-                learningObjective: filters.learningObjective,
+                [filter]: filters[filter],
               },
             ],
           },
         ])
-      }
-
-      if (filters.essentialKnowledge) {
-        query.whereJsonSupersetOf('courses', [
-          {
-            units: [
-              {
-                essentialKnowledge: filters.essentialKnowledge,
-              },
-            ],
-          },
-        ])
-      }
-
-      if (filters.application) {
-        query.whereJsonSupersetOf('courses', [
-          {
-            units: [
-              {
-                application: filters.application,
-              },
-            ],
-          },
-        ])
-      }
-
-      if (filters.skill) {
-        query.whereJsonSupersetOf('courses', [
-          {
-            units: [
-              {
-                skill: filters.skill,
-              },
-            ],
-          },
-        ])
-      }
-
-      if (filters.understanding) {
-        query.whereJsonSupersetOf('courses', [
-          {
-            units: [
-              {
-                understanding: filters.understanding,
-              },
-            ],
-          },
-        ])
-      }
+      })
 
       if (filters.cognitiveLevel && filters.cognitiveLevel.length) {
         query.whereIn('cognitive_level', filters.cognitiveLevel)

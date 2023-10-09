@@ -53,19 +53,25 @@ type Course {
 }
 
 type Unit {
-  application: String
-  coreCompetence: String
-  coreConcept: String
+  unit: String
   courseTopic: String
-  essentialKnowledge: String
+  # AP courses
   learningObjective: String
+  essentialKnowledge: String
+  # IB courses
+  application: String
   skill: String
-  subcompetence: String
-  subcompetenceStatement: String
+  understanding: String
+  # vision and change
+  coreConcept: String
   subdiscipline: String
   subdisciplineStatement: String
-  understanding: String
-  unit: String
+  coreCompetence: String
+  subcompetence: String
+  subcompetenceStatement: String
+  # aamc
+  concept: String
+  category: String
 }
 
 type QuestionsResponse {
@@ -112,26 +118,50 @@ input CourseInput {
 }
 
 input UnitInput {
-  application: String
+  unit: String
   courseTopic: String
-  essentialKnowledge: String
+  # AP courses
   learningObjective: String
+  essentialKnowledge: String
+  # IB courses
+  application: String
   skill: String
   understanding: String
-  unit: String
+  # vision and change
+  coreConcept: String
+  subdiscipline: String
+  subdisciplineStatement: String
+  coreCompetence: String
+  subcompetence: String
+  subcompetenceStatement: String
+  # aamc
+  concept: String
+  category: String
 }
 
 input SidebarFilters {
   topic: String
   subtopic: String
   course: String
-  application: String
+
+  unit: String
   courseTopic: String
-  essentialKnowledge: String
   learningObjective: String
+  essentialKnowledge: String
+
+  application: String
   skill: String
   understanding: String
-  unit: String
+
+  coreConcept: String
+  subdiscipline: String
+  subdisciplineStatement: String
+  coreCompetence: String
+  subcompetence: String
+  subcompetenceStatement: String
+
+  concept: String
+  category: String
 
   cognitiveLevel: [String]
   questionType: [String]

@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -6,6 +7,9 @@ import { LinkOutlined } from '@ant-design/icons'
 import {
   extractTopicsAndSubtopics,
   extractComplexItemSet,
+  extractAPCourseMetadata,
+  extractIBCourseMetadata,
+  extractIntroBioCourseMetadata,
 } from '../../utilities'
 import { Link, VisuallyHiddenElement } from '../common'
 
@@ -89,101 +93,67 @@ const MetadataInfo = props => {
         )
 
         const courseUnits = course.units.map(unitData => {
-          const unit = courseObject.units.find(u => u.value === unitData.unit)
-
-          const courseTopic = courseObject.topics.find(
-            u => u.value === unitData.courseTopic,
-          )
-
-          let additionalCourseMeta
-
-          if (
-            course.course === 'apBiology' ||
-            course.course === 'apEnvironmentalScience'
-          ) {
-            const learningObjective = courseObject.learningObjectives.find(
-              l => l.value === unitData.learningObjective,
-            )
-
-            const essentialKnowledge = courseObject.essentialKnowledge.find(
-              e => e.value === unitData.essentialKnowledge,
-            )
-
-            additionalCourseMeta = (
-              <>
-                <p>
-                  <strong>Learning objective</strong>
-                </p>
-                <p>{learningObjective.label}</p>
-                <p>
-                  <strong>Essential knowledge</strong>
-                </p>
-                <p>{essentialKnowledge.label}</p>
-              </>
-            )
+          switch (course.course) {
+            case 'apBiology':
+            case 'apEnvironmentalScience':
+              return (
+                <li key={`${JSON.stringify(unitData)}`}>
+                  {extractAPCourseMetadata(unitData, courseObject).map(cm => {
+                    return (
+                      cm.value && (
+                        <div key={JSON.stringify(cm)}>
+                          <p>
+                            <strong>{cm.label}</strong>
+                          </p>
+                          <p>{cm.value}</p>
+                        </div>
+                      )
+                    )
+                  })}
+                </li>
+              )
+            case 'biBiology':
+            case 'biEnvironmentalScience':
+              return (
+                <li key={`${JSON.stringify(unitData)}`}>
+                  {extractIBCourseMetadata(unitData, courseObject).map(cm => {
+                    return (
+                      cm.value && (
+                        <div key={JSON.stringify(cm)}>
+                          <p>
+                            <strong>{cm.label}</strong>
+                          </p>
+                          <p>{cm.value}</p>
+                        </div>
+                      )
+                    )
+                  })}
+                </li>
+              )
+            case 'introBioForMajors':
+              return (
+                <li key={`${JSON.stringify(unitData)}`}>
+                  {extractIntroBioCourseMetadata(
+                    unitData,
+                    courseObject,
+                    metadata.introToBioMeta,
+                  ).map(cm => {
+                    return (
+                      cm.value && (
+                        <div key={JSON.stringify(cm)}>
+                          <p>
+                            <strong>{cm.label}</strong>
+                          </p>
+                          <p>{cm.value}</p>
+                        </div>
+                      )
+                    )
+                  })}
+                </li>
+              )
+            default:
+              return null
           }
-
-          if (
-            course.course === 'biBiology' ||
-            course.course === 'biEnvironmentalScience'
-          ) {
-            const application = courseObject.applications.find(
-              a => a.value === unitData.application,
-            )
-
-            const skill = courseObject.skills.find(
-              s => s.value === unitData.skill,
-            )
-
-            const understanding = courseObject.understandings.find(
-              u => u.value === unitData.understanding,
-            )
-
-            additionalCourseMeta = (
-              <>
-                {application && (
-                  <>
-                    <p>
-                      <strong>Application</strong>
-                    </p>
-                    <p>{application.label}</p>
-                  </>
-                )}
-                {skill && (
-                  <>
-                    <p>
-                      <strong>Skill</strong>
-                    </p>
-                    <p>{skill.label}</p>
-                  </>
-                )}
-                {understanding && (
-                  <>
-                    <p>
-                      <strong>Understanding</strong>
-                    </p>
-                    <p>{understanding.label}</p>
-                  </>
-                )}
-              </>
-            )
-          }
-
-          return (
-            <li
-              key={`${unitData.unit}-${unitData.learningObjective}-${unitData.essentialKnowledge}`}
-            >
-              <p>
-                <strong>Unit</strong>
-              </p>
-              <p>{unit?.label}</p>
-              <p>
-                <strong>Topic</strong>
-              </p>
-              <p>{courseTopic?.label}</p>
-              {additionalCourseMeta}
-            </li>
-          )
         })
 
         return (
