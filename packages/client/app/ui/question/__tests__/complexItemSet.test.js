@@ -4,6 +4,8 @@ import { render, renderer, userEvent, waitFor } from '../../../testUtils'
 
 const onSave = jest.fn()
 
+const onSave = jest.fn()
+
 const MockForm = props => {
   return <ComplexItemSetForm onSave={onSave} {...props} />
 }
