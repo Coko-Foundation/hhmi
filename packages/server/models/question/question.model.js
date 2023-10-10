@@ -495,8 +495,8 @@ class Question extends BaseModel {
         break
 
       default:
-        // all other statuses: under_review, in_production or published
-        parentQuery.where(status, true)
+        // all other statuses: under_review, in_production or published AND not rejected
+        parentQuery.where({ [status]: true, rejected: false })
         break
     }
 
