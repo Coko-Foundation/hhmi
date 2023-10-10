@@ -183,9 +183,9 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
           user = await User.insert(
             {
               agreedTc,
-              givenNames,
+              givenNames: givenNames || 'given_name',
               password,
-              surname,
+              surname: surname || 'family_name',
               isActive: true,
             },
             { trx: tr },
@@ -224,6 +224,12 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
         // get the user, and update the token
         await identity.patch({ oauthAccessToken: accessToken }, { trx: tr })
         user = await User.findById(identity.userId)
+
+        if (!user.username) {
+          await User.patchAndFetchById(user.id, {
+            username: 'incomplete profile',
+          })
+        }
 
         return {
           user,
