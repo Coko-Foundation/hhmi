@@ -123,7 +123,7 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
             data: qs.stringify(payload),
           })
         } catch (e) {
-          console.error('TOKEN ERROR:', e.response.data)
+          throw new Error(e)
         }
 
         const { access_token: accessToken, error: tokenError } =
@@ -157,9 +157,21 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
         const givenNames = userInfo.given_name.map(g => g.value).join(' ')
         const surname = userInfo.family_name.map(g => g.value).join(' ')
 
+        // const identity = await Identity.query().findOne(builder =>
+        //   builder
+        //     .whereJsonSupersetOf('profile_data', {
+        //       sub, // biointeractive user id
+        //     })
+        //     .where({
+        //       isSocial: true,
+        //       provider: 'biointeractive',
+        //     }),
+        // )
+
         const identity = await Identity.findOne({
-          email,
+          email: email.toLowerCase(),
           isSocial: true,
+          provider: 'biointeractive',
         })
 
         if (!identity) {
@@ -171,9 +183,9 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
           user = await User.insert(
             {
               agreedTc,
-              givenNames,
+              givenNames: givenNames || 'given_name',
               password,
-              surname,
+              surname: surname || 'family_name',
               isActive: true,
             },
             { trx: tr },
@@ -212,6 +224,12 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
         // get the user, and update the token
         await identity.patch({ oauthAccessToken: accessToken }, { trx: tr })
         user = await User.findById(identity.userId)
+
+        if (!user.username) {
+          await User.patchAndFetchById(user.id, {
+            username: 'incomplete profile',
+          })
+        }
 
         return {
           user,

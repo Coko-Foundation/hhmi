@@ -24,13 +24,14 @@ const getUserInfo = async => {
   }
 }
 
-const createIdentity = async (user, email, isSocial) => {
+const createIdentity = async (user, email, isSocial, provider) => {
   try {
     return Identity.insert({
       userId: user.id,
       email,
       isDefault: true,
       isSocial,
+      provider,
     })
   } catch (e) {
     throw new Error(e)
