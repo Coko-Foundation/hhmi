@@ -88,11 +88,12 @@ const ChatThread = props => {
         infiniteScroll={infiniteScroll}
         messages={messages}
         onFetchMore={onFetchMore}
+        participants={participants}
         {...rest}
       />
       <StyledChatInput
-        participants={participants}
         onSend={onSendMessage}
+        participants={participants}
         placeholder="Write to author"
         type="text"
       />
