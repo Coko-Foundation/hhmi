@@ -74,10 +74,6 @@ extend input UsersQueryParams {
   search: String
 }
 
-# extend type Identity {
-#   profileData: String
-# }
-
 extend type Query {
   filterUsers(params: UsersQueryParams, options: PageInput): Users!
 }

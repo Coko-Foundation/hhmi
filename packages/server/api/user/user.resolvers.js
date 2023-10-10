@@ -38,12 +38,6 @@ const bioInteractiveLoginResolver = async (_, { authCode }, ctx) => {
   }
 }
 
-// const profileDataResolver = async identity => {
-//   const { profileData } = identity
-
-//   return JSON.stringify(profileData)
-// }
-
 module.exports = {
   Mutation: {
     updateUserProfile: updateUserProfileResolver,
@@ -56,7 +50,4 @@ module.exports = {
   User: {
     displayName: displayNameResolver,
   },
-  // Identity: {
-  //   profileData: profileDataResolver,
-  // },
 }
