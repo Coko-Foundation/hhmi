@@ -12,6 +12,7 @@ import {
   antTabs,
   createQuestionButton,
   listItemWrapper,
+  ProseMirror,
 } from '../support/selectors'
 
 const disableScripts = false
@@ -42,7 +43,7 @@ describe('Complex item set', () => {
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title)
     cy.get(listItemWrapper)
       .eq(0)
-      .contains('.ProseMirror', complexItemSet1.leadingContent)
+      .contains(ProseMirror, complexItemSet1.leadingContent)
     cy.get(listItemWrapper)
       .eq(0)
       .contains("[data-testid='author-value']", user2.username)
@@ -55,7 +56,7 @@ describe('Complex item set', () => {
     cy.contains('button', 'Create Set').click()
     cy.contains('label', 'Complex item set title')
     cy.get('input[id="title"]').type(complexItemSet2.title)
-    cy.get('.ProseMirror').type(complexItemSet2.leadingContent)
+    cy.get(ProseMirror).type(complexItemSet2.leadingContent)
     cy.contains('button[type="submit"]', 'Save').click()
     cy.wait('@GQLReq')
     cy.contains('Complex item set wax created successfully!')
@@ -83,9 +84,7 @@ describe('Complex item set', () => {
       .clear()
       .type('edited set')
 
-    cy.get('.ProseMirror')
-      .last()
-      .type(`{selectall}{del} edited set description`)
+    cy.get(ProseMirror).last().type(`{selectall}{del} edited set description`)
     cy.contains('button[type="submit"]', 'Update').click()
     cy.wait('@GQLReq')
     cy.contains('div', 'Complex item set updated successfully')

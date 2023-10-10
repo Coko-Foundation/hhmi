@@ -6,7 +6,12 @@ import {
   complexItemSet3,
 } from '../../support/appData'
 import { laptop } from '../../support/viewport'
-import { antTabs, listItemWrapper, anchorTags } from '../../support/selectors'
+import {
+  antTabs,
+  listItemWrapper,
+  anchorTags,
+  ProseMirror,
+} from '../../support/selectors'
 import {
   dashboard as dashboardRoute,
   sets as setsPage,
@@ -56,7 +61,7 @@ describe('Complex item set workflows', () => {
     cy.seedQuestion(disableScripts, admin.username, -1, 'anatomy', 'submitted')
 
     cy.login({ ...admin, visit: dashboardRoute })
-    cy.get(listItemWrapper).eq(0).get('.ProseMirror').click()
+    cy.get(listItemWrapper).eq(0).get(ProseMirror).click()
     cy.url().then(url => {
       const qId = url.split('/')[4]
 
@@ -90,7 +95,7 @@ describe('Complex item set workflows', () => {
     cy.login({ ...admin, visitUrl: dashboardRoute })
     cy.get(listItemWrapper)
       .eq(0)
-      .contains('.ProseMirror', 'By 2040, the world s population')
+      .contains(ProseMirror, 'By 2040, the world s population')
       .click()
     cy.url().then(url => {
       const qId = url.split('/')[4]
@@ -101,7 +106,7 @@ describe('Complex item set workflows', () => {
     cy.get(listItemWrapper)
       .eq(1)
       .contains(
-        '.ProseMirror',
+        ProseMirror,
         'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
       )
       .click()
@@ -122,7 +127,7 @@ describe('Complex item set workflows', () => {
 
     cy.get(listItemWrapper)
       .eq(0)
-      .contains('.ProseMirror', 'By 2040, the world s population')
+      .contains(ProseMirror, 'By 2040, the world s population')
     cy.get(listItemWrapper)
       .eq(0)
       .contains('[data-testid="question-status"]', 'Published')
@@ -164,7 +169,7 @@ describe('Complex item set workflows', () => {
     cy.get(listItemWrapper)
       .eq(0)
       .contains(
-        '.ProseMirror',
+        ProseMirror,
         'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
       )
       .click()
@@ -177,7 +182,7 @@ describe('Complex item set workflows', () => {
     cy.get(anchorTags.dashboard).click()
     cy.get(listItemWrapper)
       .eq(1)
-      .contains('.ProseMirror', 'By 2040, the world s population')
+      .contains(ProseMirror, 'By 2040, the world s population')
       .click()
     cy.url().then(url => {
       const qId = url.split('/')[4]
@@ -197,7 +202,7 @@ describe('Complex item set workflows', () => {
 
     // [segment]: checking if published set question appears
     cy.contains(
-      '.ProseMirror',
+      ProseMirror,
       `Energy: carbohydrates :: structural materials: water nucleotides lipids proteins`,
     )
   })

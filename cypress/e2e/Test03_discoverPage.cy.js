@@ -3,7 +3,11 @@ import path from 'path'
 import { user2 } from '../support/credentials'
 import { discover as discoverPage, graphqlEndpoint } from '../support/routes'
 import { multipleChoiceQuestionString } from '../support/appData'
-import { listItemWrapper, submitButton } from '../support/selectors'
+import {
+  listItemWrapper,
+  submitButton,
+  ProseMirror,
+} from '../support/selectors'
 import { getDateInFormat } from '../utils/helpers'
 import { laptop } from '../support/viewport'
 
@@ -94,7 +98,7 @@ describe('Discover page tests', () => {
       .eq(0)
       .should('be.visible')
       .contains(
-        '.ProseMirror',
+        ProseMirror,
         'What substance from Bacillus thuringiensis was most likely inserted into rice plants',
       )
     cy.contains('[data-testid="topic-value"]', 'Anatomy & Physiology')

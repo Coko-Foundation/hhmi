@@ -21,6 +21,8 @@ export const moreActionsToggle = '[aria-label="More actions"]'
 
 export const alertContainer = '[role="alert"]'
 
+export const ProseMirror = '.ProseMirror'
+
 export const anchorTags = {
   dashboard: 'a[href="/dashboard"]',
   about: 'a[href="/about"]',

@@ -14,6 +14,7 @@ import {
   antTableCell,
   submitQuestionButton,
   anchorTags,
+  ProseMirror,
 } from '../support/selectors'
 import {
   dashboard as dashboardRoute,
@@ -82,24 +83,24 @@ describe('Testing questions', () => {
     // [segment]: Testing text formats
     cy.log('testing text formats...')
     Object.entries(editor).forEach(([key, value]) => {
-      cy.get('.ProseMirror').type('{enter}')
+      cy.get(ProseMirror).type('{enter}')
       cy.get(`[title="Toggle ${key}"]`).click()
-      cy.get('.ProseMirror').type(value.value)
+      cy.get(ProseMirror).type(value.value)
       cy.contains(value.selector, value.value)
     })
-    cy.get('.ProseMirror').type('{enter}')
+    cy.get(ProseMirror).type('{enter}')
     // [segment]: Testing lists
     cy.log('testing lists...')
     cy.get("[title='Wrap in ordered list']").click()
     listItems.forEach(li => {
-      cy.get('.ProseMirror').type(`${li}{enter}`)
+      cy.get(ProseMirror).type(`${li}{enter}`)
     })
-    cy.get('.ProseMirror').type('{enter}')
+    cy.get(ProseMirror).type('{enter}')
     cy.get("[title='Wrap in bullet list']").click()
     listItems.forEach(li => {
-      cy.get('.ProseMirror').type(`${li}{enter}`)
+      cy.get(ProseMirror).type(`${li}{enter}`)
     })
-    cy.get('.ProseMirror').type('{enter}')
+    cy.get(ProseMirror).type('{enter}')
     // eslint-disable-next-line consistent-return
     cy.get('ul>li').each(($el, index) => {
       if (index < 2) return false
@@ -112,14 +113,14 @@ describe('Testing questions', () => {
     })
     // [segment]: Testing undo , redo
     cy.log('testing redo, undo...')
-    cy.get('.ProseMirror').type('Temp text')
+    cy.get(ProseMirror).type('Temp text')
     cy.get('[title="Undo"]').click()
     cy.contains('Temp text').should('not.exist')
     cy.get('[title="Redo"]').click()
     cy.contains('Temp text')
-    cy.get('.ProseMirror').clear()
-    cy.get('.ProseMirror').type('Question 2')
-    cy.get('.ProseMirror').click({ force: true })
+    cy.get(ProseMirror).clear()
+    cy.get(ProseMirror).type('Question 2')
+    cy.get(ProseMirror).click({ force: true })
     cy.deleteAllQuestions(disableScripts)
   })
   it('creating a question & checking values in the UI', () => {
@@ -197,7 +198,7 @@ describe('Testing questions', () => {
     cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
-      .contains('.ProseMirror', 'Plants growing under direct sunlight')
+      .contains(ProseMirror, 'Plants growing under direct sunlight')
       .click()
     cy.wait('@GQLReq')
     cy.contains('button[type="button"]', 'Edit question').click()
@@ -270,7 +271,7 @@ describe('Testing questions', () => {
     cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
-      .contains('.ProseMirror', '(empty)')
+      .contains(ProseMirror, '(empty)')
       .click()
     cy.get('[id="file-upload"]').selectFile(
       'cypress/fixtures/images/img12.png',
@@ -283,7 +284,7 @@ describe('Testing questions', () => {
     cy.get(listItemWrapper)
       .eq(0)
       .should('be.visible')
-      .contains('.ProseMirror', 'image with no alt text')
+      .contains(ProseMirror, 'image with no alt text')
       .click()
     cy.get('img').click()
     cy.get('[placeholder="Alt Text"]').type('alternative text')

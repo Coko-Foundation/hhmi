@@ -18,6 +18,7 @@ const {
  *                        the current date. This affects created,updated,publication_date.)
  *                  [5] - metadata type [biochemistry,anatomy,population]
  *                  [6] - question status [notSubmitted,submitted,underReview,published,inProduction] (default - notSubmitted)
+ *                  [7] - handling editor username
  * ---> when [2] = updateStatus.
  *                 [3] - bookId
  *                 [4]- [notSubmitted,submitted, underReview, published,inProduction] (default - notSubmitted)

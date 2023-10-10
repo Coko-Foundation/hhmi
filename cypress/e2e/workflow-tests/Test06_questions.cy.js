@@ -20,6 +20,7 @@ import {
   exportToWordButton,
   anchorTags,
   antSelectItem,
+  ProseMirror,
 } from '../../support/selectors'
 import {
   dashboard as dashboardRoute,
@@ -338,7 +339,7 @@ describe('Question Workflows', () => {
           .eq(0)
           .should('be.visible')
           .contains(
-            '.ProseMirror',
+            ProseMirror,
             'What substance from Bacillus thuringiensis was most likely inserted into rice plants',
           )
       })
@@ -437,7 +438,7 @@ describe('Question Workflows', () => {
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')
-        .contains('.ProseMirror', 'Energy: carbohydrates')
+        .contains(ProseMirror, 'Energy: carbohydrates')
     })
     it('Should be able to edit published questions', () => {
       cy.deleteAllQuestions()

@@ -308,6 +308,7 @@ const FilterList = ({
               onKeyDown={e => closeBadgeKeyDown(e, k?.label)}
               role="button"
               tabIndex={k?.label && !v?.label ? 0 : -1}
+              title="Clear filter option"
             />
           </FilterBadge>
 
@@ -330,6 +331,7 @@ const FilterList = ({
               pointerEvents="all"
               role="button"
               tabIndex={v?.label ? 0 : -1}
+              title="Clear filter value"
             />
           </FilterBadge>
         </span>

@@ -293,7 +293,34 @@ const formatedDate = input => {
   return new Intl.DateTimeFormat('en-US', options).format(date)
 }
 
-const avaiableFilters = ['author', 'topic', 'question', 'date']
+const avaiableFilters = [
+  {
+    key: { label: 'status', value: 'status' },
+    values: [
+      {
+        label: 'submitted',
+        value: 'submitted',
+      },
+      {
+        label: 'published',
+        value: 'published',
+      },
+    ],
+  },
+  {
+    key: { label: 'Assigned to HE', value: 'heAssigned' },
+    values: [
+      {
+        label: 'Is',
+        value: true,
+      },
+      {
+        label: 'Is not',
+        value: false,
+      },
+    ],
+  },
+]
 // end UTILS
 
 const Question = ({ question }) => (

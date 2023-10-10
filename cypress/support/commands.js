@@ -175,7 +175,7 @@ Cypress.Commands.add('updateQuestionStatus', (disabled, questionId, status) => {
       `docker exec hhmi_server_1 node ./scripts/seedQuestions.js updateStatus ${questionId} ${status}`,
     )
       .its('stdout')
-      .should('contains', `question ${questionId} updated to published`)
+      .should('contains', `question ${questionId} updated to ${status}`)
   } else {
     cy.log(`updateQuestionStatus is command disabled`)
   }

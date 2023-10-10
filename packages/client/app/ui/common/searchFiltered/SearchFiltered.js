@@ -368,6 +368,7 @@ const SearchFiltered = ({
       <SearchWrapper
         $visualfocus={visualfocus}
         aria-label="Searchbox"
+        data-testid="search-filtered"
         onBlur={handleBlur}
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
