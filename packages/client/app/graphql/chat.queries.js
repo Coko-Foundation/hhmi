@@ -44,3 +44,12 @@ export const SEND_MESSAGE = gql`
     }
   }
 `
+
+export const UPLOAD_ATTACHMENTS = gql`
+  mutation UploadAttachments($input: UploadAttachmentsInput!) {
+    uploadAttachments(input: $input) {
+      id
+      url(size: medium)
+    }
+  }
+`
