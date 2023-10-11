@@ -6,9 +6,7 @@ import { grid } from '@coko/client'
 
 import { SendOutlined } from '@ant-design/icons'
 
-import { Button } from '../common'
-
-// const Wrapper = styled.div``
+import { Button, Upload } from '../common'
 
 const SendButton = styled(Button)`
   border: none;
@@ -16,7 +14,7 @@ const SendButton = styled(Button)`
   outline: none;
 `
 
-const InputContainer = styled('div')`
+const InputWrapper = styled('div')`
   display: flex;
   border: 1px solid grey;
   margin-block: ${grid(1)};
@@ -42,6 +40,15 @@ const InputContainer = styled('div')`
   }
 `
 
+const MainContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+`
+
+const UploadWrapper = styled('div')`
+  align-self: end;
+`
+
 // TODO -- this needs to be a wax editor with two plugins (mention & task)
 
 const ChatInput = props => {
@@ -49,40 +56,61 @@ const ChatInput = props => {
 
   const [inputValue, setInputValue] = useState('')
   const [mentions, setMentions] = useState([])
+  const [attachments, setAttachments] = useState([])
 
-  const handleChange = (_, __, newPlainTextValue, newMentions) => {
+  const handleTextChange = (_, __, newPlainTextValue, newMentions) => {
     setInputValue(newPlainTextValue)
     const mentionIDs = newMentions.map(({ id }) => id)
     setMentions(curMentions => [...curMentions, ...mentionIDs])
   }
 
-  const handleSend = () => {
+  const handleAttachmentChange = ({ fileList }) => {
+    setAttachments(fileList)
+  }
+
+  const handleRemoveAttachment = file => {
+    setAttachments(selectedFiles =>
+      selectedFiles.filter(item => item.uid !== file.uid),
+    )
+  }
+
+  const handleSend = async () => {
     if (inputValue.trim().length !== 0) {
-      onSend(inputValue, mentions)
+      onSend(inputValue, mentions, attachments)
       setInputValue('')
+      setAttachments([])
     }
   }
 
   return (
-    <InputContainer>
-      <MentionsInput
-        className="mentions-input"
-        forceSuggestionsAboveCursor
-        onChange={handleChange}
-        value={inputValue}
-        {...rest}
-      >
-        <Mention
-          appendSpaceOnAdd
-          data={participants}
-          displayTransform={(_, display) => `@${display}`}
-          trigger="@"
+    <MainContainer>
+      <UploadWrapper style={{ alignSelf: 'end' }}>
+        <Upload
+          files={attachments}
+          onChange={handleAttachmentChange}
+          onRemove={handleRemoveAttachment}
         />
-      </MentionsInput>
-      <SendButton data-testid="send-btn" onClick={handleSend}>
-        <SendOutlined />
-      </SendButton>
-    </InputContainer>
+      </UploadWrapper>
+      <InputWrapper>
+        <MentionsInput
+          className="mentions-input"
+          forceSuggestionsAboveCursor
+          onChange={handleTextChange}
+          value={inputValue}
+          {...rest}
+        >
+          <Mention
+            appendSpaceOnAdd
+            data={participants}
+            displayTransform={(_, display) => `@${display}`}
+            trigger="@"
+          />
+        </MentionsInput>
+        <SendButton data-testid="send-btn" onClick={handleSend}>
+          <SendOutlined />
+        </SendButton>
+      </InputWrapper>
+    </MainContainer>
   )
 }
 
