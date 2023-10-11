@@ -103,7 +103,7 @@ const ProfileInfo = props => {
               </Form.Item>
             </Col>
 
-            <Col sm={6} xs={24}>
+            <Col sm={12} xs={24}>
               <Form.Item
                 label="First name"
                 name="firstName"
@@ -117,17 +117,6 @@ const ProfileInfo = props => {
                 <Input
                   autoComplete="given-name"
                   placeholder="Fill in your first name"
-                />
-              </Form.Item>
-            </Col>
-
-            <Col sm={6} xs={24}>
-              {/* QUESTION is this useful information? */}
-              {/* QUESTION should this be required? */}
-              <Form.Item label="Pronouns" name="pronouns">
-                <Input
-                  autoComplete="sex"
-                  placeholder="Fill in your preferred pronouns"
                 />
               </Form.Item>
             </Col>
@@ -349,26 +338,6 @@ const ProfileInfo = props => {
 
           <Row>
             <Col sm={12} xs={24}>
-              {/* QUESTION need the types */}
-              <Form.Item
-                label="Institutional Setting"
-                name="institutionalSetting"
-                rules={[
-                  {
-                    required: true,
-                    message: 'You have to select your Type of Institution',
-                  },
-                ]}
-              >
-                <Select
-                  data-testid="institutional-setting-select"
-                  options={institutionalSetting}
-                  placeholder="Select your type of institution"
-                />
-              </Form.Item>
-            </Col>
-
-            <Col sm={12} xs={24}>
               {/* QUESTION is the number input more appropriate here? */}
               <Form.Item
                 label="Years of teaching experience"
@@ -391,9 +360,6 @@ const ProfileInfo = props => {
                 />
               </Form.Item>
             </Col>
-          </Row>
-
-          <Row>
             <Col sm={12} xs={24}>
               {/* QUESTION what is this sorcery? */}
               <Form.Item
@@ -407,7 +373,9 @@ const ProfileInfo = props => {
                 />
               </Form.Item>
             </Col>
+          </Row>
 
+          <Row>
             <Col sm={12} xs={24}>
               <Form.Item dependencies={['typeOfInstitution']} noStyle>
                 {({ getFieldValue }) => {
@@ -468,9 +436,7 @@ const ProfileInfo = props => {
                 }}
               </Form.Item>
             </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
+            <Col sm={12} xs={24}>
               <Form.Item label="What course(s) do you teach?" name="courses">
                 <Select
                   data-testid="course-taught-select"
