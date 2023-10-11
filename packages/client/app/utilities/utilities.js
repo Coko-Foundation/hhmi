@@ -499,8 +499,12 @@ const profileOptions = {
       value: 'biology',
     },
     {
-      label: 'Biochemistry & Molecular Biology',
+      label: 'Biochemistry',
       value: 'biochemistryMolecularBiology',
+    },
+    {
+      label: 'Molecular Biology',
+      value: 'molecularBiology',
     },
     {
       label: 'Genetics',

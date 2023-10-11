@@ -85,10 +85,10 @@ describe('Tests for user authentication', () => {
     cy.contains(alertContainer, 'First name is required')
     // cy.contains(alertContainer, 'You have to fill in your prefered pronouns')
     cy.contains(alertContainer, 'Phone number is required')
-    cy.contains(
-      alertContainer,
-      'Please select the country where your institution is located',
-    )
+    // cy.contains(
+    //   alertContainer,
+    //   'Please select the country where your institution is located',
+    // )
     cy.contains(
       alertContainer,
       'City where your Institution is located is required',
@@ -98,7 +98,7 @@ describe('Tests for user authentication', () => {
       alertContainer,
       'You have to fill in your Institution/Organization',
     )
-    cy.contains(alertContainer, 'You have to select your Type of Institution')
+    // cy.contains(alertContainer, 'You have to select your Type of Institution')
     cy.contains(
       alertContainer,
       'You have to select your years of teaching experience',
@@ -109,12 +109,14 @@ describe('Tests for user authentication', () => {
     // [segment]: Contact
     cy.get('[id="lastName"]').type(contact.lastName)
     cy.get('[id="firstName"]').type(contact.firstName)
-    cy.get('[id="pronouns"]').type(contact.pronouns)
+    // cy.get('[id="pronouns"]').type(contact.pronouns)
     // cy.get('[id="middleName"]').type(contact.middleName)
     cy.get('[id="displayName"]').clear().type(contact.displayName)
     cy.get('[id="phone"]').type(contact.phone)
 
     // [segment]: Address
+    // checking if default country is USA
+    cy.contains('[data-testid="select-country"]', 'USA')
     cy.get('[data-testid="select-country"]')
       .click()
       .type(`${address.country}{enter}`)
@@ -130,8 +132,8 @@ describe('Tests for user authentication', () => {
     // [segment]: School
     cy.get('[id="position"]').type(school.position)
     cy.get('[id="organization"]').type(school.organization)
-    cy.get('[data-testid="institutional-setting-select"]').click()
-    cy.get(`[title="${school.institutionalSetting}"]`).click()
+    // cy.get('[data-testid="institutional-setting-select"]').click()
+    // cy.get(`[title="${school.institutionalSetting}"]`).click()
     cy.get('[data-testid="teaching-experience-select"]').click()
     cy.get(`[title="${school.yearsOfExperience}"]`).click()
     cy.get('[data-testid="primary-institution-select"]').click()
@@ -288,7 +290,7 @@ describe('Tests for user authentication', () => {
     // [segment]: Contact
     cy.get('[id="lastName"]').should('have.value', contact.lastName)
     cy.get('[id="firstName"]').should('have.value', contact.firstName)
-    cy.get('[id="pronouns"]').should('have.value', contact.pronouns)
+    // cy.get('[id="pronouns"]').should('have.value', contact.pronouns)
     cy.get('[id="phone"]').should('have.value', contact.updatedPhone)
 
     // [segment]: Address
@@ -303,10 +305,10 @@ describe('Tests for user authentication', () => {
     // [segment]: School
     cy.get('[id="position"]').should('have.value', school.position)
     cy.get('[id="organization"]').should('have.value', school.organization)
-    cy.contains(
-      '[data-testid="institutional-setting-select"]',
-      school.institutionalSetting,
-    )
+    // cy.contains(
+    //   '[data-testid="institutional-setting-select"]',
+    //   school.institutionalSetting,
+    // )
     cy.contains(
       '[data-testid="teaching-experience-select"]',
       school.yearsOfExperience,

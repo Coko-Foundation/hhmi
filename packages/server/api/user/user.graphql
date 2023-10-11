@@ -51,7 +51,7 @@ input UserProfileInput {
 
   position: String!
   organization: String!
-  institutionalSetting: String!
+  institutionalSetting: String
   teachingExperience: String!
   typeOfInstitution: String
 
