@@ -2,6 +2,7 @@ const { logger, useTransaction } = require('@coko/server')
 const { createFile } = require('@coko/server')
 const { ChatThread, ChatMessage } = require('@coko/server/src/models')
 const { User } = require('../models')
+const { getFileUrl } = require('./file.controllers')
 
 const BASE_MESSAGE = '[CHAT CONTROLLER]'
 
@@ -30,6 +31,44 @@ const getMessages = async (threadId, options = {}) => {
   logger.info(`${CONTROLLER_MESSAGE} Getting messages for thread ${threadId}`)
 
   try {
+    const messagesWithAttachments = await ChatMessage.query(options.trx)
+      .select('chat_messages.*', 'files.name ', 'files.stored_objects')
+      .leftJoin('files', 'chat_messages.id', 'files.objectId')
+      .where('chatThreadId', threadId)
+
+    const messages = Array.from(
+      new Set(messagesWithAttachments.map(({ id }) => id)),
+    )
+
+    const messagePromises = messages.map(async id => {
+      const attachments = await Promise.all(
+        messagesWithAttachments
+          .filter(message => message.id === id)
+          .map(async ({ name, storedObjects }) => {
+            const fileUrl = await getFileUrl({ storedObjects }, 'small')
+            return {
+              name,
+              fileUrl,
+            }
+          }),
+      )
+
+      const { created, content, userId } = messagesWithAttachments.find(
+        message => message.id === id,
+      )
+
+      return {
+        id,
+        content,
+        timestamp: created,
+        userId,
+        attachments,
+      }
+    })
+
+    // eslint-disable-next-line no-unused-vars
+    const newMessageArray = await Promise.all(messagePromises)
+
     return (
       await ChatMessage.query(options.trx).where('chatThreadId', threadId)
     ).map(({ id, created, content, userId }) => ({
