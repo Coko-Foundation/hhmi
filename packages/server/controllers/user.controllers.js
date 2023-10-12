@@ -154,8 +154,6 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
         // do we already have a user that is social?
         // no, set the user
         const { email } = userInfo
-        const givenNames = userInfo.given_name.map(g => g.value).join(' ')
-        const surname = userInfo.family_name.map(g => g.value).join(' ')
 
         // const identity = await Identity.query().findOne(builder =>
         //   builder
@@ -175,6 +173,8 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
         })
 
         if (!identity) {
+          const givenNames = userInfo.given_name.map(g => g.value).join(' ')
+          const surname = userInfo.family_name.map(g => g.value).join(' ')
           const password = uuid()
           const agreedTc = false
 
@@ -225,11 +225,11 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
         await identity.patch({ oauthAccessToken: accessToken }, { trx: tr })
         user = await User.findById(identity.userId)
 
-        if (!user.username) {
-          await User.patchAndFetchById(user.id, {
-            username: 'incomplete profile',
-          })
-        }
+        // if (!user.username) {
+        //   await User.patchAndFetchById(user.id, {
+        //     username: 'incomplete profile',
+        //   })
+        // }
 
         return {
           user,
