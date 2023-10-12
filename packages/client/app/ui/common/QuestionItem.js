@@ -44,8 +44,11 @@ const WaxContainer = styled(Link)`
 `
 
 const StatusContainer = styled.div`
-  min-width: 115px;
-  text-align: right;
+  /* min-width: 115px; */
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 0 0 0.7rem 0.7rem;
 `
 
 const InfoRow = styled.div`
@@ -237,7 +240,10 @@ QuestionItem.propTypes = {
     type: PropTypes.string,
     content: PropTypes.arrayOf(PropTypes.shape()),
   }),
-  status: PropTypes.string,
+  status: PropTypes.shape({
+    status: PropTypes.string,
+    assigned: PropTypes.string,
+  }),
   href: PropTypes.string,
   id: PropTypes.string,
   courses: PropTypes.arrayOf(
@@ -260,7 +266,7 @@ QuestionItem.propTypes = {
 
 QuestionItem.defaultProps = {
   content: null,
-  status: '',
+  status: null,
   href: '#',
   id: uuid(),
   courses: [],

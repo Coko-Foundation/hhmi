@@ -869,16 +869,19 @@ const dashboardDataMapper = ({
   showAuthor,
   relatedQuestionIds,
   testMode,
+  showAssigned,
 }) => {
   if (!questions) return null
 
-  const renderStatus = (
+  const renderStatus = ({
     submitted,
     underReview,
     inProduction,
     published,
     rejected,
-  ) => {
+    heAssigned,
+  }) => {
+    if (!showStatus) return null
     let status = 'Not Submitted'
     if (submitted) status = 'Submitted'
     if (underReview) status = 'Under Review'
@@ -886,11 +889,13 @@ const dashboardDataMapper = ({
     if (published) status = 'Published'
     if (rejected) status = 'Rejected'
 
-    return status
+    const assigned = showAssigned && heAssigned ? 'Assigned' : ''
+
+    return { status, assigned }
   }
 
   return questions.map(question => {
-    const { id, versions } = question
+    const { id, versions, rejected, heAssigned } = question
     const latestVersion = versions[0]
 
     const { content, publicationDate, cognitiveLevel, complexItemSetId } =
@@ -937,15 +942,7 @@ const dashboardDataMapper = ({
         },
       ],
       content: parsedContent,
-      status: showStatus
-        ? renderStatus(
-            latestVersion.submitted,
-            latestVersion.underReview,
-            latestVersion.inProduction,
-            latestVersion.published,
-            question.rejected,
-          )
-        : null,
+      status: renderStatus({ ...latestVersion, rejected, heAssigned }),
       href: testMode ? `/question/${id}/test` : `/question/${id}`,
       id,
       courses,

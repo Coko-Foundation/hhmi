@@ -17,21 +17,13 @@ exports[`ChatInput matches snapshot 1`] = `
       className="mentions-input__control"
       style={{}}
     >
-      <div
-        className="mentions-input__highlighter"
-        style={
-          {
-            "border": "1px solid transparent",
-            "boxSizing": "border-box",
-            "color": "transparent",
-            "overflow": "hidden",
-            "position": "relative",
-            "textAlign": "start",
-            "whiteSpace": "pre-wrap",
-            "width": "100%",
-            "wordWrap": "break-word",
-          }
-        }
+      <button
+        className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-default sc-hLseeU kWOTMC sc-kndUNU jNbaVF"
+        data-testid="send-btn"
+        disabled={false}
+        onClick={[Function]}
+        status={null}
+        type="button"
       >
          
       </div>

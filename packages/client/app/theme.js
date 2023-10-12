@@ -28,6 +28,8 @@ module.exports = {
 
   fontSizeBase: '16px',
   fontSizeBaseSmall: '14px',
+  fontSizeBaseSmaller: '12px',
+  fontSizeBaseSmallest: '11px',
   fontSizeHeading1: '54px',
   fontSizeHeading2: '36px',
   fontSizeHeading3: '36px',

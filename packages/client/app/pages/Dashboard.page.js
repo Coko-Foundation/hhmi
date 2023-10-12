@@ -190,6 +190,7 @@ const DashboardPage = () => {
           complexItemSetOptions,
           showStatus: true,
           showAuthor: true,
+          showAssigned: true,
         })
       : []
 

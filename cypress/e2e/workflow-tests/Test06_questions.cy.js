@@ -251,6 +251,15 @@ describe('Question Workflows', () => {
             '[class="ant-modal-body"]',
             `Handling editor assigned to the question successfully`,
           )
+
+          cy.contains(anchorTags.dashboard, 'Dashboard', { force: true }).click(
+            { force: true },
+          )
+          // [segment]: checking if he Assigned badge is displayed
+          cy.log('checking if he Assigned badge is displayed')
+          cy.get(listItemWrapper)
+            .eq(0)
+            .contains('[data-testid="status-wrapper"]', 'Assigned')
           //
         })
         it('Assign HE bulk action', () => {
