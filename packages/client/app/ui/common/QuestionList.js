@@ -47,6 +47,11 @@ const StyledList = styled(List)`
       &:not(:last-child) {
         border-bottom: 1px solid ${th('colorSecondary')};
       }
+
+      label,
+      label > span:nth-child(2) {
+        width: 100%;
+      }
     }
 
     .ant-checkbox {

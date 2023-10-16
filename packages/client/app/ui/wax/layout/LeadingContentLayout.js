@@ -10,13 +10,17 @@ import 'wax-prosemirror-services/dist/index.css'
 
 const Wrapper = styled.div`
   background-color: ${th('colorBackground')};
-  max-width: 100ch;
 
   ${commonStyles};
 
-  .ProseMirror {
-    background-color: inherit;
-    padding: 0 ${grid(5)};
+  > div {
+    height: unset;
+
+    .ProseMirror {
+      background-color: inherit;
+      max-width: 100ch;
+      padding: 0 ${grid(5)};
+    }
   }
 `
 

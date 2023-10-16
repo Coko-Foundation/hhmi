@@ -99,8 +99,8 @@ const ComplexItemSetPage = () => {
   const handleSave = newValues => {
     const { title, leadingContent } = newValues
 
+    // if we have an id, it means we're updating an existing set
     if (id) {
-      // lazy query update
       updateComplexItemSet({
         variables: {
           id,
@@ -127,7 +127,7 @@ const ComplexItemSetPage = () => {
           }, NOTIFICATION_TIMEOUT)
         })
     } else {
-      // lazy query create
+      // otherwise create a new set
       createComplexItemSet({
         variables: { title, leadingContent: JSON.stringify(leadingContent) },
       })

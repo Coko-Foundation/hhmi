@@ -16,6 +16,7 @@ import Status from './Status'
 
 const Wrapper = styled.article`
   background-color: inherit;
+  container: question-item / inline-size;
   line-height: ${th('lineHeight')};
   padding: ${grid(4)} ${grid(3)};
   position: relative;
@@ -87,26 +88,11 @@ const InfoRow = styled.div`
 
 const MetadataTable = styled.table`
   border: none;
-  /* text-align: left; */
   width: 100%;
 
   th,
   td {
     border: none;
-  }
-
-  @media (min-width: ${th('mediaQueries.small')}) {
-    tbody {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-
-      tr {
-        display: flex;
-        flex: 1 1 0px;
-        flex-direction: column;
-      }
-    }
   }
 `
 
@@ -117,10 +103,6 @@ const MetadataLabel = styled.div`
 
 const MetadataValue = styled.td`
   text-align: right;
-
-  @media (min-width: ${th('mediaQueries.small')}) {
-    text-align: left;
-  }
 `
 
 const courseOrder = [
@@ -150,6 +132,27 @@ const QuestionItem = props => {
 
   return (
     <Wrapper className={className} id={id}>
+      {/* inject a style tag with @container rule, not yet supported by our current version of styled-components */}
+      <style type="text/css">
+        {`
+              @container question-item (inline-size > 600px) {
+                tbody {
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: space-between;
+                }
+                tbody tr {
+                    display: flex;
+                    flex: 1 1 0px;
+                    flex-direction: column;
+  
+                  }
+                  tbody tr td:nth-child(2) {
+                    text-align: left;
+                  }
+              }
+        `}
+      </style>
       <FirstRow>
         <WaxContainer
           data-testid="wax-container"

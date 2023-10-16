@@ -23,9 +23,42 @@ const StyledTabs = styled(Tabs)`
       overflow: auto;
     }
   }
+
+  @media (max-width: ${th('mediaQueries.medium')}) {
+    .ant-tabs-content [role='tabpanel'][aria-hidden='false'] {
+      height: unset;
+      min-height: 100%;
+
+      > div {
+        flex-grow: 1;
+
+        > div:nth-child(2) {
+          height: unset;
+        }
+      }
+    }
+  }
 `
 
 const Wrapper = styled.div`
+  --threshold: ${th('mediaQueries.medium')};
+  display: flex;
+  flex-wrap: wrap;
+  height: 100%;
+  overflow: hidden;
+
+  > * {
+    /* ↓ Switch the layout at the --threshold */
+    flex-basis: calc((var(--threshold) - 100%) * 999);
+    flex-grow: 1;
+  }
+`
+
+const InfoWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
   padding-inline: ${grid(3)};
 
   .ProseMirror {
@@ -35,8 +68,6 @@ const Wrapper = styled.div`
 
 const StyledQuestionList = styled(QuestionList)`
   flex-grow: 1;
-  height: unset;
-  min-height: 450px;
   overflow: hidden;
 `
 
@@ -45,7 +76,7 @@ const SetTitle = styled.h2`
 `
 
 const StyledWaxLayout = styled(LeadingContentLayout)`
-  max-height: 13em;
+  height: 100%;
   overflow: auto;
 `
 
@@ -103,8 +134,8 @@ const ComplexItemSet = props => {
             label: 'Content',
             key: 'content',
             children: (
-              <>
-                <Wrapper>
+              <Wrapper>
+                <InfoWrapper>
                   <SetTitle data-testid="set-title">{title}</SetTitle>
                   <Wax
                     autoFocus={false}
@@ -115,7 +146,7 @@ const ComplexItemSet = props => {
                     readOnly
                     // onContentChange={onContentChange}
                   />
-                </Wrapper>
+                </InfoWrapper>
                 <StyledQuestionList
                   currentPage={currentQuestionsPage}
                   loading={loadingData}
@@ -134,7 +165,7 @@ const ComplexItemSet = props => {
                   showSort={false}
                   totalCount={totalQuestions} // not paginated for now, so total === question.length
                 />
-              </>
+              </Wrapper>
             ),
           },
         ]

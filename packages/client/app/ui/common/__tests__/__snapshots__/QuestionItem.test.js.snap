@@ -2,9 +2,31 @@
 
 exports[`QuestionItem matches snapshot 1`] = `
 <article
-  className="sc-bIWhlU jpkeEh"
+  className="sc-bIWhlU gPatxV"
   id="1"
 >
+  <style
+    type="text/css"
+  >
+    
+              @container question-item (inline-size &gt; 600px) {
+                tbody {
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: space-between;
+                }
+                tbody tr {
+                    display: flex;
+                    flex: 1 1 0px;
+                    flex-direction: column;
+  
+                  }
+                  tbody tr td:nth-child(2) {
+                    text-align: left;
+                  }
+              }
+        
+  </style>
   <div
     className="sc-jOBjDf jhBqBY"
   >
@@ -20,7 +42,7 @@ exports[`QuestionItem matches snapshot 1`] = `
     data-testid="courses"
   />
   <table
-    className="sc-JfKsv yGrJI"
+    className="sc-JfKsv jMJIdK"
   >
     <tbody />
   </table>
