@@ -13,16 +13,34 @@ const MainContainer = styled('div')`
   flex-direction: column;
 `
 
+const StyledUpload = styled(Upload)`
+  margin-block: ${grid(2)};
+  margin-inline: ${grid(1)};
+`
+
 const SendButton = styled(Button)`
-  background: none;
-  border: none;
-  color: ${props => props.theme.colorPrimary};
+  background: ${props => props.theme.colorPrimaryBorder};
+  margin-inline: ${grid(1)};
   outline: none;
+  border-radius: 50%;
+  border: none;
+  height: 45px;
+  weight: 50px;
+
+  color: ${props => props.theme.colorTextReverse};
+  &:hover,
+  &:focus {
+    color: ${props => props.theme.colorTextReverse} !important;
+    background: ${props => props.theme.colorPrimary};
+  }
 `
 
 const InputWrapper = styled('div')`
+  background: rgba(0, 0, 0, 0.1);
+  box-shadow: inset rgba(0, 0, 0, 0.18) 0px 1px 2px;
+
   display: flex;
-  border: 1px solid grey;
+  // border: 1px solid grey;
   margin-block: ${grid(1)};
   padding: ${grid(2)};
   border-radius: 20px;
@@ -35,6 +53,7 @@ const InputWrapper = styled('div')`
   .mentions-input__input {
     outline: none;
     border: none;
+    color: ${props => props.theme.colorText};
   }
   .mentions-input__suggestions__list {
     border: 1px solid ${props => props.theme.colorPrimaryBorder};
@@ -51,6 +70,13 @@ const InputWrapper = styled('div')`
 
 const UploadWrapper = styled('div')`
   align-self: end;
+`
+
+const ChatInputSection = styled('div')`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `
 
 // TODO -- this needs to be a wax editor with two plugins (mention & task)
@@ -89,31 +115,35 @@ const ChatInput = props => {
   return (
     <MainContainer>
       <UploadWrapper style={{ alignSelf: 'end' }}>
-        <Upload
+        <StyledUpload
+          accept=".pdf,.jpeg,.png"
           files={attachments}
+          multiple
           onChange={handleAttachmentChange}
           onRemove={handleRemoveAttachment}
         />
       </UploadWrapper>
-      <InputWrapper>
-        <MentionsInput
-          className="mentions-input"
-          forceSuggestionsAboveCursor
-          onChange={handleTextChange}
-          value={inputValue}
-          {...rest}
-        >
-          <Mention
-            appendSpaceOnAdd
-            data={participants}
-            displayTransform={(_, display) => `@${display}`}
-            trigger="@"
-          />
-        </MentionsInput>
+      <ChatInputSection>
+        <InputWrapper style={{ flexGrow: 1 }}>
+          <MentionsInput
+            className="mentions-input"
+            forceSuggestionsAboveCursor
+            onChange={handleTextChange}
+            value={inputValue}
+            {...rest}
+          >
+            <Mention
+              appendSpaceOnAdd
+              data={participants}
+              displayTransform={(_, display) => `@${display}`}
+              trigger="@"
+            />
+          </MentionsInput>
+        </InputWrapper>
         <SendButton data-testid="send-btn" onClick={handleSend}>
           <SendOutlined />
         </SendButton>
-      </InputWrapper>
+      </ChatInputSection>
     </MainContainer>
   )
 }

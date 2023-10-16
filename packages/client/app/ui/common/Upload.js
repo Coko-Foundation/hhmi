@@ -10,6 +10,7 @@ const UploadButton = styled(Button)`
   outline: none;
   border: none;
   margin-inline: ${grid(1)};
+  color: ${props => props.theme.colorPrimary};
 `
 
 const StyledAntUpload = styled(AntUpload)`
@@ -27,16 +28,17 @@ const StyledAntUpload = styled(AntUpload)`
   }
 `
 
-const Upload = ({ files, onChange, onRemove }) => {
+const Upload = ({ files, onChange, onRemove, ...rest }) => {
   return (
     <StyledAntUpload
       beforeUpload={() => false}
       fileList={files}
       onChange={onChange}
       onRemove={onRemove}
+      {...rest}
     >
       <Tooltip placement="leftBottom" title="Upload files">
-        <UploadButton icon={<PaperClipOutlined />} />
+        <UploadButton icon={<PaperClipOutlined />} shape="round" />
       </Tooltip>
     </StyledAntUpload>
   )

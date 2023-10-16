@@ -44,6 +44,10 @@ const Message = styled.div`
       ${th('colorPrimaryBorder')};
     outline-offset: 1px;
   }
+  & .mention {
+    font-weight: 900;
+    cursor: pointer;
+  }
 `
 
 const Name = styled.div`
@@ -58,9 +62,11 @@ const Content = styled.div`
 
 const Date = styled.div`
   display: flex;
+  justify-content: flex-end;
   font-size: ${th('fontSizeBaseSmall')};
   font-style: italic;
   margin-top: ${grid(2)};
+  margin-right: ${grid(2)};
 `
 
 const Attachments = styled.div`
@@ -104,7 +110,7 @@ const ChatMessage = forwardRef((props, ref) => {
   parts.forEach(part => {
     // checking if the mentioned user is a part of participants in the cat
     if (part.startsWith('@') && participants.includes(part.slice(1))) {
-      output += `<span style="font-weight:900">${part}</span>`
+      output += `<span class="mention">${part}</span>`
       return
     }
 
