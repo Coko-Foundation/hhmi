@@ -8,7 +8,13 @@ import { SendOutlined } from '@ant-design/icons'
 
 import { Button, Upload } from '../common'
 
+const MainContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+`
+
 const SendButton = styled(Button)`
+  background: none;
   border: none;
   color: ${props => props.theme.colorPrimary};
   outline: none;
@@ -18,6 +24,8 @@ const InputWrapper = styled('div')`
   display: flex;
   border: 1px solid grey;
   margin-block: ${grid(1)};
+  padding: ${grid(2)};
+  border-radius: 20px;
 
   // overrding react-mentions styles
   .mentions-input {
@@ -30,19 +38,15 @@ const InputWrapper = styled('div')`
   }
   .mentions-input__suggestions__list {
     border: 1px solid ${props => props.theme.colorPrimaryBorder};
+    border-radius: ${grid(1)};
   }
   .mentions-input__suggestions__item {
     padding-inline: ${grid(2)};
   }
   .mentions-input__suggestions__item--focused {
-    background: ${props => props.theme.colorPrimary};
+    background: ${props => props.theme.colorPrimaryBorder};
     color: ${props => props.theme.colorBackground};
   }
-`
-
-const MainContainer = styled('div')`
-  display: flex;
-  flex-direction: column;
 `
 
 const UploadWrapper = styled('div')`
