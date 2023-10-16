@@ -20,7 +20,7 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
     onKeyDown={[Function]}
   >
     <div
-      className="sc-iAEyYk jigzbt"
+      className="sc-iAEyYk fNzsdK"
     >
       <span
         id="filterlistlabel"
@@ -109,11 +109,11 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
       </ul>
     </div>
     <span
-      className="sc-eDDNvR ipSZwk"
+      className="sc-eDDNvR hmbfrf"
     >
       <span
         aria-label="filter"
-        className="anticon anticon-filter sc-hLseeU dOHwZC"
+        className="anticon anticon-filter sc-hLseeU eCTaRx"
         role="img"
       >
         <svg
@@ -140,12 +140,12 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
         }
       >
         <div
-          className="sc-jTrPJq dGGqgf"
+          className="sc-jTrPJq fMrUyv"
           tabIndex={-1}
         >
           <span
             aria-label=""
-            className="anticon anticon-close-circle sc-gLDzan bAMJhL"
+            className="anticon anticon-close-circle sc-gLDzan jtvUet"
             onClick={[Function]}
             onKeyDown={[Function]}
             role="button"
@@ -169,12 +169,12 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
         </div>
         <div
           aria-label="undefined undefined"
-          className="sc-jTrPJq dGGqgf"
+          className="sc-jTrPJq fMrUyv"
           tabIndex={-1}
         >
           <span
             aria-label=""
-            className="anticon anticon-close-circle sc-gLDzan bAMJhL"
+            className="anticon anticon-close-circle sc-gLDzan jtvUet"
             onClick={[Function]}
             onKeyDown={[Function]}
             pointerEvents="all"
@@ -208,12 +208,12 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
         }
       >
         <div
-          className="sc-jTrPJq dGGqgf"
+          className="sc-jTrPJq fMrUyv"
           tabIndex={-1}
         >
           <span
             aria-label=""
-            className="anticon anticon-close-circle sc-gLDzan bAMJhL"
+            className="anticon anticon-close-circle sc-gLDzan jtvUet"
             onClick={[Function]}
             onKeyDown={[Function]}
             role="button"
@@ -237,12 +237,12 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
         </div>
         <div
           aria-label="undefined undefined"
-          className="sc-jTrPJq dGGqgf"
+          className="sc-jTrPJq fMrUyv"
           tabIndex={-1}
         >
           <span
             aria-label=""
-            className="anticon anticon-close-circle sc-gLDzan bAMJhL"
+            className="anticon anticon-close-circle sc-gLDzan jtvUet"
             onClick={[Function]}
             onKeyDown={[Function]}
             pointerEvents="all"

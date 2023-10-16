@@ -9,7 +9,7 @@ import {
   CloseCircleFilled,
   FilterOutlined,
 } from '@ant-design/icons'
-import { th, lighten } from '@coko/client'
+import { th, darken, lighten } from '@coko/client'
 import styled from 'styled-components'
 import { alpha } from '../../_helpers/themeUtils'
 
@@ -23,11 +23,12 @@ const FilterIcon = styled(FilterOutlined)`
   color: ${p =>
     p.$visualfocus ? alpha('colorPrimary', 0.624) : alpha('colorBorder', 0.55)};
   display: flex;
-  font-size: 18px;
+  font-size: 20px;
   height: 100%;
   justify-content: center;
   margin: 0;
-  padding: 0 5px;
+  margin-right: 2px;
+  padding: 0 7px;
 
   @media screen and (max-width: 800px) {
     border-right: 1px solid
@@ -41,6 +42,7 @@ const BadgesWrapper = styled.span`
   display: contents;
   height: 25px;
   overflow: auto hidden;
+  padding: 0 0.5rem;
   scrollbar-color: ${th('colorPrimary')} #fff;
   transition: background-color 0.3s;
 
@@ -92,20 +94,19 @@ const FilterBadge = styled.div`
   }};
   border-radius: 0.1rem;
   box-shadow: ${p => (p.$show ? '0 0 3px #0003, inset 0 0 4px #fff6' : 'none')};
-  color: ${p => (p.$show ? p.badgeColor || '#fff' : '#0000')};
+  color: ${p => (p.$show ? p.badgeColor || '#fffd' : '#0000')};
   display: flex;
-  font-size: 0.5rem;
+  font-size: ${th('fontSizeBaseSmallest')};
   font-weight: 700;
   gap: 0.4rem;
   max-width: ${p => (p.$show ? 'max-content' : '0')};
   opacity: ${p => (p.$show ? (p.$visualfocus ? 1 : 0.7) : 0.7)};
 
   overflow: hidden;
-  padding: ${p => (p.$show ? '0.2rem 0.5rem' : '0.2rem 0')};
+  padding: ${p => (p.$show ? '0.2rem 0.5rem 0.1rem' : '0.2rem 0 0.1rem')};
   text-align: center;
-  text-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
   text-shadow: 0 0 2px #0005;
-  text-transform: uppercase;
   transition: all 0.1s ease-in-out;
   white-space: nowrap;
   width: ${p => (p.$show ? '900px' : '1px')};
@@ -114,9 +115,9 @@ const FilterBadge = styled.div`
 const CloseBadgeButton = styled(CloseCircleFilled)`
   color: ${p => p.$color || alpha('colorBackgroundHue', 0.7)};
   cursor: pointer;
-  font-size: 12px;
+  font-size: ${th('fontSizeBaseSmaller')};
   font-weight: 900;
-  margin: 0 -3px 0 2px;
+  margin: 0 -3px 2px 2px;
   max-width: ${p => (p.$show ? '12px' : '0')};
   transition: max-width 0.2s;
 `
@@ -133,14 +134,14 @@ const FilterPopup = styled.div`
     inset 0 0 10px #0001;
   display: flex;
   flex-direction: column;
-  font-size: 0.7rem;
+  font-size: ${th('fontSizeBaseSmaller')};
   justify-content: space-between;
   /* the 'magic numbers' are:
 4px: the sum of the SearchWraper's outline + outline offset + StyledFilterList's border
 1px: StyledFilterList's border */
   left: ${p => (p.$visualfocus ? '-4px' : '-1px')};
   max-height: ${p => (p.$show ? '200px' : '0')};
-  min-width: 200px;
+  min-width: 230px;
   overflow: hidden;
   position: absolute;
   top: ${p => (p.$visualfocus ? 'calc(100% + 4px)' : 'calc(100% + 1px)')};
@@ -167,7 +168,7 @@ finish hiding the dropdown list 'cause if not the border remains there */
           : alpha('colorBorder', 0.265)};
     box-shadow: inset 0 0 3px #0001;
     color: ${p => (p.$visualfocus ? th('colorSecondary') : th('colorText'))};
-    font-size: 0.6rem;
+    font-size: ${th('fontSizeBaseSmallest')};
     padding: 2px 5px;
     text-align: left;
     width: 100%;
@@ -184,12 +185,11 @@ finish hiding the dropdown list 'cause if not the border remains there */
   & > ul > li {
     align-items: center;
     color: ${p =>
-      p.$visualfocus ? th('colorPrimaryBorder') : alpha('colorBorder', 0.2)};
+      p.$visualfocus ? th('colorPrimary') : alpha('colorBorder', 0.2)};
     cursor: pointer;
     display: flex;
-    font-weight: 900;
     margin: 0 auto;
-    padding: 0.2rem 0.3rem;
+    padding: 0.3rem;
     text-align: left;
     transition: color 0.2s, background-color 0.2s;
     width: 100%;
@@ -207,6 +207,7 @@ finish hiding the dropdown list 'cause if not the border remains there */
       height: 7px;
       justify-content: center;
       margin: 0 0.6rem;
+      margin-right: 0.9rem;
       transition: all 0.3s;
       width: 7px;
     }
@@ -220,10 +221,9 @@ finish hiding the dropdown list 'cause if not the border remains there */
     &:focus,
     &:focus-visible,
     &[aria-selected='true'] {
-      background-color: ${alpha('colorBackgroundHue', 0.55)};
+      background-color: ${alpha('colorBackgroundHue', 0.9)};
       border: none;
-      color: ${th('colorPrimary')};
-      font-weight: 900;
+      color: ${darken('colorPrimaryBorder', 0.5)};
       outline: none;
 
       & > span.indicator {
@@ -231,7 +231,7 @@ finish hiding the dropdown list 'cause if not the border remains there */
         border-color: #0000;
         box-shadow: 0 0 10px ${alpha('colorPrimary', 0.24)};
         color: ${alpha('colorPrimary', 0.8)};
-        margin-right: 0.9rem;
+        margin-right: 1.2rem;
         transform: scale(1.2);
       }
     }
