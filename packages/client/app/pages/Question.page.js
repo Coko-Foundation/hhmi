@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useHistory, useParams, Link, useLocation } from 'react-router-dom'
-import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
+import {
+  useQuery,
+  useMutation,
+  useLazyQuery,
+  useSubscription,
+} from '@apollo/client'
 import debounce from 'lodash/debounce'
 // import { questionDataTransformer, questionDataMapper } from '../utilities'
 
@@ -36,6 +41,7 @@ import {
   CREATE_CHAT_THREAD,
   GET_QUESTION_PARTICIPANTS,
   UPLOAD_ATTACHMENTS,
+  MESSAGE_CREATED_SUBSCRIPTION,
 } from '../graphql'
 import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 
@@ -137,13 +143,17 @@ const messagesApiToUi = (messages, currentUser = null) => {
           timestamp,
           content,
           user: { id: userId, displayName } = {},
-        }) => ({
-          id,
-          content,
-          date: timestamp,
-          own: userId === currentUser,
-          user: displayName,
-        }),
+          attachments,
+        }) => {
+          return {
+            id,
+            content,
+            date: timestamp,
+            own: userId === currentUser,
+            user: displayName,
+            attachments,
+          }
+        },
       )
     : []
 }
@@ -239,6 +249,26 @@ const QuestionPage = props => {
     useLazyQuery(GET_CHAT_THREAD, {
       fetchPolicy: 'network-only',
     })
+
+  const { data: newMessage } = useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
+    variables: {
+      chatThreadId: chatThread?.id,
+    },
+  })
+
+  // maintaining messages in a state
+  const [messages, setMessages] = useState([])
+
+  useEffect(() => {
+    if (chatThread?.messages) {
+      setMessages(chatThread.messages)
+    }
+  }, [chatThread])
+
+  useEffect(() => {
+    if (newMessage)
+      setMessages(previousMessages => [...previousMessages, newMessage])
+  }, [newMessage])
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -846,7 +876,7 @@ const QuestionPage = props => {
           !getResources ||
           !complexItemSetOptions
         }
-        messages={messagesApiToUi(chatThread?.messages, currentUser?.id)}
+        messages={messagesApiToUi(messages, currentUser?.id)}
         metadata={metadata || {}}
         onAssignAuthor={handleAssignAuthor}
         onClickAssignHE={handleClickAssignHE}
