@@ -2,6 +2,7 @@ import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import DOMPurify from 'dompurify'
+import { PaperClipOutlined } from '@ant-design/icons'
 
 import { grid, th } from '@coko/client'
 
@@ -14,14 +15,20 @@ const pullRight = css`
 
 const Message = styled.div`
   align-self: baseline;
+  margin-block: 10px;
   background: ${props =>
-    props.own ? th('colorPrimary') : th('colorSecondary')};
-  border-radius: 3px;
-  color: ${th('colorTextReverse')};
+    props.own ? th('colorBackgroundHue') : th('colorPrimaryBorder')};
+  border-radius: ${props =>
+    props.own ? '15px 0 15px 15px' : '0 15px 15px 15px'};
+  color: ${props => (props.own ? th('colorTextDark') : th('colorTextReverse'))};
   display: inline-block;
   margin-left: ${grid(1)};
-  max-inline-size: 90%;
+  max-inline-size: 50%;
   min-inline-size: 30%;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  padding: ${grid(1)};
+
   ${props =>
     props.own &&
     css`
@@ -31,7 +38,6 @@ const Message = styled.div`
         ${pullRight}
       }
     `};
-  padding: ${grid(2)};
 
   &:focus {
     outline: ${props => `${props.theme.lineWidth * 4}px`} solid
@@ -46,7 +52,9 @@ const Name = styled.div`
   margin-bottom: ${grid(2)};
 `
 
-const Content = styled.div``
+const Content = styled.div`
+  padding-inline: ${grid(2)};
+`
 
 const Date = styled.div`
   display: flex;
@@ -55,8 +63,40 @@ const Date = styled.div`
   margin-top: ${grid(2)};
 `
 
+const Attachments = styled.div`
+  margin-block: ${grid(2)};
+  background: rgba(0, 0, 0, 0.1);
+  padding: ${grid(3)};
+  border-radius: 8px;
+  box-shadow: inset rgba(0, 0, 0, 0.18) 0px 1px 2px;
+  display: grid;
+  grid-template-columns: repeat(2, 0.2fr);
+  grid-gap: 5px 5px;
+`
+
+const AttachmentItem = styled.span`
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 130px;
+  white-space: nowrap;
+  cursor: pointer;
+  border: 1px solid white;
+  padding: ${grid(1)};
+  border-radius: 5px;
+`
+
 const ChatMessage = forwardRef((props, ref) => {
-  const { className, content, date, own, user, participants, ...rest } = props
+  const {
+    attachments,
+    className,
+    content,
+    date,
+    own,
+    user,
+    participants,
+    ...rest
+  } = props
 
   const parts = content.split(/(@\w+)/g)
   let output = ''
@@ -85,6 +125,16 @@ const ChatMessage = forwardRef((props, ref) => {
           dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
         />
       </Content>
+      {attachments.length > 0 && (
+        <Attachments>
+          {attachments.map(attachment => (
+            <AttachmentItem>
+              <PaperClipOutlined />
+              {attachment.name}
+            </AttachmentItem>
+          ))}
+        </Attachments>
+      )}
       <Date>
         <DateParser timestamp={date}>
           {(_, timeAgo) => <span>{timeAgo} ago</span>}
@@ -95,6 +145,7 @@ const ChatMessage = forwardRef((props, ref) => {
 })
 
 ChatMessage.propTypes = {
+  attachments: PropTypes.arrayOf(),
   content: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   own: PropTypes.bool,
@@ -103,6 +154,7 @@ ChatMessage.propTypes = {
 }
 
 ChatMessage.defaultProps = {
+  attachments: [],
   own: false,
   user: null,
   participants: [],

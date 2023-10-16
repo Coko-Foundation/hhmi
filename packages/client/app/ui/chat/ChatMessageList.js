@@ -81,22 +81,27 @@ const ChatMessageList = props => {
         scrollableTarget="scrollableDiv"
         scrollThreshold="50px"
       >
-        {messages.map(({ content, date, own, user }) => (
-          <ChatMessage
-            className="message"
-            content={content}
-            date={date}
-            own={own}
-            participants={participantUsernames}
-            user={user}
-          />
-        ))}
+        {messages.map(({ content, date, own, user, attachments, id }) => {
+          return (
+            <ChatMessage
+              attachments={attachments}
+              className="message"
+              content={content}
+              date={date}
+              key={id}
+              own={own}
+              participants={participantUsernames}
+              user={user}
+            />
+          )
+        })}
       </StyledInfiniteScroll>
     ) : (
       <>
         <MessagesWrappes>
-          {messages.map(({ content, date, own, user, id }) => (
+          {messages.map(({ content, date, own, user, id, attachments }) => (
             <ChatMessage
+              attachments={attachments}
               className="message"
               content={content}
               date={date}
