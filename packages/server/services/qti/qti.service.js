@@ -76,7 +76,14 @@ class WaxToQTIConverter {
 
   #figureHandler = content => {
     return {
-      figure: this.#contentParser(content.content),
+      div: [
+        {
+          _attr: {
+            role: 'figure',
+          },
+        },
+        ...this.#contentParser(content.content),
+      ],
     }
   }
 
@@ -535,6 +542,7 @@ class WaxToQTIConverter {
 
   #essayAnswerHandler = (content, options) => {}
   // #endregion essay
+  // #endregion question types
 
   #typeToHandlerMap = {
     bulletlist: this.#bulletListHandler,
