@@ -23,6 +23,10 @@ export const GET_CHAT_THREAD = gql`
           id
           displayName
         }
+        attachments {
+          name
+          url
+        }
       }
     }
   }
@@ -50,6 +54,16 @@ export const UPLOAD_ATTACHMENTS = gql`
     uploadAttachments(input: $input) {
       id
       url(size: medium)
+    }
+  }
+`
+
+export const MESSAGE_CREATED_SUBSCRIPTION = gql`
+  subscription MessageCreated($chatThreadId: ID!) {
+    messageCreated(chatThreadId: $chatThreadId) {
+      id
+      chatThreadId
+      content
     }
   }
 `
