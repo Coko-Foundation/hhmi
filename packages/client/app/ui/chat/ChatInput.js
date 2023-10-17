@@ -117,6 +117,7 @@ const ChatInput = props => {
       <UploadWrapper style={{ alignSelf: 'end' }}>
         <StyledUpload
           accept=".pdf,.jpeg,.png"
+          aria-label="upload-attachments"
           files={attachments}
           multiple
           onChange={handleAttachmentChange}

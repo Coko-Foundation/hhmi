@@ -92,6 +92,7 @@ const ChatThread = props => {
         {...rest}
       />
       <StyledChatInput
+        aria-label="Write to author"
         onSend={onSendMessage}
         participants={participants}
         placeholder="Write to author"
