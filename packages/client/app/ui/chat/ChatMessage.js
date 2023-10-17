@@ -70,7 +70,7 @@ const Date = styled.div`
 `
 
 const Attachments = styled.div`
-  background: rgba(0 0 0 10%);
+  background: rgba(0, 0, 0, 10%);
   border-radius: 8px;
   box-shadow: inset rgb(0 0 0 / 18%) 0 1px 2px;
   display: grid;
