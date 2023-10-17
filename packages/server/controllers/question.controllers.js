@@ -193,7 +193,7 @@ const getHandlingEditorDashboard = async (userId, options = {}) => {
 
 const getQuestionParticipants = async questionId => {
   const auth = await User.query()
-    .select('users.username', 'users.id')
+    .select('users.displayName', 'users.id')
     .leftJoin('team_members', 'users.id', 'team_members.user_id')
     .leftJoin('teams', 'teams.id', 'team_members.team_id')
     .where(builder => {

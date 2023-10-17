@@ -207,7 +207,7 @@ export const GET_QUESTION_PARTICIPANTS = gql`
   query GetQuestionParticipants($id: ID!) {
     getQuestionParticipants(id: $id) {
       id
-      display: username
+      display: displayName
     }
   }
 `
