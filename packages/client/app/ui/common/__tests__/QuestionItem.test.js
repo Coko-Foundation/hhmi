@@ -57,7 +57,7 @@ const questionData = {
   ],
   href: '/question/5d2c5fde-16cd-401d-9743-8c4311c84138/test',
   id: '5d2c5fde-16cd-401d-9743-8c4311c84138',
-  status: { status: 'Submitted' },
+  status: 'Submitted',
 }
 
 const emptyQuestionData = {
@@ -134,7 +134,7 @@ describe('QuestionItem', () => {
     const { metadata, status } = questionData
     render(<MockQuestionItem metadata={metadata} status={status} />)
     const QuestionStatus = screen.getByTestId('question-status').textContent
-    expect(QuestionStatus).toBe(status.status)
+    expect(QuestionStatus).toBe(status)
   })
   it('handles empty metadata and courses', () => {
     const { metadata } = emptyQuestionData
