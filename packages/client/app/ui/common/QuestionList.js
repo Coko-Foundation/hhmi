@@ -9,6 +9,7 @@ import QuestionItem from './QuestionItem'
 const RenderItem = ({ item }) => {
   return (
     <QuestionItem
+      assigned={item.heAssigned}
       complexItemSet={item.complexItemSet}
       content={item.content}
       courses={item.courses}
@@ -156,10 +157,8 @@ QuestionList.propTypes = {
         type: PropTypes.string,
         content: PropTypes.arrayOf(PropTypes.shape()),
       }),
-      status: PropTypes.shape({
-        status: PropTypes.string,
-        assigned: PropTypes.string,
-      }),
+      status: PropTypes.string,
+      assigned: PropTypes.bool,
       href: PropTypes.string,
       id: PropTypes.string,
       courses: PropTypes.arrayOf(

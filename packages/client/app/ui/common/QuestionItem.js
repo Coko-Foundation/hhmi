@@ -123,6 +123,7 @@ const QuestionItem = props => {
     metadata,
     content,
     status,
+    assigned,
     href,
     id,
     courses,
@@ -171,7 +172,11 @@ const QuestionItem = props => {
         </WaxContainer>
         {status ? (
           <StatusContainer>
-            <Status data-testid="question-status" status={status} />
+            <Status
+              assigned={assigned}
+              data-testid="question-status"
+              status={status}
+            />
           </StatusContainer>
         ) : null}
       </FirstRow>
@@ -243,10 +248,8 @@ QuestionItem.propTypes = {
     type: PropTypes.string,
     content: PropTypes.arrayOf(PropTypes.shape()),
   }),
-  status: PropTypes.shape({
-    status: PropTypes.string,
-    assigned: PropTypes.string,
-  }),
+  status: PropTypes.string,
+  assigned: PropTypes.bool,
   href: PropTypes.string,
   id: PropTypes.string,
   courses: PropTypes.arrayOf(
@@ -270,6 +273,7 @@ QuestionItem.propTypes = {
 QuestionItem.defaultProps = {
   content: null,
   status: null,
+  assigned: false,
   href: '#',
   id: uuid(),
   courses: [],

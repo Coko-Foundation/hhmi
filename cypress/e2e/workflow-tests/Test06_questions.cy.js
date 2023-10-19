@@ -34,9 +34,8 @@ const disableScripts = false
  *
  * @param {string} listItem - The index of question inside the wrapper
  * @param {string} stage - The stage in which the question page is going to be checked
- * @param {boolean} isHE [isHE=false] - pass true if the user who is going to check the question is a HE
  */
-const checkStage = (listItem, stage, isHE = false) => {
+const checkStage = (listItem, stage) => {
   const { operationBtn, prompt, success, QuestionStatus } = workflowData[stage]
 
   cy.get(listItemWrapper)
@@ -68,12 +67,12 @@ const checkStage = (listItem, stage, isHE = false) => {
   cy.visit(dashboardRoute, { method: 'GET' })
   cy.wait('@GQLReq')
 
-  if (!isHE) {
-    cy.get(listItemWrapper)
-      .eq(listItem)
-      .should('be.visible')
-      .contains('[data-testid="question-status"]', QuestionStatus)
-  }
+  // if (!isHE) {
+  cy.get(listItemWrapper)
+    .eq(listItem)
+    .should('be.visible')
+    .contains('[data-testid="question-status"]', QuestionStatus)
+  // }
 }
 
 describe('Question Workflows', () => {
@@ -411,10 +410,10 @@ describe('Question Workflows', () => {
         )
         cy.login(handlingEditor1)
         cy.contains(antTabs, 'Handling Editor Questions').click()
-        checkStage(1, 'reject', true)
-        checkStage(0, 'review', true)
-        checkStage(0, 'production', true)
-        checkStage(0, 'publish', true)
+        checkStage(1, 'reject')
+        checkStage(0, 'review')
+        checkStage(0, 'production')
+        checkStage(0, 'publish')
       })
     })
   })

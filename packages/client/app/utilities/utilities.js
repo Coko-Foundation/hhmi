@@ -879,7 +879,6 @@ const dashboardDataMapper = ({
     inProduction,
     published,
     rejected,
-    heAssigned,
   }) => {
     if (!showStatus) return null
     let status = 'Not Submitted'
@@ -889,9 +888,7 @@ const dashboardDataMapper = ({
     if (published) status = 'Published'
     if (rejected) status = 'Rejected'
 
-    const assigned = showAssigned && heAssigned ? 'Assigned' : ''
-
-    return { status, assigned }
+    return status
   }
 
   return questions.map(question => {
@@ -942,7 +939,8 @@ const dashboardDataMapper = ({
         },
       ],
       content: parsedContent,
-      status: renderStatus({ ...latestVersion, rejected, heAssigned }),
+      status: renderStatus({ ...latestVersion, rejected }),
+      heAssigned: showAssigned && heAssigned,
       href: testMode ? `/question/${id}/test` : `/question/${id}`,
       id,
       courses,

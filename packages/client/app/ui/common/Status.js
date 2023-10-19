@@ -13,7 +13,6 @@ const variantColor = ({ variant }) => {
     'Under Review': () => th('colorWarning'),
     'In Production': () => th('colorPrimary'),
     Published: () => th('colorSuccess'),
-    Assigned: () => th('colorSuccessAlt'),
     default: () => th('colorBackground'),
   }
 
@@ -68,34 +67,29 @@ const AssignedBadge = styled.span`
 `
 
 const Status = props => {
-  const {
-    className,
-    status: { status: variant, assigned },
-    ...rest
-  } = props
+  const { className, status, assigned, ...rest } = props
 
   return (
     <Container>
-      <Title variant={variant}>status:</Title>
+      <Title variant={status}>status:</Title>
       <BadgesWrapper data-testid="status-wrapper">
-        <StatusBadge className={className} variant={variant} {...rest}>
-          {variant}
+        <StatusBadge className={className} variant={status} {...rest}>
+          {status}
         </StatusBadge>
-        {assigned && (
-          <AssignedBadge variant={variant}>{assigned}</AssignedBadge>
-        )}
+        {assigned && <AssignedBadge variant={status}>Assigned</AssignedBadge>}
       </BadgesWrapper>
     </Container>
   )
 }
 
 Status.propTypes = {
-  status: PropTypes.shape({
-    status: PropTypes.string,
-    assigned: PropTypes.string,
-  }).isRequired,
+  status: PropTypes.string,
+  assigned: PropTypes.bool,
 }
 
-Status.defaultProps = {}
+Status.defaultProps = {
+  status: null,
+  assigned: false,
+}
 
 export default Status

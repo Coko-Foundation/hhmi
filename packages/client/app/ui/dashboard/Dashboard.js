@@ -255,10 +255,8 @@ Dashboard.propTypes = {
             type: PropTypes.string,
             content: PropTypes.arrayOf(PropTypes.shape()),
           }),
-          status: PropTypes.shape({
-            status: PropTypes.string,
-            assigned: PropTypes.string,
-          }),
+          status: PropTypes.string,
+          assigned: PropTypes.bool,
           href: PropTypes.string,
           id: PropTypes.string,
           courses: PropTypes.arrayOf(

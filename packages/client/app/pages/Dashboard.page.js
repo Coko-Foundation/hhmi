@@ -146,6 +146,8 @@ const DashboardPage = () => {
           questions: handlingEditorData.result,
           metadata,
           complexItemSetOptions: 'editor',
+          showAuthor: true,
+          showStatus: true,
         })
       : []
 
