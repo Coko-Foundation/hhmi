@@ -52,7 +52,15 @@ class User extends UserModel {
 
   static async getDisplayName(user) {
     if (user.displayName) return user.displayName
-    return user.getDisplayName()
+
+    // temporary fix: handle creation of user during SSO to avoid null display names
+    const { givenNames, surname, username } = user
+    if (givenNames && surname) return `${givenNames} ${surname}`
+    if (username) return username
+
+    return '[invalid display name]'
+
+    // return user.getDisplayName()
   }
 
   static async filter(data = {}, options = {}) {
