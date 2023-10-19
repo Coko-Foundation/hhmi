@@ -202,7 +202,7 @@ const IntroToBioCourseMetadata = props => {
       <Form.Item dependencies={[unitField, topicField]} noStyle>
         {() => (
           <Form.Item
-            label="Learning objective"
+            label="Learning Objective"
             name={learningObjectiveName}
             rules={[
               isRequired

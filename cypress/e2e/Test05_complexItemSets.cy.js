@@ -54,7 +54,7 @@ describe('Complex item set', () => {
     cy.log('creating a complex item set...')
     cy.get(anchorTags.sets).click()
     cy.contains('button', 'Create Set').click()
-    cy.contains('label', 'Complex item set title')
+    cy.contains('label', 'Complex Item Set Title')
     cy.get('input[id="title"]').type(complexItemSet2.title)
     cy.get(ProseMirror).type(complexItemSet2.leadingContent)
     cy.contains('button[type="submit"]', 'Save').click()

@@ -276,7 +276,7 @@ const IBCourseMetadata = props => {
             <Form.Item
               label={
                 courseData.value === 'biEnvironmentalScience'
-                  ? 'Application & Skill'
+                  ? 'Application and Skill'
                   : 'Application'
               }
               name={applicationName}

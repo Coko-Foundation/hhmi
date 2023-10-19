@@ -14,7 +14,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
       onSubmit={[Function]}
     >
       <h2>
-        Create new complex item set
+        Create new Complex Item Set
       </h2>
       <div
         className="ant-form-item css-dev-only-do-not-override-1vtf12y"
@@ -31,9 +31,9 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
             <label
               className="ant-form-item-required"
               htmlFor="title"
-              title="Complex item set title"
+              title="Complex Item Set Title"
             >
-              Complex item set title
+              Complex Item Set Title
             </label>
           </div>
           <div
@@ -71,7 +71,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
       </div>
       <h3>
         Create
-         the content for the complex item set leading text in the editor below
+         the content for the Complex Item Set leading text in the editor below
       </h3>
       <div
         className="sc-bhIvDk fPPAbG"

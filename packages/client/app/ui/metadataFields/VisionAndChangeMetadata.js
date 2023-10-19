@@ -263,7 +263,7 @@ const VisionAndChangeMetadata = props => {
     <>
       <p>Vision and Change Framework</p>
       <Form.Item
-        label="Core concept"
+        label="Core Concept"
         name={coreConceptName}
         rules={[
           isRequired
@@ -348,7 +348,7 @@ const VisionAndChangeMetadata = props => {
         )}
       </Form.Item>
       <Form.Item
-        label="Core competence"
+        label="Core Competence"
         name={coreCompetenceName}
         rules={[
           isRequired

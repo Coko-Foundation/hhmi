@@ -115,10 +115,10 @@ const ComplexItemSetForm = props => {
           submissionStatus={submissionStatus}
         >
           <h2>
-            {id ? 'Edit complex item set' : 'Create new complex item set'}
+            {id ? 'Edit Complex Item Set' : 'Create new Complex Item Set'}
           </h2>
           <Form.Item
-            label="Complex item set title"
+            label="Complex Item Set Title"
             name="title"
             rules={[
               {
@@ -131,7 +131,7 @@ const ComplexItemSetForm = props => {
           </Form.Item>
 
           <h3>
-            {id ? `Edit` : 'Create'} the content for the complex item set
+            {id ? `Edit` : 'Create'} the content for the Complex Item Set
             leading text in the editor below
           </h3>
           <WaxWrapper>
