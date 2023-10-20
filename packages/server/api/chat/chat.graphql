@@ -1,0 +1,3 @@
+extend type Mutation {
+  createChatThread(input: CreateChatThreadInput!): ChatThread!
+}

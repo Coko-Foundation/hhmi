@@ -1,0 +1,137 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ComplexItemSetForm matches snapshot 1`] = `
+<div
+  className="sc-gKYCAw fBSXtC"
+>
+  <div
+    className="sc-hHmAnv bDifjp"
+  >
+    <form
+      className="ant-form ant-form-vertical css-dev-only-do-not-override-1vtf12y sc-btijOp NNQtQ"
+      data-testid="form-content"
+      onReset={[Function]}
+      onSubmit={[Function]}
+    >
+      <h2>
+        Create new Complex Item Set
+      </h2>
+      <div
+        className="ant-form-item css-dev-only-do-not-override-1vtf12y"
+      >
+        <div
+          className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
+          onBlur={[Function]}
+          style={{}}
+        >
+          <div
+            className="ant-col ant-form-item-label css-dev-only-do-not-override-1vtf12y"
+            style={{}}
+          >
+            <label
+              className="ant-form-item-required"
+              htmlFor="title"
+              title="Complex Item Set Title"
+            >
+              Complex Item Set Title
+            </label>
+          </div>
+          <div
+            className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
+            style={{}}
+          >
+            <div
+              className="ant-form-item-control-input"
+            >
+              <div
+                className="ant-form-item-control-input-content"
+              >
+                <div
+                  className="sc-lcZdiQ"
+                >
+                  <input
+                    aria-required="true"
+                    className="ant-input css-dev-only-do-not-override-1vtf12y sc-czZcoD ijyMDj"
+                    disabled={false}
+                    id="title"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    placeholder="Enter title for Complex item set"
+                    style={{}}
+                    type="text"
+                    value=""
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3>
+        Create
+         the content for the Complex Item Set leading text in the editor below
+      </h3>
+      <div
+        className="sc-fUHfjU crjmKC"
+      >
+        <div
+          className="sc-hSODHv ecCzFJ"
+        >
+          <div
+            aria-controls="wax-editor"
+            aria-label="Editor toolbar"
+            className="sc-hDXZEW kcjrch"
+            role="toolbar"
+          >
+            <h2
+              className="sc-hilkcu jPKMxE"
+            >
+              Question editor toolbar
+            </h2>
+          </div>
+          <div
+            className="sc-hhLPYL biXakW"
+            tabIndex={0}
+          >
+            <h2
+              className="sc-hilkcu jPKMxE"
+            >
+              Question editor
+            </h2>
+            <div
+              className="sc-gSVlWm ftzufd"
+              id="wax-editor"
+            >
+              <div
+                className="sc-jsMahE iMDEFx"
+              >
+                <div />
+                <div
+                  className="sc-qRumB kqARvU"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="sc-kKUyCS coKhQF"
+      >
+        <button
+          className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-caOArR fTMOFZ"
+          disabled={false}
+          onClick={[Function]}
+          status={null}
+          type="submit"
+        >
+          <span>
+            Save
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+`;

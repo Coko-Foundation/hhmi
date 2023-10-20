@@ -1,10 +1,28 @@
+type GlobalTeamMembersResponse {
+  result: [User!]!
+  totalCount: Int
+}
+
 input UpdateGlobalTeamsInput {
   id: ID!
   members: [ID!]!
+  removedMembers: [ID]
+}
+
+input FilterTeamMembersInput {
+  orderBy: String
+  ascending: Boolean
+  pageSize: Int
+  page: Int
 }
 
 extend type Query {
   getNonTeamMemberUsers(teamId: ID!, term: String!): [User!]!
+  filterGlobalTeamMembers(
+    role: String!
+    query: String
+    options: FilterTeamMembersInput
+  ): GlobalTeamMembersResponse!
 }
 
 extend type Mutation {

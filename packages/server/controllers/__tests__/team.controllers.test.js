@@ -2,11 +2,13 @@ const { uuid } = require('@coko/server')
 
 const { Team, TeamMember } = require('../../models/index')
 const { createUser } = require('../../models/__tests__/__helpers__/users')
+const { createEmptyQuestion } = require('./__helpers__/questions')
 
 const {
   createGlobalTeamWithUsers,
   createGlobalEditorTeamWithUsers,
   createGlobalReviewerTeamWithUsers,
+  createGlobalHandlingEditorTeamWithUsers,
 } = require('../../models/__tests__/__helpers__/teams')
 
 const {
@@ -161,6 +163,41 @@ describe('Team Controller', () => {
     ).length
 
     expect(hasUserOne && !hasUserTwo && hasUserThree).toBe(true)
+  })
+
+  it(`updateGlobalTeams deletes user's assigment when removed from gloabl team`, async () => {
+    const { team: HETeam, user: HE } =
+      await createGlobalHandlingEditorTeamWithUsers()
+
+    const question = await createEmptyQuestion()
+
+    const questionHETeam = await Team.insert({
+      objectId: question.id,
+      objectType: 'question',
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+    })
+
+    await Team.addMember(questionHETeam.id, HE.id)
+
+    const teamToBeUpdated = [
+      {
+        id: HETeam.id,
+        members: [],
+        removedMembers: [HE.id],
+      },
+    ]
+
+    await updateGlobalTeams(teamToBeUpdated)
+
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise(resolve => setTimeout(resolve, 100))
+
+    const questionAssigment = await TeamMember.find({
+      teamId: questionHETeam.id,
+    })
+
+    expect(questionAssigment.totalCount).toBe(0)
   })
 
   it('updateGlobalTeams throws when trying to update a non existent team', async () => {

@@ -22,11 +22,19 @@ export const editor = {
   role: 'editor',
 }
 
-export const handlingEditor = {
+export const handlingEditor1 = {
   firstName: 'Nuadu',
   username: `nuaduslaine${randomNumber}`,
   lastName: 'Slaine',
   email: `nuaduslaine${randomNumber}@gmail.com`,
+  password: 'Password@123',
+  role: 'handlingEditor',
+}
+export const handlingEditor2 = {
+  firstName: 'Juno',
+  username: `junowest${randomNumber}`,
+  lastName: 'west',
+  email: `junowest${randomNumber}@gmail.com`,
   password: 'Password@123',
   role: 'handlingEditor',
 }

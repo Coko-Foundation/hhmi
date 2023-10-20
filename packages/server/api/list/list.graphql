@@ -53,5 +53,12 @@ extend type Mutation {
     ascending: Boolean
     options: GenerateWordFileOptionsInput
   ): String!
+  exportQuestionsQTI(
+    listId: ID!
+    questionIds: [ID!]!
+    orderBy: String
+    ascending: Boolean
+  ): String!
+  exportListQTI(listId: ID!, orderBy: String, ascending: Boolean): String!
   reorderList(listId: ID!, customOrder: [ID!]!): List!
 }

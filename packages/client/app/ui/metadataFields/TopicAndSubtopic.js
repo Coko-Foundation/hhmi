@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Form from './Form'
-import Select from './Select'
+import { Form, Select } from '../common'
 
 const TopicAndSubtopic = props => {
   const {
@@ -72,7 +71,7 @@ const TopicAndSubtopic = props => {
         ]}
       >
         <Select
-          // allowClear
+          allowClear={filterMode}
           data-testid="topic-select"
           disabled={readOnly}
           onChange={handleTopicChange}
@@ -96,7 +95,7 @@ const TopicAndSubtopic = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               data-testid="subtopic-select"
               disabled={readOnly || (!filterMode && !getFieldValue(topicField))}
               optionFilterProp="label"

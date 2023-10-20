@@ -11,7 +11,12 @@ const {
   createIdentity,
 } = require('../../models/__tests__/__helpers__/users')
 
-const { bioInteractiveLogin } = require('../user.controllers')
+const {
+  bioInteractiveLogin,
+  filterUsers,
+  submitQuestionnaire,
+  updateUserProfile,
+} = require('../user.controllers')
 
 const clearDb = require('../../models/__tests__/_clearDb')
 
@@ -220,5 +225,52 @@ describe('User Controller', () => {
     expect(userIdsBefore.length).toEqual(userIdsAfter.length)
     expect(userIdsAfter.includes(results.user.id)).toBe(true)
     expect(userIdsBefore.includes(results.user.id)).toBe(true)
+  })
+
+  it('submitQuestionnaire', async () => {
+    const user = await User.insert({})
+    await Identity.insert({
+      userId: user.id,
+      email: 'testuser@gmail.com',
+      isDefault: true,
+    })
+
+    const result = await submitQuestionnaire(user.id, {
+      email: 'testuser@gmail.com',
+    })
+
+    expect(result.profileSubmitted).toBe(true)
+  })
+
+  it('updateUserProfile', async () => {
+    const user = await User.insert({})
+    await Identity.insert({
+      userId: user.id,
+      email: 'testuser@gmail.com',
+      isDefault: true,
+    })
+
+    const profileData = {
+      displayName: 'testuser',
+    }
+
+    const result = await updateUserProfile(user.id, profileData)
+    expect(result.displayName).toBe('testuser')
+  })
+
+  it('filterUsers', async () => {
+    const user = await User.insert({
+      displayName: 'testuser1',
+      username: 'testuser1',
+    })
+
+    await Identity.insert({
+      userId: user.id,
+      email: 'testuser@gmail.com',
+      isDefault: true,
+    })
+
+    const users = await filterUsers({ search: 'testuser1' })
+    expect(users.result[0].displayName).toBe('testuser1')
   })
 })

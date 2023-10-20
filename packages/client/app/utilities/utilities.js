@@ -279,37 +279,45 @@ const extractCourseAndObjectives = (courses, frameworksMetadata) =>
       }
     }
 
-    const beginning = c.course.slice(0, 2).toLowerCase()
-    // const isIB = beginning === 'ib'
-    const isAP = beginning === 'ap'
-
-    const objectives = c.units.map(unit =>
-      unit.learningObjective
-        ? {
-            label: courseInValues?.learningObjectives?.find(
-              lo => lo.value === unit.learningObjective,
-            )?.label,
-          }
-        : null,
-    )
-
-    const understandings = c.units.map(unit =>
-      unit.understanding
-        ? {
-            label: courseInValues?.understandings?.find(
-              und => und.value === unit.understanding,
-            )?.label,
-          }
-        : null,
-    )
-
-    return {
+    const result = {
       course: {
         label: courseInValues.label,
       },
-      label: isAP ? 'learning objectives' : 'understandings',
-      objectives: isAP ? objectives : understandings,
     }
+
+    switch (c.course) {
+      case 'apBiology':
+      case 'apEnvironmentalScience':
+      case 'introBioForMajors':
+        result.label = 'learning objectives'
+        result.objectives = c.units.map(unit =>
+          unit.learningObjective
+            ? {
+                label: courseInValues?.learningObjectives?.find(
+                  lo => lo.value === unit.learningObjective,
+                )?.label,
+              }
+            : null,
+        )
+        break
+      case 'biBiology':
+      case 'biEnvironmentalScience':
+        result.label = 'understandings'
+        result.objectives = c.units.map(unit =>
+          unit.understanding
+            ? {
+                label: courseInValues?.understandings?.find(
+                  und => und.value === unit.understanding,
+                )?.label,
+              }
+            : null,
+        )
+        break
+      default:
+        break
+    }
+
+    return result
   })
 
 const extractBloomsLevel = (cognitiveLevel, cognitiveValues) => {
@@ -319,6 +327,129 @@ const extractBloomsLevel = (cognitiveLevel, cognitiveValues) => {
   ]
 
   return allCognitiveOptions.find(o => o.value === cognitiveLevel)?.label
+}
+
+const extractComplexItemSet = (id, options) => options.find(o => o.value === id)
+
+const extractAPCourseMetadata = (unitData, courseMetadata) => {
+  const unit = courseMetadata.units.find(u => u.value === unitData.unit)?.label
+
+  const courseTopic = courseMetadata.topics.find(
+    u => u.value === unitData.courseTopic,
+  )?.label
+
+  const learningObjective = courseMetadata.learningObjectives.find(
+    l => l.value === unitData.learningObjective,
+  )?.label
+
+  const essentialKnowledge = courseMetadata.essentialKnowledge.find(
+    e => e.value === unitData.essentialKnowledge,
+  )?.label
+
+  return [
+    { label: 'Unit', value: unit },
+    { label: 'Topic', value: courseTopic },
+    { label: 'Learning objective', value: learningObjective },
+    { label: 'Essential knowledge', value: essentialKnowledge },
+  ]
+}
+
+const extractIBCourseMetadata = (unitData, courseMetadata) => {
+  const unit = courseMetadata.units.find(u => u.value === unitData.unit)?.label
+
+  const courseTopic = courseMetadata.topics.find(
+    u => u.value === unitData.courseTopic,
+  )?.label
+
+  const application = courseMetadata.applications.find(
+    a => a.value === unitData.application,
+  )?.label
+
+  const skill = courseMetadata.skills.find(
+    s => s.value === unitData.skill,
+  )?.label
+
+  const understanding = courseMetadata.understandings.find(
+    u => u.value === unitData.understanding,
+  )?.label
+
+  return [
+    { label: 'Unit', value: unit },
+    { label: 'Topic', value: courseTopic },
+    { label: 'Application', value: application },
+    { label: 'Skill', value: skill },
+    { label: 'Understanding', value: understanding },
+  ]
+}
+
+const extractIntroBioCourseMetadata = (
+  unitData,
+  courseMetadata,
+  extraFramewrok,
+) => {
+  const unit = courseMetadata.units.find(u => u.value === unitData.unit)?.label
+
+  const courseTopic = courseMetadata.topics.find(
+    u => u.value === unitData.courseTopic,
+  )?.label
+
+  const learningObjective = courseMetadata.learningObjectives.find(
+    l => l.value === unitData.learningObjective,
+  )?.label
+
+  const visionAndChange = extraFramewrok.find(
+    meta => meta.value === 'visionAndChange',
+  )
+
+  const aamc = extraFramewrok.find(
+    meta => meta.value === 'aamcFuturePhysicians',
+  )
+
+  const coreConcept = visionAndChange.coreConcepts.find(
+    c => c.value === unitData.coreConcept,
+  )?.label
+
+  const subdiscipline = visionAndChange.subdisciplines.find(
+    c => c.value === unitData.subdiscipline,
+  )?.label
+
+  const subdisciplineStatement = visionAndChange.subdisciplineStatements.find(
+    c => c.value === unitData.subdisciplineStatement,
+  )?.label
+
+  const coreCompetence = visionAndChange.coreCompetencies.find(
+    c => c.value === unitData.coreCompetence,
+  )?.label
+
+  const subcompetence = visionAndChange.subcompetencies.find(
+    c => c.value === unitData.subcompetence,
+  )?.label
+
+  const subcompetenceStatement = visionAndChange.subcompetenceStatements.find(
+    c => c.value === unitData.subcompetenceStatement,
+  )?.label
+
+  const concept = aamc.concepts.find(c => c.value === unitData.concept)?.label
+
+  const category = aamc.categories.find(
+    c => c.value === unitData.category,
+  )?.label
+
+  return [
+    { label: 'Unit', value: unit },
+    { label: 'Topic', value: courseTopic },
+    { label: 'Learning objective', value: learningObjective },
+    // vision and change
+    { label: 'Core concept', value: coreConcept },
+    { label: 'Subdiscipline', value: subdiscipline },
+    { label: 'Subdiscipline statement', value: subdisciplineStatement },
+    { label: 'Core competence', value: coreCompetence },
+    { label: 'Subcompetence', value: subcompetence },
+    { label: 'Subcompetence statement', value: subcompetenceStatement },
+    // aamc
+    { label: 'Concept', value: concept },
+    { label: 'Category', value: category },
+  ]
 }
 
 const profileOptions = {
@@ -368,8 +499,12 @@ const profileOptions = {
       value: 'biology',
     },
     {
-      label: 'Biochemistry & Molecular Biology',
+      label: 'Biochemistry',
       value: 'biochemistryMolecularBiology',
+    },
+    {
+      label: 'Molecular Biology',
+      value: 'molecularBiology',
     },
     {
       label: 'Genetics',
@@ -560,6 +695,42 @@ const flatIBCourseMetadata = data => {
   }
 }
 
+const flatIntroBioCourseMetadata = data => {
+  const units = []
+  const topics = []
+  const learningObjectives = []
+
+  data.units.forEach(unit => {
+    units.push({
+      label: unit.label,
+      value: unit.value,
+    })
+
+    unit.topics.forEach(topic => {
+      topics.push({
+        label: topic.label,
+        value: topic.value,
+        unit: unit.value,
+      })
+
+      topic.learningObjectives.forEach(lo => {
+        learningObjectives.push({
+          label: lo.label,
+          value: lo.value,
+          unit: unit.value,
+          topic: topic.value,
+        })
+      })
+    })
+  })
+
+  return {
+    units,
+    topics,
+    learningObjectives,
+  }
+}
+
 const flatVisionAndChangeMetadata = data => {
   const coreConcepts = []
   const subdisciplines = []
@@ -690,7 +861,7 @@ const questionTypes = [
   },
 ]
 
-const dashboardDataMapper = (
+const dashboardDataMapper = ({
   questions,
   metadata,
   complexItemSetOptions,
@@ -698,16 +869,18 @@ const dashboardDataMapper = (
   showAuthor,
   relatedQuestionIds,
   testMode,
-) => {
+  showAssigned,
+}) => {
   if (!questions) return null
 
-  const renderStatus = (
+  const renderStatus = ({
     submitted,
     underReview,
     inProduction,
     published,
     rejected,
-  ) => {
+  }) => {
+    if (!showStatus) return null
     let status = 'Not Submitted'
     if (submitted) status = 'Submitted'
     if (underReview) status = 'Under Review'
@@ -719,7 +892,7 @@ const dashboardDataMapper = (
   }
 
   return questions.map(question => {
-    const { id, versions } = question
+    const { id, versions, rejected, heAssigned } = question
     const latestVersion = versions[0]
 
     const { content, publicationDate, cognitiveLevel, complexItemSetId } =
@@ -766,16 +939,12 @@ const dashboardDataMapper = (
         },
       ],
       content: parsedContent,
-      status: showStatus
-        ? renderStatus(
-            latestVersion.submitted,
-            latestVersion.underReview,
-            latestVersion.inProduction,
-            latestVersion.published,
-            question.rejected,
-          )
-        : null,
-      href: testMode ? `/question/${id}/test` : `/question/${id}`,
+      status: renderStatus({ ...latestVersion, rejected }),
+      heAssigned: showAssigned && heAssigned,
+      href:
+        testMode && latestVersion.published
+          ? `/question/${id}/test`
+          : `/question/${id}`,
       id,
       courses,
       state: { relatedQuestionIds },
@@ -784,14 +953,95 @@ const dashboardDataMapper = (
   })
 }
 
+const setSafeHTML = (selector, html, timeout) => {
+  const element = document.querySelector(selector)
+  if (!element) return
+
+  const writeOnElement = () =>
+    element && typeof html === 'string'
+      ? (element.innerHTML = html)
+      : (element.innerHTML = '')
+
+  typeof timeout !== 'number'
+    ? writeOnElement()
+    : setTimeout(writeOnElement, timeout)
+}
+
+const safeIndex = (index, direction, list, min = 0) => {
+  let finalIndex
+  const max = list.length - 1
+
+  const options = {
+    down: () => (index > max ? (finalIndex = min) : (finalIndex = index)),
+    up: () => (index < min ? (finalIndex = max) : (finalIndex = index)),
+    'up-stop': () => (index < min ? (finalIndex = min) : (finalIndex = index)),
+    'down-stop': () =>
+      index > max ? (finalIndex = max) : (finalIndex = index),
+  }
+
+  safeCall(options[direction])
+  return finalIndex
+}
+
+const isFunction = cb => typeof cb === 'function'
+
+const safeCall = (cb, fb) => (isFunction(cb) ? cb() : isFunction(fb) && fb())
+
+const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1)
+
+const conditionalWord = (cased, options) => {
+  const text = () =>
+    options.condition() ? options.wordOnTrue : options.wordOnFalse
+
+  if (!cased) return text()
+
+  const caseMode = {
+    capital: () => capitalize(text()),
+    upper: () => text().toUpperCase(),
+    lower: () => text().toLowerCase(),
+  }
+
+  return safeCall(caseMode[cased], text)
+}
+
+/* callOn() DESCRIPTION:
+- uses strategy pattern to safely execute a callback (if exists) defined on the 'options' object
+ and returns its reference.
+ - the 'key' must be a string thst matches one of the 'options' keys
+ if not, the 'fallback' wll be returned
+ - in case that we not pass a value for fallback, or the value we pass is not (or not returns) a function ref,
+ it will return a ref to a default function that returns null
+ - USAGE: if we have a dynamic string, for example the typeof some data,
+ it can be implemented like this:
+    callOn(typeof data, {
+       string: () =>  console.log('is string'),
+       number: () =>  console.log('is number'),
+       object: somefunctionReference
+      }, () => console.log('not valid type of data'))(arguments)
+*/
+
+const callOn = (key = '', options = {}, fallback = () => null) => {
+  // eslint-disable-next-line no-nested-ternary
+  return isFunction(options[key])
+    ? options[key]
+    : isFunction(fallback)
+    ? fallback
+    : () => null
+}
+
 export {
   extractDocumentText,
   extractTopicsAndSubtopics,
   extractCourseAndObjectives,
   extractBloomsLevel,
+  extractComplexItemSet,
+  extractAPCourseMetadata,
+  extractIBCourseMetadata,
+  extractIntroBioCourseMetadata,
   flatAAMCMetadata,
   flatAPCoursesMetadata,
   flatIBCourseMetadata,
+  flatIntroBioCourseMetadata,
   flatVisionAndChangeMetadata,
   objectCleaner,
   profileOptions,
@@ -799,4 +1049,11 @@ export {
   questionDataTransformer,
   questionTypes,
   dashboardDataMapper,
+  setSafeHTML,
+  isFunction,
+  safeCall,
+  capitalize,
+  conditionalWord,
+  safeIndex,
+  callOn,
 }

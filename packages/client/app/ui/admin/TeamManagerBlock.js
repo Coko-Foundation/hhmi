@@ -107,7 +107,9 @@ const TeamManagerBlock = props => {
           <Select
             // https://github.com/ant-design/ant-design/issues/19970#issuecomment-763139893
             async
-            data-testid={`select-${displayName.toLowerCase()}`}
+            data-testid={`select-${displayName
+              .replace(' ', '-')
+              .toLowerCase()}`}
             defaultOpen={false}
             labelInValue
             loading={searchLoading}
@@ -120,7 +122,9 @@ const TeamManagerBlock = props => {
           />
         </Form.Item>
         <AddButton
-          aria-labelledby={`${displayName}-team`}
+          aria-labelledby={`${displayName
+            .replace(' ', '-')
+            .toLowerCase()}-team`}
           disabled={selectUserCount === 0}
           onClick={handleAdd}
           type="primary"
@@ -131,7 +135,7 @@ const TeamManagerBlock = props => {
 
       <StyledList
         aria-labelledby={`team-${displayName}`}
-        data-testid={`${displayName.toLowerCase()}-list`}
+        data-testid={`${displayName.replace(' ', '-').toLowerCase()}-list`}
         dataSource={members}
         itemSelection={{
           onChange: handleRowSelectionChange,
@@ -143,7 +147,7 @@ const TeamManagerBlock = props => {
 
       {!!members?.length && (
         <RemoveButton
-          data-testid={`remove-${displayName.toLowerCase()}`}
+          data-testid={`remove-${displayName.replace(' ', '-').toLowerCase()}`}
           disabled={selectTeamMember.length === 0}
           onClick={handleRemove}
           status="danger"

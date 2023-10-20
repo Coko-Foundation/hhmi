@@ -6,26 +6,32 @@ import styled from 'styled-components'
 import { grid } from '@coko/client'
 
 import {
-  APCourseMetadata,
   Select,
   Form,
   Button,
-  TopicAndSubtopic,
-  IBCourseMetadata,
   VisuallyHiddenElement,
-  // VisionAndChangeMetadata,
-  // AAMCFuturePhysiciansMetadata,
+  Checkbox,
 } from '../common'
+import {
+  TopicAndSubtopic,
+  APCourseMetadata,
+  IBCourseMetadata,
+  IntroToBioCourseMetadata,
+} from '../metadataFields'
 import Resources from './Resources'
 import MetadataInfo from './MetadataInfo'
 
-const Wrapper = styled.div`
+const Wrapper = styled.section`
   padding: ${grid(4)};
 `
 
 const StyledSupplementaryFieldsContainer = styled.div`
   margin-bottom: ${grid(6)};
 `
+
+const apCourses = ['apBiology', 'apEnvironmentalScience']
+const ibCourses = ['biBiology', 'biEnvironmentalScience']
+const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
 
 const Metadata = React.forwardRef((props, ref) => {
   const {
@@ -38,6 +44,7 @@ const Metadata = React.forwardRef((props, ref) => {
     editorView,
     resources,
     presentationMode,
+    complexItemSetOptions,
     /* eslint-disable-next-line react/prop-types */
     innerRef,
   } = props
@@ -47,6 +54,7 @@ const Metadata = React.forwardRef((props, ref) => {
   if (presentationMode) {
     return (
       <MetadataInfo
+        complexItemSetOptions={complexItemSetOptions}
         metadata={metadata}
         resources={resources}
         values={initialValues}
@@ -73,13 +81,14 @@ const Metadata = React.forwardRef((props, ref) => {
   const renderFrameworkFields = (getFieldValue, index = -1, key = '') => {
     const selectedCourse = getFieldValue([key, index, 'course'])
 
-    if (
-      selectedCourse === 'apBiology' ||
-      selectedCourse === 'apEnvironmentalScience'
-    ) {
+    const courseMetadata = metadata.frameworks.find(
+      f => f.value === selectedCourse,
+    )
+
+    if (apCourses.includes(selectedCourse)) {
       return (
         <APCourseMetadata
-          courseData={metadata.frameworks.find(f => f.value === selectedCourse)}
+          courseData={courseMetadata}
           getFieldValue={getFieldValue}
           index={index}
           isRequired
@@ -90,13 +99,10 @@ const Metadata = React.forwardRef((props, ref) => {
       )
     }
 
-    if (
-      selectedCourse === 'biBiology' ||
-      selectedCourse === 'biEnvironmentalScience'
-    ) {
+    if (ibCourses.includes(selectedCourse)) {
       return (
         <IBCourseMetadata
-          courseData={metadata.frameworks.find(f => f.value === selectedCourse)}
+          courseData={courseMetadata}
           getFieldValue={getFieldValue}
           index={index}
           isRequired
@@ -107,39 +113,20 @@ const Metadata = React.forwardRef((props, ref) => {
       )
     }
 
-    // if (
-    //   selectedCourse === 'introductoryBiologyForNonMajors' ||
-    //   selectedCourse === 'introductoryBiologyForMajors'
-    // ) {
-    //   return (
-    //     <>
-    //       <VisionAndChangeMetadata
-    //         conceptsAndCompetencies={metadata.introToBioMeta.find(
-    //           f => f.value === 'visionAndChange',
-    //         )}
-    //         getFieldValue={getFieldValue}
-    //         index={index}
-    //         isRequired
-    //         readOnly={readOnly}
-    //         setFieldsValue={form.setFieldsValue}
-    //         supplementaryKey={key}
-    //       />
-    //       {selectedCourse === 'introductoryBiologyForMajors' && (
-    //         <AAMCFuturePhysiciansMetadata
-    //           aamcMetadata={metadata.introToBioMeta.find(
-    //             f => f.value === 'aamcFuturePhysicians',
-    //           )}
-    //           getFieldValue={getFieldValue}
-    //           index={index}
-    //           isRequired
-    //           readOnly={readOnly}
-    //           setFieldsValue={form.setFieldsValue}
-    //           supplementaryKey={key}
-    //         />
-    //       )}
-    //     </>
-    //   )
-    // }
+    if (introBioCourses.includes(selectedCourse)) {
+      return (
+        <IntroToBioCourseMetadata
+          courseData={courseMetadata}
+          getFieldValue={getFieldValue}
+          index={index}
+          introToBioMeta={metadata.introToBioMeta}
+          isRequired
+          readOnly={readOnly}
+          setFieldsValue={form.setFieldsValue}
+          supplementaryKey={key}
+        />
+      )
+    }
 
     return null
   }
@@ -239,7 +226,7 @@ const Metadata = React.forwardRef((props, ref) => {
    */
 
   return (
-    <Wrapper className={className}>
+    <Wrapper aria-label="Question Metadata" className={className}>
       <VisuallyHiddenElement as="h2">Metadata Form</VisuallyHiddenElement>
       <Form
         autoSave
@@ -249,6 +236,41 @@ const Metadata = React.forwardRef((props, ref) => {
         onAutoSave={onAutoSave}
         onFinish={onFormFinish}
       >
+        <Form.Item name="belongsToComplexItemSet" valuePropName="checked">
+          <Checkbox data-testid="belongs-to-set-checkbox" disabled={readOnly}>
+            This question belongs to a Complex Item Set{' '}
+          </Checkbox>
+        </Form.Item>
+
+        <Form.Item dependencies={['belongsToComplexItemSet']} noStyle>
+          {({ getFieldValue }) => {
+            if (getFieldValue('belongsToComplexItemSet')) {
+              return (
+                <Form.Item
+                  label="Select Complex Item Set"
+                  name="complexItemSetId"
+                  rules={[
+                    {
+                      required: true,
+                      message: 'Complex item set is required',
+                    },
+                  ]}
+                >
+                  <Select
+                    data-testid="complexItemSet-select"
+                    disabled={readOnly}
+                    optionFilterProp="label"
+                    options={complexItemSetOptions}
+                    showSearch
+                  />
+                </Form.Item>
+              )
+            }
+
+            return null
+          }}
+        </Form.Item>
+
         <Form.Item
           label="Question Type"
           name="questionType"
@@ -422,12 +444,12 @@ const Metadata = React.forwardRef((props, ref) => {
         {/* BLOOMS */}
 
         <Form.Item
-          label="Bloom's cognitive level"
+          label="Bloom's Cognitive Level"
           name="cognitiveLevel"
           rules={[
             {
               required: true,
-              message: "Bloom's cognitive level is required",
+              message: "Bloom's Cognitive Level is required",
             },
           ]}
         >
@@ -731,6 +753,12 @@ Metadata.propTypes = {
     readingLevel: PropTypes.string,
   }),
   presentationMode: PropTypes.bool,
+  complexItemSetOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
 }
 
 Metadata.defaultProps = {
@@ -740,6 +768,7 @@ Metadata.defaultProps = {
   readOnly: false,
   resources: [],
   presentationMode: false,
+  complexItemSetOptions: [],
 }
 
 export default Metadata

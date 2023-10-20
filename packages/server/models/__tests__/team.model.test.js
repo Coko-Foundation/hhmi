@@ -33,7 +33,7 @@ describe('Team Model', () => {
 
     const team = await Team.insert({
       role: 'editor',
-      displayName: 'Editor',
+      displayName: 'Managing Editor',
       global: true,
     })
 

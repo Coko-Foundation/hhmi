@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import PropTypes, { oneOfType } from 'prop-types'
 import styled from 'styled-components'
 import { th, grid } from '@coko/client'
 
@@ -9,16 +9,15 @@ import QuestionItem from './QuestionItem'
 const RenderItem = ({ item }) => {
   return (
     <QuestionItem
-      // additionalMetadata={item.additionalMetadata}
+      assigned={item.heAssigned}
+      complexItemSet={item.complexItemSet}
       content={item.content}
       courses={item.courses}
-      header={item.header}
       href={item.href}
       id={item.id}
       metadata={item.metadata}
       state={item.state}
       status={item.status}
-      title={item.title}
     />
   )
 }
@@ -49,10 +48,18 @@ const StyledList = styled(List)`
       &:not(:last-child) {
         border-bottom: 1px solid ${th('colorSecondary')};
       }
+
+      label,
+      label > span:nth-child(2) {
+        width: 100%;
+      }
     }
 
     .ant-checkbox {
       align-self: auto;
+
+      // align with QuestionItem
+      margin-block-start: ${grid(4)};
     }
   }
 `
@@ -81,6 +88,8 @@ const QuestionList = props => {
     draggable,
     onDragEnd,
     selectedQuestions,
+    withFilters,
+    filters,
   } = props
 
   const itemSelection = showRowCheckboxes
@@ -109,6 +118,7 @@ const QuestionList = props => {
       className={className}
       dataSource={questions}
       draggable={draggable}
+      filters={filters}
       footerContent={bulkAction}
       itemSelection={itemSelection}
       loading={loading}
@@ -125,6 +135,7 @@ const QuestionList = props => {
       showTotalCount={showTotalCount}
       sortOptions={sortOptions}
       totalCount={totalCount}
+      withFilters={withFilters}
     />
   )
 }
@@ -147,6 +158,7 @@ QuestionList.propTypes = {
         content: PropTypes.arrayOf(PropTypes.shape()),
       }),
       status: PropTypes.string,
+      assigned: PropTypes.bool,
       href: PropTypes.string,
       id: PropTypes.string,
       courses: PropTypes.arrayOf(
@@ -183,6 +195,10 @@ QuestionList.propTypes = {
   draggable: PropTypes.bool,
   onDragEnd: PropTypes.func,
   selectedQuestions: PropTypes.arrayOf(PropTypes.string),
+  filters: PropTypes.arrayOf(
+    oneOfType([PropTypes.string, PropTypes.bool, PropTypes.object]),
+  ),
+  withFilters: PropTypes.bool,
 }
 
 QuestionList.defaultProps = {
@@ -207,6 +223,8 @@ QuestionList.defaultProps = {
   draggable: false,
   onDragEnd: () => {},
   selectedQuestions: [],
+  filters: [],
+  withFilters: false,
 }
 
 export default QuestionList

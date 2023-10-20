@@ -12893,14 +12893,1683 @@ const metadata = {
         },
       ],
     },
-    // {
-    //   label: 'Introductory biology for non-majors',
-    //   value: 'introductoryBiologyForNonMajors',
-    // },
-    // {
-    //   label: 'Introductory biology for majors',
-    //   value: 'introductoryBiologyForMajors',
-    // },
+    {
+      label: 'Introductory biology for non-majors',
+      value: 'introBioForNonMajors',
+    },
+    {
+      label: 'Introductory Biology for Majors',
+      value: 'introBioForMajors',
+      units: [
+        {
+          label: 'Biochemistry and Molecular Biology',
+          value: 'ibm-u1',
+          topics: [
+            {
+              label: 'General Chemistry',
+              value: 'ibm-u1-t1',
+              learningObjectives: [
+                {
+                  label:
+                    'Using the atomic number of an element, determine the number of electrons in each electron shell.',
+                  value: 'ibm-u1-t1-lo1',
+                },
+                {
+                  label: 'Compare and contrast positive and negative ions',
+                  value: 'ibm-u1-t1-lo2',
+                },
+                {
+                  label:
+                    'Determine if a non-polar, polar or ionic bond will form between any two atoms, and identify any partial or full charges that will be present.',
+                  value: 'ibm-u1-t1-lo3',
+                },
+                {
+                  label:
+                    'Contrast covalent and ionic bonds, including the mechanism of formation and strength of each type of bond.',
+                  value: 'ibm-u1-t1-lo4',
+                },
+                {
+                  label:
+                    'Given the atomic number and electronegativity for a few elements, determine a potential compound that could be formed. Label the types of bonds that would form between each element in the compound, and whether partial or full charges would be present.',
+                  value: 'ibm-u1-t1-lo5',
+                },
+                {
+                  label:
+                    'Given the molecular formula for a compound, determine a molecular structure that would result in filled valence shells, and whether any partial or full charges would be present.',
+                  value: 'ibm-u1-t1-lo6',
+                },
+              ],
+            },
+            {
+              label: 'Macromolecules - General',
+              value: 'ibm-u1-t2',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the composition of macromolecules required by living organisms.',
+                  value: 'ibm-u1-t2-lo1',
+                },
+                {
+                  label:
+                    'Explain the reactions used to cleave and form covalent bonds between molecular subunits.',
+                  value: 'ibm-u1-t2-lo2',
+                },
+                {
+                  label:
+                    'Recognize the structure of the four major biological macromolecules  and the subunits used to form each macromolecule.',
+                  value: 'ibm-u1-t2-lo3',
+                },
+                {
+                  label:
+                    'Analyze how the structure of biological molecules (carbohydrates, lipids, nucleic acids, proteins) impacts their function. Predict or evaluate how a change in the subunit may lead to changes in the function of the macromolecule.',
+                  value: 'ibm-u1-t2-lo4',
+                },
+                {
+                  label:
+                    'Describe the functions of each of the major biological macromolecules',
+                  value: 'ibm-u1-t2-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Macromolecules: DNA and RNA',
+              value: 'ibm-u1-t3',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the primary and secondary structure of DNA and the role of phosphodiester and hydrogen bonds in the formation of these levels of structure',
+                  value: 'ibm-u1-t3-lo1',
+                },
+                {
+                  label:
+                    "Recognize complementary base pairing, and 5' and 3' antiparallel strands in a DNA molecule, and explain why complementary base pairing requires that DNA strands are antiparallel:",
+                  value: 'ibm-u1-t3-lo2',
+                },
+                {
+                  label:
+                    'Compare and contrast the structure, chemical composition, location, and function of DNA and RNA.',
+                  value: 'ibm-u1-t3-lo3',
+                },
+              ],
+            },
+            {
+              label: 'Macromolecules Proteins',
+              value: 'ibm-u1-t4',
+              learningObjectives: [
+                {
+                  label:
+                    'Recognize the four components of an amino acid and explain how the R-group will determine its unique characteristics',
+                  value: 'ibm-u1-t4-lo1',
+                },
+                {
+                  label:
+                    "Describe each of the four levels of protein structure and explain how each influences the protein's final size, shape, and chemical properties",
+                  value: 'ibm-u1-t4-lo2',
+                },
+                {
+                  label:
+                    "Compare which bonds are responsible for producing a protein's 1) primary structure, 2) secondary structure (alpha-helices and beta-pleated sheets), and 3) tertiary structure",
+                  value: 'ibm-u1-t4-lo3',
+                },
+                {
+                  label:
+                    "Given the primary structure of a polypeptide, deduce 1)which type of bonds could form between pairs of amino acids to form the tertiary structure, 2) whether a change in a specific amino acid will change the protein's structure, and 3) which aspects of structure will be altered first in response to heating, changes in pH, or other conditions",
+                  value: 'ibm-u1-t4-lo4',
+                },
+              ],
+            },
+            {
+              label: 'Water',
+              value: 'ibm-u1-t5',
+              learningObjectives: [
+                {
+                  label:
+                    'Demonstrate how the polarity of two molecules, such as two water molecules, results in hydrogen bonding.',
+                  value: 'ibm-u1-t5-lo1',
+                },
+                {
+                  label:
+                    'Explain how the properties of water that result from its polarity and hydrogen bonding affect its biological function.',
+                  value: 'ibm-u1-t5-lo2',
+                },
+                {
+                  label:
+                    'Explain how the dissociation of water results in acidic and basic conditions, and demonstrate how the concentration of protons in a solution determines pH.',
+                  value: 'ibm-u1-t5-lo3',
+                },
+                {
+                  label:
+                    "Analyze how water's high energy absorbing capacity will affect temperature in a variety of contexts.",
+                  value: 'ibm-u1-t5-lo4',
+                },
+                {
+                  label:
+                    'Analyze how water molecules will interact with the non-polar, polar and ionic regions of a molecule and predict whether the molecule will dissolve in water.',
+                  value: 'ibm-u1-t5-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Biotechnology',
+              value: 'ibm-u1-t6',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain the concept of PCR and compare it to the process of DNA replication.',
+                  value: 'ibm-u1-t6-lo1',
+                },
+                {
+                  label:
+                    'Explain how gel electrophoresis can be used to separate DNA fragments.',
+                  value: 'ibm-u1-t6-lo2',
+                },
+                {
+                  label:
+                    'Given data, predict the relative size of protein or DNA samples and interpret the presence or absence of a known protein or region of DNA (such as a PCR product).',
+                  value: 'ibm-u1-t6-lo3',
+                },
+                {
+                  label: 'Explain how the CRISPR/Cas9 system edits DNA',
+                  value: 'ibm-u1-t6-lo4',
+                },
+                {
+                  label:
+                    'Given a DNA sequence, design a CRISPR/Cas9 system that could be used to disable the gene.',
+                  value: 'ibm-u1-t6-lo5',
+                },
+                {
+                  label:
+                    'Evaluate the benefits and concerns associated with genetic modification and gene editing.  ',
+                  value: 'ibm-u1-t6-lo6',
+                },
+                {
+                  label:
+                    'Evaluate the benefits and concerns associated with the availability of genetic information.',
+                  value: 'ibm-u1-t6-lo7',
+                },
+                {
+                  label:
+                    'Describe molecular techniques used for the analysis or manipulation of DNA.',
+                  value: 'ibm-u1-t6-lo8',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Cell Biology',
+          value: 'ibm-u2',
+          topics: [
+            {
+              label: 'Cell Structure and Function',
+              value: 'ibm-u2-t1',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the structure of subcellular components and organelles',
+                  value: 'ibm-u2-t1-lo1',
+                },
+                {
+                  label:
+                    'Explain how subcellular components and organelles contribute to the function of the cell.',
+                  value: 'ibm-u2-t1-lo2',
+                },
+                {
+                  label:
+                    'Compare and contrast the structure and function of the key elements of prokaryotic versus eukaryotic cell structure.',
+                  value: 'ibm-u2-t1-lo3',
+                },
+                {
+                  label:
+                    'Compare and contrast the structure and function of key elements of plant versus animal cell structure.',
+                  value: 'ibm-u2-t1-lo4',
+                },
+                {
+                  label:
+                    'Predict the function of a cell, given a drawing, micrograph, or description of its structure and organelle content. ',
+                  value: 'ibm-u2-t1-lo5',
+                },
+                {
+                  label:
+                    'Predict the structure of a cell, given information on its function.',
+                  value: 'ibm-u2-t1-lo6',
+                },
+                {
+                  label: 'Describe the functions of the endomembrane system.',
+                  value: 'ibm-u2-t1-lo7',
+                },
+                {
+                  label:
+                    'Explain what would happen if the normal processing of proteins in the endomembrane system were altered.',
+                  value: 'ibm-u2-t1-lo8',
+                },
+                {
+                  label:
+                    'Compare and contrast the structure and function of microtubules, actin filaments (microfilaments), and intermediate filaments.',
+                  value: 'ibm-u2-t1-lo9',
+                },
+                {
+                  label:
+                    'Describe how motor proteins use chemical energy to change shape and create movement in the cell.',
+                  value: 'ibm-u2-t1-lo10',
+                },
+              ],
+            },
+            {
+              label: 'Cell Cycle',
+              value: 'ibm-u2-t2',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the process, outcome and purpose of mitosis.',
+                  value: 'ibm-u2-t2-lo1',
+                },
+                {
+                  label:
+                    'Predict the consequences of errors that occur during mitosis',
+                  value: 'ibm-u2-t2-lo2',
+                },
+                {
+                  label: 'Describe the events that occur in the cell cycle',
+                  value: 'ibm-u2-t2-lo3',
+                },
+                {
+                  label:
+                    'Explain how the cell cycle is regulated at checkpoints by a molecular control system.',
+                  value: 'ibm-u2-t2-lo4',
+                },
+                {
+                  label:
+                    'Predict the consequences of checkpoint dysfunction on cell fate',
+                  value: 'ibm-u2-t2-lo5',
+                },
+                {
+                  label:
+                    'Explain how mutations that alter the cell cycle can result in cancer',
+                  value: 'ibm-u2-t2-lo6',
+                },
+              ],
+            },
+            {
+              label: 'Cell Energetics: General',
+              value: 'ibm-u2-t3',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain how redox reactions are used during the processes of cell respiration and photosynthesis',
+                  value: 'ibm-u2-t3-lo1',
+                },
+                {
+                  label:
+                    'Given a molecular formula, determine which element(s) is/are being reduced and which is/are being oxidized.',
+                  value: 'ibm-u2-t3-lo2',
+                },
+                {
+                  label:
+                    'Describe the changes in free energy that can occur during a chemical reaction.',
+                  value: 'ibm-u2-t3-lo3',
+                },
+                {
+                  label:
+                    'Describe the structure of ATP and explain why a large change in free energy occurs when ATP is hydrolyzed, or ADP is phosphorylated.',
+                  value: 'ibm-u2-t3-lo4',
+                },
+                {
+                  label:
+                    'Explain how ATP provides energy for cellular processes by coupling exergonic reactions to endergonic reactions.',
+                  value: 'ibm-u2-t3-lo5',
+                },
+                {
+                  label:
+                    'Given  data on how free energy changes over the course of a chemical reaction, predict whether two specific reactions can be successfully coupled.',
+                  value: 'ibm-u2-t3-lo6',
+                },
+              ],
+            },
+            {
+              label: 'Cellular Energetics: Respiration',
+              value: 'ibm-u2-t4',
+              learningObjectives: [
+                {
+                  label:
+                    'Summarize the inputs and outputs of glycolysis, pyruvate processing, the citric acid cycle, and oxidative phosphorylation and chemiosmosis.',
+                  value: 'ibm-u2-t4-lo1',
+                },
+                {
+                  label:
+                    'Explain how energy is transferred or transformed in each stage of the cell respiration process. ',
+                  value: 'ibm-u2-t4-lo2',
+                },
+                {
+                  label:
+                    'Predict the possible consequences if a step in the glucose oxidation (cellular respiration) pathway is altered. ',
+                  value: 'ibm-u2-t4-lo3',
+                },
+                {
+                  label:
+                    'Explain the processes of electron transport and chemiosmosis that occur during cellular respiration',
+                  value: 'ibm-u2-t4-lo4',
+                },
+                {
+                  label:
+                    'Predict the effects of a perturbation to the electron transport chain or ATP synthase.',
+                  value: 'ibm-u2-t4-lo5',
+                },
+                {
+                  label:
+                    'Describe how feedback mechanisms control cellular respiration',
+                  value: 'ibm-u2-t4-lo6',
+                },
+                {
+                  label:
+                    'Predict what might happen if a step in a feedback mechanism that controls cell respiration is disrupted.',
+                  value: 'ibm-u2-t4-lo7',
+                },
+              ],
+            },
+            {
+              label: 'CellularEnergetics: Photosynthesis',
+              value: 'ibm-u2-t5',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe how the ultraviolet, visible and infrared ranges of the electromagnetic spectrum differ in energy, and absorbance by photosynthetic pigments.',
+                  value: 'ibm-u2-t5-lo1',
+                },
+                {
+                  label:
+                    'Summarize the inputs and outputs of the light-dependent reactions and the Calvin cycle.',
+                  value: 'ibm-u2-t5-lo2',
+                },
+                {
+                  label:
+                    'Explain how the light reactions convert solar energy to the chemical energy of ATP and NADPH',
+                  value: 'ibm-u2-t5-lo3',
+                },
+                {
+                  label:
+                    'Explain how the reactions of the Calvin cycle use ATP and NADPH to convert CO2 to sugar.',
+                  value: 'ibm-u2-t5-lo4',
+                },
+                {
+                  label:
+                    'Predict the possible consequences for the production of ATP and NADPH if a component or process in the photosynthesis pathway is altered.',
+                  value: 'ibm-u2-t5-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Cellular Energetics: Enzymes',
+              value: 'ibm-u2-t6',
+              learningObjectives: [
+                {
+                  label:
+                    'Analyze free energy changes over the course of a chemical reaction.',
+                  value: 'ibm-u2-t6-lo1',
+                },
+                {
+                  label:
+                    'Describe the structure of enzymes and explain how they affect the rate of biological reactions.',
+                  value: 'ibm-u2-t6-lo2',
+                },
+                {
+                  label:
+                    'Predict how specific changes to the structure of an enzyme may affect its function.',
+                  value: 'ibm-u2-t6-lo3',
+                },
+                {
+                  label:
+                    'Explain how the cellular environment affects enzyme activity',
+                  value: 'ibm-u2-t6-lo4',
+                },
+                {
+                  label:
+                    'Analyze how quantitative changes in the cellular environment affect enzyme function',
+                  value: 'ibm-u2-t6-lo5',
+                },
+                {
+                  label: 'Explain how enzymes are regulated.',
+                  value: 'ibm-u2-t6-lo6',
+                },
+                {
+                  label:
+                    'Predict how different concentrations of regulatory molecules will affect the activity rate of allosterically regulated enzymes.',
+                  value: 'ibm-u2-t6-lo7',
+                },
+              ],
+            },
+            {
+              label:
+                'Cellular Energetics: Integration of  photosynthesis and respiration',
+              value: 'ibm-u2-t7',
+              learningObjectives: [
+                {
+                  label:
+                    'Given the summary reactions for photosynthesis and respiration, compare 1) the reactants and products of each process, and 2) the energy transformations that occur',
+                  value: 'ibm-u2-t7-lo1',
+                },
+                {
+                  label:
+                    'Integrate knowledge of photosynthesis and cellular respiration to explain how the flow of energy from the sun is eventually incorporated into a new biomolecule.',
+                  value: 'ibm-u2-t7-lo2',
+                },
+                {
+                  label:
+                    'Integrate knowledge of photosynthesis and cellular respiration to explain how carbon from CO2 is eventually incorporated into a new biomolecule.',
+                  value: 'ibm-u2-t7-lo3',
+                },
+                {
+                  label:
+                    'Using knowledge of cell respiration and photosynthesis processes, analyze how perturbations to the environment will affect atmospheric CO2 levels.',
+                  value: 'ibm-u2-t7-lo4',
+                },
+              ],
+            },
+            {
+              label: 'Membrane structure',
+              value: 'ibm-u2-t8',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the amphipathic structure of phospholipids and explain how their molecular properties result in the spontaneous formation of micelles and bilayers in water.',
+                  value: 'ibm-u2-t8-lo1',
+                },
+                {
+                  label:
+                    'Describe the structure of the cell membrane and explain the function of each of the components.',
+                  value: 'ibm-u2-t8-lo2',
+                },
+                {
+                  label:
+                    'Explain how the structure of biological membranes influences selective permeability.',
+                  value: 'ibm-u2-t8-lo3',
+                },
+                {
+                  label:
+                    'Explain how phophoslipid composition, cholesterol content and temperature affect membrane fluidity and permeability.',
+                  value: 'ibm-u2-t8-lo4',
+                },
+              ],
+            },
+            {
+              label: 'Movement across membranes',
+              value: 'ibm-u2-t9',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the relative rates at which different types of molecules or ions cross a plasma membrane in the absence of membrane proteins.',
+                  value: 'ibm-u2-t9-lo1',
+                },
+                {
+                  label:
+                    'Compare and contrast the passive and active processes that allow ions and other molecules to move across membranes.',
+                  value: 'ibm-u2-t9-lo2',
+                },
+                {
+                  label:
+                    'Given a scenario, predict the method a substance uses to cross the membrane.',
+                  value: 'ibm-u2-t9-lo3',
+                },
+                {
+                  label:
+                    'Given solute concentrations on either side of a membrane, characterize the tonicity of the solutions and determine the direction of net flow of the solute and/or water.',
+                  value: 'ibm-u2-t9-lo4',
+                },
+                {
+                  label:
+                    'Explain the steps involved in the process of active transport of an ion or molecule across the plasma membrane.',
+                  value: 'ibm-u2-t9-lo5',
+                },
+                {
+                  label:
+                    'Describe how the plasma membrane creates and/or maintains electrochemical gradients',
+                  value: 'ibm-u2-t9-lo6',
+                },
+                {
+                  label:
+                    'Compare voltage-gated, mechanically-gated and ligand-gated ion channels. ',
+                  value: 'ibm-u2-t9-lo7',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Genetics',
+          value: 'ibm-u3',
+          topics: [
+            {
+              label: 'Meiosis',
+              value: 'ibm-u3-t1',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain the differences between somatic cells and germ cells.',
+                  value: 'ibm-u3-t1-lo1',
+                },
+                {
+                  label:
+                    'Compare and contrast the genetic material in sister chromatids and homologous chromosomes',
+                  value: 'ibm-u3-t1-lo2',
+                },
+                {
+                  label:
+                    'Describe the process, outcome and purpose of meiosis.',
+                  value: 'ibm-u3-t1-lo3',
+                },
+                {
+                  label:
+                    'Predict the consequences of errors that occur during meiosis',
+                  value: 'ibm-u3-t1-lo4',
+                },
+                {
+                  label:
+                    'Explain the processes of crossing-over and independent assortment and how they produce genetic variation',
+                  value: 'ibm-u3-t1-lo5',
+                },
+                {
+                  label:
+                    'Given the genotype of a cell, determine the meiotic processes, including crossing-over and independent assortment, that would need to occur to produce a gamete with any given combination of alleles.',
+                  value: 'ibm-u3-t1-lo6',
+                },
+                {
+                  label: 'Compare and contrast sexual and asexual reproduction',
+                  value: 'ibm-u3-t1-lo7',
+                },
+                {
+                  label:
+                    'Compare and contrast the phases, outcome and purpose of mitosis and meiosis.',
+                  value: 'ibm-u3-t1-lo8',
+                },
+              ],
+            },
+            {
+              label: 'Mutation',
+              value: 'ibm-u3-t2',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the effect of various types of DNA point mutations on the process of protein synthesis.',
+                  value: 'ibm-u3-t2-lo1',
+                },
+                {
+                  label:
+                    'Given the location of a specific type of point mutation, predict if it will affect protein function and phenotype. ',
+                  value: 'ibm-u3-t2-lo2',
+                },
+                {
+                  label:
+                    'Explain how changes in genotype may result in changes in phenotype',
+                  value: 'ibm-u3-t2-lo3',
+                },
+                {
+                  label: 'Describe various types of chromosomal mutations',
+                  value: 'ibm-u3-t2-lo4',
+                },
+                {
+                  label:
+                    'Given a specific chromosomal mutation, predict the effect on phenotype.',
+                  value: 'ibm-u3-t2-lo5',
+                },
+                {
+                  label:
+                    'Explain how DNA damage and/or mismatches are detected and repaired.',
+                  value: 'ibm-u3-t2-lo6',
+                },
+                {
+                  label:
+                    'Given a specific type of DNA mutation or damage, predict which DNA repair pathway would respond, and predict the consequences of successful and unsuccessful repair.',
+                  value: 'ibm-u3-t2-lo7',
+                },
+              ],
+            },
+            {
+              label: 'Patterns of Inheritance',
+              value: 'ibm-u3-t3',
+              learningObjectives: [
+                {
+                  label:
+                    'Label the elements of a Punnett square and explain its use to determine genotype and phenotype frequency.',
+                  value: 'ibm-u3-t3-lo1',
+                },
+                {
+                  label:
+                    'Calculate the frequencies of offspring genotypes and phenotypes for alleles that display complete, incomplete or co-dominance, and are autosomal or X-linked',
+                  value: 'ibm-u3-t3-lo2',
+                },
+                {
+                  label:
+                    'Given information on parental and offspring phenotypes, determine the inheritance patterns of the alleles involved. ',
+                  value: 'ibm-u3-t3-lo3',
+                },
+                {
+                  label:
+                    'Analyze data to determine how a trait is influenced by gene-by-gene and gene-by-environment interactions.',
+                  value: 'ibm-u3-t3-lo4',
+                },
+                {
+                  label:
+                    'Explain how polygenic inheritance produces traits with continuous variation',
+                  value: 'ibm-u3-t3-lo5',
+                },
+                {
+                  label:
+                    'Draw a simple pedigree, given information about the presence of a specific trait in multiple generations of a bloodline. ',
+                  value: 'ibm-u3-t3-lo6',
+                },
+                {
+                  label:
+                    'Based on the data in a pedigree, predict parental and offspring phenotypes and determine the inheritance patterns of the alleles involved.',
+                  value: 'ibm-u3-t3-lo7',
+                },
+              ],
+            },
+            {
+              label: 'DNA Replication',
+              value: 'ibm-u3-t4',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the function of major enzymes involved in DNA replication. ',
+                  value: 'ibm-u3-t4-lo1',
+                },
+                {
+                  label: 'Describe semi-conservative replication',
+                  value: 'ibm-u3-t4-lo2',
+                },
+                {
+                  label:
+                    'Evaluate the evidence in support of the semi-conservative replication model.',
+                  value: 'ibm-u3-t4-lo3',
+                },
+                {
+                  label:
+                    'Describe the processes by which the leading and lagging strands of DNA are replicated',
+                  value: 'ibm-u3-t4-lo4',
+                },
+                {
+                  label:
+                    'Explain how the shortening of chromosomal telomeres occurs and the role of telomerase ',
+                  value: 'ibm-u3-t4-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Gene Expression and Regulation',
+              value: 'ibm-u3-t5',
+              learningObjectives: [
+                {
+                  label: 'Explain the central dogma of molecular biology.',
+                  value: 'ibm-u3-t5-lo1',
+                },
+                {
+                  label:
+                    'Compare and contrast the structure and function of the types of RNA involved in information processing. ',
+                  value: 'ibm-u3-t5-lo2',
+                },
+                {
+                  label: 'Describe the process of DNA transcription',
+                  value: 'ibm-u3-t5-lo3',
+                },
+                {
+                  label: 'Describe the process of mRNA translation',
+                  value: 'ibm-u3-t5-lo4',
+                },
+                {
+                  label:
+                    'Given a strand of DNA, be able to predict the RNA transcript that is produced during transcription and the protein produced during translation.',
+                  value: 'ibm-u3-t5-lo5',
+                },
+                {
+                  label:
+                    'Compare and contrast the processes of replication, transcription and translation in bacterial and eukaryotic cells',
+                  value: 'ibm-u3-t5-lo6',
+                },
+                {
+                  label:
+                    'Explain how negative and positive control over transcription regulates the activity of a gene or operon.',
+                  value: 'ibm-u3-t5-lo7',
+                },
+                {
+                  label:
+                    'Predict how a specific mutation could impact gene expression',
+                  value: 'ibm-u3-t5-lo8',
+                },
+                {
+                  label:
+                    'Describe the process of RNA processing, and explain the consequences of alternative splicing',
+                  value: 'ibm-u3-t5-lo9',
+                },
+                {
+                  label:
+                    'Given a primary transcript that contains introns and exons, predict the mRNAs and resulting gene products that could result from alternative splicing.',
+                  value: 'ibm-u3-t5-lo10',
+                },
+                {
+                  label:
+                    'Explain how gene expression control can change gene products.',
+                  value: 'ibm-u3-t5-lo11',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Evolution',
+          value: 'ibm-u4',
+          topics: [
+            {
+              label: 'Mechanisms of Evolution',
+              value: 'ibm-u4-t1',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain how the scientific definitions of adaptation, fitness, evolution, and theory differ from their use in everyday English.',
+                  value: 'ibm-u4-t1-lo1',
+                },
+                {
+                  label:
+                    'Describe the types of data that provide evidence for evolution.',
+                  value: 'ibm-u4-t1-lo2',
+                },
+                {
+                  label:
+                    'Explain how random alterations in DNA create phenotypic variation that can be subject to natural selection.',
+                  value: 'ibm-u4-t1-lo3',
+                },
+                {
+                  label:
+                    'Explain how differences in relative fitness associated with heritable phenotypic traits result in natural selection',
+                  value: 'ibm-u4-t1-lo4',
+                },
+                {
+                  label:
+                    'Justify whether or not natural selection has occurred using data on heritable phenotypic variation, relative fitness and environmental conditions.',
+                  value: 'ibm-u4-t1-lo5',
+                },
+                {
+                  label:
+                    'Compare the influence of directional, stabilizing and disruptive (diversifying) selection on the distribution of trait measurements around the mean value of the trait .',
+                  value: 'ibm-u4-t1-lo6',
+                },
+                {
+                  label:
+                    'Identify presence of directional, stabilizing or disruptive (diversifying) selection using data on the change of allele or trait frequencies over time, or on the variation in fitness across the quantitative trait.',
+                  value: 'ibm-u4-t1-lo7',
+                },
+                {
+                  label:
+                    "Using specific examples, explain why evolution by natural selection is neither random nor progressive, and why adaptations are not 'perfect'.",
+                  value: 'ibm-u4-t1-lo8',
+                },
+                {
+                  label: 'Explain how sexual selection occurs.',
+                  value: 'ibm-u4-t1-lo9',
+                },
+                {
+                  label:
+                    'Explain how genetic drift results in changes in the frequecy of alleles or traits in a population.',
+                  value: 'ibm-u4-t1-lo10',
+                },
+                {
+                  label:
+                    'Analyze a scenario or data and determine whether allele or phenotypic trait frequencies are changing due to natural selection, genetic drift, or gene flow. ',
+                  value: 'ibm-u4-t1-lo11',
+                },
+                {
+                  label:
+                    'Explain how gene flow results in changes in the frequency of alleles or traits in a population.',
+                  value: 'ibm-u4-t1-lo12',
+                },
+                {
+                  label:
+                    'Explain why mutation is a particularly important evolutionary process in bacteria, viruses, and other groups with short generation times.',
+                  value: 'ibm-u4-t1-lo13',
+                },
+                {
+                  label:
+                    'Explain why inbreeding depression occurs and results in reduced fitness for affected populations.',
+                  value: 'ibm-u4-t1-lo14',
+                },
+              ],
+            },
+            {
+              label: 'Population Genetics',
+              value: 'ibm-u4-t2',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain why the Hardy-Weinberg principle provides a null model for evolution.',
+                  value: 'ibm-u4-t2-lo1',
+                },
+                {
+                  label:
+                    'Using genotype frequency data for a population, calculate the genotype frequencies expected under the Hardy-Weinberg conditions, and interpret any differences between observed and expected genotype frequencies.',
+                  value: 'ibm-u4-t2-lo2',
+                },
+                {
+                  label:
+                    'Given information about the frequency of a homozygous recessive or dominant trait, calculate all expected genotype frequencies under Hardy-Weinberg conditions.',
+                  value: 'ibm-u4-t2-lo3',
+                },
+                {
+                  label:
+                    'Explain how the genetic diversity of a species or population affects its ability to withstand environmental pressures.',
+                  value: 'ibm-u4-t2-lo4',
+                },
+                {
+                  label:
+                    'Evaluate the advantages and disadvantages of creating gene flow by moving individuals into a population of a specific endangered species.',
+                  value: 'ibm-u4-t2-lo5',
+                },
+                {
+                  label:
+                    'Explain evolutionary tradeoffs by describing how the increase in fitness of one trait may result in decreased fitness in another trait.',
+                  value: 'ibm-u4-t2-lo6',
+                },
+              ],
+            },
+            {
+              label: 'Phylogenetics',
+              value: 'ibm-u4-t3',
+              learningObjectives: [
+                {
+                  label: 'Describe the structure of a phylogenetic tree.',
+                  value: 'ibm-u4-t3-lo1',
+                },
+                {
+                  label:
+                    'Identify monophyletic, paraphyletic and polyphyletc groups on a phylogenetic tree.',
+                  value: 'ibm-u4-t3-lo2',
+                },
+                {
+                  label:
+                    'Identify a synapomorphy for a monophyletic group on a phylogenetic tree.',
+                  value: 'ibm-u4-t3-lo3',
+                },
+                {
+                  label:
+                    'Identify the most recent common ancestor of any two species on a phylogenetic tree.',
+                  value: 'ibm-u4-t3-lo4',
+                },
+                {
+                  label: 'Identify a homoplasy in a phylogenetic tree.',
+                  value: 'ibm-u4-t3-lo5',
+                },
+                {
+                  label:
+                    'Compare and contrast divergent and convergent evolution.',
+                  value: 'ibm-u4-t3-lo6',
+                },
+                {
+                  label:
+                    'Given a phylogenetic tree and information on the state of a trait at each tip, create a hypothesis for how that trait changed over time. ',
+                  value: 'ibm-u4-t3-lo7',
+                },
+                {
+                  label:
+                    'Explain how parsimony can be used to construct a phylogenetic tree, including how it relates to the concepts of homology and homoplasy.',
+                  value: 'ibm-u4-t3-lo8',
+                },
+                {
+                  label:
+                    'Construct a parsimonious phylogentic tree for a small group of taxa using data on the presence or absence of specific morphological or molecular traits within each taxa.',
+                  value: 'ibm-u4-t3-lo9',
+                },
+              ],
+            },
+            {
+              label: 'Speciation',
+              value: 'ibm-u4-t4',
+              learningObjectives: [
+                {
+                  label:
+                    'Compare the strengths and limitations of the biological, morphological, and phylogenetic species concepts.',
+                  value: 'ibm-u4-t4-lo1',
+                },
+                {
+                  label:
+                    'Using data, determine whether identified populations are of the same or different species under the biological, morphological, and phylogenetic species concepts.',
+                  value: 'ibm-u4-t4-lo2',
+                },
+                {
+                  label:
+                    'Explain how genetic isolation and genetic divergence result in speciation.',
+                  value: 'ibm-u4-t4-lo3',
+                },
+                {
+                  label:
+                    'Analyze data and evaluate whether two populations are evolving into distinct species',
+                  value: 'ibm-u4-t4-lo4',
+                },
+                {
+                  label:
+                    'Compare and contrast allopatric and sympatric speciation.',
+                  value: 'ibm-u4-t4-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Extinction',
+              value: 'ibm-u4-t5',
+              learningObjectives: [
+                {
+                  label:
+                    'Compare and contrast the five major mass extinction events, and evaluate the claim that a mass extinction event is currently underway.',
+                  value: 'ibm-u4-t5-lo1',
+                },
+                {
+                  label:
+                    'Evaluate data on competing hypotheses for the causes of the end-Cretaceous and/or end-Permian mass extinctions.',
+                  value: 'ibm-u4-t5-lo2',
+                },
+                {
+                  label:
+                    'Explain how ecological opportunities and/or key innovations can cause an adaptive radiation.',
+                  value: 'ibm-u4-t5-lo3',
+                },
+                {
+                  label:
+                    'Given data, evaluate the claim that an adaptive radiation occurred.',
+                  value: 'ibm-u4-t5-lo4',
+                },
+              ],
+            },
+            {
+              label: 'Human Evolution',
+              value: 'ibm-u4-t6',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain the central claims of the Out of Africa hypothesis, and the role of genetic drift, natural selection, and gene flow in the evolution of Homo sapiens.',
+                  value: 'ibm-u4-t6-lo1',
+                },
+                {
+                  label:
+                    'Evaluate the claim of a biological basis for race by analyzing data on the presence or absence of different traits in human populations.',
+                  value: 'ibm-u4-t6-lo2',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Ecology',
+          value: 'ibm-u5',
+          topics: [
+            {
+              label: 'Ecosystems',
+              value: 'ibm-u5-t1',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain the difference between abiotic and biotic factors in an ecosystem and provide examples of how these factors can affect communities.',
+                  value: 'ibm-u5-t1-lo1',
+                },
+                {
+                  label:
+                    'Describe the nested relationships among populations, species, communities, and ecosystems.',
+                  value: 'ibm-u5-t1-lo2',
+                },
+                {
+                  label: 'Describe the consequences of biomagnification.',
+                  value: 'ibm-u5-t1-lo3',
+                },
+                {
+                  label:
+                    'Evaluate strategies for mitigation of biomagnification.',
+                  value: 'ibm-u5-t1-lo4',
+                },
+              ],
+            },
+            {
+              label: 'Biomes',
+              value: 'ibm-u5-t2',
+              learningObjectives: [
+                {
+                  label:
+                    'Evaluate the importance of various biotic and abiotic factors in a particular biome',
+                  value: 'ibm-u5-t2-lo1',
+                },
+                {
+                  label:
+                    'Compare the factors that limit the distribution and abundance of aquatic species versus terrestrial species.',
+                  value: 'ibm-u5-t2-lo2',
+                },
+                {
+                  label:
+                    'Predict how the distribution and abundance of aquatic and terrestrial species will change in response to ecological perturbations, such as climate change.',
+                  value: 'ibm-u5-t2-lo3',
+                },
+              ],
+            },
+            {
+              label: 'Populations',
+              value: 'ibm-u5-t3',
+              learningObjectives: [
+                {
+                  label:
+                    'Given information presented as graphs, tables, or equations, describe how the size of a population has changed over time.',
+                  value: 'ibm-u5-t3-lo1',
+                },
+                {
+                  label:
+                    'Use mathematical tools to predict changes in  population size over time.',
+                  value: 'ibm-u5-t3-lo2',
+                },
+                {
+                  label:
+                    'Describe the spatial distribution of individuals of a species within a community.',
+                  value: 'ibm-u5-t3-lo3',
+                },
+                {
+                  label:
+                    'Analyze the consequences of human activities changing a continuous population to a metapopulation.',
+                  value: 'ibm-u5-t3-lo4',
+                },
+                {
+                  label:
+                    'Explain how interactions within and among populations influence the distribution and abundance of a given species.',
+                  value: 'ibm-u5-t3-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Communities',
+              value: 'ibm-u5-t4',
+              learningObjectives: [
+                {
+                  label:
+                    'Predict how interactions within and among populations will influence evolution of a population.',
+                  value: 'ibm-u5-t4-lo1',
+                },
+                {
+                  label:
+                    'Explain how interactions within and among populations influence community structure.',
+                  value: 'ibm-u5-t4-lo2',
+                },
+                {
+                  label:
+                    'Describe factors that can result in changes in community composition over time.',
+                  value: 'ibm-u5-t4-lo3',
+                },
+                {
+                  label:
+                    'Analyze factors contributing to changes in composition and dynamics of a specific community.',
+                  value: 'ibm-u5-t4-lo4',
+                },
+                {
+                  label:
+                    'Predict the consequences of perturbations to a food web.',
+                  value: 'ibm-u5-t4-lo5',
+                },
+                {
+                  label:
+                    'Expain the effects of fitness trade-offs on life history traits.',
+                  value: 'ibm-u5-t4-lo6',
+                },
+                {
+                  label:
+                    'Predict the influence of a disturbance on community composition.',
+                  value: 'ibm-u5-t4-lo7',
+                },
+              ],
+            },
+            {
+              label: 'Matter and Energy',
+              value: 'ibm-u5-t5',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the major events in the global cycling of water, carbon, and nitrogen.',
+                  value: 'ibm-u5-t5-lo1',
+                },
+                {
+                  label:
+                    'Explain how human activities have affected global water, carbon and nitrogen cycles.',
+                  value: 'ibm-u5-t5-lo2',
+                },
+                {
+                  label:
+                    'Compare net primary productivity in aquatic and terrestrial ecosystems.',
+                  value: 'ibm-u5-t5-lo3',
+                },
+                {
+                  label:
+                    'Explain how energy availability influences abundance and biomass of organisms in a food chain.',
+                  value: 'ibm-u5-t5-lo4',
+                },
+                {
+                  label:
+                    'Predict the consequences of changes in ecosystem primary production due to perturbations',
+                  value: 'ibm-u5-t5-lo5',
+                },
+                {
+                  label:
+                    'Compare top-down and bottom-up regulation in a community.',
+                  value: 'ibm-u5-t5-lo6',
+                },
+              ],
+            },
+            {
+              label: 'Cimate Change',
+              value: 'ibm-u5-t6',
+              learningObjectives: [
+                {
+                  label:
+                    'Interpret graphs showing ecosystem changes that can be attributed to fluctuating greenhouse gasses over time',
+                  value: 'ibm-u5-t6-lo1',
+                },
+                {
+                  label:
+                    'Explain how human activities contribute to climate change.',
+                  value: 'ibm-u5-t6-lo2',
+                },
+                {
+                  label:
+                    'Evaluate strategies for reducing atmospheric greenhouse gasses.',
+                  value: 'ibm-u5-t6-lo3',
+                },
+                {
+                  label:
+                    'Describe the influence of feedback loops on greenhouse gas prevalence and climate change.',
+                  value: 'ibm-u5-t6-lo4',
+                },
+                {
+                  label:
+                    'Given predictions of future changes in carbon emissions, evaluate the impacts for organisms and ecosystems.',
+                  value: 'ibm-u5-t6-lo5',
+                },
+                {
+                  label:
+                    'Explain how climate change leads to changes in ecosystem structure and/or dynamics',
+                  value: 'ibm-u5-t6-lo6',
+                },
+              ],
+            },
+            {
+              label: 'Diversity',
+              value: 'ibm-u5-t7',
+              learningObjectives: [
+                {
+                  label:
+                    'Compare and contrast different measures of biodiversity.',
+                  value: 'ibm-u5-t7-lo1',
+                },
+                {
+                  label: 'Analyze changes in biodiversity over time.',
+                  value: 'ibm-u5-t7-lo2',
+                },
+                {
+                  label:
+                    'Describe different regional and global patterns of biodiversity.',
+                  value: 'ibm-u5-t7-lo3',
+                },
+                {
+                  label: 'Evaluate strategies of preserving biodiversity.',
+                  value: 'ibm-u5-t7-lo4',
+                },
+                {
+                  label: 'Describe the influence of diversity on productivity',
+                  value: 'ibm-u5-t7-lo5',
+                },
+                {
+                  label:
+                    'Explain how ecosystem perturbations affect biodiversity.',
+                  value: 'ibm-u5-t7-lo6',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Biodiversity',
+          value: 'ibm-u6',
+          topics: [
+            {
+              label: 'Virus',
+              value: 'ibm-u6-t1',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the fundamental  traits shared by all viruses',
+                  value: 'ibm-u6-t1-lo1',
+                },
+                {
+                  label: 'Analyze evidence that viruses are not alive.',
+                  value: 'ibm-u6-t1-lo2',
+                },
+                {
+                  label:
+                    'Describe characteristics that define major groups of viruses',
+                  value: 'ibm-u6-t1-lo3',
+                },
+                {
+                  label:
+                    'Explain how viruses can contradict the Central Dogma of Molecular Biology.',
+                  value: 'ibm-u6-t1-lo4',
+                },
+                {
+                  label: 'Describe a typical viral lifecycle',
+                  value: 'ibm-u6-t1-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Diversity of Life',
+              value: 'ibm-u6-t2',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the fundamental traits shared across all domains of life, which provide evidence of common ancestry.',
+                  value: 'ibm-u6-t2-lo1',
+                },
+                {
+                  label:
+                    'Describe the fundamental  traits shared by organisms within each domain of life.',
+                  value: 'ibm-u6-t2-lo2',
+                },
+                {
+                  label:
+                    'Describe the fundamental traits shared by organisms within the following groups - protist, plant, fungus or animal.',
+                  value: 'ibm-u6-t2-lo3',
+                },
+              ],
+            },
+            {
+              label: 'Bacteria and Archaea',
+              value: 'ibm-u6-t3',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the fundamental traits shared by all bacteria.',
+                  value: 'ibm-u6-t3-lo1',
+                },
+                {
+                  label:
+                    'Describe the fundamental traits shared by all archaea.',
+                  value: 'ibm-u6-t3-lo2',
+                },
+                {
+                  label:
+                    'Discuss examples of structural and functional adaptations in bacteria that enable these organisms to exploit a wide array of energy sources and thrive in many different environments.',
+                  value: 'ibm-u6-t3-lo3',
+                },
+                {
+                  label:
+                    'Discuss examples of structural and functional adaptations in archaea that enable these organisms to exploit a wide array of energy sources and thrive in many different environments.',
+                  value: 'ibm-u6-t3-lo4',
+                },
+                {
+                  label:
+                    'Describe beneficial and harmful roles that bacteria and archaea play in the lives of humans and the biosphere as a whole.',
+                  value: 'ibm-u6-t3-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Eukaryotes: General',
+              value: 'ibm-u6-t4',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the fundamental traits shared by all eukaryotes.',
+                  value: 'ibm-u6-t4-lo1',
+                },
+                {
+                  label:
+                    'Using information about the traits of several major lineages, construct or label a tree of the eukaryotic radiation to show where key synapomorphies arose.',
+                  value: 'ibm-u6-t4-lo2',
+                },
+                {
+                  label:
+                    'Explain the role endosymbiosis played in the evolution of eukaryotes',
+                  value: 'ibm-u6-t4-lo3',
+                },
+                {
+                  label:
+                    'Describe the structural or functional characteristics of major groups of protists',
+                  value: 'ibm-u6-t4-lo4',
+                },
+              ],
+            },
+            {
+              label: 'Eukaryotes: Plants',
+              value: 'ibm-u6-t5',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the morphological, fossil and phylogenetic evidence that supports the hypothesis that land plants evolved from freshwater green algae.',
+                  value: 'ibm-u6-t5-lo1',
+                },
+                {
+                  label:
+                    'Explain the adaptive significance of synapomorphies that define the major lineages of land plants ',
+                  value: 'ibm-u6-t5-lo2',
+                },
+                {
+                  label:
+                    'Summarize the major features of alternation of generations.',
+                  value: 'ibm-u6-t5-lo3',
+                },
+                {
+                  label:
+                    'Predict the ecosystem impacts after changes in a plant community.',
+                  value: 'ibm-u6-t5-lo4',
+                },
+              ],
+            },
+            {
+              label: 'Eukaryotes: Fungi',
+              value: 'ibm-u6-t6',
+              learningObjectives: [
+                {
+                  label:
+                    'Identify the synapomorphies that define the major lineages of fungi',
+                  value: 'ibm-u6-t6-lo1',
+                },
+                {
+                  label:
+                    'Explain how mushroom physiology results in efficient absorption of nutrients and decomposition of organic matter.',
+                  value: 'ibm-u6-t6-lo2',
+                },
+                {
+                  label:
+                    'Describe mutualisms that can occur between fungi and plants.',
+                  value: 'ibm-u6-t6-lo3',
+                },
+              ],
+            },
+            {
+              label: 'Eukaryotes: Animals',
+              value: 'ibm-u6-t7',
+              learningObjectives: [
+                {
+                  label:
+                    'Identify the synapomorphies that define the major lineages of animals',
+                  value: 'ibm-u6-t7-lo1',
+                },
+                {
+                  label:
+                    'In animal lineages, compare and contrast the following: 1) body plan, 2) reproductive systems, 3) sensory organs, 4) feeding strategies, and 5) ecological role.',
+                  value: 'ibm-u6-t7-lo2',
+                },
+                {
+                  label:
+                    'Identify the synapomorphies that define the major chordate groups',
+                  value: 'ibm-u6-t7-lo3',
+                },
+                {
+                  label:
+                    'Explain the benefits and challenges of aquatic versus terrestrial living for animals',
+                  value: 'ibm-u6-t7-lo4',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Anatomy and Physiology',
+          value: 'ibm-u7',
+          topics: [
+            {
+              label: 'Structure and Function',
+              value: 'ibm-u7-t1',
+              learningObjectives: [
+                {
+                  label:
+                    'Describe the properties that emerge at increasing levels of biological organization',
+                  value: 'ibm-u7-t1-lo1',
+                },
+                {
+                  label:
+                    'Describe how the structure of a cell and/or tissue relates to the function of an organ and/or system;',
+                  value: 'ibm-u7-t1-lo2',
+                },
+                {
+                  label:
+                    'Describe how changes in structure can disrupt function of an organ or system',
+                  value: 'ibm-u7-t1-lo3',
+                },
+                {
+                  label:
+                    'Explain the relationship between surface area and volume for physiological functions',
+                  value: 'ibm-u7-t1-lo4',
+                },
+                {
+                  label:
+                    'Compare and contrast the methods by which gas, liquid, or solute moves between compartments in a physiological system.',
+                  value: 'ibm-u7-t1-lo5',
+                },
+                {
+                  label:
+                    'Analyze mass entering or leaving a compartment given flow rate and concentration or partial pressure.',
+                  value: 'ibm-u7-t1-lo6',
+                },
+                {
+                  label:
+                    'Analyze the effect of surface area-to volume ratios on the exchange of materials between cells or organisms and their environment',
+                  value: 'ibm-u7-t1-lo7',
+                },
+                {
+                  label:
+                    'Describe how the structures and functions of a physiological system or its components have been modified via natural selection. ',
+                  value: 'ibm-u7-t1-lo8',
+                },
+                {
+                  label:
+                    'Analyze the fitness trade-offs and/or evolutionary constraints on a physiological system or component that prevents it from fulfilling its function more effectively or efficiently.',
+                  value: 'ibm-u7-t1-lo9',
+                },
+                {
+                  label:
+                    'Explain how concentration gradients affect the movement of solutes across membranes.',
+                  value: 'ibm-u7-t1-lo10',
+                },
+                {
+                  label:
+                    'Explain how and why ions move in response to electrical potential gradients.',
+                  value: 'ibm-u7-t1-lo11',
+                },
+                {
+                  label:
+                    'Explain how fluids and gases move in response to pressure gradients.',
+                  value: 'ibm-u7-t1-lo12',
+                },
+                {
+                  label:
+                    'Predict the physiological responses to specified changes in gradients.',
+                  value: 'ibm-u7-t1-lo13',
+                },
+              ],
+            },
+            {
+              label: 'Cellular communication',
+              value: 'ibm-u7-t2',
+              learningObjectives: [
+                {
+                  label:
+                    'Compare the structure, solubility and method of transport of peptide, steroid, and amine messengers. ',
+                  value: 'ibm-u7-t2-lo1',
+                },
+                {
+                  label:
+                    'Explain the relationship between a chemical messenger and its receptor',
+                  value: 'ibm-u7-t2-lo2',
+                },
+                {
+                  label:
+                    "Explain the effect of upregulation or downregulation of a receptor on a cell's response to a secreted signal",
+                  value: 'ibm-u7-t2-lo3',
+                },
+                {
+                  label:
+                    'Describe the components of a signal transduction pathway.  ',
+                  value: 'ibm-u7-t2-lo4',
+                },
+                {
+                  label:
+                    'Identify and explain the role of the sensor, signal transduction pathway(s), hormonal signal(s), and response(s) as an organism reacts to an environmental stimulus.',
+                  value: 'ibm-u7-t2-lo5',
+                },
+                {
+                  label:
+                    'Predict how a specified change in a sensor, signal transduction pathway, or hormonal signal will affect how a plant responds to the environment.',
+                  value: 'ibm-u7-t2-lo6',
+                },
+                {
+                  label:
+                    'Explain how different cell types may respond differently to the same messenger molecule.',
+                  value: 'ibm-u7-t2-lo7',
+                },
+                {
+                  label:
+                    'Explain the relationship between signal molecule concentration and the magnitude of the target cell response.',
+                  value: 'ibm-u7-t2-lo8',
+                },
+                {
+                  label:
+                    'Describe the various mechanisms by which the signal from a chemical messenger ends',
+                  value: 'ibm-u7-t2-lo9',
+                },
+              ],
+            },
+            {
+              label: 'Homeostasis',
+              value: 'ibm-u7-t3',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain how positive or negative feedback affects homeostasis',
+                  value: 'ibm-u7-t3-lo1',
+                },
+                {
+                  label:
+                    'Predict how a change in one or more of the components of a homeostatic system will change the activity of the system.',
+                  value: 'ibm-u7-t3-lo2',
+                },
+              ],
+            },
+            {
+              label: 'Animal Nervous System',
+              value: 'ibm-u7-t4',
+              learningObjectives: [
+                {
+                  label: 'Describe the structure and function of a neuron.',
+                  value: 'ibm-u7-t4-lo1',
+                },
+                {
+                  label:
+                    'Explain how action potentials propagate in one direction along the axon.',
+                  value: 'ibm-u7-t4-lo2',
+                },
+                {
+                  label:
+                    'Given information on the stimuli received by a neuron, predict whether it will fire an action potential in response',
+                  value: 'ibm-u7-t4-lo3',
+                },
+                {
+                  label:
+                    'Given information about the chemical, predict how a specific neurotoxin or neuromodulator will influence the function of a neuron',
+                  value: 'ibm-u7-t4-lo4',
+                },
+                {
+                  label:
+                    'Explain how an arriving stimulus is changed into an action potential by a sensory receptor.',
+                  value: 'ibm-u7-t4-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Plant Structure and Function',
+              value: 'ibm-u7-t5',
+              learningObjectives: [
+                {
+                  label:
+                    'Explain the roles of various components of the cell wall matrix in support, growth and protection against pathogens.',
+                  value: 'ibm-u7-t5-lo1',
+                },
+                {
+                  label:
+                    'Identify roots, stems, and leaves and explain their overall function.',
+                  value: 'ibm-u7-t5-lo2',
+                },
+                {
+                  label:
+                    'Compare and contrast the adaptive significance of root, stem and leaf structures of plants in different habitats.',
+                  value: 'ibm-u7-t5-lo3',
+                },
+                {
+                  label:
+                    'Explain how and why stomata regulate exchange of CO2 and O2 in plant leaves.',
+                  value: 'ibm-u7-t5-lo4',
+                },
+                {
+                  label:
+                    'Under given light, water, or temperature conditions, predict adaptations or developmental responses in stomata and other cells and structures that optimize the rate of photosynthesis and minimize the rate of water loss.',
+                  value: 'ibm-u7-t5-lo5',
+                },
+              ],
+            },
+            {
+              label: 'Plant Growth and Reproduction',
+              value: 'ibm-u7-t6',
+              learningObjectives: [
+                {
+                  label:
+                    'Identify where mitosis, meiosis, fertilization, and haploid and diploid phases occur in a plant life cycle',
+                  value: 'ibm-u7-t6-lo1',
+                },
+                {
+                  label: 'Compare primary and secondary plant growth.',
+                  value: 'ibm-u7-t6-lo2',
+                },
+                {
+                  label:
+                    'Explain the function of specific plant hormones at the cellular, tissue, organ, system, or whole-organism level.',
+                  value: 'ibm-u7-t6-lo3',
+                },
+              ],
+            },
+            {
+              label: 'Plant Matter and Energy Flow',
+              value: 'ibm-u7-t7',
+              learningObjectives: [
+                {
+                  label: 'Explain how CO2 is the source of mass in a plant.',
+                  value: 'ibm-u7-t7-lo1',
+                },
+                {
+                  label:
+                    'Explain how inorganic nutrients are obtained from soil, either directly or via associations with mycorrhizal fungi.',
+                  value: 'ibm-u7-t7-lo2',
+                },
+                {
+                  label:
+                    'Explain the mechanism responsible for the long-distance transport of water in the xylem',
+                  value: 'ibm-u7-t7-lo3',
+                },
+                {
+                  label:
+                    'Explain the mechanism responsible for the long-distance transport of sugar in the phloem',
+                  value: 'ibm-u7-t7-lo4',
+                },
+                {
+                  label:
+                    'Compare the mechanisms responsible for the long-distance transport of sugars versus water and nutrients.',
+                  value: 'ibm-u7-t7-lo5',
+                },
+                {
+                  label:
+                    'Given data on a change in soil conditions, predict the change (if any) on the movement of water in plants',
+                  value: 'ibm-u7-t7-lo6',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
   ],
   introToBioMeta: [
     {

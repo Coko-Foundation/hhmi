@@ -36,11 +36,12 @@ const ExportToScormButton = props => {
     <ModalContext.Provider value={null}>
       <Button
         className={className}
+        id="exportToQTI"
         loading={loading}
         onClick={handleExport}
         type="primary"
       >
-        Export to SCORM
+        Export to QTI
       </Button>
       {contextHolder}
     </ModalContext.Provider>

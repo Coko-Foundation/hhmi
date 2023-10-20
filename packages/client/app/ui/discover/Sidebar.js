@@ -4,19 +4,16 @@ import styled from 'styled-components'
 
 import { grid, th } from '@coko/client'
 
+import { Button, Select, Form } from '../common'
 import {
-  Button,
-  Select,
-  Form,
   TopicAndSubtopic,
   APCourseMetadata,
   IBCourseMetadata,
-  VisionAndChangeMetadata,
-  AAMCFuturePhysiciansMetadata,
-} from '../common'
+  IntroToBioCourseMetadata,
+} from '../metadataFields'
 
 const Wrapper = styled.aside`
-  background-color: ${props => props.theme.colorBackground};
+  background-color: ${th('colorBackground')};
   height: 100%;
   overflow: hidden;
   padding: ${grid(2)} 0;
@@ -46,12 +43,16 @@ const FormFieldsContainer = styled.div`
 const Footer = styled.div`
   display: flex;
   justify-content: space-between;
-  /* padding-top: ${grid(4)}; */
   padding: ${grid(4)} ${grid(2)} 0 ${grid(4)};
 `
 
+const apCourses = ['apBiology', 'apEnvironmentalScience']
+const ibCourses = ['biBiology', 'biEnvironmentalScience']
+const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
+
 const Sidebar = props => {
-  const { className, text, setFilters, metadata, form } = props
+  const { className, text, setFilters, metadata, form, complexItemSetOptions } =
+    props
 
   const applyFilters = () => {
     setFilters(form.getFieldsValue())
@@ -64,13 +65,14 @@ const Sidebar = props => {
   const renderCourseFields = getFieldValue => {
     const selectedCourse = getFieldValue('course')
 
-    if (
-      selectedCourse === 'apBiology' ||
-      selectedCourse === 'apEnvironmentalScience'
-    ) {
+    const courseMetadata = metadata.frameworks.find(
+      f => f.value === selectedCourse,
+    )
+
+    if (apCourses.includes(selectedCourse)) {
       return (
         <APCourseMetadata
-          courseData={metadata.frameworks.find(f => f.value === selectedCourse)}
+          courseData={courseMetadata}
           filterMode
           getFieldValue={getFieldValue}
           setFieldsValue={form.setFieldsValue}
@@ -78,13 +80,10 @@ const Sidebar = props => {
       )
     }
 
-    if (
-      selectedCourse === 'biBiology' ||
-      selectedCourse === 'biEnvironmentalScience'
-    ) {
+    if (ibCourses.includes(selectedCourse)) {
       return (
         <IBCourseMetadata
-          courseData={metadata.frameworks.find(f => f.value === selectedCourse)}
+          courseData={courseMetadata}
           filterMode
           getFieldValue={getFieldValue}
           setFieldsValue={form.setFieldsValue}
@@ -92,33 +91,15 @@ const Sidebar = props => {
       )
     }
 
-    if (
-      selectedCourse === 'introductoryBiologyForNonMajors' ||
-      selectedCourse === 'introductoryBiologyForMajors'
-    ) {
-      // return 2 mystery fields, vision and change and AAMC future physicians if `introductoryBiologyForMajors`
+    if (introBioCourses.includes(selectedCourse)) {
       return (
-        <>
-          {/** mistery fields go here */}
-          <VisionAndChangeMetadata
-            conceptsAndCompetencies={metadata.introToBioMeta.find(
-              f => f.value === 'visionAndChange',
-            )}
-            filterMode
-            getFieldValue={getFieldValue}
-            setFieldsValue={form.setFieldsValue}
-          />
-          {selectedCourse === 'introductoryBiologyForMajors' && (
-            <AAMCFuturePhysiciansMetadata
-              aamcMetadata={metadata.introToBioMeta.find(
-                f => f.value === 'aamcFuturePhysicians',
-              )}
-              filterMode
-              getFieldValue={getFieldValue}
-              setFieldsValue={form.setFieldsValue}
-            />
-          )}
-        </>
+        <IntroToBioCourseMetadata
+          courseData={courseMetadata}
+          filterMode
+          getFieldValue={getFieldValue}
+          introToBioMeta={metadata.introToBioMeta}
+          setFieldsValue={form.setFieldsValue}
+        />
       )
     }
 
@@ -165,12 +146,21 @@ const Sidebar = props => {
                   options={metadata.questionTypes}
                 />
               </Form.Item>
-              <Form.Item label="Bloom's cognitive level" name="cognitiveLevel">
+              <Form.Item label="Bloom's Cognitive Level" name="cognitiveLevel">
                 <Select
                   data-testid="cognitive-level-select"
                   mode="multiple"
                   optionFilterProp="label"
                   options={metadata.blooms.cognitive}
+                />
+              </Form.Item>
+              <Form.Item label="Complex Item Set" name="complexItemSet">
+                <Select
+                  data-testid="complex-item-set-select"
+                  mode="multiple"
+                  optionFilterProp="label"
+                  options={complexItemSetOptions}
+                  showSearch
                 />
               </Form.Item>
             </>
@@ -374,12 +364,19 @@ Sidebar.propTypes = {
   }),
   /** form instance for the filters' <Form> */
   form: PropTypes.shape(),
+  complexItemSetOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
 }
 
 Sidebar.defaultProps = {
   text: '',
   metadata: null,
   form: {},
+  complexItemSetOptions: [],
 }
 
 export default Sidebar

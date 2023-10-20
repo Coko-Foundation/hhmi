@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
-import Form from './Form'
-import Select from './Select'
+import { Form, Select } from '../common'
 
 const IBCourseMetadata = props => {
   const {
@@ -227,7 +226,7 @@ const IBCourseMetadata = props => {
 
   return (
     <>
-      <p>{courseData.label}: College Board Curriculum</p>
+      {!filterMode && <p>{courseData.label}: College Board Curriculum</p>}
       <Form.Item
         label="Course Unit"
         name={unitName}
@@ -238,7 +237,7 @@ const IBCourseMetadata = props => {
         ]}
       >
         <Select
-          // allowClear
+          allowClear={filterMode}
           disabled={readOnly}
           onChange={handleFrameworkUnitChange}
           optionFilterProp="label"
@@ -259,7 +258,7 @@ const IBCourseMetadata = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               disabled={readOnly || (!filterMode && !getFieldValue(unitField))}
               onChange={handleFrameworkTopicChange}
               optionFilterProp="label"
@@ -277,7 +276,7 @@ const IBCourseMetadata = props => {
             <Form.Item
               label={
                 courseData.value === 'biEnvironmentalScience'
-                  ? 'Application & Skill'
+                  ? 'Application and Skill'
                   : 'Application'
               }
               name={applicationName}
@@ -288,7 +287,7 @@ const IBCourseMetadata = props => {
               ]}
             >
               <Select
-                // allowClear
+                allowClear={filterMode}
                 disabled={
                   readOnly || (!filterMode && !getFieldValue(topicField))
                 }
@@ -316,7 +315,7 @@ const IBCourseMetadata = props => {
               ]}
             >
               <Select
-                // allowClear
+                allowClear={filterMode}
                 disabled={
                   readOnly || (!filterMode && !getFieldValue(topicField))
                 }
@@ -341,7 +340,7 @@ const IBCourseMetadata = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               disabled={readOnly || (!filterMode && !getFieldValue(topicField))}
               optionFilterProp="label"
               options={filterUnderstandingOptions()}

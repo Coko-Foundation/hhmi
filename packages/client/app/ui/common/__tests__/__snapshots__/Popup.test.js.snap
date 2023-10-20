@@ -2,7 +2,7 @@
 
 exports[`Popup matches snapshot 1`] = `
 <div
-  className="sc-dQelHR gwmeOH"
+  className="sc-gUrTyy hfxQLV"
 >
   <button
     aria-controls="popup-1"
@@ -20,7 +20,7 @@ exports[`Popup matches snapshot 1`] = `
     </span>
   </button>
   <div
-    className="sc-jMAIzZ hVTemq"
+    className="sc-jhSXcr leBue"
     id="popup-1"
     onBlur={[Function]}
     onKeyDown={[Function]}

@@ -17,6 +17,7 @@ const AuthenticationMethod = props => {
   const {
     bioInteractiveLoading,
     className,
+    loadingConfig,
     onBioInteractiveClick,
     onEmailClick,
     showEmailOption,
@@ -25,6 +26,7 @@ const AuthenticationMethod = props => {
   return (
     <Wrapper className={className}>
       <MethodButton
+        disabled={loadingConfig}
         loading={bioInteractiveLoading}
         onClick={onBioInteractiveClick}
         type="primary"
@@ -48,10 +50,12 @@ AuthenticationMethod.propTypes = {
   bioInteractiveLoading: PropTypes.bool.isRequired,
   onBioInteractiveClick: PropTypes.func.isRequired,
   onEmailClick: PropTypes.func.isRequired,
+  loadingConfig: PropTypes.bool,
   showEmailOption: PropTypes.bool,
 }
 
 AuthenticationMethod.defaultProps = {
+  loadingConfig: false,
   showEmailOption: false,
 }
 

@@ -81,8 +81,8 @@ Cypress.Commands.add(
     keywords,
     biointeractiveResources,
     cognitiveLevel,
-    affectiveLevel,
-    psychomotorLevel,
+    // affectiveLevel,
+    // psychomotorLevel,
   }) => {
     cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     selectData(mainTopic)
@@ -116,63 +116,137 @@ Cypress.Commands.add('logout', () => {
   cy.get('[data-testid="logout-btn"]').click()
 })
 
-Cypress.Commands.add('resetDB', () => {
-  cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
-    .its('stdout')
-    .should('contain', 'database cleared')
-  cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
-    .its('stdout')
-    .should('contain', `Added global team "admin"`)
-    .should('contain', `Added global team "reviewer"`)
-    .should('contain', `Added global team "editor"`)
+Cypress.Commands.add('resetDB', disabled => {
+  if (!disabled) {
+    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
+      .its('stdout')
+      .should('contain', 'database cleared')
+    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
+      .its('stdout')
+      .should('contain', `Added global team "admin"`)
+      .should('contain', `Added global team "reviewer"`)
+      .should('contain', `Added global team "editor"`)
+  } else {
+    cy.log(`resetDB is command disabled`)
+  }
 })
 
-Cypress.Commands.add('seedUser', ({ email, role, profileSubmitted = true }) => {
-  cy.exec(
-    `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${email} ${
-      profileSubmitted ? 'profileSubmitted' : '_'
-    } ${role || ''}`,
-  )
-    .its('stdout')
-    .should('contain', `user created with email - ${email}.`)
-    .should(`${role ? '' : 'not.'}contain`, `user given ${role} role`)
-})
+Cypress.Commands.add(
+  'seedUser',
+  (disabled, { email, role, profileSubmitted = true }) => {
+    if (!disabled) {
+      cy.exec(
+        `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${email} ${
+          profileSubmitted ? 'profileSubmitted' : '_'
+        } ${role || ''}`,
+      )
+        .its('stdout')
+        .should('contain', `user created with email - ${email}.`)
+        .should(`${role ? '' : 'not.'}contain`, `user given ${role} role`)
+    } else {
+      cy.log(`seedUser is command disabled`)
+    }
+  },
+)
 
-Cypress.Commands.add('seedQuestion', (username, date, metadata, status) => {
-  cy.log(
-    `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${username} ${date} ${metadata} ${status}`,
-  )
-  cy.exec(
-    `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${username} ${date} ${metadata} ${status}`,
-  )
-    .its('stdout')
-    .should(
-      'contain',
-      `question created under the author ${username} and is ${status}`,
+Cypress.Commands.add(
+  'seedQuestion',
+  (disabled, username, date, metadata, status, handlingEditor = '') => {
+    if (!disabled) {
+      cy.exec(
+        `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${username} ${date} ${metadata} ${status} ${handlingEditor}`,
+      )
+        .its('stdout')
+        .should(
+          'contain',
+          `question created under the author ${username} and is ${status}`,
+        )
+        .should(
+          `${handlingEditor.length > 0 ? '' : 'not.'}contain`,
+          `assigned ${handlingEditor} as handling editor`,
+        )
+    }
+  },
+)
+
+Cypress.Commands.add('updateQuestionStatus', (disabled, questionId, status) => {
+  if (!disabled) {
+    cy.exec(
+      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js updateStatus ${questionId} ${status}`,
     )
+      .its('stdout')
+      .should('contains', `question ${questionId} updated to ${status}`)
+  } else {
+    cy.log(`updateQuestionStatus is command disabled`)
+  }
 })
 
-Cypress.Commands.add('deleteAllQuestions', () => {
-  cy.exec('docker exec hhmi_server_1 node ./scripts/seedQuestions.js deleteAll')
-    .its('stdout')
-    .should('contain', 'Emptied questions and question_versions')
-})
-
-Cypress.Commands.add('seedList', (listName, username) => {
-  cy.exec(
-    `docker exec hhmi_server_1 node ./scripts/seedList.js create ${listName} ${username}`,
-  )
-    .its('stdout')
-    .should('contain', `created ${listName} with author as ${username}`)
-})
-
-Cypress.Commands.add('addQuestionToList', (listName, questionId) => {
-  cy.exec(
-    `docker exec hhmi_server_1 node ./scripts/seedList addToList ${listName} ${questionId}`,
-  )
-    .its('stdout')
-    .should(
-      'contain',
-      `added question with id - ${questionId} to list ${listName}`,
+Cypress.Commands.add('deleteAllQuestions', disabled => {
+  if (!disabled) {
+    cy.exec(
+      'docker exec hhmi_server_1 node ./scripts/seedQuestions.js deleteAll',
     )
+      .its('stdout')
+      .should('contain', 'Emptied questions and question_versions')
+  } else {
+    cy.log(`deleteAllQuestions is command disabled`)
+  }
 })
+
+Cypress.Commands.add('seedList', (disabled, listName, username) => {
+  if (!disabled) {
+    cy.exec(
+      `docker exec hhmi_server_1 node ./scripts/seedList.js create ${listName} ${username}`,
+    )
+      .its('stdout')
+      .should('contain', `created ${listName} with author as ${username}`)
+  } else {
+    cy.log(`seedList is command disabled`)
+  }
+})
+
+Cypress.Commands.add('addQuestionToList', (disabled, listName, questionId) => {
+  if (!disabled) {
+    cy.exec(
+      `docker exec hhmi_server_1 node ./scripts/seedList addToList ${listName} ${questionId}`,
+    )
+      .its('stdout')
+      .should(
+        'contain',
+        `added question with id - ${questionId} to list ${listName}`,
+      )
+  } else {
+    cy.log(`addQuestionToList is command disabled`)
+  }
+})
+
+Cypress.Commands.add(
+  'seedComplexItemSet',
+  (disabled, username, title, leadingContent) => {
+    if (!disabled) {
+      cy.exec(
+        `docker exec hhmi_server_1 node ./scripts/seedComplexItemSet.js create ${username} "${title}" "${leadingContent}"`,
+      )
+        .its('stdout')
+        .should('contain', `set with title: "${title}" created!`)
+        .should('contain', `${username} set as author!`)
+    } else {
+      cy.log('seedComplexItemSet is command disabled')
+    }
+  },
+)
+
+Cypress.Commands.add(
+  'addQuestionToComplexItemSet',
+  (disabled, title, questionId) => {
+    if (!disabled) {
+      cy.exec(
+        `docker exec hhmi_server_1 node ./scripts/seedComplexItemSet.js addQuestion "${title}" ${questionId}`,
+      )
+        .its('stdout')
+        .should('contains', ` question - ${questionId} added to set "${title}"`)
+    } else {
+      cy.log(`addQuestionToComplexItemSet is command disabled`)
+    }
+  },
+)

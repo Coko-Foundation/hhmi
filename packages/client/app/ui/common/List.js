@@ -1,5 +1,6 @@
 import React, { useEffect, useState, memo, useCallback } from 'react'
-import PropTypes from 'prop-types'
+import PropTypes, { oneOfType } from 'prop-types'
+import { isEqual } from 'lodash'
 import styled from 'styled-components'
 import without from 'lodash/without'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
@@ -9,12 +10,13 @@ import { List as AntList } from 'antd'
 import { grid, th } from '@coko/client'
 
 import UICheckBox from './Checkbox'
-import Search from './Search'
+// import Search from './Search'
 import UISelect from './Select'
 import Pagination from './Pagination'
 import VisuallyHiddenElement from './VisuallyHiddenElement'
 import { Indicator } from './Spin'
 import Empty from './Empty'
+import Search from './Search'
 
 // #region styled
 const Wrapper = styled.div`
@@ -32,8 +34,7 @@ const DroppableWrapper = styled.div`
 
 const SearchWrapper = styled.div`
   align-self: center;
-  max-width: 1170px;
-  padding: 0 ${grid(2)};
+  padding: 0 ${grid(4)};
   width: 100%;
 `
 
@@ -68,6 +69,14 @@ const ListItemWrapper = styled.li`
     outline-offset: -2px;
   }
 
+  & > label {
+    display: flex;
+
+    & > span {
+      align-self: center;
+    }
+  }
+
   &&&& {
     background-color: ${({ isDragging }) =>
       isDragging ? th('colorSelection') : 'transparent'};
@@ -97,7 +106,7 @@ const FooterWrapper = styled.div`
   border: 1px solid ${th('colorBorder')};
   display: flex;
   justify-content: space-between;
-  padding: 5px;
+  padding: ${grid(2)};
 `
 
 const CheckBox = styled(UICheckBox)`
@@ -185,6 +194,37 @@ function useFunction(callback) {
 // const EmptyList = () => {
 //   return 'no data'
 // }
+// Maybe we can add it as a util or turn it into a component and export it from Checkbox.js
+const selectAllCheckbox = (
+  setItems,
+  dataSource,
+  items,
+  label = 'Select All',
+) => {
+  const { length: itemslgth } = items
+  const { length: datalgth } = dataSource
+
+  const toggle = () =>
+    setItems(keys =>
+      keys.length === datalgth ? [] : dataSource.map(r => r.id),
+    )
+
+  // posible reusable util
+  const isChecked = () =>
+    itemslgth < datalgth && itemslgth !== 0 ? 'mixed' : itemslgth > 0
+
+  return (
+    <CheckBox
+      aria-checked={isChecked()}
+      checked={datalgth > 0 && itemslgth === datalgth}
+      data-testid="select-all-checkbox"
+      indeterminate={isChecked() === 'mixed'}
+      onChange={toggle}
+    >
+      {label}
+    </CheckBox>
+  )
+}
 
 const List = props => {
   const {
@@ -213,6 +253,8 @@ const List = props => {
     draggable,
     onDragEnd,
     selectedItems: controlledSelectedItems,
+    withFilters,
+    filters,
     ...rest
   } = props
 
@@ -227,9 +269,12 @@ const List = props => {
   // Reset selected items to controlledSelectedItems when dataSource changes
   // by default it will reset selection (controlledSelectedItems = [])
   // to preserve it, keep track of selected items in the parent component, and pass it down via this prop
+
   useEffect(() => {
-    setSelectedItems(controlledSelectedItems)
-  }, [dataSource])
+    if (!isEqual(selectedItems, controlledSelectedItems)) {
+      setSelectedItems(controlledSelectedItems)
+    }
+  }, [JSON.stringify(dataSource), controlledSelectedItems])
 
   const handleSelect = useFunction(id => {
     setSelectedItems([...selectedItems, id])
@@ -436,15 +481,19 @@ const List = props => {
           <Search
             aria-label="Enter text to search in list"
             autoFocus={autoFocusSearch}
+            filters={filters}
             loading={searchLoading}
             onSearch={onSearch}
             placeholder={searchPlaceholder}
+            withFilters={withFilters}
           />
         </SearchWrapper>
       )}
 
       {showInternalHeaderRow && (
         <InternalHeader>
+          {itemSelection &&
+            selectAllCheckbox(setSelectedItems, dataSource, selectedItems)}
           {showTotalCount && (
             <TotalCount>
               <span>{totalCount} results</span>
@@ -515,6 +564,10 @@ List.propTypes = {
   onDragEnd: PropTypes.func,
   draggable: PropTypes.bool,
   selectedItems: PropTypes.arrayOf(PropTypes.string),
+  filters: PropTypes.arrayOf(
+    oneOfType([PropTypes.string, PropTypes.bool, PropTypes.object]),
+  ),
+  withFilters: PropTypes.bool,
 }
 
 List.defaultProps = {
@@ -535,6 +588,8 @@ List.defaultProps = {
   onDragEnd: () => {},
   draggable: false,
   selectedItems: [],
+  filters: [],
+  withFilters: false,
 }
 
 List.Item = AntList.Item
