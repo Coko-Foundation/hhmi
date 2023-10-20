@@ -941,7 +941,10 @@ const dashboardDataMapper = ({
       content: parsedContent,
       status: renderStatus({ ...latestVersion, rejected }),
       heAssigned: showAssigned && heAssigned,
-      href: testMode ? `/question/${id}/test` : `/question/${id}`,
+      href:
+        testMode && latestVersion.published
+          ? `/question/${id}/test`
+          : `/question/${id}`,
       id,
       courses,
       state: { relatedQuestionIds },
