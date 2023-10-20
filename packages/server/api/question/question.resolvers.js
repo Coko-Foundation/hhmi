@@ -2,12 +2,14 @@ const {
   getAuthor,
   getQuestion,
   getQuestionVersions,
+  getLeadingContentForQuestion,
   getPublishedQuestions,
   getAuthorDashboard,
   getReviewerDashboard,
   getManagingEditorDashboard,
   getPublishedQuestionsIds,
   assignAuthorship,
+  getHandlingEditorDashboard,
 
   createQuestion,
   updateQuestion,
@@ -19,7 +21,14 @@ const {
   publishQuestionVersion,
   generateWordFile,
   generateScormZip,
+  generateQtiZip,
   createNewQuestionVersion,
+
+  assignHandlingEditors,
+  unassignHandlingEditor,
+  getQuestionsHandlingEditors,
+
+  getChatThreadForQuestion,
 
   uploadFiles,
   getImageUrls,
@@ -49,8 +58,12 @@ const getManagingEditorDashboardResolver = async (_, args, ctx) => {
   return getManagingEditorDashboard(ctx.user, args)
 }
 
-const createQuestionResolver = async (_, __, ctx) => {
-  return createQuestion(ctx.user)
+const createQuestionResolver = async (_, { input }, ctx) => {
+  return createQuestion(ctx.user, input)
+}
+
+const getHandlingEditorDashboardResolver = async (_, args, ctx) => {
+  return getHandlingEditorDashboard(ctx.user, args)
 }
 
 const duplicateQuestionResolver = async (_, { questionId }, ctx) => {
@@ -131,6 +144,10 @@ const generateScormZipResolver = async (_, { questionVersionId }) => {
   return generateScormZip(questionVersionId)
 }
 
+const generateQtiZipResolver = async (_, { questionVersionId }) => {
+  return generateQtiZip(questionVersionId)
+}
+
 const createNewQuestionVersionResolver = async (_, { questionId }) => {
   return createNewQuestionVersion(questionId)
 }
@@ -143,6 +160,31 @@ const authorResolver = async ({ id }) => {
   return getAuthor(id)
 }
 
+const leadingContentResolver = async version => {
+  return getLeadingContentForQuestion(version)
+}
+
+const assignHandlingEditorsResolver = async (_, { questionIds, userIds }) => {
+  return assignHandlingEditors(questionIds, userIds)
+}
+
+const getQuestionsHandlingEditorsResolver = async (_, { questionId }) => {
+  return getQuestionsHandlingEditors(questionId)
+}
+
+const unassignHandlingEditorResolver = async (_, { questionId, userId }) => {
+  return unassignHandlingEditor(questionId, userId)
+}
+
+const chatThreadResolver = async question => {
+  return getChatThreadForQuestion(question.id)
+}
+
+const heAssignedResolver = async question => {
+  const assignedHEs = await getQuestionsHandlingEditors(question.id)
+  return assignedHEs.length > 0
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -151,6 +193,8 @@ module.exports = {
     getReviewerDashboard: getReviewerDashboardResolver,
     getManagingEditorDashboard: getManagingEditorDashboardResolver,
     getPublishedQuestionsIds: getPublishedQuestionsIdsResolver,
+    getHandlingEditorDashboard: getHandlingEditorDashboardResolver,
+    getQuestionsHandlingEditors: getQuestionsHandlingEditorsResolver,
   },
   Mutation: {
     createQuestion: createQuestionResolver,
@@ -164,15 +208,21 @@ module.exports = {
     assignAuthorship: assignAuthorshipResolver,
     generateWordFile: generateWordFileResolver,
     generateScormZip: generateScormZipResolver,
+    generateQtiZip: generateQtiZipResolver,
     createNewQuestionVersion: createNewQuestionVersionResolver,
     uploadFiles: uploadFilesResolver,
+    assignHandlingEditors: assignHandlingEditorsResolver,
+    unassignHandlingEditor: unassignHandlingEditorResolver,
   },
   Question: {
     versions: versionsResolver,
     author: authorResolver,
+    chatThreadId: chatThreadResolver,
+    heAssigned: heAssignedResolver,
   },
   QuestionVersion: {
     question: versionQuestionResolver,
     content: contentResolver,
+    leadingContent: leadingContentResolver,
   },
 }

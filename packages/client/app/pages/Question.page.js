@@ -20,12 +20,19 @@ import {
   PUBLISH_QUESTION_VERSION,
   GET_PUBLISHED_QUESTIONS_IDS,
   GENERATE_WORD_FILE,
-  GENERATE_SCORM_ZIP,
+  GENERATE_QTI_ZIP,
   GET_RESOURCES,
   CREATE_NEW_VERSION,
   UPLOAD_FILES,
   FILTER_USERS_OPTIONS,
   ASSIGN_QUESTION_AUTHOR,
+  GET_COMPLEX_ITEM_SETS_OPTIONS,
+  FILTER_GLOBAL_TEAM_MEMBERS,
+  ASSING_HANDLING_EDITORS,
+  UNASSING_HANDLING_EDITOR,
+  GET_QUESTION_HANDLING_EDITORS,
+  GET_CHAT_THREAD,
+  SEND_MESSAGE,
 } from '../graphql'
 import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
 
@@ -60,6 +67,7 @@ const metadataApiToUi = (values, testMode) => {
   return {
     ...values,
     courses: transformedCoursesData,
+    belongsToComplexItemSet: !!values.complexItemSetId,
   }
 }
 
@@ -98,6 +106,10 @@ const metadataUiToApi = values => {
     .map(course => coursesFields(course))
     .filter(Boolean)
 
+  const complexItemSetId = values.belongsToComplexItemSet
+    ? values.complexItemSetId
+    : null
+
   const metadataToSave = {
     topics,
     courses,
@@ -108,9 +120,29 @@ const metadataUiToApi = values => {
     psychomotorLevel: values.psychomotorLevel || null,
     readingLevel: values.readingLevel || null,
     questionType: values.questionType || null,
+    complexItemSetId,
   }
 
   return metadataToSave
+}
+
+const messagesApiToUi = (messages, currentUser = null) => {
+  return messages
+    ? messages.map(
+        ({
+          id,
+          timestamp,
+          content,
+          user: { id: userId, displayName } = {},
+        }) => ({
+          id,
+          content,
+          date: timestamp,
+          own: userId === currentUser,
+          user: displayName,
+        }),
+      )
+    : []
 }
 // #endregion transformations
 
@@ -134,6 +166,10 @@ const QuestionPage = props => {
   })
 
   const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
+
+  const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
+    GET_COMPLEX_ITEM_SETS_OPTIONS,
+  )
 
   const { data: { getResources } = {} } = useQuery(GET_RESOURCES)
 
@@ -166,6 +202,29 @@ const QuestionPage = props => {
       history.push(`/question/${id}/`)
     },
   })
+
+  const [
+    filterGlobalTeamMembers,
+    {
+      loading: loadingSearchHE,
+      data: { filterGlobalTeamMembers: handlingEditors } = {},
+    },
+  ] = useLazyQuery(FILTER_GLOBAL_TEAM_MEMBERS)
+
+  const [
+    getQuestionsHandlingEditors,
+    { data: { getQuestionsHandlingEditors: currentHandlingEditors } = {} },
+  ] = useLazyQuery(GET_QUESTION_HANDLING_EDITORS, {
+    variables: {
+      questionId: id,
+    },
+    fetchPolicy: 'network-only',
+  })
+
+  const [getChatThread, { data: { chatThread } = {}, loading: chatLoading }] =
+    useLazyQuery(GET_CHAT_THREAD, {
+      fetchPolicy: 'network-only',
+    })
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -252,14 +311,44 @@ const QuestionPage = props => {
   const [generateWordFileMutation, { loading: generateWordFileLoading }] =
     useMutation(GENERATE_WORD_FILE)
 
-  const [generateScormZipMutation, { loading: generateScormZipLoading }] =
-    useMutation(GENERATE_SCORM_ZIP)
+  const [generateQtiZipMutation, { loading: generateQtiZipLoading }] =
+    useMutation(GENERATE_QTI_ZIP)
 
   const [upload] = useMutation(UPLOAD_FILES)
+
+  const [assignHandlingEditor, { loading: assignHELoading }] = useMutation(
+    ASSING_HANDLING_EDITORS,
+    {
+      refetchQueries: [
+        {
+          query: GET_QUESTION_HANDLING_EDITORS,
+          variables: {
+            questionId: id,
+          },
+          fetchPolicy: 'network-only',
+        },
+      ],
+    },
+  )
+
+  const [unassignHandlingEditor] = useMutation(UNASSING_HANDLING_EDITOR, {
+    refetchQueries: [
+      {
+        query: GET_QUESTION_HANDLING_EDITORS,
+        variables: {
+          questionId: id,
+        },
+        fetchPolicy: 'network-only',
+      },
+    ],
+  })
+
+  const [sendMessage] = useMutation(SEND_MESSAGE)
   // #endregion hooks
 
   // #region user roles
   const isEditor = hasGlobalRole(currentUser, 'editor')
+  const isHandlingEditor = hasGlobalRole(currentUser, 'handlingEditor')
   const isAuthor = hasRole(currentUser, 'author', id)
   const isAdmin = hasGlobalRole(currentUser, 'admin')
   // #endregion user roles
@@ -327,7 +416,27 @@ const QuestionPage = props => {
     return submitQuestionMutation(mutationData)
   }
 
-  const handleClickAssignHE = () => {}
+  const handleClickAssignHE = users => {
+    const mutationData = {
+      variables: {
+        questionIds: id,
+        userIds: users.map(user => user.value),
+      },
+    }
+
+    return assignHandlingEditor(mutationData)
+  }
+
+  const handleUnassignHE = userId => {
+    const mutationData = {
+      variables: {
+        questionId: id,
+        userId,
+      },
+    }
+
+    return unassignHandlingEditor(mutationData)
+  }
 
   const handleGetQuestionButton = which => {
     if (relatedQuestionIds) {
@@ -426,14 +535,14 @@ const QuestionPage = props => {
     return rejectQuestionMutation()
   }
 
-  const handleExportToScorm = () => {
+  const handleExportToQti = () => {
     const mutationVariables = {
       questionVersionId: version.id,
     }
 
-    return generateScormZipMutation({ variables: mutationVariables })
+    return generateQtiZipMutation({ variables: mutationVariables })
       .then(res => {
-        const filename = res.data.generateScormZip
+        const filename = res.data.generateQtiZip
         const url = `${serverUrl}/api/download/${filename}`
         window.location.assign(url)
       })
@@ -524,6 +633,38 @@ const QuestionPage = props => {
     return assignAuthorship(mutationData)
   }
 
+  const handleSearchHE = async query => {
+    const variables = {
+      role: 'handlingEditor',
+      query,
+      options: {
+        orderBy: 'username',
+        ascending: true,
+      },
+    }
+
+    filterGlobalTeamMembers({ variables })
+  }
+
+  const onLoadChat = async () => {
+    const variables = {
+      id: question?.chatThreadId,
+    }
+
+    getChatThread({ variables })
+  }
+
+  const onSendMessage = async content => {
+    const variables = {
+      input: {
+        content,
+        chatThreadId: question?.chatThreadId,
+        userId: currentUser.id,
+      },
+    }
+
+    sendMessage({ variables })
+  }
   // #endregion handlers
 
   if (error) {
@@ -561,13 +702,21 @@ const QuestionPage = props => {
     <>
       <VisuallyHiddenElement as="h1">{pageTitle}</VisuallyHiddenElement>
       <Question
+        assignHELoading={assignHELoading}
         authors={possibleAuthors}
         canAssignAuthor={isAdmin && isAuthor}
-        canCreateNewVersion={isAdmin}
+        canCreateNewVersion={isAdmin || isEditor}
+        chatLoading={chatLoading}
+        complexItemSetOptions={complexItemSetOptions}
+        complexSetEditLink={
+          version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
+        }
+        currentHandlingEditors={currentHandlingEditors}
         editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
-        editorView={(isEditor && !isAuthor) || isAdmin}
+        editorView={isEditor || (isHandlingEditor && !isAuthor) || isAdmin}
         facultyView={testMode}
+        handlingEditors={handlingEditors?.result || []}
         initialMetadataValues={metadataApiToUi(version, testMode)}
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
         // unless the question has already been published
@@ -580,31 +729,53 @@ const QuestionPage = props => {
         isSubmitted={version?.submitted || (isAdmin && isAuthor)}
         isUnderReview={version?.underReview}
         isUserLoggedIn={!!currentUser}
+        leadingContent={
+          version?.leadingContent.length
+            ? JSON.parse(version.leadingContent)
+            : null
+        }
+        loadAssignedHEs={getQuestionsHandlingEditors}
         loadAuthors={getUsers}
-        loading={loading || !version || !metadata || !getResources}
+        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
+        // unless the question has already been published
+        loading={
+          loading ||
+          !version ||
+          !metadata ||
+          !getResources ||
+          !complexItemSetOptions
+        }
+        messages={messagesApiToUi(chatThread?.messages, currentUser?.id)}
         metadata={metadata || {}}
         onAssignAuthor={handleAssignAuthor}
         onClickAssignHE={handleClickAssignHE}
         onClickBackButton={handleClickBackButton}
-        onClickExportToScorm={testMode ? handleExportToScorm : null}
+        onClickExportToQti={testMode ? handleExportToQti : null}
         onClickExportToWord={handleExportToWord}
         onClickNextButton={() => handleGetQuestionButton('NEXT')}
         onClickPreviousButton={() => handleGetQuestionButton('PREV')}
         onCreateNewVersion={handleCreateNewVersion}
         onEditorContentAutoSave={handleEditorContentAutoSave}
         onImageUpload={handleImageUpload}
+        onLoadChat={onLoadChat}
         onMetadataAutoSave={handleMetadataAutoSave}
         onMoveToProduction={handleMoveToProduction}
         onMoveToReview={handleMoveToReview}
         onPublish={handlePublish}
         onQuestionSubmit={handleQuestionSubmit}
         onReject={handleReject}
+        onSearchHE={handleSearchHE}
+        onSendMessage={onSendMessage}
+        onUnassignHandlingEditor={handleUnassignHE}
+        qtiZipLoading={generateQtiZipLoading}
         questionAgreedTc={false} //
         refetchUser={refetchCurrentUser}
         resources={getResources}
-        scormZipLoading={generateScormZipLoading}
-        showAssignHEButton={false} //
-        showNextQuestionLink={false} //
+        searchHELoading={loadingSearchHE}
+        showAssignHEButton={
+          version?.submitted && !version?.published && isEditor
+        }
+        showNextQuestionLink={false}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
       />

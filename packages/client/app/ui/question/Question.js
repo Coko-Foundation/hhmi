@@ -12,11 +12,14 @@ import {
 import { grid, th } from '@coko/client'
 import useBreakpoint from '../_helpers/useBreakpoint'
 import { HhmiLayout, TestModeLayout } from '../wax/layout'
-import { config } from '../wax/config'
 
 import Metadata from './Metadata'
+import QuestionEditor from './QuestionEditor'
+import { ChatThread } from '../chat'
+
 import ExportToWordButton from './ExportToWordButton'
-// import ExportToScormButton from './ExportToScormButton'
+import AssignHEButton from './AssignHEButton'
+import ExportToScormButton from './ExportToScormButton'
 import AutoSaving from './AutoSaveIndicator'
 import {
   Button,
@@ -31,7 +34,6 @@ import {
   Spin,
   TabsStyled as Tabs,
 } from '../common'
-import Wax from '../wax/Wax'
 import { extractDocumentText } from '../../utilities'
 import AssignAuthorButton from './AssignAuthorButton'
 
@@ -42,6 +44,7 @@ const ModalHeader = Modal.header
 // #region styled
 const Wrapper = styled.div`
   height: 100%;
+  overflow: hidden;
 
   .ant-spin-nested-loading,
   .ant-spin-container {
@@ -118,10 +121,15 @@ const StyledWordExportButton = styled(ExportToWordButton)`
   width: 100%;
 `
 
-// const StyledScormExportButton = styled(ExportToScormButton)`
-//   margin-right: ${grid(2)};
-//   width: 100%;
-// `
+const StyledScormExportButton = styled(ExportToScormButton)`
+  margin-right: ${grid(2)};
+  width: 100%;
+`
+
+const StyledAssignHEButton = styled(AssignHEButton)`
+  margin-right: ${grid(2)};
+  width: 100%;
+`
 
 const RightAreaWrapper = styled.div`
   align-items: center;
@@ -179,7 +187,7 @@ const StyledTabs = styled(Tabs)`
   }
 `
 
-const MetadataWrapper = styled.section`
+const StyledMetadata = styled(Metadata)`
   background-color: ${th('colorBackground')};
   border-left: 1px solid ${th('colorBorder')};
   height: 100%;
@@ -207,35 +215,6 @@ const PopupToggle = styled(Button)`
   @media (min-width: ${th('mediaQueries.mediumPlus')}) {
     display: none;
   }
-`
-
-// #endregion styled
-
-// #region wax
-const EditorWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  margin: auto;
-  /* max-width: 75vw; */
-  overflow: hidden;
-  width: 100%;
-`
-
-const EditorScrollContainer = styled.div`
-  flex-grow: 1;
-  overflow: auto;
-`
-
-const SubmitTestBar = styled.div`
-  background-color: ${th('colorBackground')};
-  border-top: 1px solid ${th('colorBorder')};
-  display: flex;
-  justify-content: end;
-  margin: auto;
-  /* max-width: 100ch; */
-  padding: ${grid(2)} ${grid(2)};
-  width: 100%;
 `
 
 const ViewAsWrapper = styled.div`
@@ -266,137 +245,6 @@ const SkipToTop = styled.a`
     right: 0;
   }
 `
-
-const WaxWrapper = props => {
-  const {
-    content,
-    innerRef,
-    layout,
-    onContentChange,
-    onImageUpload,
-    readOnly,
-    published,
-    withFeedback,
-  } = props
-
-  const [showFeedBack, setShowFeedBack] = useState(false)
-  const [editorContent, setEditorContent] = useState(content)
-
-  const [testMode, setTestMode] = useState(
-    published && !showFeedBack && !withFeedback,
-  )
-
-  const [customValues, setCustomValues] = useState({ showFeedBack, testMode })
-
-  // only for users taking the test in student view
-  const preserveLocalState = published && !withFeedback
-
-  useEffect(() => {
-    setEditorContent(content)
-  }, [content])
-
-  useEffect(() => {
-    if (withFeedback) {
-      setShowFeedBack(false)
-      setTestMode(false)
-    } else {
-      setShowFeedBack(false)
-      setTestMode(true)
-    }
-
-    // reset original content after switching views
-    setEditorContent(content)
-  }, [withFeedback])
-
-  // changing customValues will rerender the editor
-  // avoid rerendering if testMode or showFeedBack don't change
-  // force rerendering when question is published and content changes (for next/previous navigation)
-  useEffect(() => {
-    if (
-      testMode !== customValues.testMode ||
-      showFeedBack !== customValues.showFeedBack ||
-      published
-    ) {
-      setCustomValues({ testMode, showFeedBack })
-    }
-  }, [testMode, showFeedBack, published, content])
-
-  const submitTest = () => {
-    setShowFeedBack(true)
-    setTestMode(false)
-
-    const contentFeedback = JSON.parse(
-      JSON.stringify(innerRef.current.getContent()),
-    )
-
-    setEditorContent(contentFeedback)
-  }
-
-  const resetTest = () => {
-    setShowFeedBack(false)
-    setTestMode(true)
-    setEditorContent(content)
-  }
-
-  return (
-    <EditorWrapper>
-      <EditorScrollContainer>
-        <Wax
-          config={config}
-          content={preserveLocalState ? editorContent : content}
-          customValues={customValues}
-          innerRef={innerRef}
-          layout={layout}
-          onContentChange={!testMode ? onContentChange : () => {}}
-          onImageUpload={onImageUpload}
-          readOnly={readOnly}
-        />
-      </EditorScrollContainer>
-
-      {!withFeedback && (
-        <SubmitTestBar>
-          {showFeedBack ? (
-            <Button onClick={resetTest} type="primary">
-              Reset
-            </Button>
-          ) : (
-            <Button onClick={submitTest} type="primary">
-              Submit
-            </Button>
-          )}
-        </SubmitTestBar>
-      )}
-    </EditorWrapper>
-  )
-}
-
-WaxWrapper.propTypes = {
-  content: PropTypes.shape(),
-  innerRef: PropTypes.oneOfType([
-    // Either a function
-    PropTypes.func,
-    // Or the instance of a DOM native element (see the note about SSR)
-    PropTypes.shape({
-      current: PropTypes.shape(),
-    }),
-  ]),
-  layout: PropTypes.elementType.isRequired,
-  onContentChange: PropTypes.func.isRequired,
-  onImageUpload: PropTypes.func,
-  readOnly: PropTypes.bool,
-  withFeedback: PropTypes.bool,
-  published: PropTypes.bool,
-}
-
-WaxWrapper.defaultProps = {
-  content: {},
-  readOnly: false,
-  innerRef: null,
-  onImageUpload: () => {},
-  published: false,
-  withFeedback: true,
-}
-// #endregion wax
 
 // #region Question Panel
 const StyledCollapse = styled(Collapse)`
@@ -487,11 +335,18 @@ PanelWrapper.propTypes = {
 const Question = props => {
   const {
     authors,
+    complexItemSetOptions,
+    announcementText,
+    messages,
     editorContent,
+    leadingContent,
+    complexSetEditLink,
     editorView,
     facultyView,
+    hasMoreMessages,
     onClickExportToWord,
-    // onClickExportToScorm,
+    onFetchMoreMessages,
+    onClickExportToQti,
     initialMetadataValues,
     isUserLoggedIn,
     isPublished,
@@ -515,10 +370,11 @@ const Question = props => {
     onPublish,
     onQuestionSubmit,
     onReject,
+    onSendMessage,
     questionAgreedTc,
     refetchUser,
     resources,
-    // scormZipLoading,
+    qtiZipLoading,
     showAssignHEButton,
     canAssignAuthor,
     showNextQuestionLink,
@@ -526,6 +382,15 @@ const Question = props => {
     updated,
     wordFileLoading,
     canCreateNewVersion,
+    handlingEditors,
+    onSearchHE,
+    searchHELoading,
+    assignHELoading,
+    currentHandlingEditors,
+    loadAssignedHEs,
+    onUnassignHandlingEditor,
+    // chatLoading,
+    onLoadChat,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -537,9 +402,10 @@ const Question = props => {
   const [agreedTc, setAgreedTc] = useState(questionAgreedTc)
   const [autoSaving, setAutoSaving] = useState(false)
   const [showMetadata, setShowMetadata] = useState(isUserLoggedIn)
+  const [activeKey, setActiveKey] = useState(0)
 
   const readOnly =
-    (editorView && !isInProduction) ||
+    (editorView && !isInProduction && isSubmitted) ||
     (!editorView && isSubmitted) ||
     isRejected
 
@@ -948,6 +814,7 @@ const Question = props => {
 
   // #region components
   const QuestionTab = <StyledTabItem>Question</StyledTabItem>
+  const AuthorChatTab = <StyledTabItem>Chat</StyledTabItem>
 
   const PreviousQuestion = (
     <StyledPrevNextButton
@@ -1117,14 +984,16 @@ const Question = props => {
         showMetadataOption
       />
       {showAssignHEButton && (
-        <StyledButton
-          aria-label="Assign Handling Editor"
-          ghost
-          onClick={onClickAssignHE}
-          type="primary "
-        >
-          Assign HE
-        </StyledButton>
+        <StyledAssignHEButton
+          currentHandlingEditors={currentHandlingEditors}
+          handlingEditors={handlingEditors}
+          loadAssignedHEs={loadAssignedHEs}
+          loading={assignHELoading}
+          onAssign={onClickAssignHE}
+          onSearchHE={onSearchHE}
+          onUnassign={onUnassignHandlingEditor}
+          searchLoading={searchHELoading}
+        />
       )}
       {canAssignAuthor && isPublished && (
         <StyledAssignAuthorButton
@@ -1205,14 +1074,16 @@ const Question = props => {
           showMetadataOption
         />
         {showAssignHEButton && (
-          <StyledButton
-            aria-label="Assign Handling Editor"
-            ghost
-            onClick={onClickAssignHE}
-            type="primary "
-          >
-            Assign HE
-          </StyledButton>
+          <StyledAssignHEButton
+            currentHandlingEditors={currentHandlingEditors}
+            handlingEditors={handlingEditors}
+            loadAssignedHEs={loadAssignedHEs}
+            loading={assignHELoading}
+            onAssign={onClickAssignHE}
+            onSearchHE={onSearchHE}
+            onUnassign={onUnassignHandlingEditor}
+            searchLoading={searchHELoading}
+          />
         )}
         {canAssignAuthor && isPublished && (
           <StyledAssignAuthorButton
@@ -1306,7 +1177,8 @@ const Question = props => {
           lastAutoSave={updated && new Date(updated)}
         />
       )}
-      {!isRejected && (editorView ? RightAreaEditor : RightAreaAuthor)}
+      {!isRejected &&
+        (editorView && isSubmitted ? RightAreaEditor : RightAreaAuthor)}
     </RightAreaWrapper>
   )
 
@@ -1317,12 +1189,12 @@ const Question = props => {
         onExport={onClickExportToWord}
         showMetadataOption={isUserLoggedIn}
       />
-      {/* {isUserLoggedIn && (
+      {isUserLoggedIn && (
         <StyledScormExportButton
-          loading={scormZipLoading}
-          onExport={onClickExportToScorm}
+          loading={qtiZipLoading}
+          onExport={onClickExportToQti}
         />
-      )} */}
+      )}
       {isPublished && canCreateNewVersion && (
         <StyledButton onClick={showNewVersionModal} type="primary">
           Edit question
@@ -1357,12 +1229,12 @@ const Question = props => {
             onExport={onClickExportToWord}
             showMetadataOption={isUserLoggedIn}
           />
-          {/* {isUserLoggedIn && (
+          {isUserLoggedIn && (
             <StyledScormExportButton
-              loading={scormZipLoading}
-              onExport={onClickExportToScorm}
+              loading={qtiZipLoading}
+              onExport={onClickExportToQti}
             />
-          )} */}
+          )}
           {isPublished && canCreateNewVersion && (
             <StyledButton onClick={showNewVersionModal} type="primary">
               Edit question
@@ -1403,11 +1275,20 @@ const Question = props => {
     return 'Jump to action buttons'
   }
 
+  const handleTabChange = activeTab => {
+    setActiveKey(activeTab)
+
+    if (activeTab) {
+      onLoadChat()
+    }
+  }
+
   return (
     <ModalContext.Provider value={contextValue}>
       <Wrapper>
         <Spin renderBackground={false} spinning={loading}>
           <StyledTabs
+            activeKey={activeKey}
             items={[
               {
                 label: QuestionTab,
@@ -1422,10 +1303,12 @@ const Question = props => {
                     <PanelWrapper
                       condition={false}
                       editor={
-                        <WaxWrapper
+                        <QuestionEditor
+                          complexSetEditLink={complexSetEditLink}
                           content={editorContent}
                           innerRef={waxRef}
                           layout={facultyView ? TestModeLayout : HhmiLayout}
+                          leadingContent={leadingContent}
                           onContentChange={handleQuestionContentChange}
                           onImageUpload={onImageUpload}
                           published={facultyView && isPublished}
@@ -1434,8 +1317,9 @@ const Question = props => {
                         />
                       }
                       metadata={
-                        <MetadataWrapper>
-                          <Metadata
+                        <>
+                          <StyledMetadata
+                            complexItemSetOptions={complexItemSetOptions}
                             editorView={editorView}
                             initialValues={initialMetadataValues}
                             innerRef={formRef}
@@ -1457,14 +1341,32 @@ const Question = props => {
                           >
                             {skipButtonText()}
                           </SkipToTop>
-                        </MetadataWrapper>
+                        </>
                       }
                       showMetadata={showMetadata}
                     />
                   </>
                 ),
               },
+
+              // temporarily disabled chat tab
+              isSubmitted &&
+                false && {
+                  label: AuthorChatTab,
+                  key: 1,
+                  children: (
+                    <ChatThread
+                      announcementText={announcementText}
+                      hasMore={hasMoreMessages}
+                      isActive={activeKey === 1}
+                      messages={messages}
+                      onFetchMore={onFetchMoreMessages}
+                      onSendMessage={onSendMessage}
+                    />
+                  ),
+                },
             ]}
+            onChange={handleTabChange}
             renderTabBar={(tabProps, DefaultTabBar) => {
               return facultyView ? (
                 FacultyHeader
@@ -1491,10 +1393,21 @@ Question.propTypes = {
       value: PropTypes.string,
     }),
   ),
+  complexItemSetOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
+  leadingContent: PropTypes.shape(),
+  announcementText: PropTypes.string,
+  messages: PropTypes.arrayOf(PropTypes.shape()),
+  hasMoreMessages: PropTypes.bool,
   loading: PropTypes.bool.isRequired,
   loadAuthors: PropTypes.func,
   onAssignAuthor: PropTypes.func,
   onClickPreviousButton: PropTypes.func,
+  onChangeAnnouncement: PropTypes.func,
   onClickNextButton: PropTypes.func,
   onCreateNewVersion: PropTypes.func,
   onEditorContentAutoSave: PropTypes.func,
@@ -1505,10 +1418,12 @@ Question.propTypes = {
   onMoveToProduction: PropTypes.func,
   onPublish: PropTypes.func,
   onReject: PropTypes.func,
+  onSendMessage: PropTypes.func,
   onClickAssignHE: PropTypes.func,
-  onClickExportToScorm: PropTypes.func,
+  onClickExportToQti: PropTypes.func,
   onClickExportToWord: PropTypes.func,
   canCreateNewVersion: PropTypes.bool,
+  onFetchMoreMessages: PropTypes.func,
   editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool,
   submitting: PropTypes.bool,
@@ -1765,21 +1680,49 @@ Question.propTypes = {
     readingLevel: PropTypes.string,
   }),
   updated: PropTypes.string,
-  wordFileLoading: PropTypes.bool.isRequired,
-  scormZipLoading: PropTypes.bool.isRequired,
+  wordFileLoading: PropTypes.bool,
+  qtiZipLoading: PropTypes.bool,
+  complexSetEditLink: PropTypes.string,
+  handlingEditors: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.string,
+    }),
+  ),
+  onSearchHE: PropTypes.func,
+  searchHELoading: PropTypes.bool,
+  assignHELoading: PropTypes.bool,
+  currentHandlingEditors: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      displayName: PropTypes.string,
+    }),
+  ),
+  loadAssignedHEs: PropTypes.func,
+  onUnassignHandlingEditor: PropTypes.func,
+  chatLoading: PropTypes.bool,
+  onLoadChat: PropTypes.func,
 }
 
 Question.defaultProps = {
   authors: [],
+  complexItemSetOptions: [],
+  announcementText: '',
+  hasMoreMessages: false,
+  messages: [],
+  onChangeAnnouncement: () => {},
   onCreateNewVersion: () => {},
+  onFetchMoreMessages: () => {},
   onMoveToReview: () => {},
   onMoveToProduction: () => {},
   onPublish: () => {},
   onReject: () => {},
+  onSendMessage: () => {},
   onClickAssignHE: () => {},
   editorContent: {},
+  leadingContent: null,
   initialMetadataValues: {},
-  onClickExportToScorm: null,
+  onClickExportToQti: null,
   onClickExportToWord: null,
   onClickPreviousButton: () => {},
   onClickNextButton: () => {},
@@ -1805,6 +1748,18 @@ Question.defaultProps = {
   updated: '',
   isUserLoggedIn: true,
   canCreateNewVersion: false,
+  wordFileLoading: false,
+  qtiZipLoading: false,
+  complexSetEditLink: null,
+  handlingEditors: [],
+  onSearchHE: () => {},
+  searchHELoading: false,
+  assignHELoading: false,
+  currentHandlingEditors: [],
+  loadAssignedHEs: () => {},
+  onUnassignHandlingEditor: () => {},
+  chatLoading: false,
+  onLoadChat: () => {},
 }
 
 export default Question

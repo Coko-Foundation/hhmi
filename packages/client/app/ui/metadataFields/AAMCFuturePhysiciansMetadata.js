@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import Form from './Form'
-import Select from './Select'
+import { Form, Select } from '../common'
 
 const AAMCFuturePhysiciansMetadata = props => {
   const {
@@ -35,7 +34,7 @@ const AAMCFuturePhysiciansMetadata = props => {
 
       cloned[index] = {
         ...cloned[index],
-        [categoryName]: null,
+        [categoryKey]: null,
       }
 
       setFieldsValue({
@@ -43,7 +42,7 @@ const AAMCFuturePhysiciansMetadata = props => {
       })
     } else {
       setFieldsValue({
-        [categoryName]: null,
+        [categoryKey]: null,
       })
     }
   }
@@ -90,7 +89,7 @@ const AAMCFuturePhysiciansMetadata = props => {
         ]}
       >
         <Select
-          // allowClear
+          allowClear={filterMode}
           disabled={readOnly}
           onChange={handleConceptChange}
           optionFilterProp="label"
@@ -111,7 +110,7 @@ const AAMCFuturePhysiciansMetadata = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               disabled={
                 readOnly || (!filterMode && !getFieldValue(conceptField))
               }

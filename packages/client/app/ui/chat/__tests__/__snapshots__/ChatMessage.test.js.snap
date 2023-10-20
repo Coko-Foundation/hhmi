@@ -1,0 +1,30 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChatMessage matches snaphot 1`] = `
+<div
+  className="sc-gKYCAw fUYeYF"
+  tabIndex={0}
+>
+  <div
+    className="sc-btijOp jvwicI"
+  />
+  <p
+    className="sc-iKGpAt bBrxpE"
+  >
+    said
+  </p>
+  <div
+    className="sc-kKUyCS"
+  >
+    Reprehenderit quia praesentium non itaque ea et quia ut ab. Molestias et rem distinctio vel voluptatibus ratione ut.
+  </div>
+  <div
+    className="sc-ftefQL hMGSuw"
+  >
+    <span>
+      a few seconds
+       ago
+    </span>
+  </div>
+</div>
+`;

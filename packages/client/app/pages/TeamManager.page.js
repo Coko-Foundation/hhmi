@@ -100,6 +100,7 @@ const TeamManagerPage = () => {
         input: {
           id: teamId,
           members: newMembers,
+          removedMembers: opts,
         },
       },
     }

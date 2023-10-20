@@ -1,8 +1,16 @@
+/* eslint-disable no-case-declarations */
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { extractTopicsAndSubtopics } from '../../utilities'
+import { LinkOutlined } from '@ant-design/icons'
+import {
+  extractTopicsAndSubtopics,
+  extractComplexItemSet,
+  extractAPCourseMetadata,
+  extractIBCourseMetadata,
+  extractIntroBioCourseMetadata,
+} from '../../utilities'
 import { Link, VisuallyHiddenElement } from '../common'
 
 const Wrapper = styled.div`
@@ -41,16 +49,31 @@ const StyledList = styled.ul`
 `
 
 const MetadataInfo = props => {
-  const { values, metadata, resources } = props
+  const { values, metadata, resources, complexItemSetOptions } = props
 
   const questionTopics = extractTopicsAndSubtopics(
     values.topics,
     metadata.topics,
   )
 
+  const complexItemSet = extractComplexItemSet(
+    values.complexItemSetId,
+    complexItemSetOptions,
+  )
+
   return (
     <Wrapper tabIndex={0}>
       <VisuallyHiddenElement as="h2">Question Metadata</VisuallyHiddenElement>
+      {complexItemSet && (
+        <>
+          <MetadataHeading>Complex item set</MetadataHeading>
+          <p>
+            <Link to={`/set/${complexItemSet.value}`}>
+              <LinkOutlined /> {complexItemSet.label}
+            </Link>
+          </p>
+        </>
+      )}
       <MetadataHeading>Question type</MetadataHeading>
       <p>
         {
@@ -70,101 +93,67 @@ const MetadataInfo = props => {
         )
 
         const courseUnits = course.units.map(unitData => {
-          const unit = courseObject.units.find(u => u.value === unitData.unit)
-
-          const courseTopic = courseObject.topics.find(
-            u => u.value === unitData.courseTopic,
-          )
-
-          let additionalCourseMeta
-
-          if (
-            course.course === 'apBiology' ||
-            course.course === 'apEnvironmentalScience'
-          ) {
-            const learningObjective = courseObject.learningObjectives.find(
-              l => l.value === unitData.learningObjective,
-            )
-
-            const essentialKnowledge = courseObject.essentialKnowledge.find(
-              e => e.value === unitData.essentialKnowledge,
-            )
-
-            additionalCourseMeta = (
-              <>
-                <p>
-                  <strong>Learning objective</strong>
-                </p>
-                <p>{learningObjective.label}</p>
-                <p>
-                  <strong>Essential knowledge</strong>
-                </p>
-                <p>{essentialKnowledge.label}</p>
-              </>
-            )
+          switch (course.course) {
+            case 'apBiology':
+            case 'apEnvironmentalScience':
+              return (
+                <li key={`${JSON.stringify(unitData)}`}>
+                  {extractAPCourseMetadata(unitData, courseObject).map(cm => {
+                    return (
+                      cm.value && (
+                        <div key={JSON.stringify(cm)}>
+                          <p>
+                            <strong>{cm.label}</strong>
+                          </p>
+                          <p>{cm.value}</p>
+                        </div>
+                      )
+                    )
+                  })}
+                </li>
+              )
+            case 'biBiology':
+            case 'biEnvironmentalScience':
+              return (
+                <li key={`${JSON.stringify(unitData)}`}>
+                  {extractIBCourseMetadata(unitData, courseObject).map(cm => {
+                    return (
+                      cm.value && (
+                        <div key={JSON.stringify(cm)}>
+                          <p>
+                            <strong>{cm.label}</strong>
+                          </p>
+                          <p>{cm.value}</p>
+                        </div>
+                      )
+                    )
+                  })}
+                </li>
+              )
+            case 'introBioForMajors':
+              return (
+                <li key={`${JSON.stringify(unitData)}`}>
+                  {extractIntroBioCourseMetadata(
+                    unitData,
+                    courseObject,
+                    metadata.introToBioMeta,
+                  ).map(cm => {
+                    return (
+                      cm.value && (
+                        <div key={JSON.stringify(cm)}>
+                          <p>
+                            <strong>{cm.label}</strong>
+                          </p>
+                          <p>{cm.value}</p>
+                        </div>
+                      )
+                    )
+                  })}
+                </li>
+              )
+            default:
+              return null
           }
-
-          if (
-            course.course === 'biBiology' ||
-            course.course === 'biEnvironmentalScience'
-          ) {
-            const application = courseObject.applications.find(
-              a => a.value === unitData.application,
-            )
-
-            const skill = courseObject.skills.find(
-              s => s.value === unitData.skill,
-            )
-
-            const understanding = courseObject.understandings.find(
-              u => u.value === unitData.understanding,
-            )
-
-            additionalCourseMeta = (
-              <>
-                {application && (
-                  <>
-                    <p>
-                      <strong>Application</strong>
-                    </p>
-                    <p>{application.label}</p>
-                  </>
-                )}
-                {skill && (
-                  <>
-                    <p>
-                      <strong>Skill</strong>
-                    </p>
-                    <p>{skill.label}</p>
-                  </>
-                )}
-                {understanding && (
-                  <>
-                    <p>
-                      <strong>Understanding</strong>
-                    </p>
-                    <p>{understanding.label}</p>
-                  </>
-                )}
-              </>
-            )
-          }
-
-          return (
-            <li
-              key={`${unitData.unit}-${unitData.learningObjective}-${unitData.essentialKnowledge}`}
-            >
-              <p>
-                <strong>Unit</strong>
-              </p>
-              <p>{unit?.label}</p>
-              <p>
-                <strong>Topic</strong>
-              </p>
-              <p>{courseTopic?.label}</p>
-              {additionalCourseMeta}
-            </li>
-          )
         })
 
         return (
@@ -217,7 +206,7 @@ const MetadataInfo = props => {
       )}
       {values.biointeractiveResources.length > 0 && (
         <>
-          <MetadataHeading>Biointeractive resources</MetadataHeading>
+          <MetadataHeading>Biointeractive Resources</MetadataHeading>
           <StyledList>
             {values.biointeractiveResources.map(resource => {
               const resourceObject = resources.find(r => r.value === resource)
@@ -243,6 +232,12 @@ const MetadataInfo = props => {
 }
 
 MetadataInfo.propTypes = {
+  complexItemSetOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.string,
+    }),
+  ),
   metadata: PropTypes.shape({
     questionTypes: PropTypes.arrayOf(
       PropTypes.shape({
@@ -436,6 +431,7 @@ MetadataInfo.propTypes = {
   }).isRequired,
   values: PropTypes.shape({
     questionType: PropTypes.string,
+    complexItemSetId: PropTypes.string,
     topics: PropTypes.arrayOf(
       PropTypes.shape({
         topic: PropTypes.string,
@@ -476,6 +472,8 @@ MetadataInfo.propTypes = {
   ).isRequired,
 }
 
-MetadataInfo.defaultProps = {}
+MetadataInfo.defaultProps = {
+  complexItemSetOptions: [],
+}
 
 export default MetadataInfo

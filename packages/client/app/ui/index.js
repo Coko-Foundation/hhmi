@@ -12,5 +12,6 @@ export * from './production'
 // export * from './profile'
 export * from './question'
 export * from './editor'
+export { default as PageNotFound } from './PageNotFound'
 
 // export * from './review'

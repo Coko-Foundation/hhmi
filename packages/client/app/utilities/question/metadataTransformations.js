@@ -1,8 +1,20 @@
 // import metadata from "./metadataValues"
-import { flatAPCoursesMetadata, flatIBCourseMetadata } from '../index'
+import {
+  flatAPCoursesMetadata,
+  flatIBCourseMetadata,
+  flatIntroBioCourseMetadata,
+  flatVisionAndChangeMetadata,
+  flatAAMCMetadata,
+} from '../index'
+
+const apCourses = ['apBiology', 'apEnvironmentalScience']
+const ibCourses = ['biBiology', 'biEnvironmentalScience']
+const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
 
 const metadataTransformer = metadata => {
   const frameworks = metadata.frameworks
+    // temporarily filter out Intro to Biology for non majors course
+    .filter(framework => framework.value !== 'introBioForNonMajors')
     .map(framework => {
       const frameworkData = {
         label: framework.label,
@@ -11,18 +23,16 @@ const metadataTransformer = metadata => {
 
       let additionalMetadata
 
-      if (
-        framework.value === 'apBiology' ||
-        framework.value === 'apEnvironmentalScience'
-      ) {
+      if (apCourses.includes(framework.value)) {
         additionalMetadata = flatAPCoursesMetadata(framework)
       }
 
-      if (
-        framework.value === 'biBiology' ||
-        framework.value === 'biEnvironmentalScience'
-      ) {
+      if (ibCourses.includes(framework.value)) {
         additionalMetadata = flatIBCourseMetadata(framework)
+      }
+
+      if (introBioCourses.includes(framework.value)) {
+        additionalMetadata = flatIntroBioCourseMetadata(framework)
       }
 
       return {
@@ -30,16 +40,36 @@ const metadataTransformer = metadata => {
         ...additionalMetadata,
       }
     })
-    // temporarily filter out Intro to Biology courses
-    .filter(
-      framework =>
-        framework.value !== 'introductoryBiologyForNonMajors' &&
-        framework.value !== 'introductoryBiologyForMajors',
-    )
+
+  const introToBioMeta = metadata.introToBioMeta.map(meta => {
+    const frameworkData = {
+      label: meta.label,
+      value: meta.value,
+    }
+
+    let additionalMetadata
+
+    switch (meta.value) {
+      case 'visionAndChange':
+        additionalMetadata = flatVisionAndChangeMetadata(meta)
+        break
+      case 'aamcFuturePhysicians':
+        additionalMetadata = flatAAMCMetadata(meta)
+        break
+      default:
+        break
+    }
+
+    return {
+      ...frameworkData,
+      ...additionalMetadata,
+    }
+  })
 
   return {
     topics: metadata.topics,
     frameworks,
+    introToBioMeta,
     questionTypes: metadata.questionTypes,
     blooms: metadata.blooms,
   }

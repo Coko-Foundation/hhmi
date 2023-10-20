@@ -110,6 +110,42 @@ const flatIBCourseMetadata = data => {
   }
 }
 
+const flatIntroBioCourseMetadata = data => {
+  const units = []
+  const topics = []
+  const learningObjectives = []
+
+  data.units.forEach(unit => {
+    units.push({
+      label: unit.label,
+      value: unit.value,
+    })
+
+    unit.topics.forEach(topic => {
+      topics.push({
+        label: topic.label,
+        value: topic.value,
+        unit: unit.value,
+      })
+
+      topic.learningObjectives.forEach(lo => {
+        learningObjectives.push({
+          label: lo.label,
+          value: lo.value,
+          unit: unit.value,
+          topic: topic.value,
+        })
+      })
+    })
+  })
+
+  return {
+    units,
+    topics,
+    learningObjectives,
+  }
+}
+
 const flatVisionAndChangeMetadata = data => {
   const coreConcepts = []
   const subdisciplines = []
@@ -205,7 +241,13 @@ const flatAAMCMetadata = data => {
   }
 }
 
+const apCourses = ['apBiology', 'apEnvironmentalScience']
+const ibCourses = ['biBiology', 'biEnvironmentalScience']
+const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
+
 const frameworks = metadata.frameworks
+  // temporarily filter out Intro to Biology for non majors course
+  .filter(framework => framework.value !== 'introBioForNonMajors')
   .map(framework => {
     const frameworkData = {
       label: framework.label,
@@ -214,18 +256,16 @@ const frameworks = metadata.frameworks
 
     let additionalMetadata
 
-    if (
-      framework.value === 'apBiology' ||
-      framework.value === 'apEnvironmentalScience'
-    ) {
+    if (apCourses.includes(framework.value)) {
       additionalMetadata = flatAPCoursesMetadata(framework)
     }
 
-    if (
-      framework.value === 'biBiology' ||
-      framework.value === 'biEnvironmentalScience'
-    ) {
+    if (ibCourses.includes(framework.value)) {
       additionalMetadata = flatIBCourseMetadata(framework)
+    }
+
+    if (introBioCourses.includes(framework.value)) {
+      additionalMetadata = flatIntroBioCourseMetadata(framework)
     }
 
     return {
@@ -233,17 +273,37 @@ const frameworks = metadata.frameworks
       ...additionalMetadata,
     }
   })
-  // temporarily filter out Intro to Biology courses
-  .filter(
-    framework =>
-      framework.value !== 'introductoryBiologyForNonMajors' &&
-      framework.value !== 'introductoryBiologyForMajors',
-  )
+
+const introToBioMeta = metadata.introToBioMeta.map(meta => {
+  const frameworkData = {
+    label: meta.label,
+    value: meta.value,
+  }
+
+  let additionalMetadata
+
+  switch (meta.value) {
+    case 'visionAndChange':
+      additionalMetadata = flatVisionAndChangeMetadata(meta)
+      break
+    case 'aamcFuturePhysicians':
+      additionalMetadata = flatAAMCMetadata(meta)
+      break
+    default:
+      break
+  }
+
+  return {
+    ...frameworkData,
+    ...additionalMetadata,
+  }
+})
 
 const metadataResolver = () => {
   return {
     topics: metadata.topics,
     frameworks,
+    introToBioMeta,
     questionTypes: metadata.questionTypes,
     blooms: metadata.blooms,
   }

@@ -31,8 +31,10 @@ const Iframe = React.forwardRef((props, ref) => {
 
   useEffect(() => {
     iframeRef.current.onload = () => {
-      onLoad()
-      setLoading(false)
+      setTimeout(() => {
+        onLoad()
+        setLoading(false)
+      }, 500)
     }
   }, [])
 

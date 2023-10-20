@@ -1,3 +1,5 @@
+const config = require('config')
+
 const { uuid } = require('@coko/server')
 
 const {
@@ -5,6 +7,8 @@ const {
   getQuestionVersions,
   updateQuestion,
   duplicateQuestion: duplicateQuestionController,
+  assignHandlingEditors,
+  unassignHandlingEditor,
 } = require('../question.controllers')
 
 const {
@@ -12,6 +16,8 @@ const {
   exampleQuestionVersion,
   exampleQuestionVersionTwo,
 } = require('./__helpers__/questions')
+
+const HE_TEAM = config.teams.nonGlobal.handlingEditor
 
 const clearDb = require('../../models/__tests__/_clearDb')
 const { Question, QuestionVersion, Team, User } = require('../../models/index')
@@ -122,5 +128,52 @@ describe('Question Controller', () => {
     const exportFilename = await generateScormZip(questionVersion.id)
 
     expect(exportFilename).toBe(`${question.id}.zip`)
+  })
+
+  test('assignHandlingEditor assigns editor to correct team', async () => {
+    const question = await createEmptyQuestion()
+    const user = await User.insert({})
+    await assignHandlingEditors([question.id], [user.id])
+
+    const team = await Question.getHandlingEditors(question.id)
+    expect(team.some(t => t.id === user.id)).toBe(true)
+  })
+
+  test('assignHandlingEditor ignores authors and sets hasAuthorshipConflict to true', async () => {
+    const question = await Question.insert({})
+    const user = await User.insert({})
+
+    const authorTeam = await Team.insert({
+      objectId: question.id,
+      objectType: 'question',
+      role: 'author',
+      displayName: 'Author',
+    })
+
+    await Team.addMember(authorTeam.id, user.id)
+    const result = await assignHandlingEditors([question.id], [user.id])
+    expect(result[0].members.length).toEqual(0)
+    expect(result[0].hasAuthorshipConflict).toBe(true)
+  })
+
+  test('unassigHandlingEditor unnassigns specified editor', async () => {
+    const question = await createEmptyQuestion()
+    const user1 = await User.insert({})
+    const user2 = await User.insert({})
+
+    const questionTeam = await Team.insert({
+      objectId: question.id,
+      objectType: 'question',
+      role: HE_TEAM.role,
+      displayName: HE_TEAM.displayName,
+    })
+
+    await Team.addMember(questionTeam.id, user1.id)
+    await Team.addMember(questionTeam.id, user2.id)
+
+    await unassignHandlingEditor(question.id, user1.id)
+    const team = await Question.getHandlingEditors(question.id)
+    expect(team.every(t => t.id !== user1.id)).toBe(true)
+    expect(team.some(t => t.id === user2.id)).toBe(true)
   })
 })

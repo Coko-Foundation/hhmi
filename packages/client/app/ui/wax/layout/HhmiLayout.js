@@ -1,14 +1,23 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { useContext } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
 import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
+import { LinkOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
 import VisuallyHiddenElement from '../../common/VisuallyHiddenElement'
+import Collapse from '../../common/Collapse'
+import Link from '../../common/HhmiLink'
+import { ComplexItemSetContext } from '../../question/QuestionEditor'
+import WaxWrapper from '../Wax'
+import LeadingContentLayout from './LeadingContentLayout'
+import { config } from '../config'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
-
+import 'wax-questions-service/dist/index.css'
+import 'wax-table-service/dist/index.css'
 // import EditorElements from './EditorElements'
 
 const fullScreenStyles = css`
@@ -53,11 +62,19 @@ const TopMenu = styled.div`
   }
 `
 
+const StyledLink = styled(Link)`
+  padding-inline: ${grid(5)};
+`
+
+const StyledCollapse = styled(Collapse)`
+  border: none;
+  width: 100%;
+`
+
 const EditorWrapper = styled.div`
   background-color: ${th('colorBackground')};
-  display: flex;
+  display: block;
   flex-grow: 1;
-  justify-content: center;
   overflow-y: auto;
 `
 
@@ -69,17 +86,16 @@ const EditorArea = styled.div`
   position: relative;
 
   .ProseMirror {
-    height: 100%;
     padding: 0 ${grid(5)} ${grid(12)};
 
     @media (min-width: ${th('mediaQueries.small')}) {
-      padding: ${grid(12)} ${grid(5)};
+      padding: ${grid(5)};
     }
     /* position: relative; */
 
     /* &:focus {
-      outline: none;
-    } */
+    outline: none;
+  } */
 
     /* .wax-selection-marker {
       background: ${th('colorPrimary')};
@@ -109,29 +125,29 @@ const EditorArea = styled.div`
   }
 
   /* .ProseMirror-gapcursor {
-    display: none;
-    pointer-events: none;
-    position: relative;
-  }
+  display: none;
+  pointer-events: none;
+  position: relative;
+}
 
-  .ProseMirror-gapcursor:after {
-    content: '';
-    display: block;
-    position: relative;
-    width: 20px;
-    border-top: 1px solid black;
-    animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
-  }
+.ProseMirror-gapcursor:after {
+  content: '';
+  display: block;
+  position: relative;
+  width: 20px;
+  border-top: 1px solid black;
+  animation: ProseMirror-cursor-blink 1.1s steps(2, start) infinite;
+}
 
-  @keyframes ProseMirror-cursor-blink {
-    to {
-      visibility: hidden;
-    }
+@keyframes ProseMirror-cursor-blink {
+  to {
+    visibility: hidden;
   }
+}
 
-  .ProseMirror-focused .ProseMirror-gapcursor {
-    display: block;
-  } */
+.ProseMirror-focused .ProseMirror-gapcursor {
+  display: block;
+} */
 `
 
 const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
@@ -141,6 +157,10 @@ const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
 const HhmiLayout = ({ editor }) => {
   const { options } = useContext(WaxContext)
   const { fullScreen } = options
+
+  const { leadingContent, complexSetEditLink } = useContext(
+    ComplexItemSetContext,
+  )
 
   return (
     <ThemeProvider theme={theme}>
@@ -157,6 +177,36 @@ const HhmiLayout = ({ editor }) => {
         </TopMenu>
 
         <EditorWrapper tabIndex={0}>
+          {leadingContent && (
+            <>
+              <StyledCollapse defaultActiveKey={['leading-content']}>
+                <Collapse.Panel
+                  data-testid="leading-content-collapse"
+                  header="Leading content"
+                  key="leading-content"
+                >
+                  <WaxWrapper
+                    config={config}
+                    content={leadingContent}
+                    key={JSON.stringify(leadingContent)}
+                    layout={LeadingContentLayout}
+                    readOnly
+                  />
+                </Collapse.Panel>
+              </StyledCollapse>
+              {complexSetEditLink && (
+                <StyledLink
+                  to={{
+                    pathname: complexSetEditLink,
+                    state: { activeTab: 'edit' },
+                  }}
+                >
+                  <LinkOutlined /> Edit the leading content for this set
+                </StyledLink>
+              )}
+            </>
+          )}
+
           <VisuallyHiddenElement as="h2">Question editor</VisuallyHiddenElement>
           <EditorArea id="wax-editor">{editor}</EditorArea>
         </EditorWrapper>

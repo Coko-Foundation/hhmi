@@ -63,7 +63,7 @@ const Resources = props => {
       <StyledFormItem
         label={
           <LabelWrapper>
-            <span>Biointeractive resources</span>
+            <span>Biointeractive Resources</span>
             <Link
               as="a"
               href="https://www.biointeractive.org/classroom-resources"

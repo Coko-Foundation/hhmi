@@ -7,7 +7,9 @@ import {
   GET_LIST,
   REMOVE_FROM_LIST,
   EXPORT_QUESTIONS,
+  EXPORT_QUESTIONS_QTI,
   REORDER_LIST,
+  GET_COMPLEX_ITEM_SETS_OPTIONS,
 } from '../graphql'
 import { useMetadata, dashboardDataMapper } from '../utilities'
 
@@ -40,7 +42,7 @@ const ListContentPage = () => {
       id,
       questionsQuery: searchParams.query,
       questionsOptions: {
-        page: searchParams.page - 1,
+        page: Math.max(searchParams.page - 1, 0),
         pageSize: searchParams.pageSize,
         orderBy: searchParams.orderBy,
         ascending: searchParams.ascending,
@@ -54,6 +56,11 @@ const ListContentPage = () => {
       ).innerHTML = `${listTitle}, list page`
     },
   })
+
+  const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
+    GET_COMPLEX_ITEM_SETS_OPTIONS,
+    { variables: { publishedOnly: true } },
+  )
 
   const [removeFromListMutation] = useMutation(REMOVE_FROM_LIST, {
     onCompleted: ({ deleteFromList }) => {
@@ -88,6 +95,8 @@ const ListContentPage = () => {
   })
 
   const [exportQuestionsMutation] = useMutation(EXPORT_QUESTIONS)
+
+  const [exportQuestionsToQTIMutation] = useMutation(EXPORT_QUESTIONS_QTI)
 
   const [reorderListMutation] = useMutation(REORDER_LIST, {
     refetchQueries: [
@@ -151,38 +160,104 @@ const ListContentPage = () => {
       })
   }
 
+  const handleExportToQTI = (questionIds, orderBy) => {
+    const mutationData = {
+      variables: {
+        listId: id,
+        questionIds,
+        orderBy: orderBy === 'custom' ? 'custom' : 'publicationDate',
+        ascending: orderBy !== 'date-desc',
+      },
+    }
+
+    return exportQuestionsToQTIMutation(mutationData)
+      .then(res => {
+        const filename = res.data.exportQuestionsQTI
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject(e.message)
+        })
+      })
+  }
+
   const handleDragEnd = result => {
     const { destination, source /* draggableId */ } = result
+    let hasErrors = false
 
     // check if no destination, or if no rearrangement happened
-    if (!destination) return
+    // if so, just return with no errors
+    if (!destination) return { hasErrors }
 
     if (
       destination.droppableId === source.droppableId &&
       destination.index === source.index
     )
-      return
+      return { hasErrors }
 
     // reorder the question ids after dragging has ended
     const orderedQuestionIds = questions.map(question => question.id)
     const draggedElement = orderedQuestionIds.splice(source.index, 1)
     orderedQuestionIds.splice(destination.index, 0, ...draggedElement)
 
-    // sort questions so that they appear in the new order visually
-    questions.sort(
+    // get a temporary copy of the new order of questions
+    const sortedQuestions = [...questions].sort(
       (a, b) =>
         orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
     )
 
-    // prepare mutation data and run mutation to persist new order
-    const mutationData = {
-      variables: {
-        listId: id,
-        customOrder: orderedQuestionIds,
-      },
+    // check if questions belonging to a set are not back-to-back
+    const complexItemSets = sortedQuestions.map(
+      question => question.versions[0].complexItemSetId,
+    )
+
+    const uniqueSets = [...new Set(complexItemSets)].filter(s => !!s)
+
+    if (uniqueSets.length) {
+      // for each set, find index of first and last question of the set
+      // check all questions in between if they belong the the same set
+      // if not, set hasErrors = true
+      uniqueSets.forEach(setId => {
+        const firstItemIndex = sortedQuestions.findIndex(
+          q => q.versions[0].complexItemSetId === setId,
+        )
+
+        const lastItemIndex = sortedQuestions.findLastIndex(
+          q => q.versions[0].complexItemSetId === setId,
+        )
+
+        for (let i = firstItemIndex + 1; i < lastItemIndex; i += 1) {
+          if (sortedQuestions[i].versions[0].complexItemSetId !== setId) {
+            hasErrors = true
+            return
+          }
+        }
+      })
     }
 
-    reorderListMutation(mutationData)
+    if (!hasErrors) {
+      // sort questions so that they appear in the new order visually
+      questions.sort(
+        (a, b) =>
+          orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
+      )
+
+      // prepare mutation data and execute mutation to persist new order
+      const mutationData = {
+        variables: {
+          listId: id,
+          customOrder: orderedQuestionIds,
+        },
+      }
+
+      reorderListMutation(mutationData)
+      return { hasErrors }
+    }
+
+    return { hasErrors }
   }
 
   return (
@@ -190,19 +265,20 @@ const ListContentPage = () => {
       loading={loading}
       onDragEnd={handleDragEnd}
       onExport={handleExport}
+      onExportQTI={handleExportToQTI}
       onRemoveFromList={handleRemoveFromList}
       onSearch={handleSearch}
       questions={
         questions && metadata
-          ? dashboardDataMapper(
+          ? dashboardDataMapper({
               questions,
               metadata,
-              [],
-              false,
-              false,
+              complexItemSetOptions,
+              showStatus: false,
+              showAuthor: false,
               relatedQuestionsIds,
-              true,
-            )
+              testMode: true,
+            })
           : []
       }
       questionsPerPage={PAGE_SIZE}

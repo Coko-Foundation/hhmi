@@ -29,6 +29,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
           published
           publicationDate
 
+          complexItemSetId
           topics {
             topic
             subtopic
@@ -63,9 +64,70 @@ export const GET_EDITOR_DASHBOARD = gql`
     $ascending: Boolean
     $page: Int
     $pageSize: Int
-    $searchQuery: String
+    $filters: DashboardFilters
   ) {
     getManagingEditorDashboard(
+      orderBy: $orderBy
+      ascending: $ascending
+      page: $page
+      pageSize: $pageSize
+      filters: $filters
+    ) {
+      result {
+        id
+        rejected
+        author {
+          displayName
+        }
+        heAssigned
+        versions(latestOnly: true) {
+          id
+          content
+
+          submitted
+          underReview
+          inProduction
+          published
+          publicationDate
+
+          complexItemSetId
+          topics {
+            topic
+            subtopic
+          }
+
+          courses {
+            course
+            units {
+              # application
+              # courseTopic
+              # essentialKnowledge
+              learningObjective
+              # skill
+              understanding
+              # unit
+            }
+          }
+
+          cognitiveLevel
+          # affectiveLevel
+          # psychomotorLevel
+        }
+      }
+      totalCount
+    }
+  }
+`
+
+export const GET_HANDLING_EDITOR_DASHBOARD = gql`
+  query GetHandlingEditorDashboard(
+    $orderBy: String
+    $ascending: Boolean
+    $page: Int
+    $pageSize: Int
+    $searchQuery: String
+  ) {
+    getHandlingEditorDashboard(
       orderBy: $orderBy
       ascending: $ascending
       page: $page
@@ -116,9 +178,34 @@ export const GET_EDITOR_DASHBOARD = gql`
   }
 `
 
+export const ASSING_HANDLING_EDITORS = gql`
+  mutation assignHandlingEditors($questionIds: [ID!]!, $userIds: [ID!]!) {
+    assignHandlingEditors(questionIds: $questionIds, userIds: $userIds) {
+      questionId
+      hasAuthorshipConflict
+      members
+    }
+  }
+`
+
+export const UNASSING_HANDLING_EDITOR = gql`
+  mutation unassignHandlingEditor($questionId: ID!, $userId: ID!) {
+    unassignHandlingEditor(questionId: $questionId, userId: $userId)
+  }
+`
+
+export const GET_QUESTION_HANDLING_EDITORS = gql`
+  query getQuestionsHandlingEditors($questionId: ID!) {
+    getQuestionsHandlingEditors(questionId: $questionId) {
+      id
+      displayName
+    }
+  }
+`
+
 export const CREATE_QUESTION = gql`
-  mutation CreateQuestion {
-    createQuestion {
+  mutation CreateQuestion($input: UpdateQuestionInput) {
+    createQuestion(input: $input) {
       id
     }
   }
@@ -155,13 +242,25 @@ export const QUESTION = gql`
         courses {
           course
           units {
-            application
+            unit
             courseTopic
-            essentialKnowledge
+            # AP courses
             learningObjective
+            essentialKnowledge
+            # IB courses
+            application
             skill
             understanding
-            unit
+            # vision and change
+            coreCompetence
+            coreConcept
+            subcompetence
+            subcompetenceStatement
+            subdiscipline
+            subdisciplineStatement
+            # aamc
+            concept
+            category
           }
         }
 
@@ -174,7 +273,12 @@ export const QUESTION = gql`
         readingLevel
 
         questionType
+        complexItemSetId
+        leadingContent
       }
+
+      chatThreadId
+      heAssigned
     }
   }
 `
@@ -201,6 +305,8 @@ export const UPDATE_QUESTION = gql`
         inProduction
         published
 
+        leadingContent
+        complexItemSetId
         questionType
 
         topics {
@@ -217,6 +323,17 @@ export const UPDATE_QUESTION = gql`
             learningObjective
             skill
             understanding
+            unit
+            # vision and change
+            coreCompetence
+            coreConcept
+            subcompetence
+            subcompetenceStatement
+            subdiscipline
+            subdisciplineStatement
+            # aamc
+            concept
+            category
           }
         }
 
@@ -351,6 +468,7 @@ export const GET_PUBLISHED_QUESTIONS = gql`
         versions(latestOnly: true, publishedOnly: true) {
           id
           content
+          complexItemSetId
 
           submitted
           underReview
@@ -397,6 +515,12 @@ export const GENERATE_WORD_FILE = gql`
 export const GENERATE_SCORM_ZIP = gql`
   mutation GenerateScormZip($questionVersionId: ID!) {
     generateScormZip(questionVersionId: $questionVersionId)
+  }
+`
+
+export const GENERATE_QTI_ZIP = gql`
+  mutation GenerateQtiZip($questionVersionId: ID!) {
+    generateQtiZip(questionVersionId: $questionVersionId)
   }
 `
 

@@ -2,13 +2,13 @@
 
 exports[`Signup matches snapshot 1`] = `
 <div
-  className="sc-cRZddA gpBzxv"
+  className="sc-hVkBjg elsmwP"
 >
   <div
-    className="sc-zRDVy fPcNwc"
+    className="sc-fNGOfv fZffij"
   >
     <h1
-      className="ant-typography sc-OIhXX fcIQYM css-dev-only-do-not-override-1vtf12y"
+      className="ant-typography sc-CQMxN bcGRRD css-dev-only-do-not-override-1vtf12y"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,7 +18,7 @@ exports[`Signup matches snapshot 1`] = `
       Sign up
     </h1>
     <div
-      className="sc-jiwKzQ"
+      className="sc-gKYCAw"
     >
       <div
         className="sc-kFuwaP eKsANT"
@@ -402,7 +402,7 @@ exports[`Signup matches snapshot 1`] = `
                     className="ant-form-item-control-input-content"
                   >
                     <label
-                      className="ant-checkbox-wrapper ant-checkbox-wrapper-in-form-item sc-jTrPJq fhnEky css-dev-only-do-not-override-1vtf12y"
+                      className="ant-checkbox-wrapper ant-checkbox-wrapper-in-form-item sc-jTrPJq iCGpyE css-dev-only-do-not-override-1vtf12y"
                     >
                       <span
                         className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
@@ -425,7 +425,7 @@ exports[`Signup matches snapshot 1`] = `
                         I agree to the
                          
                         <a
-                          className="sc-TWmSL bAtWJs"
+                          className="sc-flFvMs eareoJ"
                           href="#termsAndCondition"
                           id="termsAndConditions"
                           onClick={[Function]}
@@ -440,7 +440,7 @@ exports[`Signup matches snapshot 1`] = `
             </div>
           </div>
           <button
-            className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-daSHZT bcdbgS"
+            className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-btijOp eGzYXA"
             disabled={false}
             onClick={[Function]}
             status={null}
@@ -453,13 +453,13 @@ exports[`Signup matches snapshot 1`] = `
         </form>
       </div>
       <div
-        className="sc-cMcdXu GqDPW"
+        className="sc-kKUyCS dwVmZq"
       >
         <div
-          className="sc-byUoaA bHWkJU"
+          className="sc-fUHfjU kFwffv"
         >
           <a
-            className="sc-TWmSL bAtWJs"
+            className="sc-flFvMs eareoJ"
             href="/login"
             onClick={[Function]}
           >

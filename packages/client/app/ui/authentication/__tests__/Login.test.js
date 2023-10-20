@@ -59,7 +59,7 @@ describe('Login', () => {
     onSubmit.mockClear()
     const email = screen.getByPlaceholderText('Please enter your email')
     const password = screen.getByPlaceholderText('Please enter your password')
-    const submit = screen.getByRole('button')
+    const submit = screen.getByRole('button', { name: 'Log in' })
     fireEvent.change(email, { target: { value: 'user@gmail.com' } })
     fireEvent.change(password, {
       target: { value: 'Password@123' },

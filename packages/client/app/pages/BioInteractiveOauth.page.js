@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Redirect, useHistory, useLocation } from 'react-router-dom'
 import { useMutation } from '@apollo/client'
+import { useCurrentUser } from '@coko/client'
 
 import { BioInteractiveOauth } from 'ui'
 
@@ -9,6 +10,7 @@ import { BIOINTERACTIVE_LOGIN } from '../graphql'
 const BioInteractiveLoginPage = props => {
   const { search } = useLocation()
   const history = useHistory()
+  const { currentUser } = useCurrentUser()
 
   const authCode = new URLSearchParams(search).get('code')
   const state = new URLSearchParams(search).get('state')
@@ -19,8 +21,7 @@ const BioInteractiveLoginPage = props => {
 
   const err = loginError || oauthError
 
-  const existingToken = localStorage.getItem('token')
-  if (existingToken) return <Redirect to="/dashboard" />
+  if (currentUser) return <Redirect to="/dashboard" />
 
   if (state !== localStorage.getItem('oauthState')) {
     return <Redirect to="/" />
@@ -43,7 +44,9 @@ const BioInteractiveLoginPage = props => {
     }).catch(e => console.error(e))
   }
 
-  useEffect(login, [])
+  useEffect(() => {
+    login()
+  }, [])
 
   return <BioInteractiveOauth hasError={!!err} />
 }

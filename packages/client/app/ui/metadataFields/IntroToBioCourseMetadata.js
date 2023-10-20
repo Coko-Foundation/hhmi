@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { uniqBy } from 'lodash'
-import Form from './Form'
-import Select from './Select'
+import { Form, Select } from '../common'
+import VisionAndChangeMetadata from './VisionAndChangeMetadata'
+import AAMCFuturePhysiciansMetadata from './AAMCFuturePhysiciansMetadata'
 
-const APCourseMetadata = props => {
+const IntroToBioCourseMetadata = props => {
   const {
     courseData,
+    introToBioMeta,
     getFieldValue,
     filterMode,
     isRequired,
@@ -15,7 +17,6 @@ const APCourseMetadata = props => {
     unitKey,
     topicKey,
     learningObjectiveKey,
-    essentialKnowledgeKey,
     supplementaryKey,
     setFieldsValue,
   } = props
@@ -40,21 +41,12 @@ const APCourseMetadata = props => {
     ? [supplementaryKey, index, learningObjectiveKey]
     : learningObjectiveKey
 
-  const essentialKnowledgeName = supplementaryKey
-    ? [index, essentialKnowledgeKey]
-    : essentialKnowledgeKey
-
-  const essentialKnowledgeField = supplementaryKey
-    ? [supplementaryKey, index, essentialKnowledgeKey]
-    : essentialKnowledgeKey
-
   useEffect(() => {
     if (!supplementaryKey) {
       setFieldsValue({
         [unitKey]: null,
         [topicKey]: null,
         [learningObjectiveKey]: null,
-        [essentialKnowledgeKey]: null,
       })
     }
   }, [courseData])
@@ -67,7 +59,6 @@ const APCourseMetadata = props => {
           ...cloned[index],
           [topicKey]: null,
           [learningObjectiveKey]: null,
-          [essentialKnowledgeKey]: null,
         }
 
         setFieldsValue({
@@ -78,7 +69,6 @@ const APCourseMetadata = props => {
       setFieldsValue({
         [topicKey]: null,
         [learningObjectiveKey]: null,
-        [essentialKnowledgeKey]: null,
       })
     }
   }
@@ -90,7 +80,6 @@ const APCourseMetadata = props => {
         cloned[index] = {
           ...cloned[index],
           [learningObjectiveKey]: null,
-          [essentialKnowledgeKey]: null,
         }
         setFieldsValue({
           [supplementaryKey]: cloned,
@@ -99,28 +88,6 @@ const APCourseMetadata = props => {
     } else {
       setFieldsValue({
         [learningObjectiveKey]: null,
-        [essentialKnowledgeKey]: null,
-      })
-    }
-  }
-
-  const handleFrameworkLearningObjectiveChange = () => {
-    if (supplementaryKey) {
-      if (getFieldValue(essentialKnowledgeField)) {
-        const cloned = [...getFieldValue(supplementaryKey)]
-
-        cloned[index] = {
-          ...cloned[index],
-          [essentialKnowledgeKey]: null,
-        }
-
-        setFieldsValue({
-          [supplementaryKey]: cloned,
-        })
-      }
-    } else {
-      setFieldsValue({
-        [essentialKnowledgeKey]: null,
       })
     }
   }
@@ -184,47 +151,9 @@ const APCourseMetadata = props => {
     )
   }
 
-  const filterEssentialKnowledgeOptions = () => {
-    const selectedUnit = getFieldValue(unitField)
-    const selectedTopic = getFieldValue(topicField)
-    const selectedLearningObjective = getFieldValue(learningObjectiveField)
-
-    if (selectedLearningObjective) {
-      return courseData.essentialKnowledge
-        .filter(l => l.learningObjective === selectedLearningObjective)
-        .map(e => ({
-          label: e.label,
-          value: e.value,
-        }))
-    }
-
-    if (selectedTopic) {
-      return courseData.essentialKnowledge
-        .filter(l => l.topic === selectedTopic)
-        .map(e => ({
-          label: e.label,
-          value: e.value,
-        }))
-    }
-
-    if (selectedUnit) {
-      return courseData.essentialKnowledge
-        .filter(l => l.unit === selectedUnit)
-        .map(e => ({
-          label: e.label,
-          value: e.value,
-        }))
-    }
-
-    return courseData.essentialKnowledge.map(e => ({
-      label: e.label,
-      value: e.value,
-    }))
-  }
-
   return (
     <>
-      <p>{courseData.label}: College Board Framework</p>
+      {!filterMode && <p>{courseData.label}</p>}
       <Form.Item
         label="Course Unit"
         name={unitName}
@@ -235,7 +164,7 @@ const APCourseMetadata = props => {
         ]}
       >
         <Select
-          // allowClear
+          allowClear={filterMode}
           data-testid="course-unit-select"
           disabled={readOnly}
           onChange={handleFrameworkUnitChange}
@@ -257,7 +186,7 @@ const APCourseMetadata = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               data-testid="course-topic-select"
               disabled={readOnly || (!filterMode && !getFieldValue(unitField))}
               onChange={handleFrameworkTopicChange}
@@ -273,7 +202,7 @@ const APCourseMetadata = props => {
       <Form.Item dependencies={[unitField, topicField]} noStyle>
         {() => (
           <Form.Item
-            label="Learning objective"
+            label="Learning Objective"
             name={learningObjectiveName}
             rules={[
               isRequired
@@ -282,10 +211,10 @@ const APCourseMetadata = props => {
             ]}
           >
             <Select
-              // allowClear
+              allowClear={filterMode}
               data-testid="learning-objective-select"
               disabled={readOnly || (!filterMode && !getFieldValue(topicField))}
-              onChange={handleFrameworkLearningObjectiveChange}
+              //   onChange={handleFrameworkLearningObjectiveChange}
               optionFilterProp="label"
               options={filterLearningObjectiveOptions()}
               showSearch
@@ -294,41 +223,37 @@ const APCourseMetadata = props => {
           </Form.Item>
         )}
       </Form.Item>
-
-      <Form.Item
-        dependencies={[unitField, topicField, learningObjectiveField]}
-        noStyle
-      >
-        {() => (
-          <Form.Item
-            label="Essential Knowledge"
-            name={essentialKnowledgeName}
-            rules={[
-              isRequired
-                ? { required: true, message: 'Essential Knowledge is required' }
-                : {},
-            ]}
-          >
-            <Select
-              // allowClear
-              data-testid="essential-knowledge-select"
-              disabled={
-                readOnly ||
-                (!filterMode && !getFieldValue(learningObjectiveField))
-              }
-              optionFilterProp="label"
-              options={filterEssentialKnowledgeOptions()}
-              showSearch
-              wrapOptionText
-            />
-          </Form.Item>
+      <VisionAndChangeMetadata
+        conceptsAndCompetencies={introToBioMeta.find(
+          f => f.value === 'visionAndChange',
         )}
-      </Form.Item>
+        filterMode={filterMode}
+        getFieldValue={getFieldValue}
+        index={index}
+        isRequired={isRequired}
+        readOnly={readOnly}
+        setFieldsValue={setFieldsValue}
+        supplementaryKey={supplementaryKey}
+      />
+      {courseData.value === 'introBioForMajors' && (
+        <AAMCFuturePhysiciansMetadata
+          aamcMetadata={introToBioMeta.find(
+            f => f.value === 'aamcFuturePhysicians',
+          )}
+          filterMode={filterMode}
+          getFieldValue={getFieldValue}
+          index={index}
+          isRequired={isRequired}
+          readOnly={readOnly}
+          setFieldsValue={setFieldsValue}
+          supplementaryKey={supplementaryKey}
+        />
+      )}
     </>
   )
 }
 
-APCourseMetadata.propTypes = {
+IntroToBioCourseMetadata.propTypes = {
   filterMode: PropTypes.bool,
   getFieldValue: PropTypes.func.isRequired,
   index: PropTypes.number,
@@ -336,14 +261,14 @@ APCourseMetadata.propTypes = {
   setFieldsValue: PropTypes.func.isRequired,
   readOnly: PropTypes.bool,
   courseData: PropTypes.shape().isRequired,
+  introToBioMeta: PropTypes.shape().isRequired,
   unitKey: PropTypes.string,
   topicKey: PropTypes.string,
   learningObjectiveKey: PropTypes.string,
-  essentialKnowledgeKey: PropTypes.string,
   supplementaryKey: PropTypes.string,
 }
 
-APCourseMetadata.defaultProps = {
+IntroToBioCourseMetadata.defaultProps = {
   filterMode: false,
   index: 0,
   isRequired: false,
@@ -351,7 +276,7 @@ APCourseMetadata.defaultProps = {
   unitKey: 'unit',
   topicKey: 'courseTopic',
   learningObjectiveKey: 'learningObjective',
-  essentialKnowledgeKey: 'essentialKnowledge',
   supplementaryKey: '',
 }
-export default APCourseMetadata
+
+export default IntroToBioCourseMetadata

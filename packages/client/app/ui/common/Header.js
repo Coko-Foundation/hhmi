@@ -10,6 +10,7 @@ import logo from '../../../static/hhmi-ab-logo-sm.svg'
 import menuOpen from '../../../static/waffle-white.svg'
 import menuClose from '../../../static/close-white.svg'
 import Button from './Button'
+import { safeCall, safeIndex } from '../../utilities'
 
 // #region styles
 const StyledHeader = styled.header`
@@ -419,6 +420,7 @@ const Header = props => {
       homepage,
       questions,
       dashboard,
+      sets,
       lists,
       about,
       learning,
@@ -435,62 +437,47 @@ const Header = props => {
   const [openUserMenu, setOpenUserMenu] = useState(false)
 
   const userMenuOnKeyDown = e => {
-    const wrapper = e.currentTarget
+    e.key !== 'Tab' && e.preventDefault()
+    const { code } = e
 
-    switch (e.code) {
-      case 'Escape':
-        e.preventDefault()
+    const listOfLinks = [
+      ...document.querySelectorAll('#user-menu a'),
+      document.querySelector('#user-menu button'),
+    ]
+
+    const currentIndex = () => listOfLinks.indexOf(document.activeElement)
+
+    const keys = {
+      Escape: () => {
         setOpenUserMenu(false)
-        wrapper.querySelector('button').focus()
-        break
-      case 'Enter':
-      case 'Space':
+        document.querySelector('button[aria-controls="user-menu"]').focus()
+      },
+      Enter: () => {
+        document.activeElement.click()
+        showMenu && setShowMenu(false)
+        document.querySelector('button[aria-controls="user-menu"]').focus()
+      },
+      Space: () =>
         setTimeout(() => {
-          wrapper.querySelectorAll('#user-menu a')[0].focus()
-        }, 50)
-        break
-      case 'ArrowDown':
-        e.preventDefault()
-
-        if (!openUserMenu) {
-          setOpenUserMenu(true)
-          setTimeout(() => {
-            wrapper.querySelectorAll('#user-menu a')[0].focus()
-          }, 50)
-        } else {
-          const listOfLinks = [...wrapper.querySelectorAll('#user-menu a')]
-
-          const currentIndex = listOfLinks.indexOf(document.activeElement)
-
-          listOfLinks[(currentIndex + 1) % listOfLinks.length].focus()
-        }
-
-        break
-
-      case 'ArrowUp':
-        e.preventDefault()
-
-        if (!openUserMenu) {
-          const listOfLinks = [...wrapper.querySelectorAll('#user-menu a')]
-
-          setOpenUserMenu(true)
-          setTimeout(() => {
-            listOfLinks[listOfLinks.length - 1].focus()
-          }, 50)
-        } else {
-          const listOfLinks = [...wrapper.querySelectorAll('#user-menu a')]
-
-          const currentIndex = listOfLinks.indexOf(document.activeElement)
-
-          listOfLinks[
-            (currentIndex + listOfLinks.length - 1) % listOfLinks.length
-          ].focus()
-        }
-
-        break
-      default:
-        break
+          listOfLinks[0].focus()
+        }, 50),
+      ArrowDown: () => {
+        !openUserMenu
+          ? setOpenUserMenu(true)
+          : listOfLinks[
+              safeIndex(currentIndex() + 1, 'down', listOfLinks)
+            ].focus()
+      },
+      ArrowUp: () => {
+        !openUserMenu
+          ? setOpenUserMenu(true)
+          : listOfLinks[
+              safeIndex(currentIndex() - 1, 'up', listOfLinks)
+            ].focus()
+      },
     }
+
+    return safeCall(keys[code])
   }
 
   const userMenuOnBlur = e => {
@@ -543,6 +530,15 @@ const Header = props => {
                     to={dashboard}
                   >
                     <span>Dashboard</span>
+                  </StyledLink>
+                </li>
+                <li>
+                  <StyledLink
+                    aria-current={currentPath === sets ? 'page' : false}
+                    onClick={() => setShowMenu(false)}
+                    to={sets}
+                  >
+                    <span>Sets</span>
                   </StyledLink>
                 </li>
                 <li>
@@ -699,6 +695,7 @@ Header.propTypes = {
     homepage: PropTypes.string,
     questions: PropTypes.string,
     dashboard: PropTypes.string,
+    sets: PropTypes.string,
     lists: PropTypes.string,
     about: PropTypes.string,
     learning: PropTypes.string,
@@ -721,6 +718,7 @@ Header.defaultProps = {
     homepage: '#',
     questions: '#',
     dashboard: '#',
+    sets: '#',
     lists: '#',
     about: '#',
     learning: '#',
