@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { Iframe } from 'ui'
+import { Iframe, PageNotFound } from 'ui'
 
 const External = props => {
   const { src, ariaLabel } = props
+  const [notFound, setNotFound] = useState(false)
 
   const history = useHistory()
   const frameRef = useRef(null)
@@ -26,24 +27,31 @@ const External = props => {
   }
 
   const handleIframeLoaded = () => {
-    // transform all <a> elements of external resource to postMessage to parent window
-    setTimeout(() => {
-      frameRef.current.contentWindow.document
-        .querySelectorAll('main a')
-        .forEach(node => {
-          const href = node.getAttribute('href')
+    // render our local 404 if external url is not found
+    if (
+      frameRef.current.contentWindow.document.title ===
+      'Page not found - HHMI Assessment Builder'
+    ) {
+      setNotFound(true)
+      return
+    }
 
-          // find all anchor tags that link to pages inside the website
-          if (!href.toLowerCase().startsWith('http') /* || contains  */) {
-            // make them post message to the parent window and handle it from our app
-            // eslint-disable-next-line no-param-reassign
-            node.onclick = e => {
-              e.preventDefault()
-              postMessage(href)
-            }
+    // transform all <a> elements of external resource to postMessage to parent window
+    frameRef.current.contentWindow.document
+      .querySelectorAll('main a')
+      .forEach(node => {
+        const href = node.getAttribute('href')
+
+        // find all anchor tags that link to pages inside the website
+        if (!href.toLowerCase().startsWith('http') /* || contains  */) {
+          // make them post message to the parent window and handle it from our app
+          // eslint-disable-next-line no-param-reassign
+          node.onclick = e => {
+            e.preventDefault()
+            postMessage(href)
           }
-        })
-    }, 500)
+        }
+      })
 
     // add listener for message events from embeded window
     window.addEventListener('message', handleMessage, false)
@@ -53,7 +61,9 @@ const External = props => {
     return () => window.removeEventListener('message', handleMessage, false)
   }, [])
 
-  return (
+  return notFound ? (
+    <PageNotFound />
+  ) : (
     <Iframe
       aria-label={ariaLabel}
       id="external"

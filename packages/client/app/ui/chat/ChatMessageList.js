@@ -1,36 +1,120 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
+import InfiniteScroll from 'react-infinite-scroll-component'
 import { grid } from '@coko/client'
 
 import ChatMessage from './ChatMessage'
-import { List } from '../common'
+import { Button, Empty, Spin, VisuallyHiddenElement } from '../common'
 
 const Wrapper = styled.div`
-  li:not(:last-child) {
-    margin-bottom: ${grid(2)};
+  display: flex;
+  flex-direction: column-reverse;
+  height: 100%;
+  overflow: auto;
+  overflow-anchor: none;
+  overscroll-behavior: contain;
+
+  * + * {
+    margin-top: ${grid(1)};
   }
 `
 
+const MessagesWrappes = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+const StyledInfiniteScroll = styled(InfiniteScroll)`
+  display: flex;
+  flex-direction: column;
+`
+
+const SpinnerWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-block: ${grid(6)} ${grid(3)};
+
+  // put the loader on top even now that order of messages is not reversed
+  order: -1;
+`
+
+const TopMessageWrapper = styled.p`
+  order: ${props => (props.infiniteScroll ? '-1' : '0')};
+  text-align: center;
+`
+
 const ChatMessageList = props => {
-  const { className, messages } = props
+  const { className, hasMore, messages, onFetchMore, infiniteScroll } = props
+
+  const messageList = () =>
+    infiniteScroll ? (
+      <StyledInfiniteScroll
+        dataLength={messages.length}
+        endMessage={
+          <TopMessageWrapper infiniteScroll>
+            Start of the conversation
+          </TopMessageWrapper>
+        }
+        hasMore={hasMore}
+        inverse
+        loader={
+          <SpinnerWrapper id="chat-loading">
+            <VisuallyHiddenElement aria-live="assertive" role="status">
+              loading previous messages
+            </VisuallyHiddenElement>
+            <Spin />
+          </SpinnerWrapper>
+        }
+        next={onFetchMore}
+        scrollableTarget="scrollableDiv"
+        scrollThreshold="50px"
+      >
+        {messages.map(({ content, date, own, user }) => (
+          <ChatMessage
+            className="message"
+            content={content}
+            date={date}
+            own={own}
+            user={user}
+          />
+        ))}
+      </StyledInfiniteScroll>
+    ) : (
+      <>
+        <MessagesWrappes>
+          {messages.map(({ content, date, own, user, id }) => (
+            <ChatMessage
+              className="message"
+              content={content}
+              date={date}
+              key={id}
+              own={own}
+              user={user}
+            />
+          ))}
+        </MessagesWrappes>
+        <TopMessageWrapper>
+          {hasMore ? (
+            <Button onClick={onFetchMore}>Load older</Button>
+          ) : (
+            'Start of the conversation'
+          )}
+        </TopMessageWrapper>
+      </>
+    )
 
   return (
-    <Wrapper className={className}>
-      <List
-        dataSource={messages}
-        renderItem={item => (
-          <li>
-            <ChatMessage
-              content={item.content}
-              date={item.date}
-              own={item.own}
-              user={item.user}
-            />
-          </li>
-        )}
-      />
+    <Wrapper className={className} id="scrollableDiv">
+      {messages.length === 0 ? (
+        <Empty
+          description="No coverstions yet"
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          role="status"
+        />
+      ) : (
+        messageList()
+      )}
     </Wrapper>
   )
 }
@@ -44,10 +128,16 @@ ChatMessageList.propTypes = {
       user: PropTypes.string,
     }),
   ),
+  hasMore: PropTypes.bool,
+  infiniteScroll: PropTypes.bool,
+  onFetchMore: PropTypes.func,
 }
 
 ChatMessageList.defaultProps = {
   messages: [],
+  hasMore: false,
+  infiniteScroll: false,
+  onFetchMore: () => {},
 }
 
 export default ChatMessageList

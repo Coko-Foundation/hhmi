@@ -10,7 +10,9 @@ export const antTableCell = 'td[class="ant-table-cell"]'
 
 export const antModalConfirmTitle = '[class="ant-modal-confirm-title"]'
 
-export const antTabs = '[class="ant-tabs-tab"]'
+export const antSelectItem = '.ant-select-item'
+
+export const antTabs = '.ant-tabs-tab-btn'
 
 export const exportToWordButton =
   '[data-testid="editor-actions-popup"] [id="exportToWord"]'
@@ -18,6 +20,8 @@ export const exportToWordButton =
 export const moreActionsToggle = '[aria-label="More actions"]'
 
 export const alertContainer = '[role="alert"]'
+
+export const ProseMirror = '.ProseMirror'
 
 export const anchorTags = {
   dashboard: 'a[href="/dashboard"]',
@@ -27,6 +31,7 @@ export const anchorTags = {
   login: 'a[href="/login"]',
   requestPasswordRest: 'a[href="/request-password-reset"]',
   signup: 'a[href="/signup"]',
+  sets: 'a[href="/sets"]',
 }
 
 export const navToggle = '[data-testid="nav-toggle"]'

@@ -10,6 +10,8 @@ const {
   exportQuestionsToWordFile,
   exportListToWordFile,
   reorderList,
+  exportQuestionsToQti,
+  exportListToQti,
 } = require('../../controllers/list.controllers')
 
 const listResolver = async (
@@ -69,6 +71,17 @@ const exportListResolver = async (
   return exportListToWordFile(listId, orderBy, ascending, options)
 }
 
+const exportQuestionsQTIResolver = async (
+  _,
+  { listId, questionIds, orderBy, ascending },
+) => {
+  return exportQuestionsToQti(listId, questionIds, orderBy, ascending)
+}
+
+const exportListQTIResolver = async (_, { listId, orderBy, ascending }) => {
+  return exportListToQti(listId, orderBy, ascending)
+}
+
 const reorderListResolver = (_, { listId, customOrder }) => {
   return reorderList(listId, customOrder)
 }
@@ -91,6 +104,8 @@ module.exports = {
     exportQuestions: exportQuestionsResolver,
     exportList: exportListResolver,
     reorderList: reorderListResolver,
+    exportQuestionsQTI: exportQuestionsQTIResolver,
+    exportListQTI: exportListQTIResolver,
   },
   List: {
     questions: listQuestionsResolver,

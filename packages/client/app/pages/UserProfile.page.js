@@ -28,7 +28,7 @@ const profileApiToUi = (user, signup) => {
     assessmentTraining: user.receivedTraining,
     assessmentTrainingInclusive: user.receivedInclusiveLanguageTraining,
     city: user.city,
-    country: user.country,
+    country: user.country || 'US',
     courses: user.coursesTeaching || [],
     coursesReview: user.topicsReviewing || [],
     displayName: user.displayName,
@@ -124,7 +124,7 @@ const UserProfile = props => {
     setCountryOptions(countries)
 
     if (!currentUser) return
-    const states = (await getStatesByCountry(currentUser.country)) || []
+    const states = (await getStatesByCountry(currentUser.country || 'US')) || []
     setStatesOptions(states)
 
     setSubmitted(signup && currentUser?.profileSubmitted)

@@ -3,21 +3,38 @@ import path from 'path'
 import { user2 } from '../support/credentials'
 import { discover as discoverPage, graphqlEndpoint } from '../support/routes'
 import { multipleChoiceQuestionString } from '../support/appData'
-import { listItemWrapper, submitButton } from '../support/selectors'
+import {
+  listItemWrapper,
+  submitButton,
+  ProseMirror,
+} from '../support/selectors'
 import { getDateInFormat } from '../utils/helpers'
 import { laptop } from '../support/viewport'
 
+const disableScripts = false
 describe('Discover page tests', () => {
   before(() => {
-    cy.resetDB()
+    cy.resetDB(disableScripts)
 
-    cy.seedUser({ ...user2 })
+    cy.seedUser(disableScripts, { ...user2 })
 
-    cy.seedQuestion(user2.username, -1, 'anatomy', 'published')
+    cy.seedQuestion(disableScripts, user2.username, -1, 'anatomy', 'published')
 
-    cy.seedQuestion(user2.username, -2, 'biochemistry', 'published')
+    cy.seedQuestion(
+      disableScripts,
+      user2.username,
+      -2,
+      'biochemistry',
+      'published',
+    )
 
-    cy.seedQuestion(user2.username, -3, 'population', 'published')
+    cy.seedQuestion(
+      disableScripts,
+      user2.username,
+      -3,
+      'population',
+      'published',
+    )
 
     // cy.visit('/discoverPage')
   })
@@ -81,7 +98,7 @@ describe('Discover page tests', () => {
       .eq(0)
       .should('be.visible')
       .contains(
-        '.ProseMirror',
+        ProseMirror,
         'What substance from Bacillus thuringiensis was most likely inserted into rice plants',
       )
     cy.contains('[data-testid="topic-value"]', 'Anatomy & Physiology')

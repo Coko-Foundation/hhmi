@@ -1,29 +1,26 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 
 import { grid, th } from '@coko/client'
 
-import { DateParser } from '../common'
+import { DateParser, VisuallyHiddenElement } from '../common'
 
 const pullRight = css`
   margin-left: auto;
+  margin-right: ${grid(1)};
 `
 
-const Wrapper = styled(({ own, ...rest }) => <div {...rest} />)`
-  display: flex;
-`
-
-const Message = styled(({ own, ...rest }) => <div {...rest} />)`
+const Message = styled.div`
+  align-self: baseline;
   background: ${props =>
     props.own ? th('colorPrimary') : th('colorSecondary')};
   border-radius: 3px;
-  color: ${props => (props.own ? th('colorTextReverse') : th('colorText'))};
+  color: ${th('colorTextReverse')};
   display: inline-block;
-  max-width: 90%;
-  padding: ${grid(2)};
-
-  /* stylelint-disable-next-line order/properties-alphabetical-order */
+  margin-left: ${grid(1)};
+  max-inline-size: 90%;
+  min-inline-size: 30%;
   ${props =>
     props.own &&
     css`
@@ -32,12 +29,20 @@ const Message = styled(({ own, ...rest }) => <div {...rest} />)`
       span {
         ${pullRight}
       }
-    `}
+    `};
+  padding: ${grid(2)};
+
+  &:focus {
+    outline: ${props => `${props.theme.lineWidth * 4}px`} solid
+      ${th('colorPrimaryBorder')};
+    outline-offset: 1px;
+  }
 `
 
 const Name = styled.div`
   font-size: ${th('fontSizeBaseSmall')};
   font-weight: bold;
+  margin-bottom: ${grid(2)};
 `
 
 const Content = styled.div``
@@ -49,25 +54,24 @@ const Date = styled.div`
   margin-top: ${grid(2)};
 `
 
-const ChatMessage = props => {
-  const { className, content, date, own, user } = props
-
+const ChatMessage = forwardRef((props, ref) => {
+  const { className, content, date, own, user, ...rest } = props
   return (
-    <Wrapper className={className}>
-      <Message own={own}>
-        {!own && <Name>{user}</Name>}
+    <Message className={className} own={own} ref={ref} tabIndex={0} {...rest}>
+      {!own && <Name>{user}</Name>}
+      <VisuallyHiddenElement as="p">
+        {own ? 'you said' : 'said'}
+      </VisuallyHiddenElement>
 
-        <Content>{content}</Content>
-
-        <Date>
-          <DateParser timestamp={date}>
-            {(timestamp, timeAgo) => <span>{timeAgo} ago</span>}
-          </DateParser>
-        </Date>
-      </Message>
-    </Wrapper>
+      <Content>{content}</Content>
+      <Date>
+        <DateParser timestamp={date}>
+          {(_, timeAgo) => <span>{timeAgo} ago</span>}
+        </DateParser>
+      </Date>
+    </Message>
   )
-}
+})
 
 ChatMessage.propTypes = {
   content: PropTypes.string.isRequired,

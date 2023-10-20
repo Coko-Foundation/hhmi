@@ -6,6 +6,8 @@ type Question {
   agreedTc: Boolean!
   rejected: Boolean!
   author: User
+  chatThreadId: ID
+  heAssigned: Boolean
 }
 
 type QuestionVersion {
@@ -35,6 +37,8 @@ type QuestionVersion {
   readingLevel: String
 
   questionType: String
+  complexItemSetId: ID
+  leadingContent: String
   lastEdit: DateTime
 }
 
@@ -49,19 +53,25 @@ type Course {
 }
 
 type Unit {
-  application: String
-  coreCompetence: String
-  coreConcept: String
+  unit: String
   courseTopic: String
-  essentialKnowledge: String
+  # AP courses
   learningObjective: String
+  essentialKnowledge: String
+  # IB courses
+  application: String
   skill: String
-  subcompetence: String
-  subcompetenceStatement: String
+  understanding: String
+  # vision and change
+  coreConcept: String
   subdiscipline: String
   subdisciplineStatement: String
-  understanding: String
-  unit: String
+  coreCompetence: String
+  subcompetence: String
+  subcompetenceStatement: String
+  # aamc
+  concept: String
+  category: String
 }
 
 type QuestionsResponse {
@@ -70,12 +80,19 @@ type QuestionsResponse {
   relatedQuestionsIds: [ID]
 }
 
+type AssignHandlingEditorsResponse {
+  questionId: ID!
+  hasAuthorshipConflict: Boolean!
+  members: [ID!]!
+}
+
 # INPUTS
 
 input UpdateQuestionInput {
   agreedTc: Boolean
   content: String
 
+  complexItemSetId: ID
   questionType: String
 
   topics: [TopicInput!]
@@ -101,29 +118,54 @@ input CourseInput {
 }
 
 input UnitInput {
-  application: String
+  unit: String
   courseTopic: String
-  essentialKnowledge: String
+  # AP courses
   learningObjective: String
+  essentialKnowledge: String
+  # IB courses
+  application: String
   skill: String
   understanding: String
-  unit: String
+  # vision and change
+  coreConcept: String
+  subdiscipline: String
+  subdisciplineStatement: String
+  coreCompetence: String
+  subcompetence: String
+  subcompetenceStatement: String
+  # aamc
+  concept: String
+  category: String
 }
 
 input SidebarFilters {
   topic: String
   subtopic: String
   course: String
-  application: String
+
+  unit: String
   courseTopic: String
-  essentialKnowledge: String
   learningObjective: String
+  essentialKnowledge: String
+
+  application: String
   skill: String
   understanding: String
-  unit: String
+
+  coreConcept: String
+  subdiscipline: String
+  subdisciplineStatement: String
+  coreCompetence: String
+  subcompetence: String
+  subcompetenceStatement: String
+
+  concept: String
+  category: String
 
   cognitiveLevel: [String]
   questionType: [String]
+  complexItemSet: [String]
 }
 
 input FilterQuestionsParams {
@@ -136,6 +178,13 @@ input QuestionPageInput {
   ascending: Boolean
   pageSize: Int
   page: Int
+}
+
+input DashboardFilters {
+  searchQuery: String
+  status: String
+  heAssigned: Boolean
+  author: String
 }
 
 enum AdjecentQuestion {
@@ -180,12 +229,22 @@ extend type Query {
     ascending: Boolean
     page: Int
     pageSize: Int
+    filters: DashboardFilters
+  ): QuestionsResponse!
+
+  getHandlingEditorDashboard(
+    orderBy: String
+    ascending: Boolean
+    page: Int
+    pageSize: Int
     searchQuery: String
   ): QuestionsResponse!
+
+  getQuestionsHandlingEditors(questionId: ID!): [User!]!
 }
 
 extend type Mutation {
-  createQuestion: Question!
+  createQuestion(input: UpdateQuestionInput): Question!
   duplicateQuestion(questionId: ID!): Question!
   rejectQuestion(questionId: ID!): Question!
   moveQuestionVersionToReview(questionVersionId: ID!): QuestionVersion!
@@ -212,6 +271,13 @@ extend type Mutation {
   ): String!
 
   generateScormZip(questionVersionId: ID!): String!
+  generateQtiZip(questionVersionId: ID!): String!
   createNewQuestionVersion(questionId: ID!): Question!
   uploadFiles(files: [Upload!]!): [File!]!
+
+  assignHandlingEditors(
+    questionIds: [ID!]!
+    userIds: [ID!]!
+  ): [AssignHandlingEditorsResponse!]!
+  unassignHandlingEditor(questionId: ID!, userId: ID!): Boolean
 }

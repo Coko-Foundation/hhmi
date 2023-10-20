@@ -47,7 +47,7 @@ describe('Question model', () => {
 
   test('creates new question version', async () => {
     const question = await Question.insert({})
-    await Question.createNewVersion(question.id)
+    await question.createNewVersion()
 
     const versions = await QuestionVersion.find({
       questionId: question.id,
@@ -244,6 +244,28 @@ describe('Question model', () => {
 
     expect(questions.totalCount).toBe(1)
     expect(questions.result[0].id).toBe(questionTwo.id)
+  })
+
+  test('find handling editors', async () => {
+    const question = await Question.insert({})
+    const user1 = await User.insert({})
+    const user2 = await User.insert({})
+
+    const questionTeam = await Team.insert({
+      objectId: question.id,
+      objectType: 'question',
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+    })
+
+    await Team.addMember(questionTeam.id, user1.id)
+    await Team.addMember(questionTeam.id, user2.id)
+    const team = await Question.getHandlingEditors(question.id)
+    const teamMemberIds = team.map(t => t.id)
+
+    expect(teamMemberIds.length).toEqual(2)
+    expect(teamMemberIds.includes(user1.id)).toBe(true)
+    expect(teamMemberIds.includes(user2.id)).toBe(true)
   })
 
   test('filter questions by topic', async () => {

@@ -9,6 +9,7 @@ import { debounce as lodashDebounceFunc } from 'lodash'
 
 import { Select as AntSelect } from 'antd'
 import { th } from '@coko/client'
+import { DownOutlined } from '@ant-design/icons'
 import Empty from './Empty'
 
 const SelectWrapper = styled.span``
@@ -79,6 +80,7 @@ const Select = props => {
     onSearch,
     showSearch,
     id,
+    options,
     /* eslint-enable react/prop-types */
     isOpen,
     virtual,
@@ -168,7 +170,9 @@ const Select = props => {
         onDropdownVisibleChange={o => setOpen(o)}
         onSearch={onSearch && searchFunc}
         open={open}
+        options={options}
         showSearch={showSearch || !!onSearch}
+        suffixIcon={!options ? null : <DownOutlined />}
         virtual={virtual}
         {...rest}
       />
@@ -183,7 +187,6 @@ Select.propTypes = {
   notFoundContent: PropTypes.element,
   isOpen: PropTypes.bool,
   virtual: PropTypes.bool,
-
   wrapOptionText: PropTypes.bool,
 }
 

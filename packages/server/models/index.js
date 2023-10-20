@@ -7,6 +7,7 @@ const Team = require('./team/team.model')
 const User = require('./user/user.model')
 const List = require('./list/list.model')
 const ListMember = require('./listMember/listMember.model')
+const ComplexItemSet = require('./complexItemSet/complexItemSet.model')
 
 module.exports = {
   Question,
@@ -17,4 +18,5 @@ module.exports = {
   Identity,
   List,
   ListMember,
+  ComplexItemSet,
 }

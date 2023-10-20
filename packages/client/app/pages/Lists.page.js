@@ -8,6 +8,7 @@ import {
   EDIT_LIST,
   DELETE_LISTS,
   EXPORT_LIST,
+  EXPORT_LIST_QTI,
 } from '../graphql'
 
 const PAGE_SIZE = 10
@@ -47,6 +48,7 @@ const ListsPage = () => {
   })
 
   const [exportListMutation] = useMutation(EXPORT_LIST)
+  const [exportListToQTIMutation] = useMutation(EXPORT_LIST_QTI)
 
   const handleCreateList = title => {
     const mutationData = {
@@ -108,6 +110,28 @@ const ListsPage = () => {
       })
   }
 
+  const handleExportQTI = listId => {
+    const mutationData = {
+      variables: {
+        listId,
+        orderBy: 'custom',
+      },
+    }
+
+    return exportListToQTIMutation(mutationData)
+      .then(res => {
+        const filename = res.data.exportListQTI
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject(e.message)
+        })
+      })
+  }
+
   return (
     <MyLists
       currentPage={currentPage}
@@ -122,6 +146,7 @@ const ListsPage = () => {
       onCreateNewList={handleCreateList}
       onDeleteRows={handleDelete}
       onExport={handleExport}
+      onExportQTI={handleExportQTI}
       onPageChange={setCurrentPage}
       onRenameList={handleRenameList}
       onSearch={setSearchQuery}

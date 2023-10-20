@@ -1,8 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { lorem } from 'faker'
+import { lorem, name } from 'faker'
 import { range } from 'lodash'
+import { uuid } from '@coko/client'
 
 /**
  * Wrap components around this to show what they will look like
@@ -77,3 +78,15 @@ export const createData = (n, callback) => range(n).map(callback)
  */
 
 export const noop = () => {}
+
+/**
+ * Creates an array of length n of chat messages
+ */
+export const createMessages = n =>
+  createData(n, i => ({
+    content: lorem.sentences(2),
+    date: new Date().toISOString(),
+    own: randomPick([true, false]),
+    user: name.findName(),
+    id: uuid(),
+  }))

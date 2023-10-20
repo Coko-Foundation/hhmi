@@ -44,9 +44,7 @@ const AutoSaveIndicator = props => {
   if (!lastAutoSave) {
     text = <span>Autosaving is on</span>
     icon = <CheckOutlined />
-  }
-
-  if (autoSaving === false) {
+  } else if (autoSaving === false) {
     text = (
       <>
         <span>Last saved </span>
@@ -59,9 +57,7 @@ const AutoSaveIndicator = props => {
       </>
     )
     icon = <CheckOutlined />
-  }
-
-  if (autoSaving === true) {
+  } else if (autoSaving === true) {
     text = <span>Saving...</span>
     icon = <LoadingOutlined />
   }

@@ -1,0 +1,145 @@
+const {
+  BaseModel,
+  modelTypes: { boolean, objectNullable, stringNullable },
+} = require('@coko/server')
+
+const cloneDeep = require('lodash/cloneDeep')
+const { applyListQueryOptions, extractDocumentText } = require('../helpers')
+const QuestionVersion = require('../question/question.model')
+const User = require('../user/user.model')
+
+class ComplexItemSet extends BaseModel {
+  static get tableName() {
+    return 'complexItemSets'
+  }
+
+  constructor(properties) {
+    super(properties)
+    this.type = 'complexItemSet'
+  }
+
+  static get relationMappings() {
+    return {
+      questions: {
+        relation: BaseModel.HasManyRelation,
+        modelClass: QuestionVersion,
+        join: {
+          from: 'complexItemSets.id',
+          to: 'questionVersions.complexItemSetId',
+        },
+      },
+    }
+  }
+
+  $parseJson(json, opt) {
+    const data = super.$parseJson(json, opt)
+
+    // transform stringified wax content to json before storing in the db
+    if (data.leadingContent && typeof data.leadingContent === 'string') {
+      data.leadingContent = JSON.parse(data.leadingContent)
+
+      // clean up potentially invalid src attribute from data
+      // (urls from the file server expire and will be generated on fetch)
+      if (data.leadingContent) {
+        const cleanUpUrls = node => {
+          if (!node.content) return node
+
+          const modifiedNode = cloneDeep(node)
+
+          modifiedNode.content = node.content.map(item => {
+            if (item.type === 'figure') {
+              const clonedItem = cloneDeep(item)
+              const { src } = clonedItem.content[0].attrs
+
+              // make sure non-url existing images are not deleted
+              if (src.startsWith('data:image')) return item
+
+              clonedItem.content[0].attrs.src = null
+              return clonedItem
+            }
+
+            return cleanUpUrls(item)
+          })
+
+          return modifiedNode
+        }
+
+        data.leadingContent = cleanUpUrls(data.leadingContent)
+      }
+
+      data.contentText = extractDocumentText(data.leadingContent)
+    }
+
+    return data
+  }
+
+  static get schema() {
+    return {
+      properties: {
+        title: stringNullable,
+        leadingContent: objectNullable,
+        contentText: stringNullable,
+        isPublished: boolean,
+      },
+    }
+  }
+
+  static async filterByQueryString(searchQuery, options) {
+    const query = ComplexItemSet.query(options.trx).select('*')
+
+    if (searchQuery) {
+      query
+        .where('title', 'ilike', `%${searchQuery}%`)
+        .orWhere('content_text', 'ilike', `%${searchQuery}%`)
+    }
+
+    return applyListQueryOptions(query, options)
+  }
+
+  static async filterSetsForUser(userId, searchQuery, options) {
+    // userId will be null if user is not logged in or only public sets were requested
+    if (!userId) {
+      return ComplexItemSet.query().select('*').where('isPublished', true)
+    }
+
+    // otherwise, filter sets according to role
+    const userTeams = await User.getTeams(userId)
+
+    const isEditor = userTeams.some(
+      team =>
+        team.global &&
+        (team.role === 'editor' || team.role === 'handlingEditor'),
+    )
+
+    const authoredSets = userTeams
+      .filter(
+        team => team.role === 'author' && team.objectType === 'complexItemSet',
+      )
+      .map(team => team.objectId)
+
+    const query = ComplexItemSet.query()
+
+    if (isEditor) {
+      query.select('*')
+    } else {
+      query
+        .select('*')
+        .where(builder =>
+          builder.where('isPublished', true).orWhereIn('id', authoredSets),
+        )
+    }
+
+    if (searchQuery) {
+      query.andWhere(builder =>
+        builder
+          .where('title', 'ilike', `%${searchQuery}%`)
+          .orWhere('content_text', 'ilike', `%${searchQuery}%`),
+      )
+    }
+
+    // paginate result only if options were passed
+    return options ? applyListQueryOptions(query, options) : query
+  }
+}
+
+module.exports = ComplexItemSet

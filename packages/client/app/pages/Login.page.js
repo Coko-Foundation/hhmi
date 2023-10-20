@@ -19,6 +19,7 @@ const LoginPage = () => {
         biointeractiveOathRedirectUri,
       } = {},
     } = {},
+    loading: loadingConfig,
   } = useQuery(GET_LOGIN_CONFIG)
 
   const [emailLoginMutation, { data, loading, error }] =
@@ -31,7 +32,7 @@ const LoginPage = () => {
   const login = formData => {
     const mutationData = {
       variables: {
-        input: formData,
+        input: { ...formData, email: formData.email.toLowerCase() },
       },
     }
 
@@ -39,6 +40,12 @@ const LoginPage = () => {
   }
 
   const handleBioInteractiveClick = () => {
+    if (!biointeractiveOathClientId || !biointeractiveOathRedirectUri) {
+      // eslint-disable-next-line no-alert
+      alert('Biointeractive SSO is disabled for this site')
+      return
+    }
+
     setBioInteractiveLoading(true)
 
     const oauthState = uuid()
@@ -78,6 +85,7 @@ const LoginPage = () => {
       errorMessage={errorMessage}
       hasError={!!error}
       loading={loading}
+      loadingConfig={loadingConfig}
       onBioInteractiveClick={handleBioInteractiveClick}
       onSubmit={login}
       showEmailOption={showEmailLogin}

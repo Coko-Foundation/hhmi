@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import { uuid, th, grid } from '@coko/client'
 
 import { DateParser } from '@pubsweet/ui'
+import { LinkOutlined } from '@ant-design/icons'
+
 import WaxWrapper from '../wax/Wax'
 import { DashLayout } from '../wax/layout'
 import { dashConfig } from '../wax/config'
@@ -14,6 +16,7 @@ import Status from './Status'
 
 const Wrapper = styled.article`
   background-color: inherit;
+  container: question-item / inline-size;
   line-height: ${th('lineHeight')};
   padding: ${grid(4)} ${grid(3)};
   position: relative;
@@ -42,12 +45,14 @@ const WaxContainer = styled(Link)`
 `
 
 const StatusContainer = styled.div`
-  min-width: 115px;
-  text-align: right;
+  /* min-width: 115px; */
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 0 0 0.7rem 0.7rem;
 `
 
-const SecondRow = styled.div`
-  justify-content: space-evenly;
+const InfoRow = styled.div`
   margin-bottom: ${grid(2)};
 
   details {
@@ -81,27 +86,13 @@ const SecondRow = styled.div`
   }
 `
 
-const BottomRow = styled.table`
+const MetadataTable = styled.table`
   border: none;
-  /* text-align: left; */
   width: 100%;
 
   th,
   td {
     border: none;
-  }
-
-  @media (min-width: ${th('mediaQueries.small')}) {
-    tbody {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-
-      tr {
-        display: flex;
-        flex-direction: column;
-      }
-    }
   }
 `
 
@@ -112,10 +103,6 @@ const MetadataLabel = styled.div`
 
 const MetadataValue = styled.td`
   text-align: right;
-
-  @media (min-width: ${th('mediaQueries.small')}) {
-    text-align: left;
-  }
 `
 
 const courseOrder = [
@@ -131,11 +118,42 @@ const sortFunction = (a, b) =>
   courseOrder.indexOf(a.course.label) - courseOrder.indexOf(b.course.label)
 
 const QuestionItem = props => {
-  const { className, metadata, content, status, href, id, courses, state } =
-    props
+  const {
+    className,
+    metadata,
+    content,
+    status,
+    assigned,
+    href,
+    id,
+    courses,
+    state,
+    complexItemSet,
+  } = props
 
   return (
     <Wrapper className={className} id={id}>
+      {/* inject a style tag with @container rule, not yet supported by our current version of styled-components */}
+      <style type="text/css">
+        {`
+              @container question-item (inline-size > 600px) {
+                tbody {
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: space-between;
+                }
+                tbody tr {
+                    display: flex;
+                    flex: 1 1 0px;
+                    flex-direction: column;
+  
+                  }
+                  tbody tr td:nth-child(2) {
+                    text-align: left;
+                  }
+              }
+        `}
+      </style>
       <FirstRow>
         <WaxContainer
           data-testid="wax-container"
@@ -154,12 +172,16 @@ const QuestionItem = props => {
         </WaxContainer>
         {status ? (
           <StatusContainer>
-            <Status data-testid="question-status" status={status} />
+            <Status
+              assigned={assigned}
+              data-testid="question-status"
+              status={status}
+            />
           </StatusContainer>
         ) : null}
       </FirstRow>
 
-      <SecondRow data-testid="courses">
+      <InfoRow data-testid="courses">
         {courses.sort(sortFunction).map(c => {
           return !c.course ? (
             <span key={uuid()}>Unknown course</span>
@@ -176,9 +198,17 @@ const QuestionItem = props => {
             </details>
           )
         })}
-      </SecondRow>
+      </InfoRow>
 
-      <BottomRow>
+      {complexItemSet && (
+        <InfoRow>
+          <Link to={complexItemSet.href}>
+            <LinkOutlined /> {complexItemSet.title}
+          </Link>
+        </InfoRow>
+      )}
+
+      <MetadataTable>
         <tbody>
           {metadata &&
             metadata.length &&
@@ -202,7 +232,7 @@ const QuestionItem = props => {
               </tr>
             ))}
         </tbody>
-      </BottomRow>
+      </MetadataTable>
     </Wrapper>
   )
 }
@@ -219,6 +249,7 @@ QuestionItem.propTypes = {
     content: PropTypes.arrayOf(PropTypes.shape()),
   }),
   status: PropTypes.string,
+  assigned: PropTypes.bool,
   href: PropTypes.string,
   id: PropTypes.string,
   courses: PropTypes.arrayOf(
@@ -233,15 +264,21 @@ QuestionItem.propTypes = {
     }),
   ),
   state: PropTypes.shape(),
+  complexItemSet: PropTypes.shape({
+    href: PropTypes.string,
+    title: PropTypes.string,
+  }),
 }
 
 QuestionItem.defaultProps = {
   content: null,
-  status: '',
+  status: null,
+  assigned: false,
   href: '#',
   id: uuid(),
   courses: [],
   state: null,
+  complexItemSet: null,
 }
 
 export default QuestionItem

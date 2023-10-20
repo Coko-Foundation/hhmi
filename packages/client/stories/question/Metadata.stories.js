@@ -11,10 +11,12 @@ import {
   metadataApiToUi,
 } from '../../app/utilities/question/metadataTransformations'
 import { initialMetadataValues } from '../../app/utilities/question/initialValues'
+import complexItemSet from '../../app/utilities/question/complexItemSets'
 
 export const Author = () => {
   return (
     <Metadata
+      complexItemSetOptions={complexItemSet}
       metadata={metadataTransformer(metadata)}
       onFormFinish={() => console.log('on form finish')}
       resources={resources}
@@ -30,6 +32,7 @@ export const Editor = args => {
       <Checkbox onChange={() => setEditable(!editable)}>Editable</Checkbox>
       <Metadata
         {...args}
+        complexItemSetOptions={complexItemSet}
         editorView
         initialValues={metadataApiToUi(initialMetadataValues)}
         metadata={metadataTransformer(metadata)}

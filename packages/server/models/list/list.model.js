@@ -92,6 +92,7 @@ class List extends BaseModel {
         'questions.*',
         'question_versions.publication_date',
         'question_versions.content_text',
+        'question_versions.complex_item_set_id',
       )
       .distinctOn('questions.id')
       .where({
@@ -133,10 +134,39 @@ class List extends BaseModel {
       }),
     ])
 
-    return {
+    const questions = {
       ...response[0],
       relatedQuestionsIds: response[1],
     }
+
+    // fix order of questions to group set questions together if order is 'custom'
+    if (options.orderBy === 'custom') {
+      const complexItemSets = questions.result.map(q => q.complexItemSetId)
+      const uniqueSets = [...new Set(complexItemSets)].filter(s => !!s)
+
+      if (uniqueSets.length) {
+        const map = new Map()
+        uniqueSets.forEach(key => {
+          map.set(
+            key,
+            questions.result.filter(q => q.complexItemSetId === key),
+          )
+        })
+
+        const questionsSorted = []
+        questions.result.forEach(q => {
+          if (q.complexItemSetId === null) {
+            questionsSorted.push(q)
+          } else if (map.get(q.complexItemSetId)) {
+            questionsSorted.push(map.get(q.complexItemSetId))
+            map.delete(q.complexItemSetId)
+          }
+        })
+        questions.result = questionsSorted.flat()
+      }
+    }
+
+    return questions
   }
 }
 
