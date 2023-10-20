@@ -30,7 +30,7 @@ const StyledHeader = styled.header`
   justify-content: space-between;
   padding-left: 0;
   width: 100%;
-  z-index: 1;
+  z-index: 9999;
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
     justify-content: unset;
@@ -79,6 +79,7 @@ const Navigation = styled.nav`
   height: ${th('mobileLogoHeight')};
   justify-content: center;
   overflow: visible;
+  z-index: 9999;
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
     background-color: #0000;

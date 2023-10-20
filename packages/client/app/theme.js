@@ -11,6 +11,7 @@ module.exports = {
   colorPrimaryBorder: '#71ada9',
 
   colorInfo: '#178387',
+  colorChat: '#178369',
   colorSuccess: '#00763a',
   colorSuccessAlt: '#48a535',
   colorError: '#d43131',

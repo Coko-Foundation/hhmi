@@ -40,3 +40,17 @@ export const dashboardEditorFilters = [
   //   ],
   // },
 ]
+
+export const notificationMessageFilters = [
+  {
+    key: { label: 'Unread', value: 'unreadmention', badgeBg: theme.colorChat },
+    values: [
+      { label: 'Is', value: true, badgeBg: theme.colorChat },
+      { label: 'Is not', value: false, badgeBg: theme.colorErrorAlt },
+    ],
+  },
+  {
+    key: { label: 'From', value: 'messageAuthor' },
+    values: [{ label: '%', value: '%', badgeBg: theme.colorChat }],
+  },
+]
