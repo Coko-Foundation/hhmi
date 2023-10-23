@@ -1,36 +1,39 @@
 /* stylelint-disable string-quotes */
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { th } from '@coko/client'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { name, lorem } from 'faker'
-import { useLocation } from 'react-router-dom/cjs/react-router-dom.min'
-import { List, TabsStyled, Search } from '../ui'
-import userIcon from '../../static/user-icon.svg'
+import { List, TabsStyled, Search, Button, Checkbox } from '../ui'
+import userIcon from '../../static/user.svg'
 import { notificationMessageFilters } from '../ui/_helpers/searchFilters'
 import theme from '../theme'
+import { alpha } from '../ui/_helpers/themeUtils'
+import { NotificationsContext } from '../ui/_helpers/NotificationsProvider'
 
 const StyledTabs = styled(TabsStyled)`
   height: 100%;
   width: 100%;
 
   .ant-tabs-nav {
+    background-color: #fff;
     padding: 0.5rem 0.2rem 0;
   }
 
+  .ant-tabs-nav-list .ant-tabs-tab,
   .ant-tabs-nav-list .ant-tabs-tab [role='tab'] {
     border-radius: 0.5rem 0.5rem 0 0;
-    box-shadow: 0 0 10px #0003;
-    margin-bottom: -2px;
-    padding: 0.5rem 1rem;
+    margin: 0 0 0 0.2rem;
+    padding: 0.3rem 1rem;
 
     &:focus {
+      color: #f0f8fa;
       outline: none;
     }
   }
 
   .ant-tabs-nav-list .ant-tabs-tab.ant-tabs-tab-active {
+    background-color: ${th('colorPrimary')};
     border-radius: 0.5rem 0.5rem 0 0;
+    color: ${th('colorBackground')};
   }
 
   .ant-tabs-content-holder {
@@ -54,15 +57,19 @@ const Wrapper = styled.span`
 const StyledHeader = styled.header`
   --bg: #fff;
   align-items: center;
-  background-image: linear-gradient(to bottom, #fff 90%, #e6e6e6 100%);
-  box-shadow: 0 12px 15px #0005;
+  background-image: linear-gradient(
+    to bottom,
+    ${th('colorPrimary')} 85%,
+    ${th('colorSecondary')} 100%
+  );
+  box-shadow: 0 15px 15px #0000000a;
   display: flex;
   gap: 1rem;
   height: fit-content;
   margin: 0;
-  padding: 1rem;
+  padding: 1rem 3rem;
   position: fixed;
-  width: 100vw;
+  width: 100%;
   z-index: 999;
 
   > * {
@@ -71,72 +78,96 @@ const StyledHeader = styled.header`
 `
 
 const StyledList = styled(List)`
+  background-color: ${th('colorBackground')};
   margin-top: ${p => p.$marginTop};
-
-  & :last-of-type(li) {
-    margin-bottom: 12px;
-  }
 `
 
 const ListItem = styled.div`
   align-items: center;
-  background-color: ${th('colorChat')};
+  background-color: #fff0;
+  box-shadow: inset 0 0 10px #0001;
   display: flex;
-  flex-direction: column;
+  gap: 1rem;
   justify-content: center;
-  padding-top: 12px;
+  outline: 1px solid #0001;
+  padding: 15px 0;
   width: 100%;
+
+  &[aria-selected='true'] {
+    background-color: #eee;
+  }
 `
 
 const ListItemContent = styled.span`
   align-items: center;
-  background-color: #fff;
+  background-color: ${p => (p.$unread ? '#fffe' : '#fffe')};
   border: 1px solid ${th('colorChat')};
   border-radius: 1.5rem 0.4rem 0.4rem 1.5rem;
-  box-shadow: 0 0 15px #0004, inset 0 0 15px #0003;
+  box-shadow: 0 0 10px #0003, inset 0 0 8px #0002;
+  cursor: pointer;
   display: flex;
-  gap: 2ch;
   justify-content: space-between;
-  margin: 0.1rem 0;
   padding: 0.2rem 1rem;
-  width: 95%;
+  transition: transform 0.3s;
+  user-select: none;
+  width: 90%;
+
+  @media screen and (max-width: ${th('mediaQueries.large')}) {
+    width: 90%;
+  }
 `
 
 const MessageContent = styled.span`
   align-items: center;
   display: flex;
   gap: 1ch;
+  position: relative;
   white-space: nowrap;
   width: 80%;
 `
 
 const MessageSender = styled.p`
-  border-right: 1px solid ${th('colorChat')};
+  border-right: 1px solid ${alpha('colorChat', 0.7)};
   color: ${th('colorChat')};
   display: flex;
+  flex-direction: column;
   font-weight: bold;
   height: 100%;
   margin: 0;
-  padding: 0.5rem 0.5rem 0.5rem 0;
+  padding: 0 0.3rem;
+  width: 115px;
 `
 
 const MessageContentText = styled.p`
   overflow: hidden;
+  padding-left: 0.5rem;
   text-overflow: ellipsis;
   width: 30%;
 `
 
 const ListItemContentDate = styled.span`
   > p {
+    border-left: 1px solid ${alpha('colorChat', 0.2)};
     margin: 0;
-    padding: 0;
+    padding-left: 0.8rem;
     white-space: nowrap;
   }
 `
 
+const MarkAsRead = styled(Button)`
+  margin: 5px;
+`
+
 // eslint-disable-next-line react/prop-types
-const MessageNotificationsBlock = ({ messages }) => {
+const MessageNotificationsBlock = () => {
   const $header = useRef(null)
+  const [headerHeight, setHeaderHeight] = useState('')
+  const { mentions, setUpdated } = useContext(NotificationsContext)
+
+  useEffect(() => {
+    $header?.current &&
+      setHeaderHeight(`${$header.current.getBoundingClientRect().height}px`)
+  }, [$header])
 
   return (
     <Wrapper>
@@ -144,38 +175,99 @@ const MessageNotificationsBlock = ({ messages }) => {
         <Search filters={notificationMessageFilters} withFilters />
       </StyledHeader>
       <StyledList
-        $marginTop={
-          $header?.current &&
-          `${$header.current.getBoundingClientRect().height}px`
+        $marginTop={headerHeight}
+        dataSource={mentions}
+        id="mentions-list"
+        footerContent={
+          <MarkAsRead
+            onClick={() => {
+              setUpdated()
+              document
+                .querySelector('#mentions-list')
+                .querySelectorAll('[aria-selected="true"]')
+                .forEach((el, i) => {
+                  el.setAttribute('aria-selected', 'false')
+                })
+            }}
+            type="primary"
+          >
+            Mark as Read
+          </MarkAsRead>
         }
-        dataSource={messages}
+        // itemSelection
         pagination={{
           pageSize: 10,
         }}
-        renderItem={({ from, content, date, id }) => {
+        renderItem={message => {
+          const itemRef = useRef(null)
+          const [ariaSelected, setAriaSelected] = useState(false)
+
+          const isSelected = () =>
+            itemRef?.current?.getAttribute('aria-selected') === 'true'
+
+          const { from, content, date, id, unread } = message
           const senderName = from.split(' ')
           const [day, hours] = date.split(',')
+
+          // useEffect(() => {
+          //   itemRef?.current &&
+          //     itemRef?.current?.setAttribute(
+          //       'aria-selected',
+          //       ariaSelected.toString(),
+          //     )
+          // }, [ariaSelected, message])
+
           return (
-            <ListItem key={id * 4}>
-              <ListItemContent>
+            <ListItem
+              ariaSelected={() => isSelected()}
+              data-id={id}
+              key={id}
+              onClick={() => {
+                itemRef?.current?.getAttribute('aria-selected') === 'true'
+                  ? itemRef?.current?.setAttribute('aria-selected', 'false')
+                  : itemRef?.current?.setAttribute('aria-selected', 'true')
+                setAriaSelected(
+                  Boolean(itemRef?.current?.getAttribute('aria-selected')),
+                )
+              }}
+              ref={itemRef}
+            >
+              <Checkbox checked={isSelected()} />
+              <ListItemContent $unread={unread}>
                 <MessageContent>
-                  {/* <Checkbox /> */}
+                  <span
+                    style={{
+                      position: 'absolute',
+                      color: theme.colorBackground,
+                      border: '1px solid #990000',
+                      backgroundColor: theme.colorError,
+                      boxShadow: '0 0 7px #0003',
+                      fontWeight: 'bold',
+                      transition: 'transform 0.3s',
+                      transform: `scale(${unread ? '1' : '0'})`,
+                      borderRadius: '0.6rem',
+                      padding: '0.1rem .4rem',
+                      top: '-1rem',
+                      left: '-1.8rem',
+                      fontSize: theme.fontSizeBaseSmallest,
+                    }}
+                  >
+                    UNREAD
+                  </span>
                   <img
                     alt={`user-${senderName[0]}`}
                     src={userIcon}
                     style={{
-                      width: '35px',
-                      height: '35px',
+                      width: '40px',
+                      height: '40px',
                       borderRadius: '50%',
-                      border: `1px solid ${theme.colorChat}`,
+                      border: `3px double ${theme.colorChat}`,
                       margin: '0',
                     }}
                   />
                   <MessageSender>
-                    {senderName.length === 3
-                      ? `${senderName[0]} ${senderName[1]}`
-                      : `${senderName[0]}`}
-                    :
+                    <small>from:</small>
+                    {senderName[0]}
                   </MessageSender>
                   <MessageContentText>{`${content}`}</MessageContentText>
                 </MessageContent>
@@ -187,56 +279,28 @@ const MessageNotificationsBlock = ({ messages }) => {
             </ListItem>
           )
         }}
+        // showTotalCount
+        // showSearch
       />
     </Wrapper>
   )
 }
 
-const fakeMessages = length => {
-  const lngth = Array.from({ length })
-  const messages = []
-  lngth.forEach((e, i) => {
-    messages[i] = {
-      id: i,
-      from: `@${name.findName()}`,
-      content: lorem.words(15),
-      date: new Date().toLocaleString(),
-      unread: true,
-    }
-  })
-  return messages
-}
-
 // eslint-disable-next-line react/prop-types
-const NotificationPage = ({ currentTabKey }) => {
-  const fakesmsgs = fakeMessages(33)
-  const location = useLocation()
-  const [currentTab, setCurrentTab] = useState(currentTabKey)
-
-  useEffect(() => {
-    if (location) {
-      const tmp = location.pathname.slice(
-        location.pathname.lastIndexOf('/') + 1,
-      )
-
-      setCurrentTab(tmp)
-    }
-  }, [location])
+const NotificationPage = () => {
+  const { tabKey } = useContext(NotificationsContext)
 
   const tabs = [
     {
       label: '@mentions',
-      key: 'messages',
-      children: <MessageNotificationsBlock messages={fakesmsgs} />,
+      key: 'mentions',
+      children: <MessageNotificationsBlock />,
     },
     {
       label: 'Tasks Notifications',
       key: 'tasks',
       children: (
-        <List
-          dataSource={fakesmsgs}
-          renderItem={({ content }) => <p>{content}</p>}
-        />
+        <List dataSource={[]} renderItem={({ content }) => <p>{content}</p>} />
       ),
     },
   ]
@@ -244,7 +308,7 @@ const NotificationPage = ({ currentTabKey }) => {
   return (
     <StyledTabs
       // activeKey={currentTab}
-      defaultActiveKey={currentTab}
+      defaultActiveKey={tabKey}
       items={tabs.map(t => t)}
       type="line"
     />

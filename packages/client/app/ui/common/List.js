@@ -103,6 +103,7 @@ const StyledLoader = styled(Indicator)`
 `
 
 const FooterWrapper = styled.div`
+  background-color: ${th('colorBackground')};
   border: 1px solid ${th('colorBorder')};
   display: flex;
   justify-content: space-between;

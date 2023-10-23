@@ -107,10 +107,7 @@ export const NotificationIcon = ({
 }
 
 CounterBadge.propTypes = {
-  counts: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.arrayOf(PropTypes.any),
-  ]),
+  counts: PropTypes.oneOfType([PropTypes.any]),
   $pos: PropTypes.string,
 }
 CounterBadge.defaultProps = {
@@ -126,16 +123,13 @@ CounterWrapper.defaultProps = {
 
 CounterWrapper.propTypes = {
   children: PropTypes.node,
-  counts: PropTypes.oneOfType([
-    PropTypes.number,
-    PropTypes.arrayOf(PropTypes.any),
-  ]),
+  counts: PropTypes.oneOfType([PropTypes.any]),
   Component: PropTypes.elementType,
 }
 
 NotificationIcon.propTypes = {
   iconSrc: PropTypes.string,
-  pending: PropTypes.oneOfType([PropTypes.object]),
+  pending: PropTypes.oneOfType([PropTypes.array]),
   onClick: PropTypes.func,
 }
 

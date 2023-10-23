@@ -1,5 +1,5 @@
 /* stylelint-disable string-quotes */
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -9,7 +9,7 @@ import logoMobile from '../../../static/hhmi-logo-white-sm.svg'
 import manageTeamIcon from '../../../static/team.svg'
 import manageUserIcon from '../../../static/manageuser.svg'
 import pendingTasksIcon from '../../../static/taskIcon.svg'
-import notificationIcon from '../../../static/notificationIcon.svg'
+import messagesIcon from '../../../static/messagesIcon.svg'
 import userIcon from '../../../static/user-icon.svg'
 import logo from '../../../static/hhmi-ab-logo-sm.svg'
 import menuOpen from '../../../static/waffle-white.svg'
@@ -19,6 +19,7 @@ import Button from './Button'
 import useWindowSize from '../_helpers/useWindowSize'
 import useKeyboardOnList from '../_helpers/useKeyboardOnList'
 import { CounterBadge, NotificationIcon } from './NotificationIcon'
+import { NotificationsContext } from '../_helpers/NotificationsProvider'
 
 // #region styles
 const StyledHeader = styled.header`
@@ -578,7 +579,9 @@ const StyledIcon = styled.img`
 `
 
 // eslint-disable-next-line react/prop-types
-const PendingTasksAndMentions = ({ tasks, messages, mediaBreak, to }) => {
+const PendingTasksAndMentions = ({ tasks, mediaBreak, to }) => {
+  const { fakePendingMsgs, setTabKey } = useContext(NotificationsContext)
+
   return (
     <span
       style={{
@@ -596,14 +599,16 @@ const PendingTasksAndMentions = ({ tasks, messages, mediaBreak, to }) => {
     >
       <span style={{ display: 'flex' }}>
         <NotificationIcon
-          iconSrc={notificationIcon}
-          pending={messages}
-          to={to[0]}
+          iconSrc={messagesIcon}
+          pending={fakePendingMsgs}
+          onClick={() => setTabKey('mentions')}
+          to={to}
         />
         <NotificationIcon
           iconSrc={pendingTasksIcon}
           pending={tasks}
-          to={to[1]}
+          onClick={() => setTabKey('tasks')}
+          to={to}
         />
       </span>
     </span>
@@ -624,8 +629,9 @@ const Header = props => {
   } = props
 
   // to be removed
-  const fakePendingMsgs = [1, 1, 1, 1]
-  const fakePendingTsks = [1, 1, 1, 1, 1, 1, 1]
+  const { fakePendingMsgs } = useContext(NotificationsContext)
+
+  const fakePendingTsks = []
   const pendingTotal = [...fakePendingTsks, ...fakePendingMsgs]
   const { width: windowWidth } = useWindowSize()
 
@@ -690,9 +696,8 @@ const Header = props => {
     userLinks: [
       {
         Component: PendingTasksAndMentions,
-        link: [links.messages, links.tasks],
+        link: links.notifications,
         mediaBreak: windowWidth >= 1200,
-        messages: fakePendingMsgs,
         tasks: fakePendingTsks,
       },
       {
