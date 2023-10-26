@@ -26,6 +26,7 @@ const SearchWrapper = styled.div`
     ${p => (p.$visualfocus ? th('colorPrimaryBorder') : '#0000')};
   outline-offset: 1px;
   position: relative;
+  width: 100%;
 
   & .ant-input-wrapper {
     display: flex;

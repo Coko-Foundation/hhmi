@@ -13,14 +13,14 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
   </span>,
   <div
     aria-label="Searchbox"
-    className="sc-fsQiph cLbOnF"
+    className="sc-fsQiph hnfRIc"
     data-testid="search-filtered"
     onBlur={[Function]}
     onFocus={[Function]}
     onKeyDown={[Function]}
   >
     <div
-      className="sc-iAEyYk fNzsdK"
+      className="sc-iAEyYk ixAChZ"
     >
       <span
         id="filterlistlabel"
@@ -109,7 +109,7 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
       </ul>
     </div>
     <span
-      className="sc-eDDNvR hmbfrf"
+      className="sc-eDDNvR kcaZur"
     >
       <span
         aria-label="filter"
@@ -140,7 +140,7 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
         }
       >
         <div
-          className="sc-jTrPJq fMrUyv"
+          className="sc-jTrPJq gpwHtB"
           tabIndex={-1}
         >
           <span
@@ -169,7 +169,7 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
         </div>
         <div
           aria-label="undefined undefined"
-          className="sc-jTrPJq fMrUyv"
+          className="sc-jTrPJq gpwHtB"
           tabIndex={-1}
         >
           <span
@@ -208,7 +208,7 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
         }
       >
         <div
-          className="sc-jTrPJq fMrUyv"
+          className="sc-jTrPJq gpwHtB"
           tabIndex={-1}
         >
           <span
@@ -237,7 +237,7 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
         </div>
         <div
           aria-label="undefined undefined"
-          className="sc-jTrPJq fMrUyv"
+          className="sc-jTrPJq gpwHtB"
           tabIndex={-1}
         >
           <span
