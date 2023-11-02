@@ -203,10 +203,10 @@ const ComplexItemSet = props => {
       tabBarExtraContent={
         id ? (
           <StyledButton
-            aria-label="Add question to this set"
+            aria-label="Add item to this set"
             icon={<PlusOutlined />}
             onClick={onCreateQuestion}
-            title="Add question to this set"
+            title="Add item to this set"
             type="primary"
           >
             Add item to this set

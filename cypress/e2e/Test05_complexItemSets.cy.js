@@ -90,7 +90,7 @@ describe('Complex item set', () => {
     cy.contains('div', 'Complex item set updated successfully')
   })
 
-  context('add question to list', () => {
+  context('add item to list', () => {
     before(() => {
       cy.seedComplexItemSet(
         disableScripts,
@@ -100,7 +100,7 @@ describe('Complex item set', () => {
       )
     })
 
-    it('with "Add question to this set" button', () => {
+    it('with "Add item to this set" button', () => {
       cy.get(anchorTags.sets).click()
       cy.wait('@GQLReq')
 
@@ -108,7 +108,7 @@ describe('Complex item set', () => {
         .eq(2)
         .contains('h2', complexItemSet3.title)
         .click()
-      cy.get('button[title="Add question to this set"]').click()
+      cy.get('button[title="Add item to this set"]').click()
 
       // [segment]: checking if the leading content is displayed above the editor
       cy.log('checking if the leading content is displayed above the editor...')
