@@ -288,7 +288,7 @@ const Metadata = React.forwardRef((props, ref) => {
         >
           <Form.Item name="belongsToComplexItemSet" valuePropName="checked">
             <Checkbox data-testid="belongs-to-set-checkbox" disabled={readOnly}>
-              This question belongs to a Complex Item Set{' '}
+              This item belongs to a Complex Item Set{' '}
             </Checkbox>
           </Form.Item>
 
