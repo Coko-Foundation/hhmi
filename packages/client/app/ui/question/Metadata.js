@@ -322,9 +322,9 @@ const Metadata = React.forwardRef((props, ref) => {
           </Form.Item>
 
           <Form.Item
-            label="Question Type"
+            label="Item Type"
             name="questionType"
-            rules={[{ required: true, message: 'Question type is required' }]}
+            rules={[{ required: true, message: 'Item type is required' }]}
           >
             <Select
               // allowClear

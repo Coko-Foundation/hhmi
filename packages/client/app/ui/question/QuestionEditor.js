@@ -36,12 +36,19 @@ const SubmitTestBar = styled.div`
 `
 
 const MissingQuestionTypeAlert = styled.div`
-  border: 1px solid ${th('colorBorder')};
-  inset-block-start: 40%;
-  inset-inline-start: 50%;
-  padding: ${grid(4)};
+  background-color: rgba(200 200 200 / 25%);
+  inset: 0;
   position: absolute;
-  transform: translate(-50%, -50%);
+
+  > span {
+    background-color: ${th('colorBackground')};
+    border: 1px solid ${th('colorBorder')};
+    inset-block-start: 40%;
+    inset-inline-start: 50%;
+    padding: ${grid(4)};
+    position: absolute;
+    transform: translate(-50%, -50%);
+  }
 `
 // #endregion styled
 
@@ -163,7 +170,9 @@ const QuestionEditor = props => {
 
       {!selectedQuestionType && (
         <MissingQuestionTypeAlert data-testid="missing-question-text">
-          Please select an item type in the metadata form to start editing
+          <span>
+            Please select an item type in the metadata form to start editing
+          </span>
         </MissingQuestionTypeAlert>
       )}
     </EditorWrapper>
