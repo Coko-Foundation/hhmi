@@ -16,13 +16,6 @@ input FilterTeamMembersInput {
   page: Int
 }
 
-input FilterTeamMembersInput {
-  orderBy: String
-  ascending: Boolean
-  pageSize: Int
-  page: Int
-}
-
 extend type Query {
   getNonTeamMemberUsers(teamId: ID!, term: String!): [User!]!
   filterGlobalTeamMembers(
