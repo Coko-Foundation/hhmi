@@ -871,7 +871,7 @@ const questionTypes = [
         {
           type: 'multiple_choice_container',
           attrs: {
-            id: '3750db93-b005-48f6-93e3-e589404a0257',
+            id: '6cc4ae72-7782-4a24-804c-a368773d0e5f',
             class: 'multiple-choice',
           },
           content: [
@@ -879,28 +879,52 @@ const questionTypes = [
               type: 'question_node_multiple',
               attrs: {
                 class: 'multiple-choice-question',
-                id: '8325dfb6-9bef-446d-a144-b064f796d8f3',
+                id: 'd09c128d-394c-45d8-8efc-bc2b434c90d2',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
             {
               type: 'multiple_choice',
               attrs: {
                 class: 'multiple-choice-option',
-                id: '2fcdf010-63bb-4802-8d5e-69103acdb358',
+                id: '21162f4d-5439-41e4-8003-90def1cfa096',
                 correct: false,
                 answer: false,
                 feedback: '',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
             {
               type: 'multiple_choice',
               attrs: {
                 class: 'multiple-choice-option',
-                id: '5db539f3-bcf7-4c34-8959-3c2339887085',
+                id: 'e88f1932-ea96-470c-aae2-f02c3eecbc2d',
                 correct: false,
                 answer: false,
                 feedback: '',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
           ],
         },
@@ -914,9 +938,15 @@ const questionTypes = [
       type: 'doc',
       content: [
         {
+          type: 'paragraph',
+          attrs: {
+            class: 'paragraph',
+          },
+        },
+        {
           type: 'multiple_choice_single_correct_container',
           attrs: {
-            id: '690d139c-2943-4ef1-b46c-39e60d178f5f',
+            id: '44256b39-ee94-4e5d-a57a-7c7c8b090f78',
             class: 'multiple-choice-single-correct',
             correctId: '',
           },
@@ -924,29 +954,53 @@ const questionTypes = [
             {
               type: 'question_node_multiple_single',
               attrs: {
-                id: '78206eac-a7b8-489b-9a22-54dceb0ee5dc',
+                id: 'f23c31fe-c75e-4aa0-b7ad-6cc8f604a5fe',
                 class: 'multiple-choice-question-single',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
             {
               type: 'multiple_choice_single_correct',
               attrs: {
                 class: 'multiple-choice-option-single-correct',
-                id: 'ef2ea29f-cfeb-4f32-8e1b-56fc03da22bb',
+                id: 'f6010347-9d69-43fc-a3f2-bf6567970950',
                 correct: false,
                 answer: false,
                 feedback: '',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
             {
               type: 'multiple_choice_single_correct',
               attrs: {
                 class: 'multiple-choice-option-single-correct',
-                id: '8c27c070-6162-46e4-8182-116f5750b049',
+                id: 'eac86aee-1dd4-480c-9d89-9c7cba050052',
                 correct: false,
                 answer: false,
                 feedback: '',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
           ],
         },
@@ -962,36 +1016,60 @@ const questionTypes = [
         {
           type: 'true_false_container',
           attrs: {
-            id: '2f147ccd-b0d4-4ca8-906b-53149b8925aa',
+            id: '8387f76a-6bc6-49a3-acd3-2aa2968548bd',
             class: 'true-false',
           },
           content: [
             {
               type: 'question_node_true_false',
               attrs: {
-                id: 'c316012f-4f19-4424-ad3c-a7608b5ef5eb',
+                id: '23f9edd8-1f27-47ad-be41-03b45ac73f0c',
                 class: 'true-false-question',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
             {
               type: 'true_false',
               attrs: {
                 class: 'true-false-option',
-                id: 'a17cefa1-5f97-4efc-8f94-dc6566e0f6fa',
+                id: 'dd6f91f8-d905-447b-8897-864a6dbd5f74',
                 correct: false,
                 answer: false,
                 feedback: '',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
             {
               type: 'true_false',
               attrs: {
                 class: 'true-false-option',
-                id: '3caf9851-fab3-4b01-bd5f-1245dacd0e30',
+                id: '16eecfc1-f4c3-43df-be33-e63cf67344d4',
                 correct: false,
                 answer: false,
                 feedback: '',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
           ],
         },
@@ -1007,36 +1085,60 @@ const questionTypes = [
         {
           type: 'true_false_single_correct_container',
           attrs: {
-            id: 'f1d58c09-99a3-413e-9f1e-866e927be72c',
+            id: 'c6441c72-8d0b-4502-9058-c3e096666ef2',
             class: 'true-false-single-correct',
           },
           content: [
             {
               type: 'question_node_true_false_single',
               attrs: {
-                id: '355e75f0-3d89-4d35-a932-7ec49f3602ce',
+                id: '2e6a4672-bfa0-4124-842a-8d64e3b17ca1',
                 class: 'true-false-question-single',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
             {
               type: 'true_false_single_correct',
               attrs: {
-                id: '96c042c6-cf58-4d7b-981e-607cb2551332',
+                id: '12d92d29-980a-4f32-9416-7cc64765ec41',
                 class: 'true-false-single-correct-option',
                 correct: false,
                 answer: false,
                 feedback: '',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
             {
               type: 'true_false_single_correct',
               attrs: {
-                id: '8620edc5-096a-4ac0-9d7d-1015bdc16632',
+                id: '5a63c5fe-0b88-4f77-ad82-4b958bb9f418',
                 class: 'true-false-single-correct-option',
                 correct: false,
                 answer: false,
                 feedback: '',
               },
+              content: [
+                {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
+                  },
+                },
+              ],
             },
           ],
         },
