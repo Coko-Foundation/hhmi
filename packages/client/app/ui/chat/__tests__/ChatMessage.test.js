@@ -2,6 +2,25 @@ import React from 'react'
 import ChatMessage from '../ChatMessage'
 import { axe, render, renderer, waitFor } from '../../../testUtils'
 
+const attachments = [
+  {
+    name: 'hhmi',
+    url: 'https://coko.foundation/images/uploads/HHMI.png',
+  },
+  {
+    name: 'wax',
+    url: 'https://coko.foundation/images/uploads/Wax.png',
+  },
+  {
+    name: 'coko',
+    url: 'https://gitlab.coko.foundation/uploads/-/system/appearance/header_logo/1/dandelion.png',
+  },
+  {
+    name: 'Coko docs',
+    url: 'https://coko.foundation/images/press/cokodocs.png',
+  },
+]
+
 const MockChatMessage = props => {
   return (
     <ChatMessage
@@ -49,8 +68,26 @@ describe('ChatMessage', () => {
     expect(ownMsgStyle['margin-left']).toBe('auto')
   })
 
+  it('displays attachments of the message', () => {
+    const { queryAllByTestId } = render(
+      <MockChatMessage attachments={attachments} />,
+    )
+
+    const attachmentsItems = queryAllByTestId('message-attachment')
+    attachmentsItems.forEach((item, i) => {
+      expect(item.textContent).toBe(attachments[i].name)
+      expect(item.href).toBe(attachments[i].url)
+    })
+  })
+
   it('renders without accessibility errors', async () => {
     const { container } = render(<MockChatMessage />)
+    const result = await axe(container)
+    expect(result).toHaveNoViolations()
+  })
+
+  it('renders without accessibility error with files', async () => {
+    const { container } = render(<MockChatMessage attachments={attachments} />)
     const result = await axe(container)
     expect(result).toHaveNoViolations()
   })

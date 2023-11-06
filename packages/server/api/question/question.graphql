@@ -241,6 +241,7 @@ extend type Query {
   ): QuestionsResponse!
 
   getQuestionsHandlingEditors(questionId: ID!): [User!]!
+  getQuestionParticipants(id: ID!): [User!]!
 }
 
 extend type Mutation {

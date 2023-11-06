@@ -58,10 +58,10 @@ describe('Testing questions', () => {
         '[data-testid="missing-question-text"]',
         'Please select an item type in the metadata form to start editing',
       )
-      cy.get('[data-testid="questionType-select"]').click()
+      cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
       cy.contains('Multiple Answers').click()
       cy.get('.multiple-choice').should('exist')
-      cy.get('[data-testid="questionType-select"]').click()
+      cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
       cy.contains('Multiple Choice').click()
       cy.contains(
         '[class="ant-modal-confirm-content"]',
@@ -81,7 +81,7 @@ describe('Testing questions', () => {
       cy.contains(buttonAntModalBody, 'Ok').click()
       // [segment]: display missing question text
 
-      cy.get('[data-testid="questionType-select"]').click()
+      cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
       cy.contains('Multiple Answers').click()
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000)

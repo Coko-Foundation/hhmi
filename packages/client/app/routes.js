@@ -452,7 +452,6 @@ const routes = (
                   </Authenticated>
                 )}
               />
-              {/* individual sets and their questions can be viewed by all visitors */}
               <Route
                 exact
                 path="/set/:id"

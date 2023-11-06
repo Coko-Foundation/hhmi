@@ -245,6 +245,7 @@ const SkipToTop = styled.a`
     right: 0;
   }
 `
+// #endregion styled
 
 // #region Question Panel
 const StyledCollapse = styled(Collapse)`
@@ -337,6 +338,7 @@ const Question = props => {
     authors,
     complexItemSetOptions,
     announcementText,
+    defaultActiveKey,
     messages,
     editorContent,
     leadingContent,
@@ -374,6 +376,7 @@ const Question = props => {
     questionAgreedTc,
     refetchUser,
     resources,
+    questionParticipants,
     qtiZipLoading,
     showAssignHEButton,
     canAssignAuthor,
@@ -389,9 +392,9 @@ const Question = props => {
     currentHandlingEditors,
     loadAssignedHEs,
     onUnassignHandlingEditor,
-    // chatLoading,
-    onLoadChat,
     selectedQuestionType,
+    onChangeTab,
+    showAuthorChatTab,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -403,7 +406,7 @@ const Question = props => {
   const [agreedTc, setAgreedTc] = useState(questionAgreedTc)
   const [autoSaving, setAutoSaving] = useState(false)
   const [showMetadata, setShowMetadata] = useState(isUserLoggedIn)
-  const [activeKey, setActiveKey] = useState(0)
+  const [activeKey, setActiveKey] = useState(defaultActiveKey)
 
   const readOnly =
     (editorView && !isInProduction && isSubmitted) ||
@@ -1272,10 +1275,9 @@ const Question = props => {
   }
 
   const handleTabChange = activeTab => {
-    setActiveKey(activeTab)
-
     if (activeTab) {
-      onLoadChat()
+      setActiveKey(activeTab)
+      onChangeTab(activeTab)
     }
   }
 
@@ -1288,7 +1290,7 @@ const Question = props => {
             items={[
               {
                 label: QuestionTab,
-                key: 0,
+                key: 'editor',
                 children: (
                   <>
                     {isRejected && (
@@ -1348,23 +1350,21 @@ const Question = props => {
                   </>
                 ),
               },
-
-              // temporarily disabled chat tab
-              isSubmitted &&
-                false && {
-                  label: AuthorChatTab,
-                  key: 1,
-                  children: (
-                    <ChatThread
-                      announcementText={announcementText}
-                      hasMore={hasMoreMessages}
-                      isActive={activeKey === 1}
-                      messages={messages}
-                      onFetchMore={onFetchMoreMessages}
-                      onSendMessage={onSendMessage}
-                    />
-                  ),
-                },
+              showAuthorChatTab && {
+                label: AuthorChatTab,
+                key: 'chat',
+                children: (
+                  <ChatThread
+                    announcementText={announcementText}
+                    hasMore={hasMoreMessages}
+                    isActive={activeKey === 'chat'}
+                    messages={messages}
+                    onFetchMore={onFetchMoreMessages}
+                    onSendMessage={onSendMessage}
+                    participants={questionParticipants}
+                  />
+                ),
+              },
             ]}
             onChange={handleTabChange}
             renderTabBar={(tabProps, DefaultTabBar) => {
@@ -1399,6 +1399,7 @@ Question.propTypes = {
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
     }),
   ),
+  defaultActiveKey: PropTypes.string,
   leadingContent: PropTypes.shape(),
   announcementText: PropTypes.string,
   messages: PropTypes.arrayOf(PropTypes.shape()),
@@ -1681,6 +1682,12 @@ Question.propTypes = {
   }),
   updated: PropTypes.string,
   wordFileLoading: PropTypes.bool,
+  questionParticipants: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      username: PropTypes.string,
+    }),
+  ),
   qtiZipLoading: PropTypes.bool,
   complexSetEditLink: PropTypes.string,
   handlingEditors: PropTypes.arrayOf(
@@ -1701,13 +1708,15 @@ Question.propTypes = {
   loadAssignedHEs: PropTypes.func,
   onUnassignHandlingEditor: PropTypes.func,
   chatLoading: PropTypes.bool,
-  onLoadChat: PropTypes.func,
   selectedQuestionType: PropTypes.shape(),
+  onChangeTab: PropTypes.func,
+  showAuthorChatTab: PropTypes.bool,
 }
 
 Question.defaultProps = {
   authors: [],
   complexItemSetOptions: [],
+  defaultActiveKey: 'editor',
   announcementText: '',
   hasMoreMessages: false,
   messages: [],
@@ -1750,6 +1759,7 @@ Question.defaultProps = {
   isUserLoggedIn: true,
   canCreateNewVersion: false,
   wordFileLoading: false,
+  questionParticipants: [],
   qtiZipLoading: false,
   complexSetEditLink: null,
   handlingEditors: [],
@@ -1760,8 +1770,10 @@ Question.defaultProps = {
   loadAssignedHEs: () => {},
   onUnassignHandlingEditor: () => {},
   chatLoading: false,
-  onLoadChat: () => {},
   selectedQuestionType: null,
+
+  onChangeTab: () => {},
+  showAuthorChatTab: false,
 }
 
 export default Question

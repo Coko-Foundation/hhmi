@@ -1,10 +1,12 @@
 const { logger } = require('@coko/server')
+
 const metadata = require('./utils/mockMetadata')
 
 const {
   EmptyQuestionVersions,
   EmptyQuestions,
   createQuestion,
+  createChatThread,
   updateStatus,
 } = require('./utils/question')
 
@@ -22,6 +24,8 @@ const {
  * ---> when [2] = updateStatus.
  *                 [3] - bookId
  *                 [4]- [notSubmitted,submitted, underReview, published,inProduction] (default - notSubmitted)
+ * ---> when [2] = createChat
+ *                 [3] - related object id (question id) (required)
  */
 
 const validDataType = ['biochemistry', 'anatomy', 'population', 'ecology']
@@ -136,6 +140,17 @@ const checkDataType = (validData, dataType) => {
         await EmptyQuestions()
         logger.info(`[seedQuestions]: Emptied questions and question_versions`)
         break
+
+      case 'createChat': {
+        const questionId = process.argv[3]
+        const res = await createChatThread(questionId)
+        if (res)
+          logger.info(
+            `[seedQuestions]: chat thread created for question ${questionId}`,
+          )
+        break
+      }
+
       default:
         logger.info('Invalid operation type')
     }

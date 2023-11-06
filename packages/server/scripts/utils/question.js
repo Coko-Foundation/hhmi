@@ -1,4 +1,5 @@
 const { logger, useTransaction } = require('@coko/server')
+const { ChatThread, ChatMessage } = require('@coko/server/src/models')
 
 const {
   Question,
@@ -52,6 +53,8 @@ const EmptyQuestionVersions = async () => {
 
 const EmptyQuestions = async () => {
   try {
+    await ChatMessage.query().delete()
+    await ChatThread.query().delete()
     await Question.query().delete()
     return true
   } catch (err) {
@@ -180,7 +183,24 @@ const updateStatus = async (id, status) => {
   return useTransaction(transactionCallback)
 }
 
+/**
+ *
+ * @param {string} questionId - question id
+ * @returns {boolean}
+ */
+
+const createChatThread = async relatedObjectId => {
+  try {
+    await ChatThread.insert({ relatedObjectId, chatType: 'question' })
+    return true
+  } catch (err) {
+    logger.error(err)
+    return false
+  }
+}
+
 module.exports = {
+  createChatThread,
   EmptyQuestionVersions,
   EmptyQuestions,
   createQuestion,

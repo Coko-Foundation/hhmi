@@ -5,10 +5,10 @@ exports[`list matches snapshot 1`] = `
   className="sc-dKfzgJ hcQWTi"
 >
   <div
-    className="ant-list ant-list-split sc-lnAgIa vPndH css-dev-only-do-not-override-1vtf12y"
+    className="ant-list ant-list-split sc-lnAgIa vPndH css-dev-only-do-not-override-12jzuas"
   >
     <div
-      className="ant-spin-nested-loading css-dev-only-do-not-override-1vtf12y"
+      className="ant-spin-nested-loading css-dev-only-do-not-override-12jzuas"
     >
       <div
         className="ant-spin-container"
@@ -70,7 +70,7 @@ exports[`list matches snapshot 1`] = `
       role="navigation"
     >
       <ul
-        className="ant-pagination css-dev-only-do-not-override-1vtf12y"
+        className="ant-pagination css-dev-only-do-not-override-12jzuas"
         style={{}}
       >
         <li

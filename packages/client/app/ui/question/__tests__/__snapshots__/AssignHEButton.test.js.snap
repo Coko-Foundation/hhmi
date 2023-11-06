@@ -3,11 +3,12 @@
 exports[`AssignHEButton Matches snapshot 1`] = `
 <button
   aria-label="Assign Handling Editor"
-  className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX"
+  className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU iQloaX"
   disabled={false}
   id="assignHE"
   onClick={[Function]}
   status={null}
+  style={{}}
   type="button"
 >
   <span>

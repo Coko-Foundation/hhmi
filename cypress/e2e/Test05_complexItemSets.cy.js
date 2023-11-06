@@ -116,7 +116,7 @@ describe('Complex item set', () => {
         'div[data-testid="leading-content-wrapper"]',
         complexItemSet3.leadingContent,
       )
-      cy.get('[data-testid="questionType-select"]').click()
+      cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
       cy.contains('Multiple Answers').click()
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000)
@@ -152,7 +152,7 @@ describe('Complex item set', () => {
         'div[data-testid="leading-content-wrapper"]',
         complexItemSet3.leadingContent,
       )
-      cy.get('[data-testid="questionType-select"]').click()
+      cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
       cy.contains('Multiple Answers').click()
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000)

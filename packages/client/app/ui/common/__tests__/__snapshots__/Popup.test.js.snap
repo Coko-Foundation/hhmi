@@ -8,11 +8,12 @@ exports[`Popup matches snapshot 1`] = `
     aria-controls="popup-1"
     aria-expanded={false}
     aria-haspopup="dialog"
-    className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-default sc-hLseeU kWOTMC"
+    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default sc-hLseeU kWOTMC"
     data-testid="toggle-btn"
     disabled={false}
     onClick={[Function]}
     status={null}
+    style={{}}
     type="button"
   >
     <span>
