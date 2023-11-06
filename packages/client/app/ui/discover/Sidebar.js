@@ -138,7 +138,7 @@ const Sidebar = props => {
                   !!getFieldValue('course') && renderCourseFields(getFieldValue)
                 }
               </Form.Item>
-              <Form.Item label="Question type" name="questionType">
+              <Form.Item label="Item type" name="questionType">
                 <Select
                   data-testid="question-type-select"
                   mode="multiple"

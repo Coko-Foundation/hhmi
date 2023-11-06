@@ -391,6 +391,7 @@ const Question = props => {
     onUnassignHandlingEditor,
     // chatLoading,
     onLoadChat,
+    selectedQuestionType,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -436,8 +437,8 @@ const Question = props => {
       title: <ModalHeader>Accept Terms and Conditions</ModalHeader>,
       content: (
         <Paragraph>
-          By submitting information via the form below (the “Question
-          Information”), and clicking the “Submit” button, you agree to{' '}
+          By submitting information via the form below (the “Item Information”),
+          and clicking the “Submit” button, you agree to{' '}
           <Link
             as="a"
             href="https://www.hhmi.org/terms-of-use"
@@ -451,17 +452,17 @@ const Question = props => {
           “our”) a royalty-free, perpetual, irrevocable, non-exclusive right and
           license to use, publish, reproduce, modify, adapt, edit, translate,
           create derivative works from, incorporate into other works,
-          distribute, sub-license, and otherwise exploit such Question
-          Information, and derivatives or modifications thereof, throughout the
-          universe in any form, media or technology now known or hereafter
-          developed, including without limitation sub-licensing and distributing
-          the Question Information or derivatives or modifications thereof under
-          a Creative Commons license selected by HHMI. You hereby represent,
-          warrant and covenant that the Question Information submitted by you is
-          original to you, and that neither the existence nor the exploitation
-          thereof shall infringe upon or violate any trademark, patent,
-          copyright, trade secret, right of privacy or publicity, or other
-          common law right of any third party.
+          distribute, sub-license, and otherwise exploit such Item Information,
+          and derivatives or modifications thereof, throughout the universe in
+          any form, media or technology now known or hereafter developed,
+          including without limitation sub-licensing and distributing the Item
+          Information or derivatives or modifications thereof under a Creative
+          Commons license selected by HHMI. You hereby represent, warrant and
+          covenant that the Item Information submitted by you is original to
+          you, and that neither the existence nor the exploitation thereof shall
+          infringe upon or violate any trademark, patent, copyright, trade
+          secret, right of privacy or publicity, or other common law right of
+          any third party.
         </Paragraph>
       ),
       footer: [
@@ -496,8 +497,8 @@ const Question = props => {
     if (isEditorEmpty) {
       const emptyEditorErrorModal = error()
       emptyEditorErrorModal.update({
-        title: <ModalHeader>Question text cannot be empty</ModalHeader>,
-        content: 'Please provide some content for your question',
+        title: <ModalHeader>Item text cannot be empty</ModalHeader>,
+        content: 'Please provide some content for your item',
         footer: [
           <ModalFooter key="footer">
             <Button
@@ -527,10 +528,10 @@ const Question = props => {
     const confirmSubmitModal = confirm()
     confirmSubmitModal.update({
       title: (
-        <ModalHeader>Are you sure you want to submit the question?</ModalHeader>
+        <ModalHeader>Are you sure you want to submit this item?</ModalHeader>
       ),
       content:
-        'This will make the question visible to editors and reviewers, and after a successful review it will be published for all users.',
+        'This will make this item visible to editors and reviewers, and after a successful review it will be published for all users.',
       footer: [
         <ModalFooter key="footer">
           <Button onClick={() => confirmSubmitModal.destroy()}>Cancel</Button>
@@ -553,10 +554,10 @@ const Question = props => {
     const confirmMoveToReview = confirm()
     confirmMoveToReview.update({
       title: (
-        <ModalHeader>You are about to move the question to review</ModalHeader>
+        <ModalHeader>You are about to move this item to review</ModalHeader>
       ),
       content:
-        'This question will be passed to a reviewer and will not be editable until they provide their feedback. Are you sure you want to proceed?',
+        'This item will be passed to a reviewer and will not be editable until they provide their feedback. Are you sure you want to proceed?',
       footer: [
         <ModalFooter key="footer">
           <Button onClick={() => confirmMoveToReview.destroy()}>Cancel</Button>
@@ -568,15 +569,15 @@ const Question = props => {
                 .then(() => {
                   showDialog(
                     'success',
-                    'Question moved to review',
-                    'Question was moved to review successfully',
+                    'Item moved to review',
+                    'Item was moved to review successfully',
                   )
                 })
                 .catch(() => {
                   showDialog(
                     'error',
-                    'Problem moving the question to review',
-                    'There was an error while moving this question to review. Please try again!',
+                    'Problem moving this item to review',
+                    'There was an error while moving this item to review. Please try again!',
                   )
                 })
             }}
@@ -593,12 +594,10 @@ const Question = props => {
     const confirmMoveToProduction = confirm()
     confirmMoveToProduction.update({
       title: (
-        <ModalHeader>
-          You are about to move the question to production
-        </ModalHeader>
+        <ModalHeader>You are about to move this item to production</ModalHeader>
       ),
       content:
-        'This question will become editable and editors can apply the feedback from the reviewer. Are you sure?',
+        'This item will become editable and editors can apply the feedback from the reviewer. Are you sure?',
       footer: [
         <ModalFooter key="footer">
           <Button onClick={() => confirmMoveToProduction.destroy()}>
@@ -612,15 +611,15 @@ const Question = props => {
                 .then(() => {
                   showDialog(
                     'success',
-                    'Question moved to production',
-                    'Question was moved to production successfully',
+                    'Item moved to production',
+                    'Item was moved to production successfully',
                   )
                 })
                 .catch(() => {
                   showDialog(
                     'error',
-                    'Problem moving the question to produciton',
-                    'There was an error while moving this question to production. Please try again!',
+                    'Problem moving this item to produciton',
+                    'There was an error while moving this item to production. Please try again!',
                   )
                 })
             }}
@@ -644,19 +643,18 @@ const Question = props => {
         confirmPublish.update({
           title: (
             <ModalHeader>
-              Are you sure you want to publish this question version?
+              Are you sure you want to publish this item version?
             </ModalHeader>
           ),
           content: (
             <>
               <p>
-                Clicking &quot;Yes, publish&quot; will make the question
-                discoverable for all website visitors in the Browse Questions
-                Page.
+                Clicking &quot;Yes, publish&quot; will make this item
+                discoverable for all website visitors in the Browse Items Page.
               </p>
               {canAssignAuthor && (
                 <p>
-                  As an admin, you can reassign authorship of this question to
+                  As an admin, you can reassign authorship of this item to
                   another user after it is published.
                 </p>
               )}
@@ -673,15 +671,15 @@ const Question = props => {
                     .then(() => {
                       showDialog(
                         'success',
-                        'Question published successfully',
-                        'Question was published and is now available in the Browse Questions page',
+                        'Item published successfully',
+                        'Item was published and is now available in the Browse Items page',
                       )
                     })
                     .catch(() => {
                       showDialog(
                         'error',
-                        'Problem publishing the question',
-                        'There was an error while publishin the question. Please try again',
+                        'Problem publishing this item',
+                        'There was an error while publishin this item. Please try again',
                       )
                     })
                 }}
@@ -708,11 +706,9 @@ const Question = props => {
     const confirmReject = confirm()
     confirmReject.update({
       title: (
-        <ModalHeader>
-          Are you sure you want to reject this question?
-        </ModalHeader>
+        <ModalHeader>Are you sure you want to reject this item?</ModalHeader>
       ),
-      content: 'By rejecting, the question will not be reviewed or published.',
+      content: 'By rejecting, this item will not be reviewed or published.',
       footer: [
         <ModalFooter key="footer">
           <Button onClick={() => confirmReject.destroy()}>Cancel</Button>
@@ -724,15 +720,15 @@ const Question = props => {
                 .then(() => {
                   showDialog(
                     'success',
-                    'Question rejected',
-                    'The question was rejected',
+                    'Item rejected',
+                    'This item was rejected',
                   )
                 })
                 .catch(() => {
                   showDialog(
                     'error',
-                    'Problem rejecting the questions',
-                    'There was an error while rejecting this question. Please try again!',
+                    'Problem rejecting the items',
+                    'There was an error while rejecting this item. Please try again!',
                   )
                 })
             }}
@@ -771,15 +767,15 @@ const Question = props => {
       .then(() => {
         showDialog(
           'success',
-          'Question submitted successfully',
-          'Question was submitted successfully',
+          'Item submitted successfully',
+          'Item was submitted successfully',
         )
       })
       .catch(() => {
         showDialog(
           'error',
-          'Problem submitting the question',
-          'There was an error while submitting your question. Please try again!',
+          'Problem submitting this item',
+          'There was an error while submitting your item. Please try again!',
         )
       })
   }
@@ -788,9 +784,9 @@ const Question = props => {
     const confirmNewVersion = confirm()
     confirmNewVersion.update({
       title: <ModalHeader>Warning!</ModalHeader>,
-      content: `You are editing a published question. Any changes you make will be automatically saved, but not automatically published. 
-      You will need to publish the question again for the edits to be reflected in the Browse Questions page.
-      After the edited question is published, the old one will not be available anymore in the Browse Questions page. 
+      content: `You are editing a published item. Any changes you make will be automatically saved, but not automatically published. 
+      You will need to publish this item again for the edits to be reflected in the Browse Items page.
+      After the edited item is published, the old one will not be available anymore in the Browse Items page. 
       Do you wish to continue?`,
       footer: [
         <ModalFooter key="footer">
@@ -813,12 +809,12 @@ const Question = props => {
   // #endregion handlers
 
   // #region components
-  const QuestionTab = <StyledTabItem>Question</StyledTabItem>
+  const QuestionTab = <StyledTabItem>Item</StyledTabItem>
   const AuthorChatTab = <StyledTabItem>Chat</StyledTabItem>
 
   const PreviousQuestion = (
     <StyledPrevNextButton
-      aria-label="Previous Question"
+      aria-label="Previous Item"
       icon={<LeftOutlined />}
       onClick={() =>
         onClickPreviousButton()
@@ -826,8 +822,8 @@ const Question = props => {
           .catch(() => {
             const infoModal = modal.info()
             infoModal.update({
-              title: <ModalHeader>No previous question</ModalHeader>,
-              content: 'There are no more questions in this direction',
+              title: <ModalHeader>No previous item</ModalHeader>,
+              content: 'There are no more items in this direction',
               footer: [
                 <ModalFooter key="footer">
                   <Button autoFocus onClick={infoModal.destroy} type="primary">
@@ -838,16 +834,16 @@ const Question = props => {
             })
           })
       }
-      title="Previous Question"
+      title="Previous Item"
       type="primary"
     >
-      Previous Question
+      Previous Item
     </StyledPrevNextButton>
   )
 
   const NextQuestion = (
     <StyledPrevNextButton
-      aria-label="Next Question"
+      aria-label="Next Item"
       direction="rtl"
       icon={<RightOutlined />}
       onClick={() =>
@@ -856,8 +852,8 @@ const Question = props => {
           .catch(() => {
             const infoModal = modal.info()
             infoModal.update({
-              title: <ModalHeader>No next question</ModalHeader>,
-              content: 'There are no more questions in this direction',
+              title: <ModalHeader>No next item</ModalHeader>,
+              content: 'There are no more items in this direction',
               footer: [
                 <ModalFooter key="footer">
                   <Button autoFocus onClick={infoModal.destroy} type="primary">
@@ -868,10 +864,10 @@ const Question = props => {
             })
           })
       }
-      title="Next Question"
+      title="Next Item"
       type="primary"
     >
-      Next Question
+      Next Item
     </StyledPrevNextButton>
   )
 
@@ -967,7 +963,7 @@ const Question = props => {
             </ModalFooter>
           ),
           maskClosable: true,
-          // okText: 'Submit Question',
+          // okText: 'Submit Item',
           // onOk: handleSubmit,
         })
       }}
@@ -1053,7 +1049,7 @@ const Question = props => {
       )}
       {isPublished && canCreateNewVersion && (
         <StyledButton onClick={showNewVersionModal} type="primary">
-          Edit question
+          Edit item
         </StyledButton>
       )}
       {showNextQuestionLink && NextQuestion}
@@ -1146,7 +1142,7 @@ const Question = props => {
 
         {isPublished && canCreateNewVersion && (
           <StyledButton onClick={showNewVersionModal} type="primary">
-            Edit question
+            Edit item
           </StyledButton>
         )}
         {showNextQuestionLink && NextQuestion}
@@ -1197,7 +1193,7 @@ const Question = props => {
       )}
       {isPublished && canCreateNewVersion && (
         <StyledButton onClick={showNewVersionModal} type="primary">
-          Edit question
+          Edit item
         </StyledButton>
       )}
     </>
@@ -1237,7 +1233,7 @@ const Question = props => {
           )}
           {isPublished && canCreateNewVersion && (
             <StyledButton onClick={showNewVersionModal} type="primary">
-              Edit question
+              Edit item
             </StyledButton>
           )}
         </ActionsWrapper>
@@ -1297,7 +1293,7 @@ const Question = props => {
                   <>
                     {isRejected && (
                       <Ribbon status="error">
-                        This question has been rejected by the editors
+                        This item has been rejected by the editors
                       </Ribbon>
                     )}
                     <PanelWrapper
@@ -1312,7 +1308,8 @@ const Question = props => {
                           onContentChange={handleQuestionContentChange}
                           onImageUpload={onImageUpload}
                           published={facultyView && isPublished}
-                          readOnly={readOnly}
+                          readOnly={readOnly || !selectedQuestionType}
+                          selectedQuestionType={selectedQuestionType}
                           withFeedback={showMetadata}
                         />
                       }
@@ -1329,6 +1326,9 @@ const Question = props => {
                             presentationMode={facultyView}
                             readOnly={readOnly}
                             resources={resources}
+                            selectedQuestionType={
+                              selectedQuestionType?.metadataValue
+                            }
                           />
                           <SkipToTop
                             href="#question-actions"
@@ -1702,6 +1702,7 @@ Question.propTypes = {
   onUnassignHandlingEditor: PropTypes.func,
   chatLoading: PropTypes.bool,
   onLoadChat: PropTypes.func,
+  selectedQuestionType: PropTypes.shape(),
 }
 
 Question.defaultProps = {
@@ -1760,6 +1761,7 @@ Question.defaultProps = {
   onUnassignHandlingEditor: () => {},
   chatLoading: false,
   onLoadChat: () => {},
+  selectedQuestionType: null,
 }
 
 export default Question

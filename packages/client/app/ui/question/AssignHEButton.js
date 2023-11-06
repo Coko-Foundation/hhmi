@@ -84,13 +84,11 @@ const AssignHEButton = props => {
                 ? 'Some Handling Editors'
                 : 'Selected Handling Editor'
             } couldn't be assigned for ${
-              assignHandlingEditors.length > 1
-                ? 'selected questions'
-                : 'this question'
-            }, because Handling editors cannot handle the questions they authored.`
+              assignHandlingEditors.length > 1 ? 'selected items' : 'this item'
+            }, because Handling editors cannot handle the items they authored.`
           : `Handling editor${
               newHandlingEditor.length > 1 ? 's' : ''
-            } assigned to the question${
+            } assigned to the item${
               assignHandlingEditors.length > 1 ? 's' : ''
             } successfully`
 
@@ -139,7 +137,7 @@ const AssignHEButton = props => {
     onUnassign(user.id).then(() => {
       document.getElementById(
         'he-update',
-      ).innerHTML = `${user.displayName} removed from this question's handling editors`
+      ).innerHTML = `${user.displayName} removed from this item's handling editors`
     })
   }
 
@@ -205,7 +203,7 @@ const AssignHEButton = props => {
           }
         >
           <StyledFormItem
-            label="Find a user to assign as handling editor for this question"
+            label="Find a user to assign as handling editor for this item"
             name="newHandlingEditor"
             rules={[
               {
@@ -226,7 +224,7 @@ const AssignHEButton = props => {
 
                   return Promise.reject(
                     new Error(
-                      'This user is already a handling editor for this question.',
+                      'This user is already a handling editor for this item.',
                     ),
                   )
                 },

@@ -248,9 +248,9 @@ export const Discover = props => {
   const confirmDuplication = () => {
     const confirmDialog = confirm()
     confirmDialog.update({
-      title: <ModalHeader>Duplicate Question</ModalHeader>,
+      title: <ModalHeader>Duplicate Item</ModalHeader>,
       content:
-        "You're duplicating this question. Duplicating a question will create a new copy of the question with you as the author. By doing so, you will have an independent version that you can modify without affecting the original question.",
+        "You're duplicating this item. Duplicating an item will create a new copy of the item with you as the author. By doing so, you will have an independent version that you can modify without affecting the original item.",
       footer: (
         <ModalFooter key="footer">
           <Button onClick={() => confirmDialog.destroy()}>Close</Button>

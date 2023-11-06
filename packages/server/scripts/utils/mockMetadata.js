@@ -24,31 +24,22 @@ const biochemistry = {
     type: 'doc',
     content: [
       {
-        type: 'paragraph',
+        type: 'multiple_choice_container',
         attrs: {
-          class: 'paragraph',
-        },
-      },
-      {
-        type: 'multiple_choice_single_correct_container',
-        attrs: {
-          id: '243cc28f-8082-4bae-b7a2-7d6d0d85f5ba',
-          class: 'multiple-choice-single-correct',
-          correctId: '',
+          id: '3750db93-b005-48f6-93e3-e589404a0257',
+          class: 'multiple-choice',
         },
         content: [
           {
-            type: 'question_node_multiple_single',
+            type: 'question_node_multiple',
             attrs: {
-              id: '9a10bfec-a570-42f0-b088-799f0d7d92d0',
-              class: 'multiple-choice-question-single',
+              id: '8325dfb6-9bef-446d-a144-b064f796d8f3',
+              class: 'multiple-choice-question',
             },
             content: [
               {
                 type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
+                attrs: { class: 'paragraph' },
                 content: [
                   {
                     text: 'Energy: carbohydrates :: structural materials:',
@@ -59,10 +50,10 @@ const biochemistry = {
             ],
           },
           {
-            type: 'multiple_choice_single_correct',
+            type: 'multiple_choice',
             attrs: {
-              id: 'ea2ca3f1-f720-41c6-8ddf-13de737e95e6',
-              class: 'multiple-choice-option-single-correct',
+              id: '2fcdf010-63bb-4802-8d5e-69103acdb358',
+              class: 'multiple-choice-option',
               answer: false,
               correct: false,
               feedback: '',
@@ -70,23 +61,16 @@ const biochemistry = {
             content: [
               {
                 type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    text: 'water',
-                    type: 'text',
-                  },
-                ],
+                attrs: { class: 'paragraph' },
+                content: [{ text: 'water', type: 'text' }],
               },
             ],
           },
           {
-            type: 'multiple_choice_single_correct',
+            type: 'multiple_choice',
             attrs: {
-              id: 'ce77193c-a4fe-4b1a-a6e1-206e1875439a',
-              class: 'multiple-choice-option-single-correct',
+              id: '5db539f3-bcf7-4c34-8959-3c2339887085',
+              class: 'multiple-choice-option',
               answer: false,
               correct: false,
               feedback: '',
@@ -94,23 +78,16 @@ const biochemistry = {
             content: [
               {
                 type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    text: 'nucleotides',
-                    type: 'text',
-                  },
-                ],
+                attrs: { class: 'paragraph' },
+                content: [{ text: 'nucleotides', type: 'text' }],
               },
             ],
           },
           {
-            type: 'multiple_choice_single_correct',
+            type: 'multiple_choice',
             attrs: {
-              id: '1b8467e6-4f73-4f11-8280-a977e2ded186',
-              class: 'multiple-choice-option-single-correct',
+              id: 'd8b3f0e7-4595-4ad9-88e4-fda03a3e5e60',
+              class: 'multiple-choice-option',
               answer: false,
               correct: false,
               feedback: '',
@@ -118,23 +95,16 @@ const biochemistry = {
             content: [
               {
                 type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    text: 'lipids',
-                    type: 'text',
-                  },
-                ],
+                attrs: { class: 'paragraph' },
+                content: [{ text: 'lipids', type: 'text' }],
               },
             ],
           },
           {
-            type: 'multiple_choice_single_correct',
+            type: 'multiple_choice',
             attrs: {
-              id: '8ad9cfa7-3a47-43a6-9437-13d567d727a2',
-              class: 'multiple-choice-option-single-correct',
+              id: '3b51e422-cc5f-4937-af9e-3894ad313d74',
+              class: 'multiple-choice-option',
               answer: false,
               correct: true,
               feedback: 'correct answer',
@@ -142,15 +112,8 @@ const biochemistry = {
             content: [
               {
                 type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    text: 'proteins',
-                    type: 'text',
-                  },
-                ],
+                attrs: { class: 'paragraph' },
+                content: [{ text: 'proteins', type: 'text' }],
               },
             ],
           },
@@ -159,7 +122,7 @@ const biochemistry = {
     ],
   },
   contentText:
-    'Energy: carbohydrates :: structural materials: water nucleotides lipids proteins',
+    'Energy: carbohydrates :: structural materials: water nucleotides lipids protiens ',
 
   keywords: ['generalchemistry', 'biochemistry'],
   biointeractiveResources: ['biochemistryAndCellSignalingPathwayOfTheMc1rGene'],
@@ -170,7 +133,7 @@ const biochemistry = {
 }
 
 const anatomy = {
-  questionType: 'multipleChoiceSingleCorrect',
+  questionType: 'multipleDropdowns',
   topics: [{ topic: 'anatomyPhysiology', subtopic: 'cardiovascularSystem' }],
   courses: [
     {
@@ -192,117 +155,64 @@ const anatomy = {
     type: 'doc',
     content: [
       {
-        type: 'multiple_choice_single_correct_container',
+        type: 'multiple_drop_down_container',
         attrs: {
-          id: 'c61c3ed2-14bc-4d50-ac83-3a1177992d87',
-          class: 'multiple-choice-single-correct',
-          correctId: '',
+          id: 'b42e5e37-2c59-4502-b5af-dee7e0bf19c3',
+          class: 'multiple-drop-down-container',
+          feedback: 'Protien is the right answer',
         },
         content: [
           {
-            type: 'question_node_multiple_single',
-            attrs: {
-              id: '982d3292-77d0-41a8-a68b-31a361dd332e',
-              class: 'multiple-choice-question-single',
-            },
+            type: 'paragraph',
+            attrs: { class: 'paragraph' },
             content: [
+              { text: 'What substance from ', type: 'text' },
               {
-                type: 'paragraph',
-                attrs: { class: 'paragraph' },
-                content: [
-                  { text: 'What substance from ', type: 'text' },
-                  {
-                    text: 'Bacillus thuringiensis ',
-                    type: 'text',
-                    marks: [{ type: 'em' }],
-                  },
-                  {
-                    text: 'was most likely inserted into rice plants in the development of insect-resistant rice?',
-                    type: 'text',
-                  },
-                ],
+                text: 'Bacillus thuringiensis ',
+                type: 'text',
+                marks: [{ type: 'em' }],
               },
-            ],
-          },
-          {
-            type: 'multiple_choice_single_correct',
-            attrs: {
-              id: 'f462cf01-a08e-4ba7-823a-5f08a0b61fb5',
-              class: 'multiple-choice-option-single-correct',
-              answer: false,
-              correct: false,
-              feedback: '',
-            },
-            content: [
               {
-                type: 'paragraph',
-                attrs: { class: 'paragraph' },
-                content: [{ text: 'sugar', type: 'text' }],
-              },
-            ],
-          },
-          {
-            type: 'multiple_choice_single_correct',
-            attrs: {
-              id: 'fbeead5f-3afa-4a5b-939b-a68d2f6c4245',
-              class: 'multiple-choice-option-single-correct',
-              answer: false,
-              correct: false,
-              feedback: '',
-            },
-            content: [
-              {
-                type: 'paragraph',
-                attrs: { class: 'paragraph' },
-                content: [{ text: 'enzyme', type: 'text' }],
-              },
-            ],
-          },
-          {
-            type: 'multiple_choice_single_correct',
-            attrs: {
-              id: 'e979c402-f948-4659-9628-95e36a102bec',
-              class: 'multiple-choice-option-single-correct',
-              answer: false,
-              correct: false,
-              feedback: '',
-            },
-            content: [
-              {
-                type: 'paragraph',
-                attrs: { class: 'paragraph' },
-                content: [{ text: 'protien', type: 'text' }],
-              },
-            ],
-          },
-          {
-            type: 'multiple_choice_single_correct',
-            attrs: {
-              id: '061378b2-f9ba-4df3-8ff7-d885c2785b23',
-              class: 'multiple-choice-option-single-correct',
-              answer: false,
-              correct: true,
-              feedback: '',
-            },
-            content: [
-              {
-                type: 'paragraph',
-                attrs: { class: 'paragraph' },
-                content: [{ text: 'DNA', type: 'text' }],
+                text: 'was most likely inserted into rice plants in the development of insect-resistant rice?',
+                type: 'text',
               },
             ],
           },
           {
             type: 'paragraph',
             attrs: { class: 'paragraph' },
-            content: [{ text: ' ', type: 'text' }],
+            content: [
+              {
+                type: 'multiple_drop_down_option',
+                attrs: {
+                  id: '86d5e576-766e-4039-b1e1-ece3e109a00a',
+                  class: 'multiple-drop-down-option',
+                  answer: '',
+                  correct: '3ca07851-382b-4ead-995c-9c3d55a63582',
+                  options: [
+                    {
+                      label: 'protien',
+                      value: '3ca07851-382b-4ead-995c-9c3d55a63582',
+                    },
+                    {
+                      label: 'enzymes',
+                      value: '67ace336-f3d6-486b-8e76-5dd164e7fe77',
+                    },
+                    {
+                      label: 'nucleoids',
+                      value: '04d6c259-01a9-41aa-81f7-858847ff1214',
+                    },
+                  ],
+                },
+              },
+            ],
           },
         ],
       },
     ],
   },
   contentText:
-    'What substance from  Bacillus thuringiensis  was most likely inserted into rice plants in the development of insect-resistant rice? sugar enzyme protien DNA',
+    'What substance from  Bacillus thuringiensis  was most likely inserted into rice plants in the development of insect-resistant rice? ',
   cognitiveLevel: 'higher-analyze',
   affectiveLevel: 'valuing',
   psychomotorLevel: 'physicalAbilities',
@@ -310,7 +220,7 @@ const anatomy = {
 }
 
 const population = {
-  questionType: 'multipleChoice',
+  questionType: 'fillInTheBlank',
   topics: [
     {
       topic: 'environmentalScience',
@@ -334,7 +244,7 @@ const population = {
     },
   ],
   contentText:
-    'By 2040, the world s population is expected to rise to approximately 20 billion 10 billion 7 billion 9 billion',
+    ' By 2040, the world s population is expected to rise to approximately 9 billion . ',
   keywords: ['population', 'environment'],
   biointeractiveResources: [],
 
@@ -342,134 +252,31 @@ const population = {
     type: 'doc',
     content: [
       {
-        type: 'paragraph',
+        type: 'fill_the_gap_container',
         attrs: {
-          class: 'paragraph',
-        },
-      },
-      {
-        type: 'multiple_choice_single_correct_container',
-        attrs: {
-          id: 'de3bebb1-4d9c-497f-b976-e6d27ba83993',
-          class: 'multiple-choice-single-correct',
-          correctId: '',
+          id: '3e4771d8-e784-4e9e-8319-e3ee77bd297a',
+          class: 'fill-the-gap',
+          feedback: 'The world population will reach 9 billion',
         },
         content: [
           {
-            type: 'question_node_multiple_single',
-            attrs: {
-              id: 'd049d160-09f0-4164-89ea-ce68206e036a',
-              class: 'multiple-choice-question-single',
-            },
+            type: 'paragraph',
+            attrs: { class: 'paragraph' },
             content: [
               {
-                type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    type: 'text',
-                    text: 'By 2040, the world s population is expected to rise to approximately',
-                  },
-                ],
+                text: ' By 2040, the world s population is expected to rise to approximately',
+                type: 'text',
               },
-            ],
-          },
-          {
-            type: 'multiple_choice_single_correct',
-            attrs: {
-              class: 'multiple-choice-option-single-correct',
-              id: '62c9a024-b7df-4b1c-a884-3cb29fa03dff',
-              correct: false,
-              answer: false,
-              feedback: '',
-            },
-            content: [
               {
-                type: 'paragraph',
+                type: 'fill_the_gap',
                 attrs: {
-                  class: 'paragraph',
+                  id: '20ea2b4f-19c6-4f7f-824d-a213d41fcb62',
+                  class: 'fill-the-gap',
+                  answer: '',
                 },
-                content: [
-                  {
-                    type: 'text',
-                    text: '20 billion',
-                  },
-                ],
+                content: [{ text: '9 billion', type: 'text' }],
               },
-            ],
-          },
-          {
-            type: 'multiple_choice_single_correct',
-            attrs: {
-              class: 'multiple-choice-option-single-correct',
-              id: '8cf0e956-b4df-49eb-9be5-accb344fa3ff',
-              correct: false,
-              answer: false,
-              feedback: '',
-            },
-            content: [
-              {
-                type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    type: 'text',
-                    text: '10 billion',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: 'multiple_choice_single_correct',
-            attrs: {
-              class: 'multiple-choice-option-single-correct',
-              id: 'e79e6d30-c6ce-4df8-8f64-c2e031918e73',
-              correct: false,
-              answer: false,
-              feedback: '',
-            },
-            content: [
-              {
-                type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    type: 'text',
-                    text: '7 billion',
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: 'multiple_choice_single_correct',
-            attrs: {
-              class: 'multiple-choice-option-single-correct',
-              id: 'f845db43-69c8-461b-bb1e-5a25b6d6b2b9',
-              correct: true,
-              answer: false,
-              feedback: '',
-            },
-            content: [
-              {
-                type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    type: 'text',
-                    text: '9 billion',
-                  },
-                ],
-              },
+              { text: '.', type: 'text' },
             ],
           },
         ],

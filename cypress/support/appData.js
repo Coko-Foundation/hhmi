@@ -97,63 +97,63 @@ export const workflowData = {
   reject: {
     operationBtn: 'Do not accept',
     prompt: {
-      header: 'Are you sure you want to reject this question?',
-      body: 'By rejecting, the question will not be reviewed or published.',
+      header: 'Are you sure you want to reject this item?',
+      body: 'By rejecting, this item will not be reviewed or published.',
       cancelBtn: 'Cancel',
       okBtn: 'Reject',
     },
     success: {
-      header: 'Question rejected',
-      body: 'The question was rejected',
+      header: 'Item rejected',
+      body: 'This item was rejected',
     },
     QuestionStatus: 'Rejected',
   },
   review: {
     operationBtn: 'Move to review',
     prompt: {
-      header: 'You are about to move the question to review',
-      body: 'This question will be passed to a reviewer and will not be editable until they provide their feedback. Are you sure you want to proceed?',
+      header: 'You are about to move this item to review',
+      body: 'This item will be passed to a reviewer and will not be editable until they provide their feedback. Are you sure you want to proceed?',
       cancelBtn: 'Cancel',
       okBtn: 'Move to review',
     },
     success: {
-      header: 'Question moved to review',
-      body: 'Question was moved to review successfully',
+      header: 'Item moved to review',
+      body: 'Item was moved to review successfully',
     },
     QuestionStatus: 'Under Review',
   },
   production: {
     operationBtn: 'Move to production',
     prompt: {
-      header: 'You are about to move the question to production',
-      body: 'This question will become editable and editors can apply the feedback from the reviewer. Are you sure?',
+      header: 'You are about to move this item to production',
+      body: 'This item will become editable and editors can apply the feedback from the reviewer. Are you sure?',
       cancelBtn: 'Cancel',
       okBtn: 'Move to production',
     },
     success: {
-      header: 'Question moved to production',
-      body: 'Question was moved to production successfully',
+      header: 'Item moved to production',
+      body: 'Item was moved to production successfully',
     },
     QuestionStatus: 'In Production',
   },
   publish: {
     operationBtn: 'Publish',
     prompt: {
-      header: 'Are you sure you want to publish this question version?',
-      body: 'Clicking "Yes, publish" will make the question discoverable for all website visitors in the Browse Questions Page.',
+      header: 'Are you sure you want to publish this item version?',
+      body: 'Clicking "Yes, publish" will make this item discoverable for all website visitors in the Browse Items Page.',
       cancelBtn: 'Cancel',
       okBtn: 'Yes, publish',
     },
     success: {
-      header: 'Question published successfully',
-      body: 'Question was published and is now available in the Browse Questions page',
+      header: 'Item published successfully',
+      body: 'Item was published and is now available in the Browse Items page',
     },
     QuestionStatus: 'Published',
   },
 }
 
-export const multipleChoiceQuestionString =
-  'By 2040, the world s population is expected to rise to approximately20 billion10 billion7 billion9 billion'
+export const fillInTheBlankString =
+  ' By 2040, the world s population is expected to rise to approximately   ______  .'
 
 export const multipleChoiceQuestionWithMetadata =
   'correctNot correctCorrectMetadataQuestion type:  multipleChoiceTopics:Topic:  environmentalScienceSubtopic:  humanPopulationImpctsCourses:Course:  apEnvironmentalScienceUnit:  populationsSkill:  Application:  Course Topic:  populationGrowthAndResourceAvailabilityUnderstanding:  Learning objective:  ERT-3.FEssential knowledge:  ERT-3.F.1Keywords:  population, environmentBioInteractive resources:Bloom&apos;s Cognitive Level:  higher-evaluateBloom&apos;s Affective Level:  valuingBloom&apos;s Psychomotor Level:  nonDiscursiveCommunicationPublication date:'

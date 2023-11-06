@@ -34,7 +34,12 @@ import {
   GET_CHAT_THREAD,
   SEND_MESSAGE,
 } from '../graphql'
-import { useMetadata, hasRole, hasGlobalRole } from '../utilities'
+import {
+  useMetadata,
+  hasRole,
+  hasGlobalRole,
+  questionTypes,
+} from '../utilities'
 
 const AUTOSAVE_DELAY = 500
 
@@ -146,6 +151,12 @@ const messagesApiToUi = (messages, currentUser = null) => {
 }
 // #endregion transformations
 
+const scanContentForQuestionType = content => {
+  return content
+    ? questionTypes.find(type => content.indexOf(type.waxValue) > -1)
+    : null
+}
+
 const QuestionPage = props => {
   const { testMode } = props
 
@@ -236,6 +247,7 @@ const QuestionPage = props => {
   const [pageTitle, setPageTitle] = useState('')
 
   const version = question?.versions[0]
+  const selectedQuestionType = scanContentForQuestionType(version?.content)
 
   useEffect(() => {
     if (version && metadata) {
@@ -368,26 +380,43 @@ const QuestionPage = props => {
     updateQuestionMutation(mutationData).then(() => resolve())
   }, AUTOSAVE_DELAY)
 
-  const handleEditorContentAutoSave = content => {
+  const handleEditorContentAutoSave = (content, updateMetadata = true) => {
     return new Promise(resolve => {
       debouncedEditorAutoSave(content, resolve)
     })
   }
 
   const handleMetadataAutoSave = values => {
-    const metadataToSave = metadataUiToApi(values)
+    if (values) {
+      const metadataToSave = metadataUiToApi(values)
 
-    const mutationData = {
-      variables: {
-        questionId: id,
-        questionVersionId: version.id,
-        input: {
-          ...metadataToSave,
+      if (
+        values.questionType &&
+        version?.questionType !== values.questionType
+      ) {
+        // warn that current content will be deleted
+        // apply new question type starting data
+        const selectedType = questionTypes.find(
+          t => t.metadataValue === values.questionType,
+        )
+
+        handleEditorContentAutoSave(selectedType.startingData, false)
+      }
+
+      const mutationData = {
+        variables: {
+          questionId: id,
+          questionVersionId: version.id,
+          input: {
+            ...metadataToSave,
+          },
         },
-      },
+      }
+
+      return updateQuestionMutation(mutationData)
     }
 
-    return updateQuestionMutation(mutationData)
+    return new Promise()
   }
 
   const handleClickBackButton = () => {
@@ -690,9 +719,9 @@ const QuestionPage = props => {
     return (
       <Result
         // replace link with a Button with to="/dashboard" after MR is merged
-        extra={<Link to="/discover">Visit the Browse Questions page</Link>}
+        extra={<Link to="/discover">Visit the Browse Items page</Link>}
         status="404"
-        subTitle="Sorry, this question hasn't been published yet."
+        subTitle="Sorry, this item hasn't been published yet."
         title="Question Not Ready"
       />
     )
@@ -772,6 +801,7 @@ const QuestionPage = props => {
         refetchUser={refetchCurrentUser}
         resources={getResources}
         searchHELoading={loadingSearchHE}
+        selectedQuestionType={selectedQuestionType}
         showAssignHEButton={
           version?.submitted && !version?.published && isEditor
         }

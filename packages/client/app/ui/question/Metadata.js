@@ -11,6 +11,7 @@ import {
   Button,
   VisuallyHiddenElement,
   Checkbox,
+  Modal,
 } from '../common'
 import {
   TopicAndSubtopic,
@@ -33,6 +34,9 @@ const apCourses = ['apBiology', 'apEnvironmentalScience']
 const ibCourses = ['biBiology', 'biEnvironmentalScience']
 const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
 
+const ModalContext = React.createContext(null)
+const { footer: ModalFooter, header: ModalHeader } = Modal
+
 const Metadata = React.forwardRef((props, ref) => {
   const {
     className,
@@ -47,6 +51,7 @@ const Metadata = React.forwardRef((props, ref) => {
     complexItemSetOptions,
     /* eslint-disable-next-line react/prop-types */
     innerRef,
+    selectedQuestionType,
   } = props
 
   const [formValues] = useState(initialValues)
@@ -63,6 +68,8 @@ const Metadata = React.forwardRef((props, ref) => {
   }
 
   const [form] = Form.useForm()
+  const [modal, contextHolder] = Modal.useModal()
+  const { confirm } = modal
 
   useImperativeHandle(innerRef, () => ({
     getFormValues: () => form.getFieldsValue(),
@@ -184,6 +191,40 @@ const Metadata = React.forwardRef((props, ref) => {
     }
   }
 
+  const handleAutoSave = formData => {
+    if (
+      selectedQuestionType &&
+      selectedQuestionType !== formData.questionType
+    ) {
+      const confirmUpdateQuestionType = confirm()
+
+      const cancelUpdate = () => {
+        confirmUpdateQuestionType.destroy()
+        form.setFieldsValue({ questionType: selectedQuestionType })
+      }
+
+      const continueUpdate = () => {
+        confirmUpdateQuestionType.destroy()
+        onAutoSave(formData)
+      }
+
+      confirmUpdateQuestionType.update({
+        title: <ModalHeader>Are you sure?</ModalHeader>,
+        content: <p>All content will be replaced by the new item type.</p>,
+        footer: [
+          <ModalFooter key="footer">
+            <Button onClick={cancelUpdate}>Cancel</Button>
+            <Button autoFocus onClick={continueUpdate} type="primary">
+              Yes, update
+            </Button>
+          </ModalFooter>,
+        ],
+      })
+    } else {
+      onAutoSave(formData)
+    }
+  }
+
   useEffect(() => {
     let sIndexes = [0]
 
@@ -221,282 +262,261 @@ const Metadata = React.forwardRef((props, ref) => {
     return null
   }
 
+  useEffect(() => {
+    // only fire when new question type comes from editor content
+    if (selectedQuestionType !== form.getFieldValue('questionType')) {
+      form.setFieldsValue({ questionType: selectedQuestionType })
+      onAutoSave(form.getFieldsValue())
+    }
+  }, [selectedQuestionType])
+
   /**
    * RENDER
    */
 
   return (
-    <Wrapper aria-label="Question Metadata" className={className}>
-      <VisuallyHiddenElement as="h2">Metadata Form</VisuallyHiddenElement>
-      <Form
-        autoSave
-        form={form}
-        initialValues={formValues}
-        layout="vertical"
-        onAutoSave={onAutoSave}
-        onFinish={onFormFinish}
-      >
-        <Form.Item name="belongsToComplexItemSet" valuePropName="checked">
-          <Checkbox data-testid="belongs-to-set-checkbox" disabled={readOnly}>
-            This question belongs to a Complex Item Set{' '}
-          </Checkbox>
-        </Form.Item>
-
-        <Form.Item dependencies={['belongsToComplexItemSet']} noStyle>
-          {({ getFieldValue }) => {
-            if (getFieldValue('belongsToComplexItemSet')) {
-              return (
-                <Form.Item
-                  label="Select Complex Item Set"
-                  name="complexItemSetId"
-                  rules={[
-                    {
-                      required: true,
-                      message: 'Complex item set is required',
-                    },
-                  ]}
-                >
-                  <Select
-                    data-testid="complexItemSet-select"
-                    disabled={readOnly}
-                    optionFilterProp="label"
-                    options={complexItemSetOptions}
-                    showSearch
-                  />
-                </Form.Item>
-              )
-            }
-
-            return null
-          }}
-        </Form.Item>
-
-        <Form.Item
-          label="Question Type"
-          name="questionType"
-          rules={[{ required: true, message: 'Question type is required' }]}
+    <ModalContext.Provider value={null}>
+      <Wrapper aria-label="Question Metadata" className={className}>
+        <VisuallyHiddenElement as="h2">Metadata Form</VisuallyHiddenElement>
+        <Form
+          autoSave
+          form={form}
+          initialValues={formValues}
+          layout="vertical"
+          onAutoSave={handleAutoSave}
+          onFinish={onFormFinish}
         >
-          <Select
-            // allowClear
-            data-testid="questionType-select"
-            disabled={readOnly}
-            options={metadata.questionTypes}
-          />
-        </Form.Item>
-        <Form.List name={topicsKey} noStyle>
-          {(_, { add, remove }) => (
-            <StyledSupplementaryFieldsContainer>
-              {topicsIndexes.map(index => (
-                <div key={`supplementaryTopic-${index}`}>
-                  <TopicAndSubtopic
-                    getFieldValue={form.getFieldValue}
-                    index={index}
-                    isRequired
-                    readOnly={readOnly}
-                    setFieldsValue={form.setFieldsValue}
-                    supplementaryKey={topicsKey}
-                    topicsMetadata={metadata.topics}
-                  />
-                </div>
-              ))}
-              {!readOnly && (
-                <>
-                  {topicsIndexes.length < 2 && (
-                    <Button
-                      disabled={readOnly}
-                      onClick={() => {
-                        handleSupplementaryAdd(add, topicsKey)
-                      }}
-                      type="primary"
-                    >
-                      Add a second topic
-                    </Button>
-                  )}
-                  {topicsIndexes.length > 1 && (
-                    <Button
-                      data-testid="remove-second-topic"
-                      disabled={readOnly}
-                      onClick={() => {
-                        handleSupplementaryRemove(remove, topicsKey)
-                      }}
-                      status="danger"
-                      type="primary"
-                    >
-                      Remove second topic
-                    </Button>
-                  )}
-                </>
-              )}
-            </StyledSupplementaryFieldsContainer>
-          )}
-        </Form.List>
+          <Form.Item name="belongsToComplexItemSet" valuePropName="checked">
+            <Checkbox data-testid="belongs-to-set-checkbox" disabled={readOnly}>
+              This item belongs to a Complex Item Set{' '}
+            </Checkbox>
+          </Form.Item>
 
-        <Form.List name={coursesKey} noStyle>
-          {(_, { add, remove }) => (
-            <StyledSupplementaryFieldsContainer>
-              {coursesIndexes.map(index =>
-                index !== -1 ? (
-                  <div key={`supplementaryFields-${index}`}>
-                    {index === 1 && !editorView && <p>Second reference</p>}
-                    <Form.Item
-                      hidden={index === 1 && !editorView}
-                      {...initialValueSecondCourse(index)}
-                      label="Course"
-                      name={[index, 'course']}
-                      rules={[
-                        { required: true, message: 'Course is required' },
-                      ]}
-                    >
-                      <Select
-                        allowClear
-                        data-testid="course-select"
-                        disabled={readOnly}
-                        onChange={value =>
-                          resetCourseFields(value, index, coursesKey, remove)
-                        }
-                        options={metadata.frameworks.map(i => ({
-                          label: i.label,
-                          value: i.value,
-                        }))}
-                      />
-                    </Form.Item>
-
-                    <Form.Item
-                      dependencies={[[coursesKey, 0, 'course']]}
-                      noStyle
-                    >
-                      {({ getFieldValue }) =>
-                        renderFrameworkFields(getFieldValue, index, coursesKey)
-                      }
-                    </Form.Item>
-                  </div>
-                ) : (
-                  <p key={`supplementaryFields-${index}`}>
-                    Corrupted course value, please contact the administrator
-                  </p>
-                ),
-              )}
-
-              {!readOnly && coursesIndexes.indexOf(-1) === -1 && (
-                <>
-                  {(coursesIndexes.length < 2 || editorView) && (
-                    <Button
+          <Form.Item dependencies={['belongsToComplexItemSet']} noStyle>
+            {({ getFieldValue }) => {
+              if (getFieldValue('belongsToComplexItemSet')) {
+                return (
+                  <Form.Item
+                    label="Select Complex Item Set"
+                    name="complexItemSetId"
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Complex item set is required',
+                      },
+                    ]}
+                  >
+                    <Select
+                      data-testid="complexItemSet-select"
                       disabled={readOnly}
-                      onClick={() => {
-                        handleSupplementaryAdd(add, coursesKey)
-                      }}
-                      type="primary"
-                    >
-                      {editorView
-                        ? 'Add related course'
-                        : 'Add a second curricula reference'}
-                    </Button>
-                  )}
-                  {((coursesIndexes.length > 1 && !editorView) ||
-                    (editorView && coursesIndexes.length > 1)) && ( // transformedInitialValues.courses.length
-                    <Button
-                      disabled={readOnly}
-                      onClick={() => {
-                        handleSupplementaryRemove(remove, coursesKey)
-                      }}
-                      status="danger"
-                      type="primary"
-                    >
-                      {editorView
-                        ? 'Remove last course'
-                        : 'Remove second curricula reference'}
-                    </Button>
-                  )}
-                </>
-              )}
-            </StyledSupplementaryFieldsContainer>
-          )}
-        </Form.List>
+                      optionFilterProp="label"
+                      options={complexItemSetOptions}
+                      showSearch
+                    />
+                  </Form.Item>
+                )
+              }
 
-        <Form.Item label="Keywords" name="keywords">
-          <Select
-            data-testid="keywords-select"
-            disabled={readOnly}
-            mode="tags"
-            open={false}
-          />
-        </Form.Item>
-        <Form.Item
-          dependencies={[
-            [topicsKey, 0, 'topic'],
-            [topicsKey, 1, 'topic'],
-          ]}
-          noStyle
-        >
-          {({ getFieldValue }) => (
-            <Resources
-              getFieldValue={form.getFieldValue}
-              readOnly={readOnly}
-              resources={resources}
-              selectedTopics={getSelectedTopics([
-                getFieldValue([topicsKey, 0, 'topic']),
-                getFieldValue([topicsKey, 1, 'topic']),
-              ])}
+              return null
+            }}
+          </Form.Item>
+
+          <Form.Item
+            label="Item Type"
+            name="questionType"
+            rules={[{ required: true, message: 'Item type is required' }]}
+          >
+            <Select
+              // allowClear
+              data-testid="questionType-select"
+              disabled={readOnly}
+              options={metadata.questionTypes}
             />
-          )}
-        </Form.Item>
+          </Form.Item>
+          <Form.List name={topicsKey} noStyle>
+            {(_, { add, remove }) => (
+              <StyledSupplementaryFieldsContainer>
+                {topicsIndexes.map(index => (
+                  <div key={`supplementaryTopic-${index}`}>
+                    <TopicAndSubtopic
+                      getFieldValue={form.getFieldValue}
+                      index={index}
+                      isRequired
+                      readOnly={readOnly}
+                      setFieldsValue={form.setFieldsValue}
+                      supplementaryKey={topicsKey}
+                      topicsMetadata={metadata.topics}
+                    />
+                  </div>
+                ))}
+                {!readOnly && (
+                  <>
+                    {topicsIndexes.length < 2 && (
+                      <Button
+                        disabled={readOnly}
+                        onClick={() => {
+                          handleSupplementaryAdd(add, topicsKey)
+                        }}
+                        type="primary"
+                      >
+                        Add a second topic
+                      </Button>
+                    )}
+                    {topicsIndexes.length > 1 && (
+                      <Button
+                        data-testid="remove-second-topic"
+                        disabled={readOnly}
+                        onClick={() => {
+                          handleSupplementaryRemove(remove, topicsKey)
+                        }}
+                        status="danger"
+                        type="primary"
+                      >
+                        Remove second topic
+                      </Button>
+                    )}
+                  </>
+                )}
+              </StyledSupplementaryFieldsContainer>
+            )}
+          </Form.List>
 
-        {/* BLOOMS */}
+          <Form.List name={coursesKey} noStyle>
+            {(_, { add, remove }) => (
+              <StyledSupplementaryFieldsContainer>
+                {coursesIndexes.map(index =>
+                  index !== -1 ? (
+                    <div key={`supplementaryFields-${index}`}>
+                      {index === 1 && !editorView && <p>Second reference</p>}
+                      <Form.Item
+                        hidden={index === 1 && !editorView}
+                        {...initialValueSecondCourse(index)}
+                        label="Course"
+                        name={[index, 'course']}
+                        rules={[
+                          { required: true, message: 'Course is required' },
+                        ]}
+                      >
+                        <Select
+                          allowClear
+                          data-testid="course-select"
+                          disabled={readOnly}
+                          onChange={value =>
+                            resetCourseFields(value, index, coursesKey, remove)
+                          }
+                          options={metadata.frameworks.map(i => ({
+                            label: i.label,
+                            value: i.value,
+                          }))}
+                        />
+                      </Form.Item>
 
-        <Form.Item
-          label="Bloom's Cognitive Level"
-          name="cognitiveLevel"
-          rules={[
-            {
-              required: true,
-              message: "Bloom's Cognitive Level is required",
-            },
-          ]}
-        >
-          <Select
-            data-testid="cognitive-select"
-            disabled={readOnly}
-            options={metadata.blooms.cognitive}
-          />
-        </Form.Item>
+                      <Form.Item
+                        dependencies={[[coursesKey, 0, 'course']]}
+                        noStyle
+                      >
+                        {({ getFieldValue }) =>
+                          renderFrameworkFields(
+                            getFieldValue,
+                            index,
+                            coursesKey,
+                          )
+                        }
+                      </Form.Item>
+                    </div>
+                  ) : (
+                    <p key={`supplementaryFields-${index}`}>
+                      Corrupted course value, please contact the administrator
+                    </p>
+                  ),
+                )}
 
-        {/* <Form.Item
-          label="Bloom's affective level"
-          name="affectiveLevel"
-          rules={[
-            {
-              message: "Bloom's affective level is required",
-            },
-          ]}
-        >
-          <Select
-            data-testid="affective-select"
-            disabled={readOnly}
-            options={metadata.blooms.affective}
-          />
-        </Form.Item>
+                {!readOnly && coursesIndexes.indexOf(-1) === -1 && (
+                  <>
+                    {(coursesIndexes.length < 2 || editorView) && (
+                      <Button
+                        disabled={readOnly}
+                        onClick={() => {
+                          handleSupplementaryAdd(add, coursesKey)
+                        }}
+                        type="primary"
+                      >
+                        {editorView
+                          ? 'Add related course'
+                          : 'Add a second curricula reference'}
+                      </Button>
+                    )}
+                    {((coursesIndexes.length > 1 && !editorView) ||
+                      (editorView && coursesIndexes.length > 1)) && ( // transformedInitialValues.courses.length
+                      <Button
+                        disabled={readOnly}
+                        onClick={() => {
+                          handleSupplementaryRemove(remove, coursesKey)
+                        }}
+                        status="danger"
+                        type="primary"
+                      >
+                        {editorView
+                          ? 'Remove last course'
+                          : 'Remove second curricula reference'}
+                      </Button>
+                    )}
+                  </>
+                )}
+              </StyledSupplementaryFieldsContainer>
+            )}
+          </Form.List>
 
-        <Form.Item
-          label="Bloom's psychomotor level"
-          name="psychomotorLevel"
-          rules={[
-            {
-              message: "Bloom's psychomotor level is required",
-            },
-          ]}
-        >
-          <Select
-            data-testid="psychomotor-select"
-            disabled={readOnly}
-            options={metadata.blooms.psychomotor}
-          />
-        </Form.Item> */}
+          <Form.Item label="Keywords" name="keywords">
+            <Select
+              data-testid="keywords-select"
+              disabled={readOnly}
+              mode="tags"
+              open={false}
+            />
+          </Form.Item>
+          <Form.Item
+            dependencies={[
+              [topicsKey, 0, 'topic'],
+              [topicsKey, 1, 'topic'],
+            ]}
+            noStyle
+          >
+            {({ getFieldValue }) => (
+              <Resources
+                getFieldValue={form.getFieldValue}
+                readOnly={readOnly}
+                resources={resources}
+                selectedTopics={getSelectedTopics([
+                  getFieldValue([topicsKey, 0, 'topic']),
+                  getFieldValue([topicsKey, 1, 'topic']),
+                ])}
+              />
+            )}
+          </Form.Item>
 
-        {/* <Form.Item label="Reading level" name="readingLevel">
-          <Select disabled={readOnly} options={[]} />
-        </Form.Item> */}
-      </Form>
-    </Wrapper>
+          {/* BLOOMS */}
+
+          <Form.Item
+            label="Bloom's Cognitive Level"
+            name="cognitiveLevel"
+            rules={[
+              {
+                required: true,
+                message: "Bloom's Cognitive Level is required",
+              },
+            ]}
+          >
+            <Select
+              data-testid="cognitive-select"
+              disabled={readOnly}
+              options={metadata.blooms.cognitive}
+            />
+          </Form.Item>
+        </Form>
+      </Wrapper>
+      {contextHolder}
+    </ModalContext.Provider>
   )
 })
 
@@ -759,6 +779,7 @@ Metadata.propTypes = {
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
     }),
   ),
+  selectedQuestionType: PropTypes.string,
 }
 
 Metadata.defaultProps = {
@@ -769,6 +790,7 @@ Metadata.defaultProps = {
   resources: [],
   presentationMode: false,
   complexItemSetOptions: [],
+  selectedQuestionType: null,
 }
 
 export default Metadata

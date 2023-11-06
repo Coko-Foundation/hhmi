@@ -338,12 +338,12 @@ const metadata = {
       {
         label: 'Higher-order',
         options: [
+          // {
+          //   label: 'Understand (higher-order)',
+          //   value: 'higher-understand',
+          // },
           {
-            label: 'Understand (higher-order)',
-            value: 'higher-understand',
-          },
-          {
-            label: 'Apply',
+            label: 'Apply  (higher-order)',
             value: 'higher-apply',
           },
           {
@@ -364,11 +364,15 @@ const metadata = {
         label: 'Lower-order',
         options: [
           {
+            label: 'Apply (lower-order)',
+            value: 'lower-apply',
+          },
+          {
             label: 'Remember',
             value: 'lower-remember',
           },
           {
-            label: 'Understand (lower-order)',
+            label: 'Understand',
             value: 'lower-understand',
           },
         ],

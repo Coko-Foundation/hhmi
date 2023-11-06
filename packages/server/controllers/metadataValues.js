@@ -338,12 +338,8 @@ const metadata = {
       {
         label: 'Higher-order',
         options: [
-          // {
-          //   label: 'Understand (higher-order)',
-          //   value: 'higher-understand',
-          // },
           {
-            label: 'Apply',
+            label: 'Apply (higher-order)',
             value: 'higher-apply',
           },
           {
@@ -368,11 +364,11 @@ const metadata = {
             value: 'lower-remember',
           },
           {
-            label: 'Understand (lower-order)',
+            label: 'Understand',
             value: 'lower-understand',
           },
           {
-            label: 'Apply',
+            label: 'Apply (lower-order)',
             value: 'lower-apply',
           },
         ],
@@ -15726,7 +15722,7 @@ const metadata = {
   questionTypes: [
     {
       value: 'multipleChoice',
-      label: 'Multi-Select',
+      label: 'Multiple Answers',
     },
     {
       value: 'multipleChoiceSingleCorrect',

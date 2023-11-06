@@ -44,7 +44,7 @@ export default {
         'Lists',
         'Images',
         'Tables',
-        'QuestionsDropDown',
+        // 'QuestionsDropDown',
         'FullScreen',
       ],
     },

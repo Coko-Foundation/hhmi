@@ -230,7 +230,6 @@ const IntroToBioCourseMetadata = props => {
         filterMode={filterMode}
         getFieldValue={getFieldValue}
         index={index}
-        isRequired={isRequired}
         readOnly={readOnly}
         setFieldsValue={setFieldsValue}
         supplementaryKey={supplementaryKey}
@@ -243,7 +242,6 @@ const IntroToBioCourseMetadata = props => {
           filterMode={filterMode}
           getFieldValue={getFieldValue}
           index={index}
-          isRequired={isRequired}
           readOnly={readOnly}
           setFieldsValue={setFieldsValue}
           supplementaryKey={supplementaryKey}
