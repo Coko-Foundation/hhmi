@@ -2,7 +2,7 @@
 
 exports[`AuthenticationForm matches snapshot 1`] = `
 <div
-  className="sc-btijOp"
+  className="sc-kKUyCS"
 >
   <div
     className="sc-kFuwaP eKsANT"
@@ -15,7 +15,7 @@ exports[`AuthenticationForm matches snapshot 1`] = `
       The error message
     </div>
     <form
-      className="ant-form ant-form-vertical css-dev-only-do-not-override-1vtf12y"
+      className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas"
       data-testid="form-content"
       onReset={[Function]}
       onSubmit={[Function]}
@@ -27,7 +27,7 @@ exports[`AuthenticationForm matches snapshot 1`] = `
         className="sc-fbJfA"
       >
         <input
-          className="ant-input css-dev-only-do-not-override-1vtf12y sc-brKeYL cNoMrz"
+          className="ant-input css-dev-only-do-not-override-12jzuas sc-brKeYL cNoMrz"
           disabled={false}
           onBlur={[Function]}
           onChange={[Function]}
@@ -40,10 +40,11 @@ exports[`AuthenticationForm matches snapshot 1`] = `
         />
       </div>
       <button
-        className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU iQloaX sc-kKUyCS kIVIfu"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU iQloaX sc-ftefQL itGAsa"
         disabled={false}
         onClick={[Function]}
         status={null}
+        style={{}}
         type="submit"
       >
         <span>
@@ -53,10 +54,10 @@ exports[`AuthenticationForm matches snapshot 1`] = `
     </form>
   </div>
   <div
-    className="sc-ftefQL dCGlJq"
+    className="sc-fUHfjU igQLRM"
   >
     <div
-      className="sc-CQMxN dDJcMQ"
+      className="sc-fNGOfv kjUzal"
     >
       <a
         className="sc-flFvMs eareoJ"

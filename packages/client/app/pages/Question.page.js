@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import { useHistory, useParams, Link, useLocation } from 'react-router-dom'
-import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
+import {
+  useQuery,
+  useMutation,
+  useLazyQuery,
+  useSubscription,
+} from '@apollo/client'
 import debounce from 'lodash/debounce'
 // import { questionDataTransformer, questionDataMapper } from '../utilities'
 
@@ -33,6 +38,9 @@ import {
   GET_QUESTION_HANDLING_EDITORS,
   GET_CHAT_THREAD,
   SEND_MESSAGE,
+  CREATE_CHAT_THREAD,
+  GET_QUESTION_PARTICIPANTS,
+  MESSAGE_CREATED_SUBSCRIPTION,
 } from '../graphql'
 import {
   useMetadata,
@@ -136,16 +144,20 @@ const messagesApiToUi = (messages, currentUser = null) => {
     ? messages.map(
         ({
           id,
-          timestamp,
+          created,
           content,
           user: { id: userId, displayName } = {},
-        }) => ({
-          id,
-          content,
-          date: timestamp,
-          own: userId === currentUser,
-          user: displayName,
-        }),
+          attachments,
+        }) => {
+          return {
+            id,
+            content,
+            date: created,
+            own: userId === currentUser,
+            user: displayName,
+            attachments,
+          }
+        },
       )
     : []
 }
@@ -165,8 +177,11 @@ const QuestionPage = props => {
   const history = useHistory()
   const { metadata } = useMetadata()
 
+  const initialTabKey = localStorage.getItem(id) || 'editor'
+
   const {
     data: { question } = {},
+    refetch: refetchQuestion,
     loading,
     error,
   } = useQuery(QUESTION, {
@@ -178,6 +193,13 @@ const QuestionPage = props => {
 
   const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
 
+  const { data: { getQuestionParticipants: questionParticipants } = {} } =
+    useQuery(GET_QUESTION_PARTICIPANTS, {
+      variables: {
+        id,
+      },
+    })
+
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
   )
@@ -187,6 +209,8 @@ const QuestionPage = props => {
   const [updateQuestionMutation] = useMutation(UPDATE_QUESTION)
 
   const [submitQuestionMutation] = useMutation(SUBMIT_QUESTION)
+
+  const [createChatThreadMutation] = useMutation(CREATE_CHAT_THREAD)
 
   const [rejectQuestionMutation] = useMutation(REJECT_QUESTION, {
     variables: { questionId: id },
@@ -232,10 +256,61 @@ const QuestionPage = props => {
     fetchPolicy: 'network-only',
   })
 
-  const [getChatThread, { data: { chatThread } = {}, loading: chatLoading }] =
-    useLazyQuery(GET_CHAT_THREAD, {
-      fetchPolicy: 'network-only',
+  const { data: { chatThread } = {}, loading: chatLoading } = useQuery(
+    GET_CHAT_THREAD,
+    {
+      skip: !question?.chatThreadId,
+      variables: {
+        id: question?.chatThreadId,
+      },
+    },
+  )
+
+  useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
+    skip: !chatThread?.id,
+    variables: { chatThreadId: chatThread?.id },
+    // fetchPolicy: 'network-only',
+    onData: ({
+      data: {
+        data: { messageCreated },
+      },
+    }) => {
+      if (messageCreated) {
+        setMessages(previousMessages => [...previousMessages, messageCreated])
+      }
+    },
+  })
+
+  const createQuestionChat = () => {
+    const chatThreadMutationData = {
+      variables: {
+        input: {
+          chatType: 'authorChat',
+          relatedObjectId: id,
+        },
+      },
+    }
+
+    return new Promise((resolve, reject) => {
+      createChatThreadMutation(chatThreadMutationData)
+        .then(data => {
+          refetchQuestion()
+          resolve(data)
+        })
+        .catch(err => {
+          reject(err)
+        })
     })
+  }
+
+  // maintaining messages in a state
+  const [messages, setMessages] = useState([])
+
+  useEffect(() => {
+    if (chatThread?.messages) {
+      setMessages(chatThread.messages)
+    }
+  }, [chatThread])
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -296,6 +371,12 @@ const QuestionPage = props => {
       }
     }
   }, [version, metadata])
+
+  useEffect(() => {
+    if (version?.submitted && !question?.chatThreadId) {
+      createQuestionChat()
+    }
+  }, [question, version])
 
   // declare lazy query to be called when no `relatedQuestionsIds` from previous state
   const [getPublishedQuestionIds] = useLazyQuery(GET_PUBLISHED_QUESTIONS_IDS)
@@ -675,24 +756,26 @@ const QuestionPage = props => {
     filterGlobalTeamMembers({ variables })
   }
 
-  const onLoadChat = async () => {
-    const variables = {
-      id: question?.chatThreadId,
-    }
-
-    getChatThread({ variables })
+  const persistQuestionTab = activeTab => {
+    localStorage.setItem(id, activeTab)
   }
 
-  const onSendMessage = async content => {
-    const variables = {
-      input: {
-        content,
-        chatThreadId: question?.chatThreadId,
-        userId: currentUser.id,
+  const onSendMessage = async (content, mentions, attachments) => {
+    const fileObjects = attachments.map(attachment => attachment.originFileObj)
+
+    const mutationData = {
+      variables: {
+        input: {
+          content,
+          chatThreadId: question?.chatThreadId,
+          userId: currentUser.id,
+          mentions,
+          attachments: fileObjects,
+        },
       },
     }
 
-    sendMessage({ variables })
+    return sendMessage(mutationData)
   }
   // #endregion handlers
 
@@ -741,6 +824,7 @@ const QuestionPage = props => {
           version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
         }
         currentHandlingEditors={currentHandlingEditors}
+        defaultActiveKey={initialTabKey}
         editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
         editorView={isEditor || (isHandlingEditor && !isAuthor) || isAdmin}
@@ -753,9 +837,10 @@ const QuestionPage = props => {
           version?.inProduction || (isAdmin && isAuthor && !version?.published)
         }
         isPublished={version?.published}
+        // admins have editorial rights (publishing rights) on their own questions
         isRejected={question?.rejected}
-        // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
         isSubmitted={version?.submitted || (isAdmin && isAuthor)}
+        // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
         isUnderReview={version?.underReview}
         isUserLoggedIn={!!currentUser}
         leadingContent={
@@ -765,8 +850,6 @@ const QuestionPage = props => {
         }
         loadAssignedHEs={getQuestionsHandlingEditors}
         loadAuthors={getUsers}
-        // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
-        // unless the question has already been published
         loading={
           loading ||
           !version ||
@@ -774,9 +857,10 @@ const QuestionPage = props => {
           !getResources ||
           !complexItemSetOptions
         }
-        messages={messagesApiToUi(chatThread?.messages, currentUser?.id)}
+        messages={messagesApiToUi(messages, currentUser?.id)}
         metadata={metadata || {}}
         onAssignAuthor={handleAssignAuthor}
+        onChangeTab={persistQuestionTab}
         onClickAssignHE={handleClickAssignHE}
         onClickBackButton={handleClickBackButton}
         onClickExportToQti={testMode ? handleExportToQti : null}
@@ -786,7 +870,6 @@ const QuestionPage = props => {
         onCreateNewVersion={handleCreateNewVersion}
         onEditorContentAutoSave={handleEditorContentAutoSave}
         onImageUpload={handleImageUpload}
-        onLoadChat={onLoadChat}
         onMetadataAutoSave={handleMetadataAutoSave}
         onMoveToProduction={handleMoveToProduction}
         onMoveToReview={handleMoveToReview}
@@ -798,6 +881,7 @@ const QuestionPage = props => {
         onUnassignHandlingEditor={handleUnassignHE}
         qtiZipLoading={generateQtiZipLoading}
         questionAgreedTc={false} //
+        questionParticipants={questionParticipants}
         refetchUser={refetchCurrentUser}
         resources={getResources}
         searchHELoading={loadingSearchHE}
@@ -805,6 +889,7 @@ const QuestionPage = props => {
         showAssignHEButton={
           version?.submitted && !version?.published && isEditor
         }
+        showAuthorChatTab={version?.submitted}
         showNextQuestionLink={false}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}

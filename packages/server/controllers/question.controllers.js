@@ -4,6 +4,7 @@ const config = require('config')
 const { createFile, logger, useTransaction } = require('@coko/server')
 
 const {
+  User,
   Question,
   QuestionVersion,
   Team,
@@ -22,6 +23,7 @@ const { getImageUrls, findImages } = require('./utils')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
+const EDITOR_TEAM = config.teams.nonGlobal.editor
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
 
 const getQuestion = async (questionId, options = {}) => {
@@ -187,6 +189,28 @@ const getHandlingEditorDashboard = async (userId, options = {}) => {
     searchQuery,
     trx,
   })
+}
+
+const getQuestionParticipants = async questionId => {
+  const auth = await User.query()
+    .select('users.displayName', 'users.id')
+    .leftJoin('team_members', 'users.id', 'team_members.user_id')
+    .leftJoin('teams', 'teams.id', 'team_members.team_id')
+    .where(builder => {
+      builder.where('teams.role', EDITOR_TEAM.role).orWhere(subquery => {
+        subquery
+          .whereIn('teams.role', [AUTHOR_TEAM.role, HE_TEAM.role])
+          .whereExists(
+            Team.query()
+              .select(1)
+              .from('questions')
+              .whereRaw('questions.id=teams.object_id')
+              .where('questions.id', questionId),
+          )
+      })
+    })
+
+  return auth
 }
 
 /**
@@ -799,6 +823,7 @@ module.exports = {
   getReviewerDashboard,
   getManagingEditorDashboard,
   getHandlingEditorDashboard,
+  getQuestionParticipants,
 
   createQuestion,
   duplicateQuestion,

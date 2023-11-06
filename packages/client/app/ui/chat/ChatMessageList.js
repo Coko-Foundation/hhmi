@@ -45,7 +45,18 @@ const TopMessageWrapper = styled.p`
 `
 
 const ChatMessageList = props => {
-  const { className, hasMore, messages, onFetchMore, infiniteScroll } = props
+  const {
+    className,
+    hasMore,
+    messages,
+    onFetchMore,
+    infiniteScroll,
+    participants,
+  } = props
+
+  const participantUsernames = participants.map(
+    participant => participant.display,
+  )
 
   const messageList = () =>
     infiniteScroll ? (
@@ -70,26 +81,33 @@ const ChatMessageList = props => {
         scrollableTarget="scrollableDiv"
         scrollThreshold="50px"
       >
-        {messages.map(({ content, date, own, user }) => (
-          <ChatMessage
-            className="message"
-            content={content}
-            date={date}
-            own={own}
-            user={user}
-          />
-        ))}
-      </StyledInfiniteScroll>
-    ) : (
-      <>
-        <MessagesWrappes>
-          {messages.map(({ content, date, own, user, id }) => (
+        {messages.map(({ content, date, own, user, attachments, id }) => {
+          return (
             <ChatMessage
+              attachments={attachments}
               className="message"
               content={content}
               date={date}
               key={id}
               own={own}
+              participants={participantUsernames}
+              user={user}
+            />
+          )
+        })}
+      </StyledInfiniteScroll>
+    ) : (
+      <>
+        <MessagesWrappes>
+          {messages.map(({ content, date, own, user, id, attachments }) => (
+            <ChatMessage
+              attachments={attachments}
+              className="message"
+              content={content}
+              date={date}
+              key={id}
+              own={own}
+              participants={participantUsernames}
               user={user}
             />
           ))}
@@ -128,6 +146,7 @@ ChatMessageList.propTypes = {
       user: PropTypes.string,
     }),
   ),
+  participants: PropTypes.arrayOf(PropTypes.shape()),
   hasMore: PropTypes.bool,
   infiniteScroll: PropTypes.bool,
   onFetchMore: PropTypes.func,
@@ -138,6 +157,7 @@ ChatMessageList.defaultProps = {
   hasMore: false,
   infiniteScroll: false,
   onFetchMore: () => {},
+  participants: [],
 }
 
 export default ChatMessageList

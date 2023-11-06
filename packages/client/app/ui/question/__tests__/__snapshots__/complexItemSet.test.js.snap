@@ -2,13 +2,13 @@
 
 exports[`ComplexItemSetForm matches snapshot 1`] = `
 <div
-  className="sc-btijOp eUhKnE"
+  className="sc-kKUyCS daOPNy"
 >
   <div
     className="sc-lfQZlm jcLZhl"
   >
     <form
-      className="ant-form ant-form-vertical css-dev-only-do-not-override-1vtf12y sc-kKUyCS hCzjKq"
+      className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas sc-ftefQL jCPzqW"
       data-testid="form-content"
       onReset={[Function]}
       onSubmit={[Function]}
@@ -17,15 +17,15 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
         Create new Complex Item Set
       </h2>
       <div
-        className="ant-form-item css-dev-only-do-not-override-1vtf12y"
+        className="ant-form-item css-dev-only-do-not-override-12jzuas"
       >
         <div
-          className="ant-row ant-form-item-row css-dev-only-do-not-override-1vtf12y"
+          className="ant-row ant-form-item-row css-dev-only-do-not-override-12jzuas"
           onBlur={[Function]}
           style={{}}
         >
           <div
-            className="ant-col ant-form-item-label css-dev-only-do-not-override-1vtf12y"
+            className="ant-col ant-form-item-label css-dev-only-do-not-override-12jzuas"
             style={{}}
           >
             <label
@@ -37,7 +37,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
             </label>
           </div>
           <div
-            className="ant-col ant-form-item-control css-dev-only-do-not-override-1vtf12y"
+            className="ant-col ant-form-item-control css-dev-only-do-not-override-12jzuas"
             style={{}}
           >
             <div
@@ -51,7 +51,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
                 >
                   <input
                     aria-required="true"
-                    className="ant-input css-dev-only-do-not-override-1vtf12y sc-fYDBmu cTCiWh"
+                    className="ant-input css-dev-only-do-not-override-12jzuas sc-fYDBmu cTCiWh"
                     disabled={false}
                     id="title"
                     onBlur={[Function]}
@@ -74,7 +74,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
          the content for the Complex Item Set leading text in the editor below
       </h3>
       <div
-        className="sc-CQMxN kUIcwV"
+        className="sc-fNGOfv kla-dfQ"
       >
         <div
           className="sc-hDXZEW feqOOT"
@@ -117,13 +117,14 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="sc-ftefQL vzDlB"
+        className="sc-fUHfjU jdivmj"
       >
         <button
-          className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-caOArR fTMOFZ"
+          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-caOArR fTMOFZ"
           disabled={false}
           onClick={[Function]}
           status={null}
+          style={{}}
           type="submit"
         >
           <span>

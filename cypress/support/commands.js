@@ -248,7 +248,22 @@ Cypress.Commands.add(
         .its('stdout')
         .should('contains', ` question - ${questionId} added to set "${title}"`)
     } else {
-      cy.log(`addQuestionToComplexItemSet is command disabled`)
+      cy.log(`addQuestionToComplexItemSet command is disabled`)
     }
   },
 )
+
+Cypress.Commands.add('createChat', (disabled, questionId) => {
+  if (!disabled) {
+    cy.exec(
+      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js createChat ${questionId}`,
+    )
+      .its('stdout')
+      .should(
+        'contains',
+        `[seedQuestions]: chat thread created for question ${questionId}`,
+      )
+  } else {
+    cy.log('createChat command is disabled')
+  }
+})
