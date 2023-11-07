@@ -39,10 +39,9 @@ const FilterIcon = styled(FilterOutlined)`
 
 const BadgesWrapper = styled.span`
   box-shadow: inset 0 0 7px #0001;
-  display: contents;
-  height: 25px;
-  overflow: auto hidden;
-  padding: 0 0.5rem;
+  display: flex;
+  overflow: visible;
+  padding: 0;
   scrollbar-color: ${th('colorPrimary')} #fff;
   transition: background-color 0.3s;
 
@@ -71,9 +70,8 @@ const BadgesWrapper = styled.span`
     border-bottom: 1px solid
       ${p =>
         p.$visualfocus ? th('colorPrimaryBorder') : alpha('colorBorder', 0.8)};
-    display: flex;
-    font-size: 0.4rem;
     max-height: 25px;
+    overflow: auto hidden;
     padding: 0.2rem;
     user-select: none;
     width: 100%;
@@ -99,7 +97,7 @@ const FilterBadge = styled.div`
   font-size: ${th('fontSizeBaseSmallest')};
   font-weight: 700;
   gap: 0.4rem;
-  max-width: ${p => (p.$show ? 'max-content' : '0')};
+  max-width: ${p => (p.$show ? '900px' : '1px')};
   opacity: ${p => (p.$show ? (p.$visualfocus ? 1 : 0.7) : 0.7)};
 
   overflow: hidden;
@@ -109,7 +107,6 @@ const FilterBadge = styled.div`
   text-shadow: 0 0 2px #0005;
   transition: all 0.1s ease-in-out;
   white-space: nowrap;
-  width: ${p => (p.$show ? '900px' : '1px')};
 `
 
 const CloseBadgeButton = styled(CloseCircleFilled)`
@@ -183,6 +180,7 @@ finish hiding the dropdown list 'cause if not the border remains there */
   }
 
   & > ul > li {
+    /* stylelint-disable-next-line property-no-vendor-prefix */
     align-items: center;
     color: ${p =>
       p.$visualfocus ? th('colorPrimary') : alpha('colorBorder', 0.2)};
@@ -217,10 +215,11 @@ finish hiding the dropdown list 'cause if not the border remains there */
       padding: 0.2rem 0;
       transition: all 0.3s;
     }
-    /*  &:hover, */
+
+    &:hover,
     &:focus,
-    &:focus-visible,
     &[aria-selected='true'] {
+      /* stylelint-disable-next-line property-no-vendor-prefix */
       background-color: ${alpha('colorBackgroundHue', 0.9)};
       border: none;
       color: ${darken('colorPrimaryBorder', 0.5)};

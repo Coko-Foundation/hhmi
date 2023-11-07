@@ -45,11 +45,11 @@ const WaxContainer = styled(Link)`
 `
 
 const StatusContainer = styled.div`
-  /* min-width: 115px; */
   align-items: center;
   display: flex;
-  justify-content: center;
-  padding: 0 0 0.7rem 0.7rem;
+  flex: 1 0 130px;
+  justify-content: flex-end;
+  padding-block-end: ${grid(3)};
 `
 
 const InfoRow = styled.div`

@@ -72,12 +72,10 @@ describe('Testing apps responsiveness', () => {
       cy.get(submitQuestionButton).should('not.exist')
       cy.get(navToggle).click()
       cy.get(anchorTags.dashboard).click()
-      cy.contains('Editor Questions').click()
+      cy.contains('Editor Items').click()
       cy.wait('@GQLReq')
 
-      cy.contains(
-        'By 2040, the world s population is expected to rise to approximately 20 billion 10 billion 7 billion 9 billion',
-      ).click()
+      cy.get(listItemWrapper).eq(1).contains(ProseMirror, 'By 2040').click()
 
       cy.wait('@GQLReq')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -201,7 +199,7 @@ describe('Search filter', () => {
   // eslint-disable-next-line jest/no-disabled-tests
   it.skip('filter by author', () => {
     cy.login(editorRole)
-    cy.contains(antTabs, 'Editor Questions').click()
+    cy.contains(antTabs, 'Editor Items').click()
     cy.get('[data-testid="search-filtered"]')
       .last()
       .click()
@@ -223,7 +221,7 @@ describe('Search filter', () => {
 
   it('filter by status', () => {
     cy.login(editorRole)
-    cy.contains(antTabs, 'Editor Questions').click()
+    cy.contains(antTabs, 'Editor Items').click()
 
     cy.get(listItemWrapper)
       .eq(1)
@@ -267,7 +265,7 @@ describe('Search filter', () => {
 
   it('filter by question that editors are assigned to', () => {
     cy.login(editorRole)
-    cy.contains(antTabs, 'Editor Questions').click()
+    cy.contains(antTabs, 'Editor Items').click()
     cy.seedQuestion(
       disableScripts,
       user2.username,

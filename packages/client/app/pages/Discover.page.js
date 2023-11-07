@@ -32,8 +32,7 @@ const sortOptions = [
   },
 ]
 
-const sidebarText =
-  'Explore questions by applying one or more of the filters below'
+const sidebarText = 'Explore items by applying one or more of the filters below'
 
 const PAGE_SIZE = 10
 
@@ -189,9 +188,7 @@ const DiscoverPage = () => {
 
   return (
     <>
-      <VisuallyHiddenElement as="h1">
-        Browse Questions page
-      </VisuallyHiddenElement>
+      <VisuallyHiddenElement as="h1">Browse items page</VisuallyHiddenElement>
       <Discover
         complexItemSetOptions={complexItemSetOptions}
         existingListsOptions={existingLists}

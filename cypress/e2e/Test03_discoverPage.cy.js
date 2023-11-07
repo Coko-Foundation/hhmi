@@ -2,7 +2,7 @@
 import path from 'path'
 import { user2 } from '../support/credentials'
 import { discover as discoverPage, graphqlEndpoint } from '../support/routes'
-import { multipleChoiceQuestionString } from '../support/appData'
+import { fillInTheBlankString } from '../support/appData'
 import {
   listItemWrapper,
   submitButton,
@@ -216,7 +216,7 @@ describe('Discover page tests', () => {
       })
       cy.task('readF', path.join(downloadsFolder, `${id}.docx`)).then(data => {
         // eslint-disable-next-line jest/valid-expect
-        expect(data).to.equal(multipleChoiceQuestionString)
+        expect(data).to.equal(fillInTheBlankString)
       })
     })
 

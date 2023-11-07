@@ -16,7 +16,7 @@ describe('Flatten metadata values', () => {
     expect(flattened.animalBehavior).toBe('Animal Behavior')
 
     // blooms
-    expect(flattened['higher-apply']).toBe('Apply')
+    expect(flattened['higher-apply']).toBe('Apply (higher-order)')
     expect(flattened['lower-remember']).toBe('Remember')
     expect(flattened.responding).toBe('Responding')
     expect(flattened.skilledMovements).toBe('Skilled movements')

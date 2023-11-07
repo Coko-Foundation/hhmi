@@ -518,7 +518,7 @@ const Header = props => {
                 onClick={() => setShowMenu(false)}
                 to={questions}
               >
-                <span>Browse Questions</span>
+                <span>Browse Items</span>
               </StyledLink>
             </li>
             {loggedin && (

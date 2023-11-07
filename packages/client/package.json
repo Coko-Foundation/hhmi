@@ -39,10 +39,10 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-router-dom": "^5.2.0",
     "styled-components": "^5.3.0",
-    "wax-prosemirror-core": "^0.8.21",
-    "wax-prosemirror-services": "^0.8.21",
-    "wax-questions-service": "^0.8.21",
-    "wax-table-service": "^0.8.21"
+    "wax-prosemirror-core": "^0.8.26",
+    "wax-prosemirror-services": "^0.8.26",
+    "wax-questions-service": "^0.8.26",
+    "wax-table-service": "^0.8.26"
   },
   "devDependencies": {
     "@coko/lint": "^2.0.1",

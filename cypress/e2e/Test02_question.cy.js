@@ -47,243 +47,262 @@ describe('Testing questions', () => {
     cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     cy.viewport(laptop.preset)
   })
-  it('checking the wax editor', () => {
-    cy.login(user2)
-    cy.get(createQuestionButton).click()
-    cy.wait('@GQLReq')
-    // [segment]: Checking if user can submit when question is empty
-    cy.log('checking if user can submit when question is empty...')
-    cy.get('[data-testid="accept-tnc"]').click()
-    cy.get(submitQuestionButton).click()
-    cy.contains(antModalContent, 'Question text cannot be empty')
-    cy.contains(
-      antModalContent,
-      'Please provide some content for your question',
-    )
-    cy.contains(buttonAntModalBody, 'Ok').click()
-    // [segment]: question dropdown
-    cy.log('checking question dropdown...')
-    cy.contains('[aria-controls="questions-list"]', 'Question Type').click()
-    cy.contains('#questions-list  > :nth-child(1)', 'Multi-Select')
-    cy.contains('#questions-list  > :nth-child(2)', 'Multiple Choice')
-    cy.contains('#questions-list  > :nth-child(3)', 'Multiple True/False')
-    cy.contains('#questions-list  > :nth-child(4)', 'True/False')
-    cy.contains('#questions-list  > :nth-child(5)', 'Matching')
-    cy.contains('#questions-list  > :nth-child(6)', 'Essay')
-    cy.contains('#questions-list  > :nth-child(7)', 'Multiple dropdowns')
-    cy.contains('#questions-list  > :nth-child(8)', 'Fill in the blank')
-    cy.contains('[aria-controls="questions-list"]', 'Question Type').click()
+  context('Wax editor', () => {
+    beforeEach(() => {
+      cy.login(user2)
+      cy.get(createQuestionButton).click()
+      cy.wait('@GQLReq')
+    })
+    it('Widget is created correctly from the Item Type dropdown', () => {
+      cy.contains(
+        '[data-testid="missing-question-text"]',
+        'Please select an item type in the metadata form to start editing',
+      )
+      cy.get('[data-testid="questionType-select"]').click()
+      cy.contains('Multiple Answers').click()
+      cy.get('.multiple-choice').should('exist')
+      cy.get('[data-testid="questionType-select"]').click()
+      cy.contains('Multiple Choice').click()
+      cy.contains(
+        '[class="ant-modal-confirm-content"]',
+        'All content will be replaced by the new item type.',
+      )
+      cy.contains('button[type="button"]', 'Yes, update').click()
+      cy.get('.multiple-choice-single-correct')
+    })
 
-    // [segment]: Testing text formats
-    cy.log('testing text formats...')
-    Object.entries(editor).forEach(([key, value]) => {
-      cy.get(ProseMirror).type('{enter}')
-      cy.get(`[title="Toggle ${key}"]`).click()
-      cy.get(ProseMirror).type(value.value)
-      cy.contains(value.selector, value.value)
-    })
-    cy.get(ProseMirror).type('{enter}')
-    // [segment]: Testing lists
-    cy.log('testing lists...')
-    cy.get("[title='Wrap in ordered list']").click()
-    listItems.forEach(li => {
-      cy.get(ProseMirror).type(`${li}{enter}`)
-    })
-    cy.get(ProseMirror).type('{enter}')
-    cy.get("[title='Wrap in bullet list']").click()
-    listItems.forEach(li => {
-      cy.get(ProseMirror).type(`${li}{enter}`)
-    })
-    cy.get(ProseMirror).type('{enter}')
-    // eslint-disable-next-line consistent-return
-    cy.get('ul>li').each(($el, index) => {
-      if (index < 2) return false
-      cy.get($el).contains(listItems[index])
-    })
-    // eslint-disable-next-line consistent-return
-    cy.get('ol>li').each(($el, index) => {
-      if (index < 2) return false
-      cy.get($el).contains(listItems[index])
-    })
-    // [segment]: Testing undo , redo
-    cy.log('testing redo, undo...')
-    cy.get(ProseMirror).type('Temp text')
-    cy.get('[title="Undo"]').click()
-    cy.contains('Temp text').should('not.exist')
-    cy.get('[title="Redo"]').click()
-    cy.contains('Temp text')
-    cy.get(ProseMirror).clear()
-    cy.get(ProseMirror).type('Question 2')
-    cy.get(ProseMirror).click({ force: true })
-    cy.deleteAllQuestions(disableScripts)
-  })
-  it('creating a question & checking values in the UI', () => {
-    cy.login(user2)
-    cy.get(createQuestionButton).click()
-    cy.wait('@GQLReq')
-    cy.wait('@GQLReq')
-    cy.fillQuestion(question)
-    // [segment]: checking last save
-    // cy.log('checking the last saved...')
-    // const today = new Date()
-    // const time = `Last saved ${today.getHours()}:${String(
-    //   today.getMinutes(),
-    // ).padStart(2, 0)}`
-    // cy.contains('span', time)
-    cy.get('[data-testid="accept-tnc"]').click()
-    cy.get(submitQuestionButton).click()
-    cy.contains(
-      antModalConfirmTitle,
-      'Are you sure you want to submit the question?',
-    )
-    cy.contains(
-      '[class="ant-modal-confirm-content"]',
-      'This will make the question visible to editors and reviewers, and after a successful review it will be published for all users.',
-    )
-    cy.contains(buttonAntModalBody, 'Submit').click()
-    cy.wait('@GQLReq')
-    // [segment]: checking if the values are retained in the UI
-    cy.visit(dashboardRoute, { method: 'GET' })
-    cy.wait('@GQLReq')
-    // [segment]: Checking  dashboardRoute
-    cy.log('checking in the dashboard...')
-    cy.contains('.ProseMirror p.paragraph', 'Question 1')
-    cy.contains('[data-testid="topic-value"]', mainTopic.topic.value)
-    cy.contains('[data-testid="subtopic-value"]', mainTopic.subtopic.value)
-    cy.contains(`[data-testid="bloom's level-value"]`, cognitiveLevel.value)
-    cy.contains('[data-testid="question-status"]', 'Submitted')
-    cy.get('[data-testid="wax-container"]')
-      .invoke('attr', 'href')
-      .then(href => {
-        cy.visit(href)
+    it('checking the wax editor', () => {
+      // [segment]: Checking if user can submit when question is empty
+      cy.log('checking if user can submit when question is empty...')
+      cy.get('[data-testid="accept-tnc"]').click()
+      cy.get(submitQuestionButton).click()
+      cy.contains(antModalContent, 'Item text cannot be empty')
+      cy.contains(antModalContent, 'Please provide some content for your item')
+      cy.contains(buttonAntModalBody, 'Ok').click()
+      // [segment]: display missing question text
+
+      cy.get('[data-testid="questionType-select"]').click()
+      cy.contains('Multiple Answers').click()
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(2000)
+      cy.get('.multiple-choice').first().type('{enter}')
+      // [segment]: Testing text formats
+      cy.log('testing text formats...')
+      Object.entries(editor).forEach(([key, value]) => {
+        cy.get(ProseMirror).first().type('{enter}')
+        cy.get(`[title="Toggle ${key}"]`).click()
+        cy.get(ProseMirror).first().type(value.value)
+        cy.contains(value.selector, value.value)
       })
-    // [segment]: checking the question
-    cy.log('checking the question...')
-
-    const checkData = section => {
-      Object.values(section).forEach(data => {
-        cy.contains(data.selector, data.value)
+      cy.get(ProseMirror).first().type('{enter}')
+      // [segment]: Testing lists
+      cy.log('testing lists...')
+      cy.get("[title='Wrap in ordered list']").click()
+      listItems.forEach(li => {
+        cy.get(ProseMirror).first().type(`${li}{enter}`)
       })
-    }
-
-    const checkDataWithoutParent = section => {
-      cy.contains(section.selector, section.value)
-    }
-
-    checkData(mainTopic)
-    checkData(course)
-    keywords.value.forEach(keyword =>
-      cy.contains(`${keywords.selector} span`, keyword),
-    )
-    biointeractiveResources.values.forEach(key => {
-      cy.contains(`${biointeractiveResources.selector} span`, key)
+      cy.get(ProseMirror).first().type('{enter}')
+      cy.get("[title='Wrap in bullet list']").click()
+      listItems.forEach(li => {
+        cy.get(ProseMirror).first().type(`${li}{enter}`)
+      })
+      cy.get(ProseMirror).first().type('{enter}')
+      // eslint-disable-next-line consistent-return
+      cy.get('ul>li').each(($el, index) => {
+        if (index < 2) return false
+        cy.get($el).contains(listItems[index])
+      })
+      // eslint-disable-next-line consistent-return
+      cy.get('ol>li').each(($el, index) => {
+        if (index < 2) return false
+        cy.get($el).contains(listItems[index])
+      })
+      // [segment]: Testing undo , redo
+      cy.log('testing redo, undo...')
+      cy.get(ProseMirror).first().type('Temp text')
+      cy.get('[title="Undo"]').click()
+      cy.contains('Temp text').should('not.exist')
+      cy.get('[title="Redo"]').click()
+      cy.contains('Temp text')
+      cy.get(ProseMirror).first().clear()
+      cy.deleteAllQuestions(disableScripts)
     })
-    // temporarily disabled affective level and psychomotor level from metadata form
-    // checkDataWithoutParent(affectiveLevel)
-    // checkDataWithoutParent(psychomotorLevel)
-    checkDataWithoutParent(cognitiveLevel)
-    cy.deleteAllQuestions(disableScripts)
   })
-  it('editing the question', () => {
-    cy.seedQuestion(disableScripts, user2.username, -3, 'ecology', 'published')
-    cy.login(admin)
-    cy.contains(anchorTags.discover, 'Browse Questions').click()
-    cy.wait('@GQLReq')
-    cy.get(listItemWrapper)
-      .eq(0)
-      .should('be.visible')
-      .contains(ProseMirror, 'Plants growing under direct sunlight')
-      .click()
-    cy.wait('@GQLReq')
-    cy.contains('button[type="button"]', 'Edit question').click()
-    cy.contains(antModalConfirmTitle, 'Warning!')
-    cy.contains(
-      '[class="ant-modal-confirm-content"]',
-      `You are editing a published question. Any changes you make will be automatically saved, but not automatically published. You will need to publish the question again for the edits to be reflected in the Browse Questions page. After the edited question is published, the old one will not be available anymore in the Browse Questions page. Do you wish to continue`,
-    )
-    cy.contains(buttonAntModalBody, 'Create new version').click()
-    cy.wait('@GQLReq')
+  context('Functionalities', () => {
+    it('creating a question & checking values in the UI', () => {
+      cy.login(user2)
+      cy.get(createQuestionButton).click()
+      cy.wait('@GQLReq')
+      cy.wait('@GQLReq')
+      cy.fillQuestion(question)
+      // [segment]: checking last save
+      // cy.log('checking the last saved...')
+      // const today = new Date()
+      // const time = `Last saved ${today.getHours()}:${String(
+      //   today.getMinutes(),
+      // ).padStart(2, 0)}`
+      // cy.contains('span', time)
+      cy.get('[data-testid="accept-tnc"]').click()
+      cy.get(submitQuestionButton).click()
+      cy.contains(
+        antModalConfirmTitle,
+        'Are you sure you want to submit this item?',
+      )
+      cy.contains(
+        '[class="ant-modal-confirm-content"]',
+        'This will make this item visible to editors and reviewers, and after a successful review it will be published for all users.',
+      )
+      cy.contains(buttonAntModalBody, 'Submit').click()
+      cy.wait('@GQLReq')
+      // [segment]: checking if the values are retained in the UI
+      cy.visit(dashboardRoute, { method: 'GET' })
+      cy.wait('@GQLReq')
+      // [segment]: Checking  dashboardRoute
+      cy.log('checking in the dashboard...')
+      cy.contains('.ProseMirror p.paragraph', 'Question 1')
+      cy.contains('[data-testid="topic-value"]', mainTopic.topic.value)
+      cy.contains('[data-testid="subtopic-value"]', mainTopic.subtopic.value)
+      cy.contains(`[data-testid="bloom's level-value"]`, cognitiveLevel.value)
+      cy.contains('[data-testid="question-status"]', 'Submitted')
+      cy.get('[data-testid="wax-container"]')
+        .invoke('attr', 'href')
+        .then(href => {
+          cy.visit(href)
+        })
+      // [segment]: checking the question
+      cy.log('checking the question...')
 
-    cy.get('[contenteditable="true"]', {
-      force: true,
+      const checkData = section => {
+        Object.values(section).forEach(data => {
+          cy.contains(data.selector, data.value)
+        })
+      }
+
+      const checkDataWithoutParent = section => {
+        cy.contains(section.selector, section.value)
+      }
+
+      checkData(mainTopic)
+      checkData(course)
+      keywords.value.forEach(keyword =>
+        cy.contains(`${keywords.selector} span`, keyword),
+      )
+      biointeractiveResources.values.forEach(key => {
+        cy.contains(`${biointeractiveResources.selector} span`, key)
+      })
+      // temporarily disabled affective level and psychomotor level from metadata form
+      // checkDataWithoutParent(affectiveLevel)
+      // checkDataWithoutParent(psychomotorLevel)
+      checkDataWithoutParent(cognitiveLevel)
+      cy.deleteAllQuestions(disableScripts)
     })
-      .clear()
-      .type('Edited')
-    cy.contains('[type="button"]', 'Publish').click()
-    cy.contains('[type="button"]', 'Yes, publish').click()
-    cy.contains(antModalConfirmTitle, 'Question published successfully')
-    cy.contains(
-      '[class="ant-modal-confirm-content"]',
-      'Question was published and is now available in the Browse Questions page',
-    )
-    cy.contains(buttonAntModalBody, 'Ok').click()
-  })
-  it('duplicate question', () => {
-    cy.deleteAllQuestions(disableScripts)
-    cy.seedQuestion(
-      disableScripts,
-      user2.username,
-      -3,
-      'population',
-      'published',
-    )
-    cy.login({ ...user2 })
-    cy.contains(anchorTags.discover, 'Browse Questions').click()
-    cy.wait('@GQLReq')
-    cy.get(listItemWrapper)
-      .eq(0)
-      .should('be.visible')
-      .get('input[type="checkbox"]', { timeout: 10000 })
-      .last()
-      .click()
-    cy.get('[data-testid="duplicate-question"]').click()
-    cy.contains(
-      'div[class="ant-modal-body"] button[type="button"]',
-      'Duplicate',
-    ).click()
-    cy.wait('@GQLReq')
-    cy.visit(dashboardRoute)
-    cy.wait('@GQLReq')
-    cy.contains('div[role="tab"]', 'Authored Questions').click()
-    cy.wait('@GQLReq')
-    cy.get(listItemWrapper)
-      .eq(0)
-      .should('be.visible')
-      .contains('p')
-      .should('contain', 'By 2040')
-    cy.contains('span[data-testid="question-status"]', 'Not Submitted')
-  })
-  // skipped due to #172
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('check alternative text for empty questions', () => {
-    cy.login(user2)
-    cy.get(createQuestionButton).click()
-    cy.wait('@GQLReq')
-    cy.wait('@GQLReq')
-    cy.visit(dashboardRoute, { method: 'GET' })
-    cy.wait('@GQLReq')
-    cy.get(listItemWrapper)
-      .eq(0)
-      .should('be.visible')
-      .contains(ProseMirror, '(empty)')
-      .click()
-    cy.get('[id="file-upload"]').selectFile(
-      'cypress/fixtures/images/img12.png',
-      { force: true },
-    )
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
-    cy.visit(dashboardRoute, { method: 'GET' })
-    cy.wait('@GQLReq')
-    cy.get(listItemWrapper)
-      .eq(0)
-      .should('be.visible')
-      .contains(ProseMirror, 'image with no alt text')
-      .click()
-    cy.get('img').click()
-    cy.get('[placeholder="Alt Text"]').type('alternative text')
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000)
+    it('editing the question', () => {
+      cy.seedQuestion(
+        disableScripts,
+        user2.username,
+        -3,
+        'ecology',
+        'published',
+      )
+      cy.login(admin)
+      cy.contains(anchorTags.discover, 'Browse Items').click()
+      cy.wait('@GQLReq')
+      cy.get(listItemWrapper)
+        .eq(0)
+        .should('be.visible')
+        .contains(ProseMirror, 'Plants growing under direct sunlight')
+        .click()
+      cy.wait('@GQLReq')
+      cy.contains('button[type="button"]', 'Edit item').click()
+      cy.contains(antModalConfirmTitle, 'Warning!')
+      cy.contains(
+        '[class="ant-modal-confirm-content"]',
+        `You are editing a published item. Any changes you make will be automatically saved, but not automatically published. You will need to publish this item again for the edits to be reflected in the Browse Items page. After the edited item is published, the old one will not be available anymore in the Browse Items page. Do you wish to continue?`,
+      )
+      cy.contains(buttonAntModalBody, 'Create new version').click()
+      cy.wait('@GQLReq')
+
+      cy.get('[contenteditable="true"]', {
+        force: true,
+      })
+        .clear()
+        .type('Edited')
+      cy.contains('[type="button"]', 'Publish').click()
+      cy.contains('[type="button"]', 'Yes, publish').click()
+      cy.contains(antModalConfirmTitle, 'Item published successfully')
+      cy.contains(
+        '[class="ant-modal-confirm-content"]',
+        'Item was published and is now available in the Browse Items page',
+      )
+      cy.contains(buttonAntModalBody, 'Ok').click()
+    })
+    it('duplicate question', () => {
+      cy.deleteAllQuestions(disableScripts)
+      cy.seedQuestion(
+        disableScripts,
+        user2.username,
+        -3,
+        'population',
+        'published',
+      )
+      cy.login({ ...user2 })
+      cy.contains(anchorTags.discover, 'Browse Items').click()
+      cy.wait('@GQLReq')
+      cy.get(listItemWrapper)
+        .eq(0)
+        .should('be.visible')
+        .get('input[type="checkbox"]', { timeout: 10000 })
+        .last()
+        .click()
+      cy.get('[data-testid="duplicate-question"]').click()
+      cy.contains(
+        'div[class="ant-modal-body"] button[type="button"]',
+        'Duplicate',
+      ).click()
+      cy.wait('@GQLReq')
+      cy.visit(dashboardRoute)
+      cy.wait('@GQLReq')
+      cy.contains('div[role="tab"]', 'Authored Items').click()
+      cy.wait('@GQLReq')
+      cy.get(listItemWrapper)
+        .eq(0)
+        .should('be.visible')
+        .contains('p')
+        .should('contain', 'By 2040')
+      cy.contains('span[data-testid="question-status"]', 'Not Submitted')
+    })
+    // skipped due to #172
+    // eslint-disable-next-line jest/no-disabled-tests
+    it.skip('check alternative text for empty questions', () => {
+      cy.login(user2)
+      cy.get(createQuestionButton).click()
+      cy.wait('@GQLReq')
+      cy.wait('@GQLReq')
+      cy.visit(dashboardRoute, { method: 'GET' })
+      cy.wait('@GQLReq')
+      cy.get(listItemWrapper)
+        .eq(0)
+        .should('be.visible')
+        .contains(ProseMirror, '(empty)')
+        .click()
+      cy.get('[id="file-upload"]').selectFile(
+        'cypress/fixtures/images/img12.png',
+        { force: true },
+      )
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(1000)
+      cy.visit(dashboardRoute, { method: 'GET' })
+      cy.wait('@GQLReq')
+      cy.get(listItemWrapper)
+        .eq(0)
+        .should('be.visible')
+        .contains(ProseMirror, 'image with no alt text')
+        .click()
+      cy.get('img').click()
+      cy.get('[placeholder="Alt Text"]').type('alternative text')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(1000)
+    })
   })
 })
 
@@ -321,7 +340,7 @@ describe('Testing lists', () => {
   it('adding questions to new & existing list', () => {
     cy.seedList(disableScripts, 'new_list', user2.username)
     cy.login({ ...user2 })
-    cy.contains(anchorTags.discover, 'Browse Questions').click()
+    cy.contains(anchorTags.discover, 'Browse Items').click()
     cy.wait('@GQLReq')
     // [segment]: adding question to new lsit
     cy.get(listItemWrapper)

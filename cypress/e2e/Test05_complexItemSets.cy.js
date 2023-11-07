@@ -90,7 +90,7 @@ describe('Complex item set', () => {
     cy.contains('div', 'Complex item set updated successfully')
   })
 
-  context('add question to list', () => {
+  context('add item to list', () => {
     before(() => {
       cy.seedComplexItemSet(
         disableScripts,
@@ -100,7 +100,7 @@ describe('Complex item set', () => {
       )
     })
 
-    it('with "Add question to this set" button', () => {
+    it('with "Add item to this set" button', () => {
       cy.get(anchorTags.sets).click()
       cy.wait('@GQLReq')
 
@@ -108,7 +108,7 @@ describe('Complex item set', () => {
         .eq(2)
         .contains('h2', complexItemSet3.title)
         .click()
-      cy.get('button[title="Add question to this set"]').click()
+      cy.get('button[title="Add item to this set"]').click()
 
       // [segment]: checking if the leading content is displayed above the editor
       cy.log('checking if the leading content is displayed above the editor...')
@@ -116,7 +116,12 @@ describe('Complex item set', () => {
         'div[data-testid="leading-content-wrapper"]',
         complexItemSet3.leadingContent,
       )
-      cy.get('[id="wax-editor"]').type('question 1')
+      cy.get('[data-testid="questionType-select"]').click()
+      cy.contains('Multiple Answers').click()
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(2000)
+      cy.get('.multiple-choice').first().type('{enter}')
+      cy.get(ProseMirror).first().type('Question1')
       cy.url().then(url => {
         const qId = url.split('/')[4]
 
@@ -132,7 +137,7 @@ describe('Complex item set', () => {
       cy.wait('@GQLReq')
       // [segment]: checking if the question is listed in the set
       cy.log('checking if the question is listed in the set')
-      cy.get(listItemWrapper).eq(0).contains('p', 'question 1')
+      cy.get(listItemWrapper).eq(0).contains('p', 'Question1')
       cy.deleteAllQuestions(disableScripts)
     })
 
@@ -147,7 +152,13 @@ describe('Complex item set', () => {
         'div[data-testid="leading-content-wrapper"]',
         complexItemSet3.leadingContent,
       )
-      cy.get('[id="wax-editor"]').type('question 2')
+      cy.get('[data-testid="questionType-select"]').click()
+      cy.contains('Multiple Answers').click()
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(2000)
+      cy.get('.multiple-choice').first().type('{enter}')
+
+      cy.get(ProseMirror).first().type('Question2')
 
       cy.url().then(url => {
         const qId = url.split('/')[4]
@@ -165,7 +176,7 @@ describe('Complex item set', () => {
       // [segment]: checking if the question is listed in the set
       cy.log('checking if the question is listed in the set')
 
-      cy.get(listItemWrapper).eq(0).contains('p', 'question 2')
+      cy.get(listItemWrapper).eq(0).contains('p', 'Question2')
     })
   })
 })

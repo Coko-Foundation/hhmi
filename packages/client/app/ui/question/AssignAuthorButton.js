@@ -51,7 +51,7 @@ const AssignAuthorButton = props => {
             authors.find(
               a => a.value === assignAuthorForm.getFieldValue('author'),
             )?.label
-          } has been assgined as the author of this question`,
+          } has been assgined as the author of this item`,
           footer: [
             <ModalFooter key="footer">
               <Button onClick={successModal.destroy} type="primary">
@@ -142,7 +142,7 @@ const AssignAuthorButton = props => {
           onValuesChange={() => assignAuthorForm.validateFields(['author'])}
         >
           <Form.Item
-            label="Select the author of this question"
+            label="Select the author of this item"
             name="author"
             rules={[
               {
@@ -177,7 +177,7 @@ const AssignAuthorButton = props => {
         </StyledForm>
         <ConfirmationScreen visible={showConfirm}>
           This action is irreversible. You will not be able to change the author
-          of this question again.
+          of this item again.
         </ConfirmationScreen>
       </Modal>
 
