@@ -444,6 +444,7 @@ const QuestionPage = props => {
   const isHandlingEditor = hasGlobalRole(currentUser, 'handlingEditor')
   const isAuthor = hasRole(currentUser, 'author', id)
   const isAdmin = hasGlobalRole(currentUser, 'admin')
+  const isProduction = hasGlobalRole(currentUser, 'production')
   // #endregion user roles
 
   // #region handlers
@@ -827,7 +828,12 @@ const QuestionPage = props => {
         defaultActiveKey={initialTabKey}
         editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
-        editorView={isEditor || (isHandlingEditor && !isAuthor) || isAdmin}
+        editorView={
+          isEditor ||
+          ((isHandlingEditor || (isProduction && version?.inProduction)) &&
+            !isAuthor) ||
+          isAdmin
+        }
         facultyView={testMode}
         handlingEditors={handlingEditors?.result || []}
         initialMetadataValues={metadataApiToUi(version, testMode)}

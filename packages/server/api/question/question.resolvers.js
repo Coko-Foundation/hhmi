@@ -11,6 +11,7 @@ const {
   getQuestionParticipants,
   assignAuthorship,
   getHandlingEditorDashboard,
+  getInProductionDashboard,
 
   createQuestion,
   updateQuestion,
@@ -28,7 +29,6 @@ const {
   assignHandlingEditors,
   unassignHandlingEditor,
   getQuestionsHandlingEditors,
-
   getChatThreadForQuestion,
 
   uploadFiles,
@@ -57,6 +57,10 @@ const getReviewerDashboardResolver = async (_, args, ctx) => {
 
 const getManagingEditorDashboardResolver = async (_, args, ctx) => {
   return getManagingEditorDashboard(ctx.user, args)
+}
+
+const getInProductionDashboardResolver = async (_, args, ctx) => {
+  return getInProductionDashboard(ctx.user, args)
 }
 
 const createQuestionResolver = async (_, { input }, ctx) => {
@@ -122,7 +126,10 @@ const versionsResolver = async (
   //   question.id,
   //   latestOnly,
   // )
-  return getQuestionVersions(question.id, { latestOnly, publishedOnly })
+  return getQuestionVersions(question.id, {
+    latestOnly,
+    publishedOnly,
+  })
 }
 
 const versionQuestionResolver = async version => {
@@ -201,6 +208,7 @@ module.exports = {
     getHandlingEditorDashboard: getHandlingEditorDashboardResolver,
     getQuestionsHandlingEditors: getQuestionsHandlingEditorsResolver,
     getQuestionParticipants: getQuestionParticipantsResolver,
+    getInProductionDashboard: getInProductionDashboardResolver,
   },
   Mutation: {
     createQuestion: createQuestionResolver,

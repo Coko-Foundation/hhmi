@@ -240,6 +240,14 @@ extend type Query {
     searchQuery: String
   ): QuestionsResponse!
 
+  getInProductionDashboard(
+    orderBy: String
+    ascending: Boolean
+    page: Int
+    pageSize: Int
+    searchQuery: String
+  ): QuestionsResponse!
+
   getQuestionsHandlingEditors(questionId: ID!): [User!]!
   getQuestionParticipants(id: ID!): [User!]!
 }

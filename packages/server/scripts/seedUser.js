@@ -9,7 +9,7 @@ const { seedUser, addToTeams } = require('./utils/user')
  * --->   [2] = create
  *              [3] - email id (required)
  *              [4] - profileSubmitted (required if role is to be specified)
- *              [5] - role [admin,reviewer,editor] (default - editor)
+ *              [5] - role [admin,editor,handlingEditor,production,reviewer] (default - editor)
  * --->   [2] = addToTeams
  *              [3] - email id
  *              [4] - role [admin,reviewer,editor,handlingEditor]

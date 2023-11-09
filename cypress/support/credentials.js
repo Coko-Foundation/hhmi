@@ -22,6 +22,24 @@ export const editor = {
   role: 'editor',
 }
 
+export const productionMember1 = {
+  firstName: 'Dustin',
+  username: `dustinreed${randomNumber}`,
+  lastName: 'Reed',
+  email: `dustinreed${randomNumber}@gmail.com`,
+  password: 'Password@123',
+  role: 'production',
+}
+
+export const productionMember2 = {
+  firstName: 'Hanna',
+  username: `hannastanley${randomNumber}`,
+  lastName: 'Stanley',
+  email: `hannastanley${randomNumber}@gmail.com`,
+  password: 'Password@123',
+  role: 'production',
+}
+
 export const handlingEditor1 = {
   firstName: 'Nuadu',
   username: `nuaduslaine${randomNumber}`,
@@ -30,6 +48,7 @@ export const handlingEditor1 = {
   password: 'Password@123',
   role: 'handlingEditor',
 }
+
 export const handlingEditor2 = {
   firstName: 'Juno',
   username: `junowest${randomNumber}`,

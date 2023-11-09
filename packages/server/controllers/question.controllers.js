@@ -213,6 +213,20 @@ const getQuestionParticipants = async questionId => {
   return auth
 }
 
+const getInProductionDashboard = async (userId, options = {}) => {
+  const { orderBy, ascending, page, pageSize, trx, searchQuery } = options
+
+  return Question.findByExcludingRole(userId, 'author', {
+    orderBy,
+    ascending,
+    page,
+    pageSize,
+    submittedOnly: true,
+    filters: { status: 'inProduction', searchQuery },
+    trx,
+  })
+}
+
 /**
  * Create question & first question version
  * Add user that created it to the author team
@@ -824,6 +838,7 @@ module.exports = {
   getManagingEditorDashboard,
   getHandlingEditorDashboard,
   getQuestionParticipants,
+  getInProductionDashboard,
 
   createQuestion,
   duplicateQuestion,

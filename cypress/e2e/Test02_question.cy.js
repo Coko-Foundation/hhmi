@@ -59,7 +59,7 @@ describe('Testing questions', () => {
         'Please select an item type in the metadata form to start editing',
       )
       cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
-      cy.contains('Multiple Answers').click()
+      cy.contains('Multiple Answers').click({ force: true })
       cy.get('.multiple-choice').should('exist')
       cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
       cy.contains('Multiple Choice').click()
