@@ -9,7 +9,8 @@ const {
   duplicateQuestion: duplicateQuestionController,
   assignHandlingEditors,
   unassignHandlingEditor,
-  getQuestionParticipants,
+  getAuthorChatParticipants,
+  getProductionChatParticipants,
 } = require('../question.controllers')
 
 const {
@@ -20,6 +21,7 @@ const {
 
 const {
   createGlobalEditorTeamWithUsers,
+  createGlobalProductionTeamWithUsers,
 } = require('../../models/__tests__/__helpers__/teams')
 
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
@@ -30,11 +32,11 @@ const { Question, QuestionVersion, Team, User } = require('../../models/index')
 describe('Question Controller', () => {
   beforeEach(() => clearDb())
 
-  afterAll(async () => {
-    await clearDb()
-    const knex = QuestionVersion.knex()
-    knex.destroy()
-  })
+  // afterAll(async () => {
+  //   await clearDb()
+  //   const knex = QuestionVersion.knex()
+  //   knex.destroy()
+  // })
 
   test('duplicates existing question and sets correct author', async () => {
     const question = await Question.insert({})
@@ -135,7 +137,7 @@ describe('Question Controller', () => {
     expect(exportFilename).toBe(`${question.id}.zip`)
   })
 
-  test('getQuestionParticipants gets correct question participants', async () => {
+  test('getAuthorChatParticipants gets correct question participants', async () => {
     const { user: editor } = await createGlobalEditorTeamWithUsers()
 
     const updatedEditor = await User.query()
@@ -176,7 +178,7 @@ describe('Question Controller', () => {
 
     await Team.addMember(handlingEditorTeam.id, HE.id)
 
-    const participants = await getQuestionParticipants(question.id)
+    const participants = await getAuthorChatParticipants(question.id)
 
     const participantUsernames = participants.map(
       participant => participant.displayName,
@@ -185,6 +187,71 @@ describe('Question Controller', () => {
     expect(participantUsernames).toContain(updatedEditor[0].displayName)
     expect(participantUsernames).toContain(HE.displayName)
     expect(participantUsernames).toContain(author.displayName)
+  })
+
+  test('getProductionChatParticipants gets correct question participants', async () => {
+    const { user: editor } = await createGlobalEditorTeamWithUsers()
+
+    const { user: productionMember } =
+      await createGlobalProductionTeamWithUsers()
+
+    const updatedEditor = await User.query()
+      .update({
+        displayName: 'editor 1',
+        username: 'editor1',
+      })
+      .where({ id: editor.id })
+      .returning('displayName')
+
+    const updatedProductionMember = await User.query()
+      .update({
+        displayName: 'productionMember',
+        username: 'productionMember',
+      })
+      .where({ id: productionMember.id })
+      .returning('displayName')
+
+    const author = await User.insert({
+      username: 'user1',
+      displayName: 'user 1',
+    })
+
+    const HE = await User.insert({
+      username: 'handlingEditor1',
+      displayName: 'HE1',
+    })
+
+    const question = await Question.insert({})
+
+    const authorTeam = await Team.insert({
+      objectId: question.id,
+      objectType: 'question',
+      role: 'author',
+      displayName: 'Author',
+    })
+
+    await Team.addMember(authorTeam.id, author.id)
+
+    const handlingEditorTeam = await Team.insert({
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(handlingEditorTeam.id, HE.id)
+
+    const participants = await getProductionChatParticipants(question.id)
+
+    const participantUsernames = participants.map(
+      participant => participant.displayName,
+    )
+
+    expect(participantUsernames).toContain(updatedEditor[0].displayName)
+    expect(participantUsernames).toContain(HE.displayName)
+    expect(participantUsernames).toContain(
+      updatedProductionMember[0].displayName,
+    )
   })
 
   test('assignHandlingEditor assigns editor to correct team', async () => {

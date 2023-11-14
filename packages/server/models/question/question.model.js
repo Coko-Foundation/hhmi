@@ -593,13 +593,17 @@ class Question extends BaseModel {
     }
   }
 
-  static async getChatThread(questionId, options = {}) {
+  static async getChatThread(
+    questionId,
+    chatType = 'authorChat',
+    options = {},
+  ) {
     const { trx } = options
 
     try {
       const chat = await ChatThread.query(trx)
         .select('id')
-        .findOne({ relatedObjectId: questionId })
+        .findOne({ relatedObjectId: questionId, chatType })
 
       return chat?.id
     } catch (e) {

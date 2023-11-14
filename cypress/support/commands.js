@@ -115,7 +115,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('logout', () => {
   cy.get('[data-testid="usermenu-btn"]').click()
-  cy.get('[data-testid="logout-btn"]').click()
+  cy.get('[data-testid="logout-btn"]').click({ force: true })
 })
 
 Cypress.Commands.add('resetDB', disabled => {

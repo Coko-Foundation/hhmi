@@ -39,7 +39,8 @@ import {
   GET_CHAT_THREAD,
   SEND_MESSAGE,
   CREATE_CHAT_THREAD,
-  GET_QUESTION_PARTICIPANTS,
+  GET_AUTHOR_CHAT_PARTICIPANTS,
+  GET_PRODUCTION_CHAT_PARTICIPANTS,
   MESSAGE_CREATED_SUBSCRIPTION,
 } from '../graphql'
 import {
@@ -193,12 +194,20 @@ const QuestionPage = props => {
 
   const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
 
-  const { data: { getQuestionParticipants: questionParticipants } = {} } =
-    useQuery(GET_QUESTION_PARTICIPANTS, {
+  const { data: { getAuthorChatParticipants: authorChatParticipants } = {} } =
+    useQuery(GET_AUTHOR_CHAT_PARTICIPANTS, {
       variables: {
         id,
       },
     })
+
+  const {
+    data: { getProductionChatParticipants: productionChatParticipants } = {},
+  } = useQuery(GET_PRODUCTION_CHAT_PARTICIPANTS, {
+    variables: {
+      id,
+    },
+  })
 
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
@@ -256,36 +265,68 @@ const QuestionPage = props => {
     fetchPolicy: 'network-only',
   })
 
-  const { data: { chatThread } = {}, loading: chatLoading } = useQuery(
+  const { data: { chatThread: authorChatThread } = {}, loading: chatLoading } =
+    useQuery(GET_CHAT_THREAD, {
+      skip: !question?.authorChatThreadId,
+      variables: {
+        id: question?.authorChatThreadId,
+      },
+    })
+
+  const { data: { chatThread: productionChatThread } = {} } = useQuery(
     GET_CHAT_THREAD,
     {
-      skip: !question?.chatThreadId,
+      skip: !question?.productionChatThreadId,
       variables: {
-        id: question?.chatThreadId,
+        id: question?.productionChatThreadId,
       },
     },
   )
 
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
-    skip: !chatThread?.id,
-    variables: { chatThreadId: chatThread?.id },
-    // fetchPolicy: 'network-only',
+    skip: !authorChatThread?.id,
+    variables: { chatThreadId: authorChatThread?.id },
     onData: ({
       data: {
         data: { messageCreated },
       },
     }) => {
       if (messageCreated) {
-        setMessages(previousMessages => [...previousMessages, messageCreated])
+        setAuthorChatMessages(previousMessages => [
+          ...previousMessages,
+          messageCreated,
+        ])
       }
     },
   })
 
-  const createQuestionChat = () => {
+  useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
+    skip: !productionChatThread?.id,
+    variables: { chatThreadId: productionChatThread?.id },
+    onData: ({
+      data: {
+        data: { messageCreated },
+      },
+    }) => {
+      if (messageCreated) {
+        setProductionChatMessages(previousMessages => [
+          ...previousMessages,
+          messageCreated,
+        ])
+      }
+    },
+  })
+
+  /**
+   *
+   * @param {string} chatType - type of the chat thread
+   * @returns
+   */
+  const createChat = chatType => {
     const chatThreadMutationData = {
       variables: {
         input: {
-          chatType: 'authorChat',
+          chatType,
           relatedObjectId: id,
         },
       },
@@ -304,13 +345,19 @@ const QuestionPage = props => {
   }
 
   // maintaining messages in a state
-  const [messages, setMessages] = useState([])
+  const [authorChatMessages, setAuthorChatMessages] = useState([])
+  const [productionChatMessages, setProductionChatMessages] = useState([])
 
   useEffect(() => {
-    if (chatThread?.messages) {
-      setMessages(chatThread.messages)
+    if (authorChatThread?.messages) {
+      setAuthorChatMessages(authorChatThread.messages)
     }
-  }, [chatThread])
+  }, [authorChatThread])
+  useEffect(() => {
+    if (productionChatThread?.messages) {
+      setProductionChatMessages(productionChatThread.messages)
+    }
+  }, [productionChatThread])
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -373,8 +420,12 @@ const QuestionPage = props => {
   }, [version, metadata])
 
   useEffect(() => {
-    if (version?.submitted && !question?.chatThreadId) {
-      createQuestionChat()
+    if (version?.submitted && !question?.authorChatThreadId) {
+      createChat('authorChat')
+    }
+
+    if (version?.inProduction && !question?.productionChatThreadId) {
+      createChat('productionChat')
     }
   }, [question, version])
 
@@ -442,9 +493,16 @@ const QuestionPage = props => {
   // #region user roles
   const isEditor = hasGlobalRole(currentUser, 'editor')
   const isHandlingEditor = hasGlobalRole(currentUser, 'handlingEditor')
+  const isProductionMember = hasGlobalRole(currentUser, 'production')
   const isAuthor = hasRole(currentUser, 'author', id)
   const isAdmin = hasGlobalRole(currentUser, 'admin')
-  const isProduction = hasGlobalRole(currentUser, 'production')
+
+  const showAuthorChatTab =
+    version?.submitted && (isEditor || isHandlingEditor || isAuthor || isAdmin)
+
+  const showProductionChatTab =
+    version?.inProduction &&
+    (isEditor || isHandlingEditor || isProductionMember || isAdmin)
   // #endregion user roles
 
   // #region handlers
@@ -761,14 +819,14 @@ const QuestionPage = props => {
     localStorage.setItem(id, activeTab)
   }
 
-  const onSendMessage = async (content, mentions, attachments) => {
+  const onSendAuthorChatMessage = async (content, mentions, attachments) => {
     const fileObjects = attachments.map(attachment => attachment.originFileObj)
 
     const mutationData = {
       variables: {
         input: {
           content,
-          chatThreadId: question?.chatThreadId,
+          chatThreadId: question?.authorChatThreadId,
           userId: currentUser.id,
           mentions,
           attachments: fileObjects,
@@ -778,6 +836,29 @@ const QuestionPage = props => {
 
     return sendMessage(mutationData)
   }
+
+  const onSendProductionChatMessage = async (
+    content,
+    mentions,
+    attachments,
+  ) => {
+    const fileObjects = attachments.map(attachment => attachment.originFileObj)
+
+    const mutationData = {
+      variables: {
+        input: {
+          content,
+          chatThreadId: question?.productionChatThreadId,
+          userId: currentUser.id,
+          mentions,
+          attachments: fileObjects,
+        },
+      },
+    }
+
+    return sendMessage(mutationData)
+  }
+
   // #endregion handlers
 
   if (error) {
@@ -816,6 +897,11 @@ const QuestionPage = props => {
       <VisuallyHiddenElement as="h1">{pageTitle}</VisuallyHiddenElement>
       <Question
         assignHELoading={assignHELoading}
+        authorChatMessages={messagesApiToUi(
+          authorChatMessages,
+          currentUser?.id,
+        )}
+        authorChatParticipants={authorChatParticipants}
         authors={possibleAuthors}
         canAssignAuthor={isAdmin && isAuthor}
         canCreateNewVersion={isAdmin || isEditor}
@@ -830,7 +916,8 @@ const QuestionPage = props => {
         // admins have editorial rights (publishing rights) on their own questions
         editorView={
           isEditor ||
-          ((isHandlingEditor || (isProduction && version?.inProduction)) &&
+          ((isHandlingEditor ||
+            (isProductionMember && version?.inProduction)) &&
             !isAuthor) ||
           isAdmin
         }
@@ -863,7 +950,6 @@ const QuestionPage = props => {
           !getResources ||
           !complexItemSetOptions
         }
-        messages={messagesApiToUi(messages, currentUser?.id)}
         metadata={metadata || {}}
         onAssignAuthor={handleAssignAuthor}
         onChangeTab={persistQuestionTab}
@@ -883,11 +969,16 @@ const QuestionPage = props => {
         onQuestionSubmit={handleQuestionSubmit}
         onReject={handleReject}
         onSearchHE={handleSearchHE}
-        onSendMessage={onSendMessage}
+        onSendAuthorChatMessage={onSendAuthorChatMessage}
+        onSendProductionChatMessage={onSendProductionChatMessage}
         onUnassignHandlingEditor={handleUnassignHE}
+        productionChatMessages={messagesApiToUi(
+          productionChatMessages,
+          currentUser?.id,
+        )}
+        productionChatParticipants={productionChatParticipants}
         qtiZipLoading={generateQtiZipLoading}
         questionAgreedTc={false} //
-        questionParticipants={questionParticipants}
         refetchUser={refetchCurrentUser}
         resources={getResources}
         searchHELoading={loadingSearchHE}
@@ -895,8 +986,9 @@ const QuestionPage = props => {
         showAssignHEButton={
           version?.submitted && !version?.published && isEditor
         }
-        showAuthorChatTab={version?.submitted}
+        showAuthorChatTab={showAuthorChatTab}
         showNextQuestionLink={false}
+        showProductionChatTab={showProductionChatTab}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
       />

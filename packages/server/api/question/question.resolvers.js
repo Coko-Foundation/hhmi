@@ -8,7 +8,7 @@ const {
   getReviewerDashboard,
   getManagingEditorDashboard,
   getPublishedQuestionsIds,
-  getQuestionParticipants,
+  getAuthorChatParticipants,
   assignAuthorship,
   getHandlingEditorDashboard,
   getInProductionDashboard,
@@ -33,6 +33,7 @@ const {
 
   uploadFiles,
   getImageUrls,
+  getProductionChatParticipants,
 } = require('../../controllers/question.controllers')
 
 const questionResolver = async (_, { id, options }) => {
@@ -184,8 +185,12 @@ const unassignHandlingEditorResolver = async (_, { questionId, userId }) => {
   return unassignHandlingEditor(questionId, userId)
 }
 
-const chatThreadResolver = async question => {
-  return getChatThreadForQuestion(question.id)
+const authorChatThreadResolver = async question => {
+  return getChatThreadForQuestion(question.id, 'authorChat')
+}
+
+const productionChatThreadResolver = async question => {
+  return getChatThreadForQuestion(question.id, 'productionChat')
 }
 
 const heAssignedResolver = async question => {
@@ -193,8 +198,12 @@ const heAssignedResolver = async question => {
   return assignedHEs.length > 0
 }
 
-const getQuestionParticipantsResolver = async (_, { id }) => {
-  return getQuestionParticipants(id)
+const getAuthorChatParticipantsResolver = async (_, { id }) => {
+  return getAuthorChatParticipants(id)
+}
+
+const getProductionChatParticipantsResolver = async (_, { id }) => {
+  return getProductionChatParticipants(id)
 }
 
 module.exports = {
@@ -207,8 +216,9 @@ module.exports = {
     getPublishedQuestionsIds: getPublishedQuestionsIdsResolver,
     getHandlingEditorDashboard: getHandlingEditorDashboardResolver,
     getQuestionsHandlingEditors: getQuestionsHandlingEditorsResolver,
-    getQuestionParticipants: getQuestionParticipantsResolver,
+    getAuthorChatParticipants: getAuthorChatParticipantsResolver,
     getInProductionDashboard: getInProductionDashboardResolver,
+    getProductionChatParticipants: getProductionChatParticipantsResolver,
   },
   Mutation: {
     createQuestion: createQuestionResolver,
@@ -231,7 +241,8 @@ module.exports = {
   Question: {
     versions: versionsResolver,
     author: authorResolver,
-    chatThreadId: chatThreadResolver,
+    authorChatThreadId: authorChatThreadResolver,
+    productionChatThreadId: productionChatThreadResolver,
     heAssigned: heAssignedResolver,
   },
   QuestionVersion: {

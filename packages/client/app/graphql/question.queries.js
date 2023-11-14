@@ -262,9 +262,17 @@ export const GET_QUESTION_HANDLING_EDITORS = gql`
   }
 `
 
-export const GET_QUESTION_PARTICIPANTS = gql`
-  query GetQuestionParticipants($id: ID!) {
-    getQuestionParticipants(id: $id) {
+export const GET_AUTHOR_CHAT_PARTICIPANTS = gql`
+  query GetAuthorChatParticipants($id: ID!) {
+    getAuthorChatParticipants(id: $id) {
+      id
+      display: displayName
+    }
+  }
+`
+export const GET_PRODUCTION_CHAT_PARTICIPANTS = gql`
+  query GetProductionChatParticipants($id: ID!) {
+    getProductionChatParticipants(id: $id) {
       id
       display: displayName
     }
@@ -345,7 +353,8 @@ export const QUESTION = gql`
         leadingContent
       }
 
-      chatThreadId
+      authorChatThreadId
+      productionChatThreadId
       heAssigned
     }
   }

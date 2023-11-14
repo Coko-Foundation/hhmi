@@ -6,7 +6,8 @@ type Question {
   agreedTc: Boolean!
   rejected: Boolean!
   author: User
-  chatThreadId: ID
+  authorChatThreadId: ID
+  productionChatThreadId: ID
   heAssigned: Boolean
 }
 
@@ -249,7 +250,8 @@ extend type Query {
   ): QuestionsResponse!
 
   getQuestionsHandlingEditors(questionId: ID!): [User!]!
-  getQuestionParticipants(id: ID!): [User!]!
+  getAuthorChatParticipants(id: ID!): [User!]!
+  getProductionChatParticipants(id: ID!): [User!]!
 }
 
 extend type Mutation {

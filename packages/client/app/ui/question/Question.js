@@ -339,7 +339,8 @@ const Question = props => {
     complexItemSetOptions,
     announcementText,
     defaultActiveKey,
-    messages,
+    authorChatMessages,
+    productionChatMessages,
     editorContent,
     leadingContent,
     complexSetEditLink,
@@ -372,11 +373,13 @@ const Question = props => {
     onPublish,
     onQuestionSubmit,
     onReject,
-    onSendMessage,
+    onSendAuthorChatMessage,
+    onSendProductionChatMessage,
     questionAgreedTc,
     refetchUser,
     resources,
-    questionParticipants,
+    authorChatParticipants,
+    productionChatParticipants,
     qtiZipLoading,
     showAssignHEButton,
     canAssignAuthor,
@@ -395,6 +398,7 @@ const Question = props => {
     selectedQuestionType,
     onChangeTab,
     showAuthorChatTab,
+    showProductionChatTab,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -814,6 +818,10 @@ const Question = props => {
   // #region components
   const QuestionTab = <StyledTabItem>Item</StyledTabItem>
   const AuthorChatTab = <StyledTabItem>Chat</StyledTabItem>
+
+  const ProductionAssignmentsTab = (
+    <StyledTabItem>Production Assignments</StyledTabItem>
+  )
 
   const PreviousQuestion = (
     <StyledPrevNextButton
@@ -1352,16 +1360,28 @@ const Question = props => {
               },
               showAuthorChatTab && {
                 label: AuthorChatTab,
-                key: 'chat',
+                key: 'authorChat',
                 children: (
                   <ChatThread
                     announcementText={announcementText}
                     hasMore={hasMoreMessages}
-                    isActive={activeKey === 'chat'}
-                    messages={messages}
+                    isActive={activeKey === 'authorChat'}
+                    messages={authorChatMessages}
                     onFetchMore={onFetchMoreMessages}
-                    onSendMessage={onSendMessage}
-                    participants={questionParticipants}
+                    onSendMessage={onSendAuthorChatMessage}
+                    participants={authorChatParticipants}
+                  />
+                ),
+              },
+              showProductionChatTab && {
+                label: ProductionAssignmentsTab,
+                key: 'productionChat',
+                children: (
+                  <ChatThread
+                    isActive={activeKey === 'productionChat'}
+                    messages={productionChatMessages}
+                    onSendMessage={onSendProductionChatMessage}
+                    participants={productionChatParticipants}
                   />
                 ),
               },
@@ -1402,7 +1422,9 @@ Question.propTypes = {
   defaultActiveKey: PropTypes.string,
   leadingContent: PropTypes.shape(),
   announcementText: PropTypes.string,
-  messages: PropTypes.arrayOf(PropTypes.shape()),
+  authorChatMessages: PropTypes.arrayOf(PropTypes.shape()),
+  productionChatMessages: PropTypes.arrayOf(PropTypes.shape()),
+
   hasMoreMessages: PropTypes.bool,
   loading: PropTypes.bool.isRequired,
   loadAuthors: PropTypes.func,
@@ -1419,7 +1441,8 @@ Question.propTypes = {
   onMoveToProduction: PropTypes.func,
   onPublish: PropTypes.func,
   onReject: PropTypes.func,
-  onSendMessage: PropTypes.func,
+  onSendAuthorChatMessage: PropTypes.func,
+  onSendProductionChatMessage: PropTypes.func,
   onClickAssignHE: PropTypes.func,
   onClickExportToQti: PropTypes.func,
   onClickExportToWord: PropTypes.func,
@@ -1682,7 +1705,13 @@ Question.propTypes = {
   }),
   updated: PropTypes.string,
   wordFileLoading: PropTypes.bool,
-  questionParticipants: PropTypes.arrayOf(
+  authorChatParticipants: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      username: PropTypes.string,
+    }),
+  ),
+  productionChatParticipants: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
       username: PropTypes.string,
@@ -1711,6 +1740,7 @@ Question.propTypes = {
   selectedQuestionType: PropTypes.shape(),
   onChangeTab: PropTypes.func,
   showAuthorChatTab: PropTypes.bool,
+  showProductionChatTab: PropTypes.bool,
 }
 
 Question.defaultProps = {
@@ -1719,7 +1749,8 @@ Question.defaultProps = {
   defaultActiveKey: 'editor',
   announcementText: '',
   hasMoreMessages: false,
-  messages: [],
+  authorChatMessages: [],
+  productionChatMessages: [],
   onChangeAnnouncement: () => {},
   onCreateNewVersion: () => {},
   onFetchMoreMessages: () => {},
@@ -1727,7 +1758,8 @@ Question.defaultProps = {
   onMoveToProduction: () => {},
   onPublish: () => {},
   onReject: () => {},
-  onSendMessage: () => {},
+  onSendAuthorChatMessage: () => {},
+  onSendProductionChatMessage: () => {},
   onClickAssignHE: () => {},
   editorContent: {},
   leadingContent: null,
@@ -1759,7 +1791,8 @@ Question.defaultProps = {
   isUserLoggedIn: true,
   canCreateNewVersion: false,
   wordFileLoading: false,
-  questionParticipants: [],
+  authorChatParticipants: [],
+  productionChatParticipants: [],
   qtiZipLoading: false,
   complexSetEditLink: null,
   handlingEditors: [],
@@ -1774,6 +1807,7 @@ Question.defaultProps = {
 
   onChangeTab: () => {},
   showAuthorChatTab: false,
+  showProductionChatTab: false,
 }
 
 export default Question
