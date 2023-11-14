@@ -7,7 +7,7 @@ import {
   RightOutlined,
   EllipsisOutlined,
 } from '@ant-design/icons'
- 
+
 import { grid, th } from '@coko/client'
 import useBreakpoint from '../_helpers/useBreakpoint'
 import { HhmiLayout, TestModeLayout } from '../wax/layout'
@@ -992,13 +992,13 @@ const Question = props => {
   const QuestionTab = <StyledTabItem>Item</StyledTabItem>
   const AuthorChatTab = <StyledTabItem>Author chat</StyledTabItem>
 
-  const ProductionAssignmentsTab = (
-    <StyledTabItem>Production chat</StyledTabItem>
-  )
-
   const ReviewerChatTab = <StyledTabItem>Reviewer chat</StyledTabItem>
 
   const AssignReviewersTab = <StyledTabItem>Invite reviewers</StyledTabItem>
+
+  const ProductionAssignmentsTab = (
+    <StyledTabItem>Production Assignments</StyledTabItem>
+  )
 
   const PreviousQuestion = (
     <StyledPrevNextButton
