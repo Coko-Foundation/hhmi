@@ -265,8 +265,7 @@ describe('Testing questions', () => {
         .should('contain', 'By 2040')
       cy.contains('span[data-testid="question-status"]', 'Not Submitted')
     })
-    // skipped due to #172
-    // eslint-disable-next-line jest/no-disabled-tests
+
     it('check alternative text for empty questions', () => {
       cy.login(user2)
       cy.get(createQuestionButton).click()
@@ -287,7 +286,7 @@ describe('Testing questions', () => {
         { force: true },
       )
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1000)
+      cy.wait(3000)
       cy.visit(dashboardRoute, { method: 'GET' })
       cy.wait('@GQLReq')
       cy.get(listItemWrapper)
