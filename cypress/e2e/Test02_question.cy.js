@@ -286,7 +286,10 @@ describe('Testing questions', () => {
         { force: true },
       )
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(3000)
+      cy.wait(4000)
+      cy.wait('@GQLReq')
+      cy.wait('@GQLReq')
+
       cy.visit(dashboardRoute, { method: 'GET' })
       cy.wait('@GQLReq')
       cy.get(listItemWrapper)
@@ -294,7 +297,9 @@ describe('Testing questions', () => {
         .should('be.visible')
         .contains(ProseMirror, 'image with no alt text')
         .click()
-      cy.get('img').click()
+      cy.wait('@GQLReq')
+
+      cy.get('img', { timeout: 20000 }).click()
       cy.get('[placeholder="Alt Text"]').type('alternative text')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000)
