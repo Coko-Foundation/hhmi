@@ -42,6 +42,7 @@ import {
   GET_AUTHOR_CHAT_PARTICIPANTS,
   GET_PRODUCTION_CHAT_PARTICIPANTS,
   MESSAGE_CREATED_SUBSCRIPTION,
+  CANCEL_EMAIL_NOTIFICATION,
 } from '../graphql'
 import {
   useMetadata,
@@ -178,7 +179,12 @@ const QuestionPage = props => {
   const history = useHistory()
   const { metadata } = useMetadata()
 
-  const initialTabKey = localStorage.getItem(id) || 'editor'
+  const requestedTab = window.location.hash.substring(1)
+  let initialTabKey = localStorage.getItem(id) || 'editor'
+
+  if (requestedTab && requestedTab !== initialTabKey) {
+    initialTabKey = requestedTab
+  }
 
   const {
     data: { question } = {},
@@ -247,6 +253,8 @@ const QuestionPage = props => {
     },
   })
 
+  const [cancelEmailNotification] = useMutation(CANCEL_EMAIL_NOTIFICATION)
+
   const [
     filterGlobalTeamMembers,
     {
@@ -296,6 +304,17 @@ const QuestionPage = props => {
           ...previousMessages,
           messageCreated,
         ])
+
+        if (
+          messageCreated.mentions.includes(currentUser.id) &&
+          localStorage.getItem(question?.id) === 'authorChat'
+        ) {
+          cancelEmailNotification({
+            variables: {
+              chatThreadId: authorChatThread?.id,
+            },
+          })
+        }
       }
     },
   })
@@ -313,6 +332,17 @@ const QuestionPage = props => {
           ...previousMessages,
           messageCreated,
         ])
+      }
+
+      if (
+        messageCreated.mentions.includes(currentUser.id) &&
+        localStorage.getItem(question?.id) === 'productionChat'
+      ) {
+        cancelEmailNotification({
+          variables: {
+            chatThreadId: authorChatThread?.id,
+          },
+        })
       }
     },
   })
@@ -816,6 +846,25 @@ const QuestionPage = props => {
   }
 
   const persistQuestionTab = activeTab => {
+    switch (activeTab) {
+      case 'authorChat':
+        cancelEmailNotification({
+          variables: {
+            chatThreadId: authorChatThread?.id,
+          },
+        })
+        break
+      case 'productionChat':
+        cancelEmailNotification({
+          variables: {
+            chatThreadId: productionChatThread?.id,
+          },
+        })
+        break
+      default:
+        break
+    }
+
     localStorage.setItem(id, activeTab)
   }
 

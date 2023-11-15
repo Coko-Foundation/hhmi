@@ -69,3 +69,9 @@ export const MESSAGE_CREATED_SUBSCRIPTION = gql`
     }
   }
 `
+
+export const CANCEL_EMAIL_NOTIFICATION = gql`
+  mutation cancelEmailNotification($chatThreadId: ID!) {
+    cancelEmailNotification(chatThreadId: $chatThreadId)
+  }
+`

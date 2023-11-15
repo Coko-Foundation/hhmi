@@ -6,6 +6,7 @@ const {
   sendMessage,
   getMessage,
   getMessageAuthor,
+  cancelEmailNotification,
 } = require('../chat.controllers')
 
 const { User } = require('../../models/index')
@@ -38,6 +39,9 @@ describe('Chat controller', () => {
     const message = await sendMessage(chatThread.id, content, user.id, [
       participant1,
     ])
+
+    // cancel email notification for this test
+    cancelEmailNotification(participant1, chatThread.id)
 
     expect(message.chatThreadId).toBe(chatThread.id)
     expect(message.content).toBe(content)

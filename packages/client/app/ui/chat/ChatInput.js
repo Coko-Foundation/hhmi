@@ -85,17 +85,17 @@ const ChatInput = props => {
 
   const inputRef = useRef(null)
 
-  const handleTextChange = (_, __, newPlainTextValue, newMentions) => {
-    setInputValue(newPlainTextValue)
-    const mentionIDs = newMentions.map(({ id }) => id)
-    setMentions(curMentions => [...curMentions, ...mentionIDs])
+  const handleTextChange = (event, newValue, _, mentioned) => {
+    setInputValue(newValue)
+    const mentionIDs = mentioned.map(({ id }) => id)
+    setMentions(mentionIDs)
   }
 
   const handleKeyDown = e => {
     if (
       e.key === 'Enter' &&
       !e.shiftKey &&
-      inputRef.current.selectionStart === inputValue.length
+      inputRef.current.selectionStart === inputRef.current.value.length
     ) {
       e.preventDefault()
       handleSend()
@@ -115,13 +115,14 @@ const ChatInput = props => {
   const handleSend = async () => {
     if (inputValue.trim().length !== 0 || attachments.length > 0) {
       const content =
-        inputValue.trim().length === 0
+        inputRef.current.value.trim().length === 0
           ? ' '
-          : inputValue.replace(/\r?\n/g, '<br />')
+          : inputRef.current.value.replace(/\r?\n/g, '<br />')
 
       onSend(content, mentions, attachments)
       setInputValue('')
       setAttachments([])
+      setMentions([])
       inputRef.current.focus()
     }
   }

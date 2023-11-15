@@ -10,7 +10,6 @@ import { DateParser, VisuallyHiddenElement } from '../common'
 
 const pullRight = css`
   margin-left: auto;
-  margin-right: ${grid(1)};
 `
 
 const Message = styled.div`
@@ -24,7 +23,6 @@ const Message = styled.div`
   color: ${props => (props.own ? th('colorTextDark') : th('colorTextReverse'))};
   display: inline-block;
   margin-block: 10px;
-  margin-left: ${grid(1)};
   max-inline-size: 50%;
   min-inline-size: 30%;
   ${props =>
@@ -36,7 +34,7 @@ const Message = styled.div`
         ${pullRight}
       }
     `};
-  padding: ${grid(1)};
+  padding: ${grid(2)};
 
   &:focus {
     outline: ${props => `${props.theme.lineWidth * 4}px`} solid
@@ -48,25 +46,24 @@ const Message = styled.div`
     cursor: pointer;
     font-weight: 900;
   }
+
+  > * + * {
+    margin-block-start: ${grid(3)};
+  }
 `
 
 const Name = styled.div`
   font-size: ${th('fontSizeBaseSmall')};
   font-weight: bold;
-  margin-bottom: ${grid(2)};
 `
 
-const Content = styled.div`
-  padding-inline: ${grid(2)};
-`
+const Content = styled.div``
 
 const Date = styled.div`
   display: flex;
   font-size: ${th('fontSizeBaseSmall')};
   font-style: italic;
   justify-content: flex-end;
-  margin-right: ${grid(2)};
-  margin-top: ${grid(2)};
 `
 
 const Attachments = styled.div`

@@ -3,8 +3,11 @@ const { createFile } = require('@coko/server')
 const { ChatThread, ChatMessage, File } = require('@coko/server/src/models')
 const { User } = require('../models')
 const { getFileUrl } = require('./file.controllers')
+const CokoNotifier = require('../services/notify')
 
 const BASE_MESSAGE = '[CHAT CONTROLLER]'
+
+const globalTimeouts = {}
 
 const createChatThread = async (input = {}, options = {}) => {
   const { relatedObjectId, chatType } = input
@@ -52,6 +55,14 @@ const sendMessage = async (
       },
       { trx, passedTrxOnly: true },
     )
+
+    mentions.forEach(mention => {
+      globalTimeouts[`${mention}-${chatThreadId}`] = setTimeout(() => {
+        // send an email that they've been mentioned
+        const notifier = new CokoNotifier()
+        notifier.notify('hhmi.chatMention', { mention, userId, chatThreadId })
+      }, 10000)
+    })
 
     const uploadedAttachments = await Promise.all(
       attachmentData.map(async attachment => {
@@ -143,6 +154,11 @@ const getAttachments = async ({ id }) => {
   return filesWithUrl
 }
 
+const cancelEmailNotification = (userId, chatThreadId) => {
+  clearTimeout(globalTimeouts[`${userId}-${chatThreadId}`])
+  return true
+}
+
 module.exports = {
   createChatThread,
   getAttachments,
@@ -150,4 +166,5 @@ module.exports = {
   getMessageAuthor,
   sendMessage,
   getMessage,
+  cancelEmailNotification,
 }

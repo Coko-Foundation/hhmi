@@ -20,9 +20,10 @@ const Wrapper = styled.div`
   }
 `
 
-const MessagesWrappes = styled.div`
+const MessagesWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  padding-inline: 4px;
 `
 
 const StyledInfiniteScroll = styled(InfiniteScroll)`
@@ -98,7 +99,7 @@ const ChatMessageList = props => {
       </StyledInfiniteScroll>
     ) : (
       <>
-        <MessagesWrappes>
+        <MessagesWrapper>
           {messages.map(({ content, date, own, user, id, attachments }) => (
             <ChatMessage
               attachments={attachments}
@@ -111,7 +112,7 @@ const ChatMessageList = props => {
               user={user}
             />
           ))}
-        </MessagesWrappes>
+        </MessagesWrapper>
         <TopMessageWrapper>
           {hasMore ? (
             <Button onClick={onFetchMore}>Load older</Button>
