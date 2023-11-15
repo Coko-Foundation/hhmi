@@ -14,6 +14,7 @@ const {
   getAttachments,
   sendMessage,
   getMessage,
+  cancelEmailNotification,
 } = require('../../controllers/chat.controllers')
 
 const createChatThreadResolver = async (_, { input }) => {
@@ -56,6 +57,10 @@ const sendMessageResolver = async (_, { input }, ctx) => {
   }
 }
 
+const cancelEmailNotificationResolver = (_, { chatThreadId }, ctx) => {
+  return cancelEmailNotification(ctx.user, chatThreadId)
+}
+
 module.exports = {
   ChatThread: {
     messages: messagesResolver,
@@ -67,6 +72,7 @@ module.exports = {
   Mutation: {
     sendMessage: sendMessageResolver,
     createChatThread: createChatThreadResolver,
+    cancelEmailNotification: cancelEmailNotificationResolver,
   },
   Subscription: {
     messageCreated: {
