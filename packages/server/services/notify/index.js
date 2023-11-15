@@ -2,8 +2,9 @@
 const clone = require('lodash/clone')
 
 const email = require('./email')
+const notificationServices = require('./notification')
 
-const validNotifications = ['email']
+const validNotifications = ['email', 'notification']
 
 /*
   Creates a notifier service to send (for now only email) notifications 
@@ -29,9 +30,9 @@ class CokoNotifier {
           case 'email':
             this.mapper[type].email = email.handlers[type]
             break
-          // case 'notification':
-          //   this.mapper[type].notification = notification.handlers[type]
-          //   break
+          case 'notification':
+            this.mapper[type].notification = notificationServices.handlers[type]
+            break
           default:
             break
         }
@@ -53,28 +54,69 @@ class CokoNotifier {
       notifyBy: ['email'],
     },
     'hhmi.chatMention': {
-      notifyBy: ['email'],
+      notifyBy: ['email', 'notification'],
     },
     'hhmi.productionChatActivityDigest': {
+      notifyBy: ['email'],
+    },
+    'hhmi.addExternalReviewer': {
+      notifyBy: ['email'],
+    },
+    'hhmi.reviewerInvited': {
+      notifyBy: ['email'],
+    },
+    'hhmi.revokeInvitation': {
+      notifyBy: ['email'],
+    },
+    'hhmi.rejectInvitation': {
+      notifyBy: ['email'],
+    },
+    'hhmi.acceptInvitation': {
+      notifyBy: ['email'],
+    },
+    'hhmi.moveQuestionVersionToReview': {
+      notifyBy: ['email'],
+    },
+    'hhmi.submitReview': {
       notifyBy: ['email'],
     },
     // ...
   }
 
-  runType = (type, context) => {
+  runType = (type, context, method = null) => {
     if (!this.mapper[type] || !Array.isArray(this.mapper[type].notifyBy))
       throw new Error(`Notification type ${type} not recognized`)
 
-    this.mapper[type].notifyBy.forEach(async notification => {
-      if (!validNotifications.includes(notification))
-        throw new Error(`${notification} is not a valid notification`)
+    let notificationMethods
 
+    if (method) {
+      // notify only via requested methods
+      notificationMethods = clone(method)
+
+      if (!Array.isArray(notificationMethods)) {
+        if (typeof notificationMethods === 'string') {
+          notificationMethods = [notificationMethods]
+        }
+      }
+    } else {
+      // send notifications via all registered methods for notification type
+      notificationMethods = this.mapper[type].notifyBy
+    }
+
+    notificationMethods.forEach(async _method => {
+      if (!validNotifications.includes(_method))
+        throw new Error(`${_method} is not a valid notification`)
+
+      // const notificationData = await this.mapper[type][method](context)
       let emailData
 
-      switch (notification) {
+      switch (_method) {
         case 'email':
           emailData = await this.mapper[type].email(context)
           email.sendEmail(emailData)
+          break
+        case 'notification':
+          await this.mapper[type].notification(context)
           break
         default:
           throw Error('Notification type not defined')
@@ -82,7 +124,7 @@ class CokoNotifier {
     })
   }
 
-  notify = (notifyTypes, context) => {
+  notify = (notifyTypes, context, method) => {
     let types = clone(notifyTypes)
 
     if (!Array.isArray(notifyTypes)) {
@@ -93,7 +135,7 @@ class CokoNotifier {
       }
     }
 
-    types.forEach(type => this.runType(type, context))
+    types.forEach(type => this.runType(type, context, method))
   }
 }
 

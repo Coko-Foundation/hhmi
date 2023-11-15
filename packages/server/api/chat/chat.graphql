@@ -20,7 +20,3 @@ extend type Mutation {
 extend type Subscription {
   messageCreated(chatThreadId: ID!): ChatMessage!
 }
-
-extend type Subscription {
-  messageCreated(chatThreadId: ID!): ChatMessage!
-}
