@@ -109,13 +109,23 @@ Cypress.Commands.add(
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000)
 
-    cy.get('.ProseMirror').first().type('Question 1', { force: true })
+    cy.get('.multiple-choice  .ProseMirror')
+      .first()
+      .type('Question 1', { force: true })
   },
 )
 
 Cypress.Commands.add('logout', () => {
   cy.get('[data-testid="usermenu-btn"]').click()
   cy.get('[data-testid="logout-btn"]').click({ force: true })
+})
+
+Cypress.Commands.add('createQuestionWidget', () => {
+  cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
+  cy.contains('Multiple Answers').click({ force: true })
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(2000)
+  cy.get('.multiple-choice').should('exist')
 })
 
 Cypress.Commands.add('resetDB', disabled => {
