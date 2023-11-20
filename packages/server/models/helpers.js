@@ -2,6 +2,7 @@
 
 const { db } = require('@coko/server')
 const { cloneDeep } = require('lodash')
+const TeamMember = require('./teamMember/teamMember.model')
 
 // TO DO -- move to cokoapps
 const applyListQueryOptions = async (query, options = {}) => {
@@ -94,7 +95,21 @@ const extractDocumentText = data => {
   return allContent
 }
 
+const hasRoleHelper = async (userId, objectId, role, global = false) => {
+  const member = await TeamMember.query()
+    .leftJoin('teams', 'teams.id', 'team_members.team_id')
+    .findOne({
+      global,
+      role,
+      objectId,
+      userId,
+    })
+
+  return !!member
+}
+
 module.exports = {
   applyListQueryOptions,
   extractDocumentText,
+  hasRoleHelper,
 }
