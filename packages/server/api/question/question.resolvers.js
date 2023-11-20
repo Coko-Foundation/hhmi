@@ -34,6 +34,10 @@ const {
   uploadFiles,
   getImageUrls,
   getProductionChatParticipants,
+
+  updateReviewerPool,
+  changeAmountOfReviewers,
+  changeReviewerAutomationStatus,
 } = require('../../controllers/question.controllers')
 
 const questionResolver = async (_, { id, options }) => {
@@ -206,6 +210,27 @@ const getProductionChatParticipantsResolver = async (_, { id }) => {
   return getProductionChatParticipants(id)
 }
 
+const updateReviewerPoolResolver = async (
+  _,
+  { questionVersionId, reviewerIds },
+) => {
+  return updateReviewerPool(questionVersionId, reviewerIds)
+}
+
+const changeAmountOfReviewersResolver = async (
+  _,
+  { questionVersionId, amount },
+) => {
+  return changeAmountOfReviewers(questionVersionId, amount)
+}
+
+const changeReviewerAutomationStatusResolver = async (
+  _,
+  { questionVersionId, value },
+) => {
+  return changeReviewerAutomationStatus(questionVersionId, value)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -237,6 +262,9 @@ module.exports = {
     uploadFiles: uploadFilesResolver,
     assignHandlingEditors: assignHandlingEditorsResolver,
     unassignHandlingEditor: unassignHandlingEditorResolver,
+    updateReviewerPool: updateReviewerPoolResolver,
+    changeAmountOfReviewers: changeAmountOfReviewersResolver,
+    changeReviewerAutomationStatus: changeReviewerAutomationStatusResolver,
   },
   Question: {
     versions: versionsResolver,

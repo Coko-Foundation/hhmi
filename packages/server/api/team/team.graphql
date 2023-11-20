@@ -3,6 +3,11 @@ type GlobalTeamMembersResponse {
   totalCount: Int
 }
 
+type AddExternalReviewerResponse {
+  teamMemberId: ID!
+  userExists: Boolean!
+}
+
 input UpdateGlobalTeamsInput {
   id: ID!
   members: [ID!]!
@@ -16,6 +21,12 @@ input FilterTeamMembersInput {
   page: Int
 }
 
+input AddExternalReviewerInput {
+  email: String!
+  givenNames: String!
+  surname: String!
+}
+
 extend type Query {
   getNonTeamMemberUsers(teamId: ID!, term: String!): [User!]!
   filterGlobalTeamMembers(
@@ -23,8 +34,19 @@ extend type Query {
     query: String
     options: FilterTeamMembersInput
   ): GlobalTeamMembersResponse!
+
+  searchForReviewers(searchTerm: String!, questionVersionId: ID!): [User!]!
 }
 
 extend type Mutation {
   updateGlobalTeams(input: [UpdateGlobalTeamsInput!]!): [Team!]!
+
+  addExternalReviewer(
+    questionVersionId: ID!
+    input: AddExternalReviewerInput!
+  ): AddExternalReviewerResponse!
+
+  inviteReviewer(questionVersionId: ID!, reviewerId: ID!): TeamMember!
+
+  revokeInvitation(questionVersionId: ID!, reviewerId: ID!): QuestionVersion!
 }

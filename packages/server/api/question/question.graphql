@@ -41,6 +41,11 @@ type QuestionVersion {
   complexItemSetId: ID
   leadingContent: String
   lastEdit: DateTime
+
+  amountOfReviewers: Int
+  isReviewerAutomationOn: Boolean
+  reviewerPool: [TeamMember!]!
+  reviews(currentUserOnly: Boolean): [Review!]
 }
 
 type Topic {
@@ -291,4 +296,19 @@ extend type Mutation {
     userIds: [ID!]!
   ): [AssignHandlingEditorsResponse!]!
   unassignHandlingEditor(questionId: ID!, userId: ID!): Boolean
+
+  updateReviewerPool(
+    questionVersionId: ID!
+    reviewerIds: [ID!]!
+  ): QuestionVersion!
+
+  changeAmountOfReviewers(
+    questionVersionId: ID!
+    amount: Int!
+  ): QuestionVersion!
+
+  changeReviewerAutomationStatus(
+    questionVersionId: ID!
+    value: Boolean!
+  ): QuestionVersion!
 }

@@ -14,16 +14,18 @@ const {
 
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const { clearTempImageFiles } = require('./helpers')
-const { labels } = require('./constants')
+const { labels, REVIEWER_STATUSES } = require('./constants')
 const WaxToScormConverter = require('../services/scorm/scorm.service')
 const WaxToQTIConverter = require('../services/qti/qti.service')
 const metadataResolver = require('./metadataHandler')
 const resources = require('./resourcesData')
 const { getImageUrls, findImages } = require('./utils')
+const { inviteMaxReviewers } = require('./review.controller')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
 const EDITOR_TEAM = config.teams.nonGlobal.editor
+const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
 const PRODUCTION_TEAM = config.teams.global.production
 
@@ -848,6 +850,91 @@ const uploadFiles = async files => {
   )
 }
 
+const updateReviewerPool = async (questionVersionId, reviewerIds) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} updateReviewerPool:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} updating reviewer pool for version ${questionVersionId}`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      const updated = await QuestionVersion.patchAndFetchById(
+        questionVersionId,
+        { reviewerPool: reviewerIds },
+      )
+
+      let reviewerTeam = await Team.findOne({
+        role: REVIEWER_TEAM.role,
+        objectId: questionVersionId,
+      })
+
+      if (!reviewerTeam) {
+        reviewerTeam = await Team.insert({
+          objectId: questionVersionId,
+          objectType: 'questionVersion',
+          role: REVIEWER_TEAM.role,
+          displayName: REVIEWER_TEAM.displayName,
+        })
+      }
+
+      await Team.updateMembershipByTeamId(reviewerTeam.id, reviewerIds, {
+        trx,
+        status: REVIEWER_STATUSES.added,
+      })
+
+      return updated
+    })
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const changeAmountOfReviewers = async (questionVersionId, amount) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} changeAmountOfReviewers:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} changing amount of reviewers for version ${questionVersionId} to ${amount}`,
+  )
+
+  try {
+    return QuestionVersion.patchAndFetchById(questionVersionId, {
+      amountOfReviewers: amount,
+    })
+  } catch (e) {
+    logger.error(
+      `Question version resolver: Change amount of reviewers: Change failed!`,
+    )
+    throw new Error(e)
+  }
+}
+
+const changeReviewerAutomationStatus = async (questionVersionId, isAuto) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} changeReviewerAutomationStatus:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} changing automation of reviewers for version ${questionVersionId} to ${isAuto}`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      const updated = await QuestionVersion.patchAndFetchById(
+        questionVersionId,
+        { isReviewerAutomationOn: isAuto },
+      )
+
+      if (isAuto) {
+        await inviteMaxReviewers(updated, { trx })
+      }
+
+      return updated
+    })
+  } catch (e) {
+    logger.error(
+      `Question version resolver: Change reviewer automation status: ${e}`,
+    )
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   getQuestion,
   getQuestionVersions,
@@ -890,4 +977,8 @@ module.exports = {
 
   uploadFiles,
   getImageUrls,
+
+  updateReviewerPool,
+  changeAmountOfReviewers,
+  changeReviewerAutomationStatus,
 }
