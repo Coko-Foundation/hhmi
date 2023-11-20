@@ -563,15 +563,24 @@ describe('Question Workflows', () => {
       cy.contains('Ecology').click({ force: true })
       cy.get('[data-testid="subtopic-select"]').scrollIntoView().click()
       cy.contains('Matter & Energy').click({ force: true })
-      cy.get('[data-testid="publish-question-btn"]').first().click()
-      cy.contains(
-        '[class="ant-modal-body"] button[type="button"]',
-        'Yes, publish',
-      ).click()
-      cy.contains(
-        '[class="ant-modal-body"] [class="ant-modal-confirm-content"]',
-        'Item was published and is now available in the Browse Items page',
+
+      cy.log(
+        'making sure the the production team member doesnt have the access to publish the question',
       )
+      // [segment]: making sure the the production team member doesnt have the access to publish the question
+      cy.get('[data-testid="publish-question-btn"]').should('not.exist')
+
+      cy.log(
+        'making sure the question is removed from the production items tab after its published',
+      )
+      // [segment]: making sure the question is removed from the production items tab after its published
+      cy.url().then(url => {
+        const id = url.split('/')[4]
+        cy.updateQuestionStatus(disableScripts, id, 'published')
+      })
+      cy.reload()
+      cy.visit(dashboardRoute)
+      cy.get(listItemWrapper).should('have.length', 0)
     })
   })
 })

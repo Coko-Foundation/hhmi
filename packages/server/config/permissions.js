@@ -172,7 +172,6 @@ const canPublish = rule()(async (_, __, ctx) => {
     user.isActive &&
     ((await user.hasGlobalRole('editor')) ||
       (await user.hasGlobalRole('handlingEditor')) ||
-      (await user.hasGlobalRole('production')) ||
       user.hasGlobalRole('admin'))
   )
 })
