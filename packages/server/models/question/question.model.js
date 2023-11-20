@@ -10,7 +10,7 @@ const { ChatThread } = require('@coko/server/src/models')
 
 const QuestionVersion = require('../questionVersion/questionVersion.model')
 const User = require('../user/user.model')
-const { applyListQueryOptions } = require('../helpers')
+const { applyListQueryOptions, hasRoleHelper } = require('../helpers')
 
 class Question extends BaseModel {
   static get tableName() {
@@ -661,6 +661,14 @@ class Question extends BaseModel {
     query.debug()
 
     return applyListQueryOptions(query, options)
+  }
+
+  static async hasRole(userId, manuscriptVersionId, role) {
+    return hasRoleHelper(userId, manuscriptVersionId, role)
+  }
+
+  async hasRole(userId, role) {
+    return hasRoleHelper(userId, this.id, role)
   }
 }
 

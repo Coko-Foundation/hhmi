@@ -11,6 +11,9 @@ const {
   unassignHandlingEditor,
   getAuthorChatParticipants,
   getProductionChatParticipants,
+  updateReviewerPool,
+  changeAmountOfReviewers,
+  changeReviewerAutomationStatus,
 } = require('../question.controllers')
 
 const {
@@ -27,7 +30,16 @@ const {
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
 
 const clearDb = require('../../models/__tests__/_clearDb')
-const { Question, QuestionVersion, Team, User } = require('../../models/index')
+
+const {
+  Question,
+  QuestionVersion,
+  Team,
+  TeamMember,
+  User,
+} = require('../../models')
+
+const { REVIEWER_STATUSES } = require('../constants')
 
 describe('Question Controller', () => {
   beforeEach(() => clearDb())
@@ -299,5 +311,126 @@ describe('Question Controller', () => {
     const team = await Question.getHandlingEditors(question.id)
     expect(team.every(t => t.id !== user1.id)).toBe(true)
     expect(team.some(t => t.id === user2.id)).toBe(true)
+  })
+
+  test('updateReviewerPool adds and removes user to the pool', async () => {
+    const question = await createEmptyQuestion()
+    const user1 = await User.insert({})
+    const user2 = await User.insert({})
+
+    let questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    expect(questionVersion.reviewerPool).toHaveLength(0)
+
+    const ids = [user1.id, user2.id]
+
+    questionVersion = await updateReviewerPool(questionVersion.id, ids)
+
+    expect(questionVersion.reviewerPool).toHaveLength(2)
+    questionVersion.reviewerPool.forEach(userId =>
+      expect(ids).toContain(userId),
+    )
+
+    questionVersion = await updateReviewerPool(questionVersion.id, [user2.id])
+
+    expect(questionVersion.reviewerPool).toHaveLength(1)
+    expect(questionVersion.reviewerPool[0]).toBe(user2.id)
+  })
+
+  test('changeAmountOfReviewers updates number of reviewers', async () => {
+    const question = await createEmptyQuestion()
+
+    let questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    expect(questionVersion.amountOfReviewers).toBe(0)
+
+    questionVersion = await changeAmountOfReviewers(questionVersion.id, 3)
+
+    expect(questionVersion.amountOfReviewers).toBe(3)
+
+    questionVersion = await changeAmountOfReviewers(questionVersion.id, 1)
+
+    expect(questionVersion.amountOfReviewers).toBe(1)
+  })
+
+  test('changeReviewerAutomationStatus sends out max invites', async () => {
+    const question = await createEmptyQuestion()
+    const user1 = await User.insert({})
+    const user2 = await User.insert({})
+    const user3 = await User.insert({})
+    const user4 = await User.insert({})
+
+    let questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    expect(questionVersion.isReviewerAutomationOn).toBe(false)
+
+    await updateReviewerPool(questionVersion.id, [user1.id, user2.id])
+
+    questionVersion = await changeReviewerAutomationStatus(
+      questionVersion.id,
+      true,
+    )
+
+    expect(questionVersion.isReviewerAutomationOn).toBe(true)
+
+    const reviewerTeam = await Team.findOne({
+      role: 'reviewer',
+      objectId: questionVersion.id,
+    })
+
+    let teamMember1 = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId: user1.id,
+    })
+
+    let teamMember2 = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId: user2.id,
+    })
+
+    expect(teamMember1.status).toBe(REVIEWER_STATUSES.added)
+    expect(teamMember2.status).toBe(REVIEWER_STATUSES.added)
+
+    await teamMember1.patch({ status: REVIEWER_STATUSES.accepted })
+    await teamMember2.patch({ status: REVIEWER_STATUSES.rejected })
+
+    await updateReviewerPool(questionVersion.id, [
+      user1.id,
+      user2.id,
+      user3.id,
+      user4.id,
+    ])
+
+    teamMember1 = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId: user1.id,
+    })
+
+    teamMember2 = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId: user2.id,
+    })
+
+    const teamMember3 = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId: user3.id,
+    })
+
+    const teamMember4 = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId: user4.id,
+    })
+
+    expect(teamMember1.status).toBe(REVIEWER_STATUSES.accepted)
+    expect(teamMember2.status).toBe(REVIEWER_STATUSES.rejected)
+
+    expect(teamMember3.status).toBe(REVIEWER_STATUSES.added)
+    expect(teamMember4.status).toBe(REVIEWER_STATUSES.added)
   })
 })
