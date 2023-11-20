@@ -30,14 +30,19 @@ const StyledMentionsInput = styled(MentionsInput)`
     padding: ${grid(1)} ${grid(10)} ${grid(1)} ${grid(2)};
   }
 
+  [role='listbox'] {
+    border: 1px solid ${th('colorBorder')};
+    box-shadow: ${th('boxShadow')};
+  }
+
   [role='option'] {
-    color: none;
-    padding: ${grid(1)};
+    color: ${th('colorText')};
+    padding: ${grid(1)} ${grid(3)};
   }
 
   [role='option']:hover,
   [role='option'][aria-selected='true'] {
-    background: ${th('colorPrimaryBorder')};
+    background: ${th('colorPrimary')};
     color: ${th('colorTextReverse')};
   }
 `
@@ -133,6 +138,13 @@ const ChatInput = props => {
           appendSpaceOnAdd
           data={participants}
           displayTransform={(_, display) => `@${display}`}
+          renderSuggestion={entry => {
+            return (
+              <span>{`${entry.display} ${
+                entry.role === 'handlingEditor' ? '(HE)' : ''
+              }`}</span>
+            )
+          }}
           trigger="@"
         />
       </StyledMentionsInput>
@@ -157,6 +169,7 @@ ChatInput.propTypes = {
     PropTypes.shape({
       id: PropTypes.string,
       display: PropTypes.string,
+      role: PropTypes.string,
     }),
   ),
 }

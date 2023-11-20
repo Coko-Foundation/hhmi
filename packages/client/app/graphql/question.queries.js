@@ -267,6 +267,7 @@ export const GET_AUTHOR_CHAT_PARTICIPANTS = gql`
     getAuthorChatParticipants(id: $id) {
       id
       display: displayName
+      role
     }
   }
 `
@@ -275,6 +276,7 @@ export const GET_PRODUCTION_CHAT_PARTICIPANTS = gql`
     getProductionChatParticipants(id: $id) {
       id
       display: displayName
+      role
     }
   }
 `

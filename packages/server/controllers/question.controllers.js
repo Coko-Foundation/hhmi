@@ -194,7 +194,7 @@ const getHandlingEditorDashboard = async (userId, options = {}) => {
 
 const getAuthorChatParticipants = async questionId => {
   const participants = await User.query()
-    .select('users.displayName', 'users.id')
+    .select('users.displayName', 'users.id', 'teams.role')
     .leftJoin('team_members', 'users.id', 'team_members.user_id')
     .leftJoin('teams', 'teams.id', 'team_members.team_id')
     .whereIn('teams.role', [EDITOR_TEAM.role])
@@ -209,6 +209,7 @@ const getAuthorChatParticipants = async questionId => {
             .where('questions.id', questionId),
         )
     })
+    .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
 
   return participants
 }
@@ -229,7 +230,7 @@ const getInProductionDashboard = async (userId, options = {}) => {
 
 const getProductionChatParticipants = async questionId => {
   const participants = await User.query()
-    .select('users.displayName', 'users.id')
+    .select('users.displayName', 'users.id', 'teams.role')
     .leftJoin('team_members', 'users.id', 'team_members.user_id')
     .leftJoin('teams', 'teams.id', 'team_members.team_id')
     .whereIn('teams.role', [PRODUCTION_TEAM.role, EDITOR_TEAM.role])
@@ -244,6 +245,7 @@ const getProductionChatParticipants = async questionId => {
             .where('questions.id', questionId),
         )
     })
+    .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
 
   return participants
 }

@@ -118,7 +118,8 @@ ChatThread.propTypes = {
   participants: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
-      username: PropTypes.string,
+      display: PropTypes.string,
+      role: PropTypes.string,
     }),
   ),
 }
