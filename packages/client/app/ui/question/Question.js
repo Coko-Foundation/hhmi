@@ -36,6 +36,8 @@ import {
 } from '../common'
 import { extractDocumentText } from '../../utilities'
 import AssignAuthorButton from './AssignAuthorButton'
+import ReviewerRejectButton from './ReviewerRejectButton'
+import ReviewerAcceptButton from './ReviewerAcceptButton'
 
 const ModalContext = React.createContext({ agree: false, setAgree: () => {} })
 const ModalFooter = Modal.footer
@@ -128,6 +130,15 @@ const StyledScormExportButton = styled(ExportToScormButton)`
 
 const StyledAssignHEButton = styled(AssignHEButton)`
   margin-right: ${grid(2)};
+  width: 100%;
+`
+
+const StyledReviewerRejectInviteButton = styled(ReviewerRejectButton)`
+  margin-right: ${grid(2)};
+  width: 100%;
+`
+
+const StyledReviewerAcceptInviteButton = styled(ReviewerAcceptButton)`
   width: 100%;
 `
 
@@ -376,11 +387,15 @@ const Question = props => {
     onReject,
     onSendAuthorChatMessage,
     onSendProductionChatMessage,
+    authorChatParticipants,
+    productionChatParticipants,
+    onReviewerAcceptInvite,
+    onReviewerRejectInvite,
     questionAgreedTc,
     refetchUser,
     resources,
-    authorChatParticipants,
-    productionChatParticipants,
+    reviewInviteStatus,
+    reviewerView,
     qtiZipLoading,
     showAssignHEButton,
     canAssignAuthor,
@@ -410,7 +425,11 @@ const Question = props => {
 
   const [agreedTc, setAgreedTc] = useState(questionAgreedTc)
   const [autoSaving, setAutoSaving] = useState(false)
-  const [showMetadata, setShowMetadata] = useState(isUserLoggedIn)
+
+  const [showMetadata, setShowMetadata] = useState(
+    isUserLoggedIn && !reviewerView,
+  )
+
   const [activeKey, setActiveKey] = useState(defaultActiveKey)
 
   const readOnly =
@@ -420,7 +439,7 @@ const Question = props => {
 
   // need to reset showMetadata, in case user loads after the page is rendered
   useEffect(() => {
-    setShowMetadata(isUserLoggedIn)
+    setShowMetadata(isUserLoggedIn && !reviewerView)
   }, [isUserLoggedIn])
 
   // #region handlers
@@ -1177,6 +1196,38 @@ const Question = props => {
     </>
   )
 
+  const reviewerInviteActions = (
+    <>
+      <StyledReviewerRejectInviteButton
+        onReject={onReviewerRejectInvite}
+        showDialog={showDialog}
+      />
+      <StyledReviewerAcceptInviteButton
+        onAccept={onReviewerAcceptInvite}
+        showDialog={showDialog}
+      />
+    </>
+  )
+
+  const RightAreaReviewer = (
+    <>
+      <ActionsWrapper>{reviewerInviteActions}</ActionsWrapper>
+      <Popup
+        alignment="end"
+        position="block-end"
+        toggle={
+          <PopupToggle
+            icon={<EllipsisOutlined />}
+            title="More actions"
+            type="primary"
+          />
+        }
+      >
+        <PopupContentWrapper>{reviewerInviteActions}</PopupContentWrapper>
+      </Popup>
+    </>
+  )
+
   const RightArea = (
     <RightAreaWrapper id="question-actions" tabIndex="-1">
       {readOnly ? null : (
@@ -1187,6 +1238,7 @@ const Question = props => {
       )}
       {!isRejected &&
         (editorView && isSubmitted ? RightAreaEditor : RightAreaAuthor)}
+      {reviewerView && !isRejected && !reviewInviteStatus && RightAreaReviewer}
     </RightAreaWrapper>
   )
 
@@ -1225,7 +1277,7 @@ const Question = props => {
             <StyledSelect
               data-testid="viewas-select"
               id="viewAsSelect"
-              onChange={val => setShowMetadata(val)}
+              onChange={setShowMetadata}
               options={viewAsOptions}
               value={showMetadata}
             />
@@ -1442,6 +1494,8 @@ Question.propTypes = {
   onMoveToProduction: PropTypes.func,
   onPublish: PropTypes.func,
   onReject: PropTypes.func,
+  onReviewerAcceptInvite: PropTypes.func,
+  onReviewerRejectInvite: PropTypes.func,
   onSendAuthorChatMessage: PropTypes.func,
   onSendProductionChatMessage: PropTypes.func,
   onClickAssignHE: PropTypes.func,
@@ -1659,6 +1713,8 @@ Question.propTypes = {
       subtopics: PropTypes.arrayOf(PropTypes.string),
     }),
   ),
+  reviewInviteStatus: PropTypes.string,
+  reviewerView: PropTypes.bool,
   initialMetadataValues: PropTypes.shape({
     topics: PropTypes.arrayOf(
       PropTypes.shape({
@@ -1774,6 +1830,8 @@ Question.defaultProps = {
   onImageUpload: () => {},
   onMetadataAutoSave: () => {},
   onAssignAuthor: () => {},
+  onReviewerAcceptInvite: () => {},
+  onReviewerRejectInvite: () => {},
   loadAuthors: () => {},
   submitting: false,
   isPublished: false,
@@ -1790,6 +1848,8 @@ Question.defaultProps = {
   facultyView: false,
   refetchUser: () => {},
   resources: [],
+  reviewInviteStatus: null,
+  reviewerView: false,
   updated: '',
   isUserLoggedIn: true,
   canCreateNewVersion: false,

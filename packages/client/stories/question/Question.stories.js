@@ -285,6 +285,14 @@ export const EditorView = () => {
     setAnnouncementText(`Loaded ${prevMessages.length}  previous messages`)
   }
 
+  const handleMetadataAutoSave = () =>
+    new Promise(resolve => {
+      setTimeout(() => {
+        console.log('metadata auto save')
+        resolve()
+      }, 1000)
+    })
+
   const mockAuthorMessage = () => {
     const msg = {
       content: lorem.sentences(2),
@@ -326,7 +334,7 @@ export const EditorView = () => {
         onClickExportToWord={() => {}}
         onEditorContentAutoSave={handleEditorContentChanged}
         onFetchMoreMessages={handleFetchMoreMessage}
-        onMetadataAutoSave={() => console.log('metadata auto save')}
+        onMetadataAutoSave={handleMetadataAutoSave}
         onMoveToProduction={moveToProduction}
         onMoveToReview={moveToReview}
         onPublish={publish}
@@ -376,6 +384,54 @@ export const TestMode = () => {
         resources={resources}
         submitting={false}
         wordFileLoading={wordFileLoading}
+      />
+    </Wrapper>
+  )
+}
+
+export const ReviewerView = () => {
+  const [inviteStatus, setInviteStatus] = useState(null)
+
+  const handleAccept = () =>
+    new Promise(resolve => {
+      setTimeout(() => {
+        console.log('reviewer accepted invite')
+        setInviteStatus('accepted')
+        resolve()
+      }, 1000)
+    })
+
+  const handleReject = () =>
+    new Promise(resolve => {
+      setTimeout(() => {
+        console.log('reviewer rejected invite')
+        setInviteStatus('rejected')
+        resolve()
+      }, 1000)
+    })
+
+  return (
+    <Wrapper>
+      <Question
+        complexItemSetOptions={complexItemSet}
+        editorContent={editorInitialContent}
+        // facultyView
+        initialMetadataValues={initialMetadataValues}
+        isPublished
+        isRejected={false}
+        isSubmitted
+        isUnderReview={false}
+        loading={false}
+        metadata={metadataTransformer(metadata)}
+        onClickBackButton={() => console.log('go back to dashboard')}
+        onQuestionSubmit={data => console.log(data)}
+        onReviewerAcceptInvite={handleAccept}
+        onReviewerRejectInvite={handleReject}
+        readOnly
+        resources={resources}
+        reviewerView
+        reviewInviteStatus={inviteStatus}
+        submitting={false}
       />
     </Wrapper>
   )
