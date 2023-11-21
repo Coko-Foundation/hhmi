@@ -178,6 +178,65 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
     }
   }
 `
+export const GET_REVIEWER_DASHBOARD = gql`
+  query GetReviewerDashboard(
+    $orderBy: String
+    $ascending: Boolean
+    $page: Int
+    $pageSize: Int
+    $searchQuery: String
+  ) {
+    getReviewerDashboard(
+      orderBy: $orderBy
+      ascending: $ascending
+      page: $page
+      pageSize: $pageSize
+      searchQuery: $searchQuery
+    ) {
+      result {
+        id
+        rejected
+        author {
+          displayName
+        }
+        versions(latestOnly: true) {
+          id
+          content
+          submitted
+          underReview
+          inProduction
+          published
+          publicationDate
+
+          complexItemSetId
+          topics {
+            topic
+            subtopic
+          }
+
+          courses {
+            course
+            units {
+              # application
+              # courseTopic
+              # essentialKnowledge
+              learningObjective
+              # skill
+              understanding
+              # unit
+            }
+          }
+
+          cognitiveLevel
+          # affectiveLevel
+          # psychomotorLevel
+        }
+      }
+      totalCount
+    }
+  }
+`
+
 export const GET_PRODUCTION_DASHBOARD = gql`
   query GetInProductionDashboard(
     $orderBy: String
