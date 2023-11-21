@@ -52,6 +52,9 @@ class CokoNotifier {
     'hhmi.chatMention': {
       notifyBy: ['email'],
     },
+    'hhmi.productionChatActivityDigest': {
+      notifyBy: ['email'],
+    },
     // ...
   }
 

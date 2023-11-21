@@ -107,10 +107,39 @@ const questionRejected = async context => {
   }
 }
 
+const productionChatActivityDigest = async context => {
+  const { questionId, userId } = context
+
+  const userIdentity = await Identity.findOne({ userId })
+
+  const link = `${clientUrl}/question/${questionId}#productionChat`
+
+  const content = `
+    <p>The Production team have been discussing this item. 
+      Click on <a href="${link}">this link</a> to view the discussion. 
+      If you cannot see the link, copy and paste the following link into your browser.
+      <br/>
+      ${link}
+    </p>
+  `
+
+  const text = `The Production team have been discussing this item..
+        \nCopy and paste the following link into your browser to view the discussion.
+        \n${link}`
+
+  return {
+    content,
+    text,
+    subject: 'HHMI BioInteractive Assessment Builder: Production chat activity',
+    to: userIdentity.email,
+  }
+}
+
 module.exports = {
   sendEmail,
   handlers: {
     'hhmi.chatMention': chatMention,
     'hhmi.questionRejected': questionRejected,
+    'hhmi.productionChatActivityDigest': productionChatActivityDigest,
   },
 }
