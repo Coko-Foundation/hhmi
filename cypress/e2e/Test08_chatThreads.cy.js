@@ -60,7 +60,7 @@ describe('ChatThreads', () => {
           'By 2040, the world s population is expected to rise to approximately',
         )
         .click()
-      cy.contains(antTabs, 'Chat').click()
+      cy.contains(antTabs, 'Author chat').click()
     })
 
     it('sending a message', () => {
@@ -88,7 +88,7 @@ describe('ChatThreads', () => {
           'By 2040, the world s population is expected to rise to approximately',
         )
         .click()
-      cy.contains(antTabs, 'Chat').click()
+      cy.contains(antTabs, 'Author chat').click()
 
       cy.contains(
         '[data-testid="participant-message"]',
@@ -173,7 +173,7 @@ describe('ChatThreads', () => {
             'By 2040, the world s population is expected to rise to approximately',
           )
           .click()
-        cy.contains(antTabs, 'Chat').click()
+        cy.contains(antTabs, 'Author chat').click()
       })
 
       it('displays correct participants', () => {
