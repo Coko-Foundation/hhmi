@@ -68,6 +68,16 @@ const SendButton = styled(Button)`
   border: none;
   height: 32px;
   margin: ${grid(1)};
+  ${props =>
+    props.$inactive &&
+    `color:rgba(63, 63, 63, 0.25); 
+     cursor: default;
+     background: rgba(63, 63, 63, 0.04);
+     &:hover, &:active, &:focus {
+      color:rgba(63, 63, 63, 0.25)!important; 
+      background: rgba(63, 63, 63, 0.04)!important;
+     }
+    `}
 `
 
 // TODO -- this needs to be a wax editor with two plugins (mention & task)
@@ -156,7 +166,12 @@ const ChatInput = props => {
         onChange={handleAttachmentChange}
         onRemove={handleRemoveAttachment}
       />
-      <SendButton data-testid="send-btn" onClick={handleSend} type="primary">
+      <SendButton
+        $inactive={inputValue.length === 0 && attachments.length === 0}
+        data-testid="send-btn"
+        onClick={handleSend}
+        type="primary"
+      >
         <SendOutlined />
       </SendButton>
     </MainContainer>

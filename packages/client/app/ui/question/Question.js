@@ -818,7 +818,7 @@ const Question = props => {
 
   // #region components
   const QuestionTab = <StyledTabItem>Item</StyledTabItem>
-  const AuthorChatTab = <StyledTabItem>Chat</StyledTabItem>
+  const AuthorChatTab = <StyledTabItem>Author chat</StyledTabItem>
 
   const ProductionAssignmentsTab = (
     <StyledTabItem>Production chat</StyledTabItem>
