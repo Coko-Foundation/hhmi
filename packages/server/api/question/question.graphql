@@ -45,7 +45,7 @@ type QuestionVersion {
 
   amountOfReviewers: Int
   isReviewerAutomationOn: Boolean
-  reviewerPool: [TeamMember!]!
+  reviewerPool: [User!]!
   reviews(currentUserOnly: Boolean): [Review!]
 }
 

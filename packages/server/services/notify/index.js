@@ -58,6 +58,15 @@ class CokoNotifier {
     'hhmi.productionChatActivityDigest': {
       notifyBy: ['email'],
     },
+    'hhmi.addExternalReviewer': {
+      notifyBy: ['email'],
+    },
+    'hhmi.reviewerInvited': {
+      notifyBy: ['email'],
+    },
+    'hhmi.revokeInvitation': {
+      notifyBy: ['email'],
+    },
     // ...
   }
 
