@@ -2,10 +2,10 @@
 
 exports[`TeamManagerBlock matches snapshot 1`] = `
 <div
-  className="sc-kKUyCS kqmcto"
+  className="sc-frTjsE kCqIik"
 >
   <h2
-    className="ant-typography sc-ftefQL zsbCu css-dev-only-do-not-override-12jzuas"
+    className="ant-typography sc-cQGx fJLhXr css-dev-only-do-not-override-12jzuas"
     style={
       {
         "WebkitLineClamp": undefined,
@@ -22,7 +22,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
     className="sc-kFuwaP eKsANT"
   >
     <form
-      className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas sc-fUHfjU eWyoOm"
+      className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas sc-jrPfva jhVdbt"
       data-testid="form-content"
       onReset={[Function]}
       onSubmit={[Function]}
@@ -185,7 +185,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
       </div>
       <button
         aria-labelledby="editor-team"
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ sc-CQMxN"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ sc-dZYMIT"
         disabled={true}
         onClick={[Function]}
         status={null}
@@ -199,7 +199,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
     </form>
   </div>
   <div
-    className="sc-cCYyox fgmuLb sc-eAyYiB dKBEYc"
+    className="sc-cCYyox fgmuLb sc-bImIVK lnqHnd"
   >
     <div
       aria-labelledby="team-editor"
@@ -240,7 +240,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 </span>
               </label>
               <div
-                className="sc-fyQkcW"
+                className="sc-dFWdGd"
               >
                 user1
               </div>
@@ -269,7 +269,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 </span>
               </label>
               <div
-                className="sc-fyQkcW"
+                className="sc-dFWdGd"
               >
                 user2
               </div>
@@ -298,7 +298,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 </span>
               </label>
               <div
-                className="sc-fyQkcW"
+                className="sc-dFWdGd"
               >
                 user3
               </div>
@@ -327,7 +327,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 </span>
               </label>
               <div
-                className="sc-fyQkcW"
+                className="sc-dFWdGd"
               >
                 user4
               </div>
@@ -338,7 +338,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
     </div>
   </div>
   <button
-    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ sc-fNGOfv"
+    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ sc-iXMwsk"
     data-testid="remove-editor"
     disabled={true}
     onClick={[Function]}
