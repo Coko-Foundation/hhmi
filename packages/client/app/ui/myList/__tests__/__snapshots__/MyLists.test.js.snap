@@ -1122,7 +1122,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            24 days ago
+                            23 days ago
                           </td>
                           <td
                             className="ant-table-cell"
