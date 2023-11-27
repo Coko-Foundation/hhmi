@@ -29,6 +29,7 @@ const {
   inviteReviewer,
   revokeInvitation,
   searchForReviewers,
+  acceptOrRejectInvitation,
 } = require('../team.controllers')
 
 const clearDb = require('../../models/__tests__/_clearDb')
@@ -419,7 +420,7 @@ describe('Team Controller', () => {
     await expect(
       inviteReviewer(questionVersion.id, user2.id, editor.id),
     ).rejects.toThrow(
-      /Invite reviewer: User was never added to the reviewer pool/,
+      /Team controllers: inviteReviewer: User was never added to the reviewer pool/,
     )
   })
 
@@ -580,5 +581,96 @@ describe('Team Controller', () => {
         ).toBeFalsy()
       }),
     )
+  })
+
+  it('acceptOrRejectInvitation updates team member and creates pending review', async () => {
+    const question = await createEmptyQuestion()
+    const editor = await createUser()
+    const handlingEditor1 = await createUser()
+    const handlingEditor2 = await createUser()
+
+    await createIdentity(editor, internet.email(), false, null)
+
+    await createIdentity(handlingEditor1, internet.email(), false, null)
+
+    await createIdentity(handlingEditor2, internet.email(), false, null)
+
+    const user1 = await createUser()
+    const user2 = await createUser()
+
+    let questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    const editorTeam = await Team.insert({
+      role: 'editor',
+      global: true,
+      displayName: 'Managing Editor',
+    })
+
+    await Team.updateMembershipByTeamId(editorTeam.id, [editor.id])
+
+    const handlingEditorTeam = await Team.insert({
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+      objectId: questionVersion.questionId,
+      objectType: 'question',
+    })
+
+    await Team.updateMembershipByTeamId(handlingEditorTeam.id, [
+      handlingEditor1.id,
+      handlingEditor2.id,
+    ])
+
+    await expect(
+      acceptOrRejectInvitation(
+        questionVersion.id,
+        'someString',
+        null,
+        user1.id,
+      ),
+    ).rejects.toThrow(
+      /Team controllers: acceptOrRejectInvitation: Invalid value for "accepted"/,
+    )
+
+    await expect(
+      acceptOrRejectInvitation(questionVersion.id, true, null, user1.id),
+    ).rejects.toThrow(
+      /(Team controllers: acceptOrRejectInvitation: No reviewer team found for)/,
+    )
+
+    questionVersion = await updateReviewerPool(questionVersion.id, [user1.id])
+
+    const reviewerTeam = await Team.findOne({
+      role: 'reviewer',
+      objectId: questionVersion.id,
+    })
+
+    await acceptOrRejectInvitation(questionVersion.id, true, '', user1.id)
+
+    const teamMember1 = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId: user1.id,
+    })
+
+    expect(teamMember1.status).toBe(REVIEWER_STATUSES.accepted)
+    expect(teamMember1.description).toBeFalsy()
+
+    questionVersion = await updateReviewerPool(questionVersion.id, [
+      user1.id,
+      user2.id,
+    ])
+
+    const reason = 'Just nah, no thanks'
+
+    await acceptOrRejectInvitation(questionVersion.id, false, reason, user2.id)
+
+    const teamMember2 = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId: user2.id,
+    })
+
+    expect(teamMember2.status).toBe(REVIEWER_STATUSES.rejected)
+    expect(teamMember2.description).toBe(reason)
   })
 })

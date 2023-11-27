@@ -1,0 +1,26 @@
+type ReviewStatus {
+  pending: Boolean
+  submitted: Boolean
+}
+
+type Review {
+  id: ID!
+  questionVersionId: ID!
+  reviewerId: ID!
+
+  content: String
+  status: ReviewStatus
+}
+
+input SubmitReviewInput {
+  questionVersionId: ID!
+  content: String
+}
+
+# extend type Query {
+#   reviews(questionId: ID!, reviewerId: ID!): [Review!]!
+# }
+
+extend type Mutation {
+  submitReview(input: SubmitReviewInput!): ID!
+}

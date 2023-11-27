@@ -208,7 +208,7 @@ const DashboardPage = () => {
           complexItemSetOptions,
           showStatus: true,
           showAuthor: true,
-          showAssigned: true,
+          showStatusLabel: true,
         })
       : []
 
@@ -229,6 +229,7 @@ const DashboardPage = () => {
           metadata,
           complexItemSetOptions,
           showStatus: true,
+          showStatusLabel: true,
         })
       : []
 

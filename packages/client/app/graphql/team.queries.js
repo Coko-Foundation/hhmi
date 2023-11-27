@@ -121,6 +121,20 @@ const FILTER_GLOBAL_TEAM_MEMBERS = gql`
   }
 `
 
+const ACCEPT_OR_REJECT_REVIEW_INVITATION = gql`
+  mutation AcceptOrRejectReviewInvitation(
+    $questionVersionId: ID!
+    $accepted: Boolean!
+    $reason: String
+  ) {
+    acceptOrRejectInvitation(
+      questionVersionId: $questionVersionId
+      accepted: $accepted
+      reason: $reason
+    )
+  }
+`
+
 export {
   TEAM,
   GLOBAL_TEAMS,
@@ -129,4 +143,5 @@ export {
   NON_TEAM_MEMBER_USERS,
   UPDATE_GLOBAL_TEAMS,
   FILTER_GLOBAL_TEAM_MEMBERS,
+  ACCEPT_OR_REJECT_REVIEW_INVITATION,
 }

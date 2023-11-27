@@ -8,6 +8,7 @@ const {
   Identity,
   User,
   QuestionVersion,
+  Review,
 } = require('../models')
 
 const { REVIEWER_STATUSES } = require('./constants')
@@ -18,6 +19,7 @@ const CokoNotifier = require('../services/notify')
 
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
 const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
+const EDITOR_TEAM = config.teams.global.editor
 
 const BASE_MESSAGE = 'Team controllers:'
 
@@ -148,13 +150,15 @@ const addExternalReviewer = async (questionVersionId, input) => {
 
       if (teamMember) {
         throw new Error(
-          'Add external reviewer: User has already been added to reviewer team',
+          `${BASE_MESSAGE} addExternalReviewer: User has already been added to reviewer team`,
         )
       } else {
         const version = await QuestionVersion.findById(questionVersionId)
 
         if (!version)
-          throw new Error('Add external reviewer: Cannot find question version')
+          throw new Error(
+            `${BASE_MESSAGE} addExternalReviewer: Cannot find question version`,
+          )
 
         const currentMembers = await TeamMember.find({
           teamId: reviewerTeam.id,
@@ -164,7 +168,9 @@ const addExternalReviewer = async (questionVersionId, input) => {
           currentMembers &&
           currentMembers.length > version.amountOfReviewers
         ) {
-          throw new Error('Add external reviewer: No available reviewer slots')
+          throw new Error(
+            `${BASE_MESSAGE} addExternalReviewer: No available reviewer slots`,
+          )
         }
 
         teamMember = await TeamMember.insert(
@@ -196,7 +202,9 @@ const addExternalReviewer = async (questionVersionId, input) => {
       userExists,
     }
   } catch (e) {
-    logger.error('Add external reviewer: Transaction failed! Rolling back...')
+    logger.error(
+      `${BASE_MESSAGE} addExternalReviewer: Transaction failed! Rolling back...`,
+    )
     throw new Error(e)
   }
 }
@@ -216,7 +224,7 @@ const inviteReviewer = async (questionVersionId, reviewerId) => {
 
   if (!reviewer)
     throw new Error(
-      'Invite reviewer: User was never added to the reviewer pool',
+      `${BASE_MESSAGE} inviteReviewer: User was never added to the reviewer pool`,
     )
 
   let invitedAlready = false
@@ -262,7 +270,9 @@ const revokeInvitation = async (questionVersionId, reviewerId) => {
         })
 
       if (!reviewer)
-        throw new Error('User was never added to the reviewer pool')
+        throw new Error(
+          `${BASE_MESSAGE} revokeInvitation: User was never added to the reviewer pool`,
+        )
 
       if (reviewer.status === REVIEWER_STATUSES.revoked)
         throw new Error('Invitation has been revoked already')
@@ -284,7 +294,7 @@ const revokeInvitation = async (questionVersionId, reviewerId) => {
       return reviewer
     })
   } catch (e) {
-    logger.error(`Revoke invitation: ${e}`)
+    logger.error(`${BASE_MESSAGE} revokeInvitation: ${e}`)
     throw new Error(e)
   }
 }
@@ -349,6 +359,103 @@ const searchForReviewers = async (searchTerm, questionVersionId) => {
   }
 }
 
+const acceptOrRejectInvitation = async (
+  questionVersionId,
+  accepted,
+  reason,
+  userId,
+) => {
+  if (typeof accepted !== 'boolean')
+    throw new Error(
+      `${BASE_MESSAGE} acceptOrRejectInvitation: Invalid value for "accepted"`,
+    )
+
+  logger.info(
+    `${BASE_MESSAGE} acceptOrRejectInvitation: ${
+      accepted ? 'accept' : 'reject'
+    }ing user ${userId} to review questionVersion ${questionVersionId}`,
+  )
+
+  return useTransaction(async trx => {
+    const reviewerTeam = await Team.findOne({
+      objectId: questionVersionId,
+      role: 'reviewer',
+    })
+
+    if (!reviewerTeam)
+      throw new Error(
+        `${BASE_MESSAGE} acceptOrRejectInvitation: No reviewer team found for ${questionVersionId}`,
+      )
+
+    const status = REVIEWER_STATUSES[accepted ? 'accepted' : 'rejected']
+
+    const teamMember = await TeamMember.findOne({
+      teamId: reviewerTeam.id,
+      userId,
+    })
+
+    teamMember.patch(
+      { status, ...(!accepted && { description: reason }) },
+      { trx },
+    )
+
+    const questionVersion = await QuestionVersion.findById(questionVersionId)
+
+    const handlingEditorTeam = await Team.findOne({
+      objectId: questionVersion.questionId,
+      role: HE_TEAM.role,
+    })
+
+    const handlingEditors = await TeamMember.find({
+      teamId: handlingEditorTeam.id,
+    })
+
+    const editorTeam = await Team.findOne({
+      role: EDITOR_TEAM.role,
+      global: true,
+    })
+
+    const editors = await TeamMember.find({
+      teamId: editorTeam.id,
+    })
+
+    const identities = await Identity.query(trx)
+      .whereIn(
+        'userId',
+        handlingEditors.result.map(he => he.userId),
+      )
+      .orWhereIn(
+        'userId',
+        editors.result.map(e => e.userId),
+      )
+
+    if (accepted) {
+      await Review.insert(
+        {
+          questionVersionId,
+          reviewerId: userId,
+          status: {
+            pending: true,
+            submitted: false,
+          },
+        },
+        { trx },
+      )
+    }
+
+    identities.forEach(id => {
+      const notifier = new CokoNotifier()
+      notifier.notify(`hhmi.${accepted ? 'accept' : 'reject'}Invitation`, {
+        email: id.email,
+        questionId: questionVersion.questionId,
+        reviewerId: userId,
+      })
+    })
+
+    return accepted
+  })
+}
+
 module.exports = {
   updateGlobalTeams,
   getNonTeamMemberUsers,
@@ -357,4 +464,5 @@ module.exports = {
   inviteReviewer,
   revokeInvitation,
   searchForReviewers,
+  acceptOrRejectInvitation,
 }
