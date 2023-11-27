@@ -1,4 +1,5 @@
 const config = require('config')
+const { internet } = require('faker')
 
 const { uuid } = require('@coko/server')
 
@@ -17,6 +18,7 @@ const {
   updateReviewerPool,
   changeAmountOfReviewers,
   changeReviewerAutomationStatus,
+  reviewStatusForReviewer,
 } = require('../question.controllers')
 
 const {
@@ -44,6 +46,13 @@ const {
 } = require('../../models')
 
 const { REVIEWER_STATUSES } = require('../constants')
+
+const {
+  createUser,
+  createIdentity,
+} = require('../../models/__tests__/__helpers__/users')
+
+const { acceptOrRejectInvitation } = require('../team.controllers')
 
 describe('Question Controller', () => {
   beforeEach(() => clearDb())
@@ -673,5 +682,81 @@ describe('Question Controller', () => {
 
     expect(teamMember3.status).toBe(REVIEWER_STATUSES.added)
     expect(teamMember4.status).toBe(REVIEWER_STATUSES.added)
+  })
+
+  test('reviewStatusForReviewer returns the correct status', async () => {
+    const question = await createEmptyQuestion()
+    const editor = await createUser()
+    const handlingEditor1 = await createUser()
+    const handlingEditor2 = await createUser()
+
+    await createIdentity(editor, internet.email(), false, null)
+
+    await createIdentity(handlingEditor1, internet.email(), false, null)
+
+    await createIdentity(handlingEditor2, internet.email(), false, null)
+
+    let questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    const editorTeam = await Team.insert({
+      role: 'editor',
+      global: true,
+      displayName: 'Managing Editor',
+    })
+
+    await Team.updateMembershipByTeamId(editorTeam.id, [editor.id])
+
+    const handlingEditorTeam = await Team.insert({
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+      objectId: questionVersion.questionId,
+      objectType: 'question',
+    })
+
+    await Team.updateMembershipByTeamId(handlingEditorTeam.id, [
+      handlingEditor1.id,
+      handlingEditor2.id,
+    ])
+
+    questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    const reviewer = await createUser()
+    const user = await createUser()
+
+    await expect(
+      reviewStatusForReviewer(questionVersion.id, reviewer.id),
+    ).rejects.toThrow(
+      /Question controllers: reviewStatusForReviewer: team not found/,
+    )
+
+    await updateReviewerPool(questionVersion.id, [reviewer.id])
+
+    const team = await Team.findOne({
+      objectId: questionVersion.id,
+      role: 'reviewer',
+    })
+
+    await acceptOrRejectInvitation(questionVersion.id, true, null, reviewer.id)
+
+    const teamMember = await TeamMember.findOne({
+      teamId: team.id,
+      userId: reviewer.id,
+    })
+
+    const status = await reviewStatusForReviewer(
+      questionVersion.id,
+      reviewer.id,
+    )
+
+    expect(status).toBe(REVIEWER_STATUSES.accepted)
+    expect(teamMember.status).toBe(status)
+
+    await expect(
+      reviewStatusForReviewer(questionVersion.id, user.id),
+    ).rejects.toThrow()
   })
 })

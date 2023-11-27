@@ -16,6 +16,7 @@ module.exports = [
   './models/list',
   './models/listMember',
   './models/complexItemSet',
+  './models/review',
 
   // local api
   './api', // graphql

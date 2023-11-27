@@ -11,6 +11,7 @@ import {
   getRandomCourse,
   getRandomObjectivesForCourse,
   getRandomStatus,
+  getRandomStatusLabel,
 } from '../../app/utilities/question/_utils'
 
 const generateCoursesForQuestion = () => {
@@ -33,7 +34,7 @@ const generateCoursesForQuestion = () => {
   return courses
 }
 
-const makeData = n =>
+const makeData = (n, role = null) =>
   createData(n, i => ({
     id: uuid(),
     title: lorem.words(6),
@@ -53,7 +54,8 @@ const makeData = n =>
     },
     metadata: generateMetadata(),
     courses: generateCoursesForQuestion(),
-    status: getRandomStatus(),
+    status: role === 'reviewer' ? 'Under Review' : getRandomStatus(),
+    statusLabel: role === 'reviewer' && getRandomStatusLabel(),
     href: '#',
   }))
 
@@ -83,6 +85,7 @@ const searchFunction = params => {
     totalResults - 10 * (params.page - 1) > 10
       ? 10
       : totalResults - 10 * (params.page - 1),
+    params.role,
   )
 
   return data

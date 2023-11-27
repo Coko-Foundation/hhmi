@@ -1311,6 +1311,14 @@ const questionTypes = [
   },
 ]
 
+const REVIEWER_STATUSES = {
+  accepted: 'acceptedInvitation',
+  added: 'notInvited',
+  invited: 'invited',
+  rejected: 'rejectedInvitation',
+  revoked: 'invitationRevoked',
+}
+
 const dashboardDataMapper = ({
   questions,
   metadata,
@@ -1341,12 +1349,30 @@ const dashboardDataMapper = ({
     return status
   }
 
+  const renderStatusLabel = ({ heAssigned, reviewStatus }) => {
+    if (!showStatus) return null
+
+    const { accepted, invited } = REVIEWER_STATUSES
+    let label = null
+
+    if (heAssigned) label = 'Assigned'
+    if (reviewStatus === accepted) label = 'In Progress'
+    if (reviewStatus === invited) label = 'Invitation'
+
+    return label
+  }
+
   return questions.map(question => {
     const { id, versions, rejected, heAssigned } = question
     const latestVersion = versions[0]
 
-    const { content, publicationDate, cognitiveLevel, complexItemSetId } =
-      latestVersion
+    const {
+      content,
+      publicationDate,
+      cognitiveLevel,
+      complexItemSetId,
+      reviewStatus,
+    } = latestVersion
 
     const parsedContent = extractDocumentText(content)
 
@@ -1390,7 +1416,8 @@ const dashboardDataMapper = ({
       ],
       content: parsedContent,
       status: renderStatus({ ...latestVersion, rejected }),
-      heAssigned: showAssigned && heAssigned,
+      statusLabel:
+        showAssigned && renderStatusLabel({ heAssigned, reviewStatus }),
       href:
         testMode && latestVersion.published
           ? `/question/${id}/test`
@@ -1506,4 +1533,5 @@ export {
   conditionalWord,
   safeIndex,
   callOn,
+  REVIEWER_STATUSES,
 }

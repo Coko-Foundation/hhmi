@@ -264,7 +264,10 @@ const Metadata = React.forwardRef((props, ref) => {
 
   useEffect(() => {
     // only fire when new question type comes from editor content
-    if (selectedQuestionType !== form.getFieldValue('questionType')) {
+    if (
+      selectedQuestionType !== form.getFieldValue('questionType') &&
+      !readOnly
+    ) {
       form.setFieldsValue({ questionType: selectedQuestionType })
       onAutoSave(form.getFieldsValue())
     }

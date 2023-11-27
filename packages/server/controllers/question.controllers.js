@@ -921,6 +921,7 @@ const changeReviewerAutomationStatus = async (questionVersionId, isAuto) => {
       const updated = await QuestionVersion.patchAndFetchById(
         questionVersionId,
         { isReviewerAutomationOn: isAuto },
+        { trx },
       )
 
       if (isAuto) {
@@ -933,6 +934,43 @@ const changeReviewerAutomationStatus = async (questionVersionId, isAuto) => {
     logger.error(
       `Question version resolver: Change reviewer automation status: ${e}`,
     )
+    throw new Error(e)
+  }
+}
+
+const reviewStatusForReviewer = async (questionVersionId, reviewerId) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} reviewStatusForReviewer:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} fetching ${questionVersionId} question version reviewer status for ${reviewerId}`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      const team = await Team.findOne(
+        {
+          objectId: questionVersionId,
+          role: REVIEWER_TEAM.role,
+        },
+        { trx },
+      )
+
+      if (!team) throw new Error(`${CONTROLLER_MESSAGE} team not found`)
+
+      const teamMember = await TeamMember.findOne(
+        {
+          teamId: team.id,
+          userId: reviewerId,
+        },
+        { trx },
+      )
+
+      if (!teamMember)
+        throw new Error(`${CONTROLLER_MESSAGE} team member not found`)
+
+      return teamMember.status
+    })
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} error: ${e}`)
     throw new Error(e)
   }
 }
@@ -983,4 +1021,5 @@ module.exports = {
   updateReviewerPool,
   changeAmountOfReviewers,
   changeReviewerAutomationStatus,
+  reviewStatusForReviewer,
 }
