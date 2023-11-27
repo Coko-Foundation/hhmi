@@ -46,6 +46,7 @@ type QuestionVersion {
   isReviewerAutomationOn: Boolean
   reviewerPool: [User!]!
   reviews(currentUserOnly: Boolean): [Review!]
+  reviewStatus: String
 }
 
 type Topic {

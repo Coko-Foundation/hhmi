@@ -191,6 +191,74 @@ const inviteReviewer = async context => {
 //   return { content, text, subject, to: reviewerIdentity.email }
 // }
 
+const rejectInvitation = async context => {
+  try {
+    const { email, questionId, reviewerId } = context
+
+    const reviewer = await User.findById(reviewerId)
+    const link = `${clientUrl}/question/${questionId}`
+
+    const content = `
+			  <p>
+				${reviewer.displayName} has rejected an invitation to review an item in the Assessment Builder.
+			  </p>
+			  <p>
+				Click on <a href="${link}">this link</a> to view the rejected invitation on the Reviewer Invites page.
+				If you cannot see the link, copy and paste the following link into your browser.
+				<br/>
+				  ${link}
+			  </p>
+		  `
+
+    const text = `${reviewer.displayName} has rejected an invitation to review an item in the Assessment Builder.
+			  \nCopy and paste the following link into your browser to view the rejected item.
+			  \n${link}
+		  `
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Invitation to review rejected'
+
+    return { content, text, subject, to: email }
+  } catch (e) {
+    logger.error('Failed to create email for reject invitation')
+    throw new Error(e)
+  }
+}
+
+const acceptInvitation = async context => {
+  try {
+    const { email, questionId, reviewerId } = context
+
+    const reviewer = await User.findById(reviewerId)
+    const link = `${clientUrl}/question/${questionId}`
+
+    const content = `
+			  <p>
+				${reviewer.displayName} has accepted an invitation to review an item in the Assessment Builder.
+			  </p>
+			  <p>
+				Click on <a href="${link}">this link</a> to view the accepted invitation on the Reviewer Invites page.
+				If you cannot see the link, copy and paste the following link into your browser.
+				<br/>
+				  ${link}
+			  </p>
+		  `
+
+    const text = `${reviewer.displayName} has accepted an invitation to review an item in the Assessment Builder.
+			  \nCopy and paste the following link into your browser to view the accepted item.
+			  \n${link}
+		  `
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Invitation to review accepted'
+
+    return { content, text, subject, to: email }
+  } catch (e) {
+    logger.error('Failed to create email for reject invitation')
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   sendEmail,
   handlers: {
@@ -199,5 +267,7 @@ module.exports = {
     'hhmi.addExternalReviewer': addExternalReviewer,
     'hhmi.reviewerInvited': inviteReviewer,
     // 'hhmi.revokeInvitation': revokeInvitation,
+    'hhmi.rejectInvitation': rejectInvitation,
+    'hhmi.acceptInvitation': acceptInvitation,
   },
 }

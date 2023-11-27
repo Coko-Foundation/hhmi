@@ -180,6 +180,12 @@ const FacultyHeaderWrapper = styled.div`
   }
 `
 
+const ReviewerActionsWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  width: 100%;
+`
+
 const StyledTabItem = styled.div`
   padding: 0 ${grid(3)};
 `
@@ -435,7 +441,8 @@ const Question = props => {
   const readOnly =
     (editorView && !isInProduction && isSubmitted) ||
     (!editorView && isSubmitted) ||
-    isRejected
+    isRejected ||
+    reviewerView
 
   // need to reset showMetadata, in case user loads after the page is rendered
   useEffect(() => {
@@ -1196,8 +1203,22 @@ const Question = props => {
     </>
   )
 
-  const reviewerInviteActions = (
+  const ViewAsContent = (
     <>
+      <ViewAsLabel htmlFor="viewAsSelect">View as</ViewAsLabel>
+      <StyledSelect
+        data-testid="viewas-select"
+        id="viewAsSelect"
+        onChange={setShowMetadata}
+        options={viewAsOptions}
+        value={showMetadata}
+      />
+    </>
+  )
+
+  const reviewerInviteActions = (
+    <ReviewerActionsWrapper>
+      {ViewAsContent}
       <StyledReviewerRejectInviteButton
         onReject={onReviewerRejectInvite}
         showDialog={showDialog}
@@ -1206,7 +1227,7 @@ const Question = props => {
         onAccept={onReviewerAcceptInvite}
         showDialog={showDialog}
       />
-    </>
+    </ReviewerActionsWrapper>
   )
 
   const RightAreaReviewer = (
@@ -1271,18 +1292,7 @@ const Question = props => {
       </div>
 
       <div>
-        {isUserLoggedIn && (
-          <ViewAsWrapper>
-            <ViewAsLabel htmlFor="viewAsSelect">View as</ViewAsLabel>
-            <StyledSelect
-              data-testid="viewas-select"
-              id="viewAsSelect"
-              onChange={setShowMetadata}
-              options={viewAsOptions}
-              value={showMetadata}
-            />
-          </ViewAsWrapper>
-        )}
+        {isUserLoggedIn && <ViewAsWrapper>{ViewAsContent}</ViewAsWrapper>}
         <ActionsWrapper>
           <StyledWordExportButton
             loading={wordFileLoading}

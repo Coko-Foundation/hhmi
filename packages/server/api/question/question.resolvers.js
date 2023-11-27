@@ -38,6 +38,7 @@ const {
   updateReviewerPool,
   changeAmountOfReviewers,
   changeReviewerAutomationStatus,
+  reviewStatusForReviewer,
 } = require('../../controllers/question.controllers')
 
 const questionResolver = async (_, { id, options }) => {
@@ -231,6 +232,10 @@ const changeReviewerAutomationStatusResolver = async (
   return changeReviewerAutomationStatus(questionVersionId, value)
 }
 
+const reviewStatusResolver = async (questionVersion, _, ctx) => {
+  return reviewStatusForReviewer(questionVersion.id, ctx.user)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -277,5 +282,6 @@ module.exports = {
     question: versionQuestionResolver,
     content: contentResolver,
     leadingContent: leadingContentResolver,
+    reviewStatus: reviewStatusResolver,
   },
 }

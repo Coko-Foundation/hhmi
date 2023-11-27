@@ -47,6 +47,11 @@ extend type Mutation {
   ): AddExternalReviewerResponse!
 
   inviteReviewer(questionVersionId: ID!, reviewerId: ID!): TeamMember!
-
   revokeInvitation(questionVersionId: ID!, reviewerId: ID!): QuestionVersion!
+
+  acceptOrRejectInvitation(
+    questionVersionId: ID!
+    accepted: Boolean!
+    reason: String
+  ): Boolean!
 }

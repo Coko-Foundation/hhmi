@@ -9,7 +9,6 @@ import QuestionItem from './QuestionItem'
 const RenderItem = ({ item }) => {
   return (
     <QuestionItem
-      assigned={item.heAssigned}
       complexItemSet={item.complexItemSet}
       content={item.content}
       courses={item.courses}
@@ -18,6 +17,7 @@ const RenderItem = ({ item }) => {
       metadata={item.metadata}
       state={item.state}
       status={item.status}
+      statusLabel={item.statusLabel}
     />
   )
 }
