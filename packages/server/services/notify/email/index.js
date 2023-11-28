@@ -8,6 +8,7 @@ const clientUrl = config.has('clientUrl') && config.get('clientUrl')
 
 const { ChatThread } = require('@coko/server/src/models')
 const { Question, Identity, User, QuestionVersion } = require('../../../models')
+const flatten = require('../../../controllers/flattenMetadataValues')
 
 const sendEmail = data => {
   const { content, subject, text, to } = data
@@ -259,6 +260,48 @@ const acceptInvitation = async context => {
   }
 }
 
+const moveQuestionVersionToReview = async context => {
+  try {
+    const { questionVersion } = context
+
+    const to = `assessmentbuilder@hhmi.org`
+    const author = await Question.getAuthor(questionVersion.questionId)
+    const identity = await Identity.findOne({ userId: author.id })
+    const link = `${clientUrl}/question/${questionVersion.questionId}`
+    const bloomsLevel = flatten()[questionVersion.cognitiveLevel]
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Item passed Editorial Review'
+
+    const content = `
+	  <p>This item has passed Editorial Review and payment to the Author should proceed.</p>
+	  <p>Item details:</p>
+	  <ul>
+	    <li>Author name: ${author.displayName}</li>
+	    <li>Author email: ${identity.email}</li>
+	    <li>Item ID: ${questionVersion.questionId}</li>
+	    <li>Bloom's level of the item: ${bloomsLevel}</li>
+	  </ul>
+	  <p>
+	    Click on <a href="${link}">this link</a> to view the item.
+	    If you cannot see the link, copy and paste the following link into your browser.
+	    <br/>
+	  	${link}
+	  </p>
+	`
+
+    const text = `Item ${questionVersion.questionId} has passed Editorial Review and payment to the Author should proceed.
+	\nCopy and paste the following link into your browser to view the item.
+	\n${link}
+`
+
+    return { content, text, subject, to }
+  } catch (e) {
+    logger.error('Failed to create email for move question version to review')
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   sendEmail,
   handlers: {
@@ -269,5 +312,6 @@ module.exports = {
     // 'hhmi.revokeInvitation': revokeInvitation,
     'hhmi.rejectInvitation': rejectInvitation,
     'hhmi.acceptInvitation': acceptInvitation,
+    'hhmi.moveQuestionVersionToReview': moveQuestionVersionToReview,
   },
 }

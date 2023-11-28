@@ -21,6 +21,7 @@ const metadataResolver = require('./metadataHandler')
 const resources = require('./resourcesData')
 const { getImageUrls, findImages } = require('./utils')
 const { inviteMaxReviewers } = require('./review.controller')
+const CokoNotifier = require('../services/notify')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
@@ -439,11 +440,18 @@ const moveQuestionVersionToReview = async (questionVersionId, options = {}) => {
     `${CONTROLLER_MESSAGE} moving question version with id ${questionVersionId} to review`,
   )
 
-  return modifyQuestionVersion(
+  const questionVersion = await modifyQuestionVersion(
     questionVersionId,
     { underReview: true },
     { trx: options.trx },
   )
+
+  const notifier = new CokoNotifier()
+  notifier.notify('hhmi.moveQuestionVersionToReview', {
+    questionVersion,
+  })
+
+  return questionVersion
 }
 
 const moveQuestionVersionToProduction = async (

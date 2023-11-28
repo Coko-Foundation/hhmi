@@ -67,6 +67,9 @@ class CokoNotifier {
     'hhmi.acceptInvitation': {
       notifyBy: ['email'],
     },
+    'hhmi.moveQuestionVersionToReview': {
+      notifyBy: ['email'],
+    },
     // ...
   }
 
