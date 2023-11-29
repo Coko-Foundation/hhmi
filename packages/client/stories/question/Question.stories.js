@@ -20,6 +20,7 @@ import {
 } from '../../app/utilities/question/initialValues'
 import complexItemSet from '../../app/utilities/question/complexItemSets'
 import { createData, createMessages } from '../../app/utilities/_helpers'
+import { REVIEWER_STATUSES } from '../../app/utilities'
 
 const Wrapper = styled.div`
   border: ${th('borderWidth')} ${th('borderStyle')} ${th('colorBorder')};
@@ -390,13 +391,14 @@ export const TestMode = () => {
 }
 
 export const ReviewerView = () => {
-  const [inviteStatus, setInviteStatus] = useState(null)
+  const [inviteStatus, setInviteStatus] = useState(REVIEWER_STATUSES.invited)
+  const [reviewSubmitted, setReviewSubmitted] = useState(false)
 
   const handleAccept = () =>
     new Promise(resolve => {
       setTimeout(() => {
         console.log('reviewer accepted invite')
-        setInviteStatus('accepted')
+        setInviteStatus(REVIEWER_STATUSES.accepted)
         resolve()
       }, 1000)
     })
@@ -405,7 +407,16 @@ export const ReviewerView = () => {
     new Promise(resolve => {
       setTimeout(() => {
         console.log('reviewer rejected invite')
-        setInviteStatus('rejected')
+        setInviteStatus(REVIEWER_STATUSES.rejected)
+        resolve()
+      }, 1000)
+    })
+
+  const handleSubmit = () =>
+    new Promise(resolve => {
+      setTimeout(() => {
+        console.log('reviewer submitted review')
+        setReviewSubmitted(true)
         resolve()
       }, 1000)
     })
@@ -427,10 +438,12 @@ export const ReviewerView = () => {
         onQuestionSubmit={data => console.log(data)}
         onReviewerAcceptInvite={handleAccept}
         onReviewerRejectInvite={handleReject}
+        onSubmitReview={handleSubmit}
         readOnly
         resources={resources}
         reviewerView
         reviewInviteStatus={inviteStatus}
+        reviewSubmitted={reviewSubmitted}
         submitting={false}
       />
     </Wrapper>

@@ -1327,7 +1327,7 @@ const dashboardDataMapper = ({
   showAuthor,
   relatedQuestionIds,
   testMode,
-  showAssigned,
+  showStatusLabel,
 }) => {
   if (!questions) return null
 
@@ -1351,21 +1351,26 @@ const dashboardDataMapper = ({
     return status
   }
 
-  const renderStatusLabel = ({ heAssigned, reviewStatus }) => {
+  const renderStatusLabel = ({
+    heAssigned,
+    reviewerStatus,
+    reviewSubmitted,
+  }) => {
     if (!showStatus) return null
 
     const { accepted, invited } = REVIEWER_STATUSES
     let label = null
 
-    if (heAssigned) label = 'Assigned'
-    if (reviewStatus === accepted) label = 'In Progress'
-    if (reviewStatus === invited) label = 'Invitation'
+    if (heAssigned) return 'Assigned'
+    if (reviewSubmitted) return 'Submitted'
+    if (reviewerStatus === accepted) label = 'In Progress'
+    if (reviewerStatus === invited) label = 'Invitation'
 
     return label
   }
 
   return questions.map(question => {
-    const { id, versions, rejected, heAssigned } = question
+    const { id, versions, rejected, heAssigned, reviews } = question
     const latestVersion = versions[0]
 
     const {
@@ -1373,7 +1378,7 @@ const dashboardDataMapper = ({
       publicationDate,
       cognitiveLevel,
       complexItemSetId,
-      reviewStatus,
+      reviewerStatus,
     } = latestVersion
 
     const parsedContent = extractDocumentText(content)
@@ -1401,6 +1406,10 @@ const dashboardDataMapper = ({
         }
       : null
 
+    const reviewSubmitted = !!reviews.find(
+      review => review.reviewerId === id && review.status.submitted,
+    )
+
     return {
       metadata: [
         { label: 'topic', value: topics.topics },
@@ -1419,7 +1428,8 @@ const dashboardDataMapper = ({
       content: parsedContent,
       status: renderStatus({ ...latestVersion, rejected }),
       statusLabel:
-        showAssigned && renderStatusLabel({ heAssigned, reviewStatus }),
+        showStatusLabel &&
+        renderStatusLabel({ heAssigned, reviewerStatus, reviewSubmitted }),
       href:
         testMode && latestVersion.published
           ? `/question/${id}/test`

@@ -15,9 +15,12 @@ const baseMessage = 'Review controller:'
 // 	}
 // }
 
-const submitReview = async (userId, input, options = {}) => {
-  const { questionVersionId, content } = input
-
+const submitReview = async (
+  questionVersionId,
+  content,
+  userId,
+  options = {},
+) => {
   try {
     const review = await Review.createReview(
       questionVersionId,

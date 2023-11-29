@@ -10,6 +10,7 @@ const {
   Team,
   TeamMember,
   ComplexItemSet,
+  Review,
 } = require('../models')
 
 const CokoNotifier = require('../services/notify')
@@ -985,8 +986,8 @@ const changeReviewerAutomationStatus = async (questionVersionId, isAuto) => {
   }
 }
 
-const reviewStatusForReviewer = async (questionVersionId, reviewerId) => {
-  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} reviewStatusForReviewer:`
+const reviewerStatus = async (questionVersionId, reviewerId) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} reviewerStatusForReviewer:`
   logger.info(
     `${CONTROLLER_MESSAGE} fetching ${questionVersionId} question version reviewer status for ${reviewerId}`,
   )
@@ -1001,7 +1002,7 @@ const reviewStatusForReviewer = async (questionVersionId, reviewerId) => {
         { trx },
       )
 
-      if (!team) throw new Error(`${CONTROLLER_MESSAGE} team not found`)
+      if (!team) return null
 
       const teamMember = await TeamMember.findOne(
         {
@@ -1011,13 +1012,41 @@ const reviewStatusForReviewer = async (questionVersionId, reviewerId) => {
         { trx },
       )
 
-      if (!teamMember)
-        throw new Error(`${CONTROLLER_MESSAGE} team member not found`)
+      if (!teamMember) return null
 
       return teamMember.status
     })
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} error: ${e}`)
+    throw new Error(e)
+  }
+}
+
+const questionVersionReviews = async (
+  questionVersionId,
+  currentUserOnly,
+  userId,
+) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} questionVersionReviews:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} fetching ${questionVersionId} question version reviewers${
+      currentUserOnly ? ` for user ${userId}` : ''
+    }`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      const results = await Review.getReviewsForQuestionVersion(
+        questionVersionId,
+        currentUserOnly,
+        userId,
+        { trx },
+      )
+
+      return results
+    })
+  } catch (e) {
+    console.error(e)
     throw new Error(e)
   }
 }
@@ -1069,5 +1098,6 @@ module.exports = {
   updateReviewerPool,
   changeAmountOfReviewers,
   changeReviewerAutomationStatus,
-  reviewStatusForReviewer,
+  reviewerStatus,
+  questionVersionReviews,
 }

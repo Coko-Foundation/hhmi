@@ -194,6 +194,7 @@ const DashboardPage = () => {
           complexItemSetOptions,
           showAuthor: true,
           showStatus: true,
+          showStatusLabel: true,
         })
       : []
 

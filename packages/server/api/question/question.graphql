@@ -46,8 +46,8 @@ type QuestionVersion {
   amountOfReviewers: Int
   isReviewerAutomationOn: Boolean
   reviewerPool: [User!]!
-  reviews(currentUserOnly: Boolean): [Review!]
-  reviewStatus: String
+  reviews(currentUserOnly: Boolean): [Review!]!
+  reviewerStatus: String
 }
 
 type Topic {

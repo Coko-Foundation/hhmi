@@ -45,6 +45,7 @@ import {
   CANCEL_EMAIL_NOTIFICATION,
   UNPUBLISH_QUESTION_VERSION,
   ACCEPT_OR_REJECT_REVIEW_INVITATION,
+  SUBMIT_REVIEW,
 } from '../graphql'
 import {
   useMetadata,
@@ -557,7 +558,28 @@ const QuestionPage = props => {
 
   const [acceptOrRejectInvitation] = useMutation(
     ACCEPT_OR_REJECT_REVIEW_INVITATION,
+    {
+      refetchQueries: [
+        {
+          query: QUESTION,
+          variables: {
+            id,
+          },
+        },
+      ],
+    },
   )
+
+  const [submitReview] = useMutation(SUBMIT_REVIEW, {
+    refetchQueries: [
+      {
+        query: QUESTION,
+        variables: {
+          id,
+        },
+      },
+    ],
+  })
   // #endregion hooks
 
   // #region user roles
@@ -578,6 +600,13 @@ const QuestionPage = props => {
   const showProductionChatTab =
     version?.inProduction &&
     (isEditor || isHandlingEditor || isProductionMember || isAdmin)
+
+  const reviewerInviteStatus = isReviewer && version?.reviewerStatus
+  const reviews = version?.reviews
+
+  const reviewSubmitted = !!reviews.find(
+    review => review.reviewerId === id && review.status.submitted,
+  )
   // #endregion user roles
 
   // #region handlers
@@ -986,6 +1015,17 @@ const QuestionPage = props => {
     return acceptOrRejectInvitation(mutationData)
   }
 
+  const handleSubmitReview = async content => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        content,
+      },
+    }
+
+    return submitReview(mutationData)
+  }
+
   // #endregion handlers
 
   if (error) {
@@ -1105,6 +1145,7 @@ const QuestionPage = props => {
         onSearchHE={handleSearchHE}
         onSendAuthorChatMessage={onSendAuthorChatMessage}
         onSendProductionChatMessage={onSendProductionChatMessage}
+        onSubmitReview={handleSubmitReview}
         onUnassignHandlingEditor={handleUnassignHE}
         onUnpublish={handleUnpublish}
         productionChatMessages={messagesApiToUi(
@@ -1117,6 +1158,8 @@ const QuestionPage = props => {
         refetchUser={refetchCurrentUser}
         resources={getResources}
         reviewerView={isReviewer}
+        reviewInviteStatus={reviewerInviteStatus}
+        reviewSubmitted={reviewSubmitted}
         searchHELoading={loadingSearchHE}
         selectedQuestionType={selectedQuestionType}
         showAssignHEButton={
