@@ -24,5 +24,5 @@ type Review {
 # }
 
 extend type Mutation {
-  submitReview(input: SubmitReviewInput!): ID!
+  submitReview(questionVersionId: ID!, content: String): ID!
 }
