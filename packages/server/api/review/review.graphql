@@ -12,15 +12,10 @@ type Review {
   status: ReviewStatus
 }
 
-input SubmitReviewInput {
-  questionVersionId: ID!
-  content: String
-}
-
 # extend type Query {
 #   reviews(questionId: ID!, reviewerId: ID!): [Review!]!
 # }
 
 extend type Mutation {
-  submitReview(input: SubmitReviewInput!): ID!
+  submitReview(questionVersionId: ID!, content: String): ID!
 }
