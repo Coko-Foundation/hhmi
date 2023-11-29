@@ -847,7 +847,7 @@ describe('Question Controller', () => {
     expect(results[0].content).toBe(review32.content)
   })
 
-  test('reviewStatusForReviewer returns the correct status', async () => {
+  test('reviewerStatusForReviewer returns the correct status', async () => {
     const question = await createEmptyQuestion()
     const editor = await createUser()
     const handlingEditor1 = await createUser()
@@ -890,11 +890,9 @@ describe('Question Controller', () => {
     const reviewer = await createUser()
     const user = await createUser()
 
-    await expect(
-      reviewStatusForReviewer(questionVersion.id, reviewer.id),
-    ).rejects.toThrow(
-      /Question controllers: reviewStatusForReviewer: team not found/,
-    )
+    const result1 = await reviewerStatus(questionVersion.id, reviewer.id)
+
+    expect(result1).toBe(null)
 
     await updateReviewerPool(questionVersion.id, [reviewer.id])
 
@@ -910,16 +908,103 @@ describe('Question Controller', () => {
       userId: reviewer.id,
     })
 
-    const status = await reviewStatusForReviewer(
-      questionVersion.id,
-      reviewer.id,
-    )
+    const status = await reviewerStatus(questionVersion.id, reviewer.id)
 
     expect(status).toBe(REVIEWER_STATUSES.accepted)
     expect(teamMember.status).toBe(status)
 
-    await expect(
-      reviewStatusForReviewer(questionVersion.id, user.id),
-    ).rejects.toThrow()
+    const result2 = await reviewerStatus(questionVersion.id, user.id)
+
+    expect(result2).toBe(null)
+  })
+
+  test('questionVersionReviews returns reviews for the given questionVersionId', async () => {
+    const question1 = await createEmptyQuestion()
+    const question2 = await createEmptyQuestion()
+
+    const questionVersion1 = await QuestionVersion.findOne({
+      questionId: question1.id,
+    })
+
+    const questionVersion2 = await QuestionVersion.findOne({
+      questionId: question2.id,
+    })
+
+    let results = await Review.getReviewsForQuestionVersion(questionVersion1.id)
+
+    expect(results).toHaveLength(0)
+
+    const user1 = await createUser()
+    const user2 = await createUser()
+    const user3 = await createUser()
+    const user4 = await createUser()
+    const user5 = await createUser()
+
+    const reviewStatus = {
+      pending: false,
+      submitted: true,
+    }
+
+    await Review.createReview(
+      questionVersion1.id,
+      user1.id,
+      "User 1's review",
+      reviewStatus,
+    )
+
+    await Review.createReview(
+      questionVersion1.id,
+      user2.id,
+      "User 2's review",
+      reviewStatus,
+    )
+
+    await Review.createReview(
+      questionVersion1.id,
+      user3.id,
+      "User 3's review",
+      reviewStatus,
+    )
+
+    const review32 = await Review.createReview(
+      questionVersion2.id,
+      user3.id,
+      "User 3's review",
+      reviewStatus,
+    )
+
+    await Review.createReview(
+      questionVersion2.id,
+      user4.id,
+      "User 4's review",
+      reviewStatus,
+    )
+
+    await Review.createReview(
+      questionVersion2.id,
+      user5.id,
+      "User 5's review",
+      reviewStatus,
+    )
+
+    const group1 = [user1.id, user2.id, user3.id]
+    results = await Review.getReviewsForQuestionVersion(questionVersion1.id)
+    expect(results).toHaveLength(3)
+    results.forEach(r => expect(group1).toContain(r.reviewerId))
+
+    const group2 = [user3.id, user4.id, user5.id]
+    results = await Review.getReviewsForQuestionVersion(questionVersion2.id)
+    expect(results).toHaveLength(3)
+    results.forEach(r => expect(group2).toContain(r.reviewerId))
+
+    results = await Review.getReviewsForQuestionVersion(
+      questionVersion2.id,
+      true,
+      user3.id,
+    )
+
+    expect(results).toHaveLength(1)
+    expect(results[0].reviewerId).toBe(user3.id)
+    expect(results[0].content).toBe(review32.content)
   })
 })
