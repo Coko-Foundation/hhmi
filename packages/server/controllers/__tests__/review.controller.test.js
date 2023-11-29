@@ -1,4 +1,5 @@
 const { Review, QuestionVersion, User } = require('../../models')
+const { createUser } = require('../../models/__tests__/__helpers__/users')
 const clearDb = require('../../models/__tests__/_clearDb')
 
 const {
@@ -6,7 +7,7 @@ const {
   changeAmountOfReviewers,
 } = require('../question.controllers')
 
-const { inviteMaxReviewers } = require('../review.controller')
+const { inviteMaxReviewers, submitReview } = require('../review.controller')
 const { createEmptyQuestion } = require('./__helpers__/questions')
 
 describe('Review Controller', () => {
@@ -44,5 +45,37 @@ describe('Review Controller', () => {
     expect(invitedMembers).toHaveLength(2)
 
     invitedMembers.forEach(member => expect(ids).toContain(member.userId))
+  })
+
+  test('submitReview creates a review for the given user', async () => {
+    const question = await createEmptyQuestion()
+
+    const questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    const reviewer = await createUser()
+
+    let review = await Review.findOne({
+      questionVersionId: questionVersion.id,
+      reviewerId: reviewer.id,
+    })
+
+    expect(review).toBeFalsy()
+
+    const reviewContent =
+      'Yeah, looks alright.\nMaybe change some formatting stuff.'
+
+    const reviewId = await submitReview(
+      questionVersion.id,
+      reviewContent,
+      reviewer.id,
+    )
+
+    expect(reviewId).not.toBeFalsy()
+    review = await Review.findById(reviewId)
+
+    expect(review.id).toBe(reviewId)
+    expect(review.content).toBe(reviewContent)
   })
 })

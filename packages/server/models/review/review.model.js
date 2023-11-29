@@ -59,10 +59,31 @@ class Review extends BaseModel {
     try {
       const { trx } = options
 
-      return Review.insert(
+      return this.insert(
         { questionVersionId, reviewerId, content, status },
         { trx },
       )
+    } catch (e) {
+      console.error(e)
+      throw new Error(e)
+    }
+  }
+
+  static async getReviewsForQuestionVersion(
+    questionVersionId,
+    currentUserOnly,
+    reviewerId,
+    options = {},
+  ) {
+    try {
+      const { trx } = options
+
+      const query = this.query(trx).where({ questionVersionId })
+      if (currentUserOnly) query.where({ reviewerId })
+
+      const result = await query
+
+      return result
     } catch (e) {
       console.error(e)
       throw new Error(e)
