@@ -951,7 +951,7 @@ describe('Question Controller', () => {
     expect(true).toBe(true)
   })
 
-  test('reviewStatusForReviewer returns the correct status', async () => {
+  test('reviewerStatusForReviewer returns the correct status', async () => {
     const question = await createEmptyQuestion()
     const editor = await createUser()
     const handlingEditor1 = await createUser()
