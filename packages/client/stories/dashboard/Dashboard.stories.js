@@ -55,7 +55,10 @@ const makeData = (n, role = null) =>
     metadata: generateMetadata(),
     courses: generateCoursesForQuestion(),
     status: role === 'reviewer' ? 'Under Review' : getRandomStatus(),
-    statusLabel: role === 'reviewer' && getRandomStatusLabel(),
+    statusLabel:
+      role === 'reviewer'
+        ? getRandomStatusLabel()
+        : (role === 'editor' || role === 'handlingEditor') && 'Assigned',
     href: '#',
   }))
 
@@ -303,7 +306,7 @@ export const ReviewerDashboard = args => {
       loading: author.loading,
     },
     {
-      label: 'Review Invites',
+      label: 'Reviewer Items',
       value: 'reviewer',
       questions: reviewer.questions,
       totalCount: reviewer.totalCount,
