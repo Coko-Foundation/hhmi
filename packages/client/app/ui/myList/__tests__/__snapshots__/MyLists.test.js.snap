@@ -483,7 +483,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            7 years ago
+                            November 20, 2020
                           </td>
                           <td
                             className="ant-table-cell"
@@ -696,7 +696,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            8 years ago
+                            January 31, 2020
                           </td>
                           <td
                             className="ant-table-cell"
@@ -909,7 +909,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            5 years ago
+                            June 23, 2019
                           </td>
                           <td
                             className="ant-table-cell"
@@ -1122,7 +1122,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            23 days ago
+                            December 17, 2020
                           </td>
                           <td
                             className="ant-table-cell"
@@ -1335,7 +1335,7 @@ exports[`MyList Matches snapshot 1`] = `
                             rowSpan={null}
                             style={{}}
                           >
-                            5 years ago
+                            October 02, 2020
                           </td>
                           <td
                             className="ant-table-cell"
