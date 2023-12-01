@@ -5,7 +5,7 @@ exports[`Form matches snapshot 1`] = `
   className="sc-hLseeU gTQpGv"
 >
   <form
-    className="ant-form ant-form-horizontal css-dev-only-do-not-override-1vtf12y"
+    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas"
     data-testid="form-content"
     onReset={[Function]}
     onSubmit={[Function]}
@@ -14,7 +14,7 @@ exports[`Form matches snapshot 1`] = `
       className="sc-jTrPJq"
     >
       <input
-        className="ant-input css-dev-only-do-not-override-1vtf12y sc-gLDzan lhFuEK"
+        className="ant-input css-dev-only-do-not-override-12jzuas sc-gLDzan lhFuEK"
         disabled={false}
         onBlur={[Function]}
         onChange={[Function]}
@@ -30,11 +30,11 @@ exports[`Form matches snapshot 1`] = `
       className="sc-jTrPJq"
     >
       <span
-        className="ant-input-affix-wrapper ant-input-password sc-fsQiph cqilML css-dev-only-do-not-override-1vtf12y"
+        className="ant-input-affix-wrapper ant-input-password sc-fsQiph cqilML css-dev-only-do-not-override-12jzuas"
         onClick={[Function]}
       >
         <input
-          className="ant-input css-dev-only-do-not-override-1vtf12y"
+          className="ant-input css-dev-only-do-not-override-12jzuas"
           disabled={false}
           hidden={null}
           onBlur={[Function]}
@@ -85,11 +85,12 @@ exports[`Form matches snapshot 1`] = `
       </span>
     </div>
     <button
-      className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-button sc-qRumB egCkMh"
+      className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-button sc-qRumB egCkMh"
       data-testid="submit-btn"
       disabled={false}
       onClick={[Function]}
       status={null}
+      style={{}}
       type="button"
     >
       <span>

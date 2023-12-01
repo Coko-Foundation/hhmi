@@ -12,6 +12,7 @@ import {
   CURRENT_USER,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
   FILTER_GLOBAL_TEAM_MEMBERS,
+  GET_PRODUCTION_DASHBOARD,
 } from '../graphql'
 import {
   hasGlobalRole,
@@ -39,6 +40,27 @@ const DashboardPage = () => {
 
   const { metadata } = useMetadata()
 
+  const updateSearchResultAnnounce = (data, query) => {
+    if (initialRender.current) initialRender.current = false
+    else {
+      const nrOfQuestions = data[query].result.length
+      const total = data[query].totalCount
+      let announcement = 'Results updated.'
+
+      if (total === 0) {
+        announcement = `${announcement} No results for your search query`
+      } else if (total <= 10) {
+        announcement = `${announcement} ${nrOfQuestions} questions`
+      } else {
+        announcement = `${announcement} Page ${currentPage} of ${Math.ceil(
+          total / 10,
+        )} with ${nrOfQuestions} questions from a total of ${total}`
+      }
+
+      document.querySelector('#search-results-update').innerHTML = announcement
+    }
+  }
+
   const { data: currentUserResponse } = useQuery(CURRENT_USER)
 
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
@@ -60,28 +82,7 @@ const DashboardPage = () => {
       ...defaultSearchOptions,
       page: 0,
     },
-    onCompleted: data => {
-      // run only on update, not on first render
-      if (initialRender.current) initialRender.current = false
-      else {
-        const nrOfQuestions = data.getAuthorDashboard.result.length
-        const total = data.getAuthorDashboard.totalCount
-        let announcement = 'Results updated.'
-
-        if (total === 0) {
-          announcement = `${announcement} No results for your search query`
-        } else if (total <= 10) {
-          announcement = `${announcement} ${nrOfQuestions} questions`
-        } else {
-          announcement = `${announcement} Page ${currentPage} of ${Math.ceil(
-            total / 10,
-          )} with ${nrOfQuestions} questions from a total of ${total}`
-        }
-
-        document.querySelector('#search-results-update').innerHTML =
-          announcement
-      }
-    },
+    onCompleted: data => updateSearchResultAnnounce(data, 'getAuthorDashboard'),
   })
 
   const [
@@ -97,28 +98,8 @@ const DashboardPage = () => {
     { data: editorResponse, loading: editorLoading, called: editorCalled },
   ] = useLazyQuery(GET_EDITOR_DASHBOARD, {
     fetchPolicy: 'network-only',
-    onCompleted: data => {
-      // run only on update, not on first render
-      if (initialRender.current) initialRender.current = false
-      else {
-        const nrOfQuestions = data.getManagingEditorDashboard.result.length
-        const total = data.getManagingEditorDashboard.totalCount
-        let announcement = 'Results updated.'
-
-        if (total === 0) {
-          announcement = `${announcement} No results for your search query`
-        } else if (total <= 10) {
-          announcement = `${announcement} ${nrOfQuestions} questions`
-        } else {
-          announcement = `${announcement} Page ${currentPage} of ${Math.ceil(
-            total / 10,
-          )} with ${nrOfQuestions} questions from a total of ${total}`
-        }
-
-        document.querySelector('#search-results-update').innerHTML =
-          announcement
-      }
-    },
+    onCompleted: data =>
+      updateSearchResultAnnounce(data, 'getManagingEditorDashb'),
   })
 
   const [
@@ -135,40 +116,36 @@ const DashboardPage = () => {
       ...defaultSearchOptions,
       page: 0,
     },
-    onCompleted: data => {
-      // run only on update, not on first render
-      if (initialRender.current) initialRender.current = false
-      else {
-        const nrOfQuestions = data.getHandlingEditorDashboard.result.length
-        const total = data.getHandlingEditorDashboard.totalCount
-        let announcement = 'Results updated.'
+    onCompleted: data =>
+      updateSearchResultAnnounce(data, 'getHandlingEditorDashboard'),
+  })
 
-        if (total === 0) {
-          announcement = `${announcement} No results for your search query`
-        } else if (total <= 10) {
-          announcement = `${announcement} ${nrOfQuestions} questions`
-        } else {
-          announcement = `${announcement} Page ${currentPage} of ${Math.ceil(
-            total / 10,
-          )} with ${nrOfQuestions} questions from a total of ${total}`
-        }
-
-        document.querySelector('#search-results-update').innerHTML =
-          announcement
-      }
+  const [
+    productionQuery,
+    {
+      data: productionResponse,
+      loading: productionLoading,
+      called: productionCalled,
     },
+  ] = useLazyQuery(GET_PRODUCTION_DASHBOARD, {
+    fetchPolicy: 'network-only',
+    onCompleted: data =>
+      updateSearchResultAnnounce(data, 'getInProductionDashboard'),
   })
 
   const authorData = authorResponse && authorResponse.getAuthorDashboard
   const editorData = editorResponse && editorResponse.getManagingEditorDashboard
   const handlingEditorData = heResponse && heResponse.getHandlingEditorDashboard
 
+  const productionData =
+    productionResponse && productionResponse.getInProductionDashboard
+
   const mappedDataHE =
     handlingEditorData && metadata
       ? dashboardDataMapper({
           questions: handlingEditorData.result,
           metadata,
-          complexItemSetOptions: 'editor',
+          complexItemSetOptions,
           showAuthor: true,
           showStatus: true,
         })
@@ -196,16 +173,28 @@ const DashboardPage = () => {
         })
       : []
 
+  const mappedDataProduction =
+    productionData && metadata
+      ? dashboardDataMapper({
+          questions: productionData.result,
+          metadata,
+          complexItemSetOptions,
+          showAuthor: true,
+        })
+      : []
+
   const queryMapper = {
     query: {
       author: authorQuery,
       editor: editorQuery,
       handlingEditor: handlingEditorQuery,
+      production: productionQuery,
     },
     called: {
       author: authorCalled,
       editor: editorCalled,
       handlingEditor: heCalled,
+      production: productionCalled,
     },
   }
 
@@ -220,7 +209,9 @@ const DashboardPage = () => {
       variables: {
         ...defaultSearchOptions,
         page: currentPage - 1,
-        filters: query || {},
+        ...(currentTabKey === 'editor'
+          ? { filters: query || {} }
+          : { searchQuery: query }),
       },
     }
 
@@ -290,6 +281,11 @@ const DashboardPage = () => {
     'handlingEditor',
   )
 
+  const isProduction = hasGlobalRole(
+    currentUserResponse?.currentUser,
+    'production',
+  )
+
   const tabs = [
     {
       label: 'Authored Items',
@@ -314,6 +310,14 @@ const DashboardPage = () => {
       totalCount: handlingEditorData?.totalCount,
       showBulkActions: false,
       loading: heLoading,
+    },
+    isProduction && {
+      label: 'Production Items',
+      value: 'production',
+      questions: mappedDataProduction,
+      totalCount: productionData && productionData.totalCount,
+      showBulkActions: false,
+      loading: productionLoading,
     },
   ].filter(Boolean)
 

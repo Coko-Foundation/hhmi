@@ -116,10 +116,7 @@ describe('Complex item set', () => {
         'div[data-testid="leading-content-wrapper"]',
         complexItemSet3.leadingContent,
       )
-      cy.get('[data-testid="questionType-select"]').click()
-      cy.contains('Multiple Answers').click()
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(2000)
+      cy.createQuestionWidget()
       cy.get('.multiple-choice').first().type('{enter}')
       cy.get(ProseMirror).first().type('Question1')
       cy.url().then(url => {
@@ -152,10 +149,7 @@ describe('Complex item set', () => {
         'div[data-testid="leading-content-wrapper"]',
         complexItemSet3.leadingContent,
       )
-      cy.get('[data-testid="questionType-select"]').click()
-      cy.contains('Multiple Answers').click()
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(2000)
+      cy.createQuestionWidget()
       cy.get('.multiple-choice').first().type('{enter}')
 
       cy.get(ProseMirror).first().type('Question2')

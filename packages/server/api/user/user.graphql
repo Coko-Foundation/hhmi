@@ -32,6 +32,7 @@ extend type User {
   source: String
 
   profileSubmitted: Boolean!
+  role: String
 }
 
 input UserProfileInput {

@@ -1,5 +1,13 @@
 import { gql } from '@apollo/client'
 
+export const CREATE_CHAT_THREAD = gql`
+  mutation CreateChatThread($input: CreateChatThreadInput!) {
+    createChatThread(input: $input) {
+      id
+    }
+  }
+`
+
 export const GET_CHAT_THREAD = gql`
   query chatThread($id: ID!) {
     chatThread(id: $id) {
@@ -11,9 +19,15 @@ export const GET_CHAT_THREAD = gql`
       messages {
         id
         content
+        created
         user {
           id
           displayName
+        }
+        mentions
+        attachments {
+          name
+          url
         }
       }
     }
@@ -21,18 +35,43 @@ export const GET_CHAT_THREAD = gql`
 `
 
 export const SEND_MESSAGE = gql`
-  mutation sendMessage($input: SendChatMessageInput!) {
+  mutation SendMessage($input: SendChatMessageInput!) {
     sendMessage(input: $input) {
       id
       chatThreadId
       content
-      #   timestamp
       isDeleted
       mentions
-      #   user {
-      #     id
-      #     displayName
-      #   }
+      attachments {
+        name
+        url
+      }
     }
+  }
+`
+
+export const MESSAGE_CREATED_SUBSCRIPTION = gql`
+  subscription MessageCreated($chatThreadId: ID!) {
+    messageCreated(chatThreadId: $chatThreadId) {
+      id
+      chatThreadId
+      content
+      created
+      user {
+        id
+        displayName
+      }
+      mentions
+      attachments {
+        name
+        url
+      }
+    }
+  }
+`
+
+export const CANCEL_EMAIL_NOTIFICATION = gql`
+  mutation cancelEmailNotification($chatThreadId: ID!) {
+    cancelEmailNotification(chatThreadId: $chatThreadId)
   }
 `

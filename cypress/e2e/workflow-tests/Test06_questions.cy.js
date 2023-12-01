@@ -6,6 +6,7 @@ import {
   user2,
   handlingEditor1,
   handlingEditor2,
+  productionMember1,
 } from '../../support/credentials'
 import { workflowData, question } from '../../support/appData'
 import { laptop } from '../../support/viewport'
@@ -80,6 +81,8 @@ describe('Question Workflows', () => {
     cy.resetDB(disableScripts)
     cy.seedUser(disableScripts, { ...admin })
     cy.seedUser(disableScripts, user2)
+    cy.seedUser(disableScripts, { ...editor })
+    cy.seedUser(disableScripts, handlingEditor1)
   })
 
   beforeEach(() => {
@@ -89,9 +92,6 @@ describe('Question Workflows', () => {
 
   describe('Editor worflow', () => {
     before(() => {
-      cy.seedUser(disableScripts, { ...editor })
-      cy.seedUser(disableScripts, handlingEditor1)
-
       cy.seedQuestion(
         disableScripts,
         admin.username,
@@ -120,8 +120,8 @@ describe('Question Workflows', () => {
           'Authored Items',
         ).click()
         cy.get('[class="ant-list-empty-text"]').should('exist')
-        // [segment]: if all questions appear in editor questions tab
-        cy.log('if all questions appear in editor questions tab')
+        // [segment]: if all questions appear in editor items tab
+        cy.log('if all questions appear in editor items tab')
         cy.contains(antTabs, 'Editor Items').click()
         cy.wait('@GQLReq')
         cy.get(listItemWrapper).should('have.length', 2)
@@ -283,7 +283,7 @@ describe('Question Workflows', () => {
           cy.contains(
             'div[class="ant-modal-footer"] button[type="button"]',
             'Assign',
-          ).click()
+          ).click({ force: true })
           cy.contains(
             '[class="ant-modal-body"]',
             `Some Handling Editors couldn't be assigned for selected items, because Handling editors cannot handle the items they authored.`,
@@ -498,6 +498,47 @@ describe('Question Workflows', () => {
       cy.contains(anchorTags.discover, 'Browse Items').click()
       cy.get(listItemWrapper).eq(1).contains('p', 'What substance from')
       cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+    })
+  })
+
+  describe('Production team worflow', () => {
+    before(() => {
+      cy.seedUser(disableScripts, productionMember1)
+      cy.seedQuestion(
+        disableScripts,
+        user2.username,
+        -4,
+        'population',
+        'inProduction',
+      )
+    })
+
+    it('Question in production stage available for editing', () => {
+      cy.login(productionMember1)
+      cy.contains(antTabs, 'Production Items').click()
+      cy.get(listItemWrapper).eq(0).contains(ProseMirror, 'By 2040').click()
+      cy.get('[data-testid="topic-select"]').scrollIntoView().click()
+      cy.contains('Ecology').click({ force: true })
+      cy.get('[data-testid="subtopic-select"]').scrollIntoView().click()
+      cy.contains('Matter & Energy').click({ force: true })
+
+      cy.log(
+        'making sure the the production team member doesnt have the access to publish the question',
+      )
+      // [segment]: making sure the the production team member doesnt have the access to publish the question
+      cy.get('[data-testid="publish-question-btn"]').should('not.exist')
+
+      cy.log(
+        'making sure the question is removed from the production items tab after its published',
+      )
+      // [segment]: making sure the question is removed from the production items tab after its published
+      cy.url().then(url => {
+        const id = url.split('/')[4]
+        cy.updateQuestionStatus(disableScripts, id, 'published')
+      })
+      cy.reload()
+      cy.visit(dashboardRoute)
+      cy.get(listItemWrapper).should('have.length', 0)
     })
   })
 })

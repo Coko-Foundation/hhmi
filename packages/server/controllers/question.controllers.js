@@ -4,6 +4,7 @@ const config = require('config')
 const { createFile, logger, useTransaction } = require('@coko/server')
 
 const {
+  User,
   Question,
   QuestionVersion,
   Team,
@@ -22,7 +23,9 @@ const { getImageUrls, findImages } = require('./utils')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
+const EDITOR_TEAM = config.teams.nonGlobal.editor
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
+const PRODUCTION_TEAM = config.teams.global.production
 
 const getQuestion = async (questionId, options = {}) => {
   const { trx } = options
@@ -187,6 +190,64 @@ const getHandlingEditorDashboard = async (userId, options = {}) => {
     searchQuery,
     trx,
   })
+}
+
+const getAuthorChatParticipants = async questionId => {
+  const participants = await User.query()
+    .select('users.displayName', 'users.id', 'teams.role')
+    .leftJoin('team_members', 'users.id', 'team_members.user_id')
+    .leftJoin('teams', 'teams.id', 'team_members.team_id')
+    .whereIn('teams.role', [EDITOR_TEAM.role])
+    .orWhere(subquery => {
+      subquery
+        .whereIn('teams.role', [AUTHOR_TEAM.role, HE_TEAM.role])
+        .whereExists(
+          Team.query()
+            .select(1)
+            .from('questions')
+            .whereRaw('questions.id=teams.object_id')
+            .where('questions.id', questionId),
+        )
+    })
+    .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
+
+  return participants
+}
+
+const getInProductionDashboard = async (userId, options = {}) => {
+  const { orderBy, ascending, page, pageSize, trx, searchQuery } = options
+
+  return Question.findByExcludingRole(userId, 'author', {
+    orderBy,
+    ascending,
+    page,
+    pageSize,
+    submittedOnly: true,
+    filters: { status: 'inProduction', searchQuery },
+    trx,
+  })
+}
+
+const getProductionChatParticipants = async questionId => {
+  const participants = await User.query()
+    .select('users.displayName', 'users.id', 'teams.role')
+    .leftJoin('team_members', 'users.id', 'team_members.user_id')
+    .leftJoin('teams', 'teams.id', 'team_members.team_id')
+    .whereIn('teams.role', [PRODUCTION_TEAM.role, EDITOR_TEAM.role])
+    .orWhere(subquery => {
+      subquery
+        .where('teams.role', HE_TEAM.role)
+        .whereExists(
+          Team.query()
+            .select(1)
+            .from('questions')
+            .whereRaw('questions.id=teams.object_id')
+            .where('questions.id', questionId),
+        )
+    })
+    .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
+
+  return participants
 }
 
 /**
@@ -761,14 +822,14 @@ const unassignHandlingEditor = async (questionId, userId, options = {}) => {
   }
 }
 
-const getChatThreadForQuestion = async (questionId, options = {}) => {
+const getChatThreadForQuestion = async (questionId, chatType, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} getChatThreadForQuestion:`
   logger.info(
     `${CONTROLLER_MESSAGE} getting chat thread for question ${questionId}`,
   )
 
   try {
-    return Question.getChatThread(questionId, options)
+    return Question.getChatThread(questionId, chatType, options)
   } catch (error) {
     logger.error(`${CONTROLLER_MESSAGE} ${error}`)
     throw new Error(error)
@@ -799,6 +860,9 @@ module.exports = {
   getReviewerDashboard,
   getManagingEditorDashboard,
   getHandlingEditorDashboard,
+  getAuthorChatParticipants,
+  getInProductionDashboard,
+  getProductionChatParticipants,
 
   createQuestion,
   duplicateQuestion,

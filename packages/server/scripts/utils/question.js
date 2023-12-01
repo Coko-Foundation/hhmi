@@ -1,4 +1,5 @@
 const { logger, useTransaction } = require('@coko/server')
+const { ChatThread, ChatMessage } = require('@coko/server/src/models')
 
 const {
   Question,
@@ -52,6 +53,8 @@ const EmptyQuestionVersions = async () => {
 
 const EmptyQuestions = async () => {
   try {
+    await ChatMessage.query().delete()
+    await ChatThread.query().delete()
     await Question.query().delete()
     return true
   } catch (err) {
@@ -142,18 +145,25 @@ const createQuestion = async (
 
 const updateStatus = async (id, status) => {
   const transactionCallback = async trx => {
+    let patchValue = {}
+
+    if (status === 'notSubmitted') {
+      patchValue = {
+        ...patchValue,
+        submitted: false,
+        published: false,
+        inProduction: false,
+        underReview: false,
+      }
+    } else if (status === 'published') {
+      patchValue = { ...patchValue, inProduction: false, published: true }
+    } else {
+      patchValue = { [status]: true }
+    }
+
     try {
       const updatedQuestion = await QuestionVersion.query()
-        .patch({
-          ...(status === 'notSubmitted'
-            ? {
-                submitted: false,
-                published: false,
-                inProduction: false,
-                underReview: false,
-              }
-            : { [status]: true }),
-        })
+        .patch(patchValue)
         .where('questionId', id)
         .returning('*')
         .first()
@@ -180,7 +190,24 @@ const updateStatus = async (id, status) => {
   return useTransaction(transactionCallback)
 }
 
+/**
+ *
+ * @param {string} questionId - question id
+ * @returns {boolean}
+ */
+
+const createChatThread = async relatedObjectId => {
+  try {
+    await ChatThread.insert({ relatedObjectId, chatType: 'question' })
+    return true
+  } catch (err) {
+    logger.error(err)
+    return false
+  }
+}
+
 module.exports = {
+  createChatThread,
   EmptyQuestionVersions,
   EmptyQuestions,
   createQuestion,

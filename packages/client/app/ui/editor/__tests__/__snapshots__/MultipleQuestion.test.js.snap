@@ -2,41 +2,41 @@
 
 exports[`MultipleQuestion matches snapshot 1`] = `
 <div
-  className="sc-ftefQL iGVrBG"
+  className="sc-jrPfva cnXGhT"
 >
   <div
-    className="sc-fUHfjU jWTYcH"
+    className="sc-dZYMIT SwQMe"
   >
     <span
-      className="sc-CQMxN"
+      className="sc-iXMwsk"
     >
       Answer 
       3
     </span>
   </div>
   <div
-    className="sc-fNGOfv cvuqIn"
+    className="sc-dFWdGd jMNAcp"
   >
     <div
-      className="sc-fyQkcW cGDscB"
+      className="sc-bImIVK gjPorm"
     >
       <div
-        className="sc-elIugc dsgWAc"
+        className="sc-dHTlsg lagrZV"
       >
         <div
-          className="sc-itboUC jfFdal"
+          className="sc-CxMgy eamUCL"
         />
         <span
-          className="sc-gWAFUw sc-kKUyCS iBfpvu"
+          className="sc-gKziwN sc-cQGx gzjtGj"
         >
           <span
-            className="sc-bEKnip dwZrPW"
+            className="sc-gvIEuo hTTEUW"
           >
             Correct?
           </span>
           <button
             aria-checked={false}
-            className="ant-switch css-dev-only-do-not-override-1vtf12y"
+            className="ant-switch css-dev-only-do-not-override-12jzuas"
             onClick={[Function]}
             onKeyDown={[Function]}
             role="switch"
@@ -63,15 +63,15 @@ exports[`MultipleQuestion matches snapshot 1`] = `
         </span>
       </div>
       <div
-        className="sc-hXGYtH llbEdO"
+        className="sc-jFyCeV dcLol"
       >
         <span
-          className="sc-hIQuri ebXDmH"
+          className="sc-fLGeYu kbMvId"
         >
           Feedback
         </span>
         <input
-          className="sc-gKziwN camrjf"
+          className="sc-cUHWEf ixTEdP"
           onChange={[Function]}
           placeholder="Insert feedback"
           type="text"
@@ -80,71 +80,83 @@ exports[`MultipleQuestion matches snapshot 1`] = `
       </div>
     </div>
     <div
-      className="sc-eAyYiB dsJZWH"
+      className="sc-hFRZIz bfxhIt"
     >
       <button
-        className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-default ant-btn-icon-only sc-itoWHD cHprRd"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-lgQHWK iIfAnK"
         data-testid="add-option"
         disabled={false}
         onClick={[Function]}
         status={null}
+        style={{}}
         type="button"
       >
         <span
-          aria-label="plus-square"
-          className="anticon anticon-plus-square"
-          onClick={[MockFunction]}
-          role="img"
-          tabIndex={-1}
-          title="Add Option"
+          className="ant-btn-icon"
+          style={{}}
         >
-          <svg
-            aria-hidden="true"
-            data-icon="plus-square"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
+          <span
+            aria-label="plus-square"
+            className="anticon anticon-plus-square"
+            onClick={[MockFunction]}
+            role="img"
+            tabIndex={-1}
+            title="Add Option"
           >
-            <path
-              d="M328 544h152v152c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V544h152c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H544V328c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v152H328c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8z"
-            />
-            <path
-              d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"
-            />
-          </svg>
+            <svg
+              aria-hidden="true"
+              data-icon="plus-square"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M328 544h152v152c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V544h152c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8H544V328c0-4.4-3.6-8-8-8h-48c-4.4 0-8 3.6-8 8v152H328c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8z"
+              />
+              <path
+                d="M880 112H144c-17.7 0-32 14.3-32 32v736c0 17.7 14.3 32 32 32h736c17.7 0 32-14.3 32-32V144c0-17.7-14.3-32-32-32zm-40 728H184V184h656v656z"
+              />
+            </svg>
+          </span>
         </span>
       </button>
       <button
-        className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-default ant-btn-icon-only sc-itoWHD cHprRd"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-lgQHWK iIfAnK"
         data-testid="remove-option"
         disabled={false}
         onClick={[Function]}
         status={null}
+        style={{}}
         type="button"
       >
         <span
-          aria-label="delete"
-          className="anticon anticon-delete"
-          onClick={[MockFunction]}
-          role="img"
-          tabIndex={-1}
-          title="Delete Option"
+          className="ant-btn-icon"
+          style={{}}
         >
-          <svg
-            aria-hidden="true"
-            data-icon="delete"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
+          <span
+            aria-label="delete"
+            className="anticon anticon-delete"
+            onClick={[MockFunction]}
+            role="img"
+            tabIndex={-1}
+            title="Delete Option"
           >
-            <path
-              d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z"
-            />
-          </svg>
+            <svg
+              aria-hidden="true"
+              data-icon="delete"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z"
+              />
+            </svg>
+          </span>
         </span>
       </button>
     </div>

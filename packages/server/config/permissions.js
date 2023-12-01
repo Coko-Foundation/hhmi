@@ -16,6 +16,14 @@ const isEditor = rule()(async (_, __, ctx) => {
   return user.isActive && user.hasGlobalRole('editor')
 })
 
+const isProduction = rule()(async (_, __, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+  return user.isActive && user.hasGlobalRole('production')
+})
+
 const isHandlingEditor = rule()(async (_, __, ctx) => {
   if (!ctx.user) return false
 
@@ -110,12 +118,11 @@ const canUpdateQuestion = rule()(
 
     // the only other editable state is 'inProduction'
     if (question.inProduction) {
-      // only editors, handling editors or admins can edit
-      return (
-        (await user.hasGlobalRole('editor')) ||
-        (await user.hasGlobalRole('handlingEditor')) ||
-        user.hasGlobalRole('admin')
-      )
+      // only editors, handling editors, production team members or admins can edit
+      const isUserEditor = await user.hasGlobalRole('editor')
+      const isUserAdmin = await user.hasGlobalRole('admin')
+      const isFromProductionTeam = await user.hasGlobalRole('production')
+      return isUserEditor || isUserAdmin || isFromProductionTeam
     }
 
     // if just submitted, under review or published
@@ -250,6 +257,7 @@ const permissions = {
     getAuthorDashboard: isActive,
     getManagingEditorDashboard: isEditor,
     getHandlingEditorDashboard: isHandlingEditor,
+    getInProductionDashboard: isProduction,
   },
 }
 

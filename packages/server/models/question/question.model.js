@@ -365,6 +365,33 @@ class Question extends BaseModel {
     }
   }
 
+  static applyStatusFilter(status, query) {
+    switch (status) {
+      case '':
+      case null:
+      case undefined:
+        return query
+
+      case 'submitted':
+        query.where({
+          under_review: false,
+          in_production: false,
+          published: false,
+          rejected: false,
+        })
+        return query
+
+      case 'rejected':
+        query.where({ rejected: true })
+        return query
+
+      default:
+        // all other statuses: under_review, in_production or published AND not rejected
+        query.where({ [status]: true, rejected: false })
+        return query
+    }
+  }
+
   // eg. find all questions this user is an author of
   static async findByRole(userId, role, options = {}) {
     const query = Question.query(options.trx)
@@ -475,29 +502,8 @@ class Question extends BaseModel {
 
     // apply additional filters by chaining `where` clauses
     // status filter
-    switch (status) {
-      case '':
-      case null:
-      case undefined:
-        break
-
-      case 'submitted':
-        parentQuery.where({
-          under_review: false,
-          in_production: false,
-          published: false,
-          rejected: false,
-        })
-        break
-
-      case 'rejected':
-        parentQuery.where({ rejected: true })
-        break
-
-      default:
-        // all other statuses: under_review, in_production or published AND not rejected
-        parentQuery.where({ [status]: true, rejected: false })
-        break
+    if (status) {
+      this.applyStatusFilter(status, parentQuery)
     }
 
     // heAssigned filter
@@ -554,6 +560,33 @@ class Question extends BaseModel {
     return applyListQueryOptions(parentQuery, options)
   }
 
+  static async findAny(options = {}) {
+    const { status } = options
+
+    const query = Question.query(options.trx)
+      .leftJoin(
+        'question_versions',
+        'questions.id',
+        'question_versions.question_id',
+      )
+      .distinctOn('questions.id')
+      .orderBy([
+        'questions.id',
+        { column: 'question_versions.created', order: 'desc' },
+      ])
+      .select('question_versions.*', 'questions.*')
+
+    query.as('q1')
+
+    const parentQuery = Question.query(options.trx).select('*').from(query)
+
+    if (status) {
+      this.applyStatusFilter(status, parentQuery)
+    }
+
+    return applyListQueryOptions(parentQuery, options)
+  }
+
   static async getAuthor(questionId, options = {}) {
     const { trx } = options
 
@@ -593,17 +626,21 @@ class Question extends BaseModel {
     }
   }
 
-  static async getChatThread(questionId, options = {}) {
+  static async getChatThread(
+    questionId,
+    chatType = 'authorChat',
+    options = {},
+  ) {
     const { trx } = options
 
     try {
       const chat = await ChatThread.query(trx)
         .select('id')
-        .findOne({ relatedObjectId: questionId })
+        .findOne({ relatedObjectId: questionId, chatType })
 
       return chat?.id
     } catch (e) {
-      console.error('Question model: getHandlingEditors failed', e)
+      console.error('Question model: getChatThread failed', e)
       throw new Error(e)
     }
   }

@@ -6,7 +6,8 @@ type Question {
   agreedTc: Boolean!
   rejected: Boolean!
   author: User
-  chatThreadId: ID
+  authorChatThreadId: ID
+  productionChatThreadId: ID
   heAssigned: Boolean
 }
 
@@ -240,7 +241,17 @@ extend type Query {
     searchQuery: String
   ): QuestionsResponse!
 
+  getInProductionDashboard(
+    orderBy: String
+    ascending: Boolean
+    page: Int
+    pageSize: Int
+    searchQuery: String
+  ): QuestionsResponse!
+
   getQuestionsHandlingEditors(questionId: ID!): [User!]!
+  getAuthorChatParticipants(id: ID!): [User!]!
+  getProductionChatParticipants(id: ID!): [User!]!
 }
 
 extend type Mutation {
