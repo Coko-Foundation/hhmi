@@ -11,7 +11,13 @@ const { Identity, User, Team } = require('../../models')
  */
 const addToTeams = async (email, role) => {
   try {
-    const roles = ['admin', 'reviewer', 'editor', 'handlingEditor']
+    const roles = [
+      'admin',
+      'reviewer',
+      'editor',
+      'handlingEditor',
+      'production',
+    ]
 
     const checkRole = () => {
       const index = roles.findIndex(fn => fn === role)

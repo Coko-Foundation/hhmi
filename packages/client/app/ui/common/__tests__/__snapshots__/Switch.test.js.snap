@@ -6,7 +6,7 @@ exports[`Switch matches snapshot 1`] = `
 >
   <button
     aria-checked={true}
-    className="ant-switch css-dev-only-do-not-override-1vtf12y ant-switch-checked"
+    className="ant-switch css-dev-only-do-not-override-12jzuas ant-switch-checked"
     data-testid="metadata-toggle"
     onClick={[Function]}
     onKeyDown={[Function]}

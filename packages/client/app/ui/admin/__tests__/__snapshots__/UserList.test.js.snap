@@ -2,13 +2,13 @@
 
 exports[`UserList matches snapshot 1`] = `
 <div
-  className="sc-btijOp byYWRB"
+  className="sc-frTjsE cqnRTT"
 >
   <section
-    className="sc-ftefQL bMjuqE"
+    className="sc-jrPfva bjPTkZ"
   >
     <h1
-      className="ant-typography sc-kKUyCS fElity css-dev-only-do-not-override-1vtf12y"
+      className="ant-typography sc-cQGx hoDcDb css-dev-only-do-not-override-12jzuas"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,19 +18,19 @@ exports[`UserList matches snapshot 1`] = `
       User Manager
     </h1>
     <div
-      className="sc-bEKnip ehNUCh sc-fUHfjU kHBBPs"
+      className="sc-gvIEuo jcPGzx sc-dZYMIT kWkjGt"
     >
       <div
-        className="sc-NrEwa jAYjoC"
+        className="sc-hhpBdf ECQQt"
       >
         <span
-          className="ant-input-group-wrapper ant-input-search sc-gXSCqU gwrPvP css-dev-only-do-not-override-1vtf12y"
+          className="ant-input-group-wrapper ant-input-search sc-gXSCqU gwrPvP css-dev-only-do-not-override-12jzuas"
         >
           <span
-            className="ant-input-wrapper ant-input-group css-dev-only-do-not-override-1vtf12y"
+            className="ant-input-wrapper ant-input-group css-dev-only-do-not-override-12jzuas"
           >
             <input
-              className="ant-input css-dev-only-do-not-override-1vtf12y"
+              className="ant-input css-dev-only-do-not-override-12jzuas"
               disabled={false}
               hidden={null}
               onBlur={[Function]}
@@ -48,30 +48,36 @@ exports[`UserList matches snapshot 1`] = `
               className="ant-input-group-addon"
             >
               <button
-                className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-default ant-btn-icon-only ant-input-search-button"
+                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only ant-input-search-button"
                 disabled={false}
                 onClick={[Function]}
                 onMouseDown={[Function]}
+                style={{}}
                 type="button"
               >
                 <span
-                  aria-label="search"
-                  className="anticon anticon-search"
-                  role="img"
+                  className="ant-btn-icon"
+                  style={{}}
                 >
-                  <svg
-                    aria-hidden="true"
-                    data-icon="search"
-                    fill="currentColor"
-                    focusable="false"
-                    height="1em"
-                    viewBox="64 64 896 896"
-                    width="1em"
+                  <span
+                    aria-label="search"
+                    className="anticon anticon-search"
+                    role="img"
                   >
-                    <path
-                      d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"
-                    />
-                  </svg>
+                    <svg
+                      aria-hidden="true"
+                      data-icon="search"
+                      fill="currentColor"
+                      focusable="false"
+                      height="1em"
+                      viewBox="64 64 896 896"
+                      width="1em"
+                    >
+                      <path
+                        d="M909.6 854.5L649.9 594.8C690.2 542.7 712 479 712 412c0-80.2-31.3-155.4-87.9-212.1-56.6-56.7-132-87.9-212.1-87.9s-155.5 31.3-212.1 87.9C143.2 256.5 112 331.8 112 412c0 80.1 31.3 155.5 87.9 212.1C256.5 680.8 331.8 712 412 712c67 0 130.6-21.8 182.7-62l259.7 259.6a8.2 8.2 0 0011.6 0l43.6-43.5a8.2 8.2 0 000-11.6zM570.4 570.4C528 612.7 471.8 636 412 636s-116-23.3-158.4-65.6C211.3 528 188 471.8 188 412s23.3-116.1 65.6-158.4C296 211.3 352.2 188 412 188s116.1 23.2 158.4 65.6S636 352.2 636 412s-23.3 116.1-65.6 158.4z"
+                      />
+                    </svg>
+                  </span>
                 </span>
               </button>
             </span>
@@ -79,16 +85,16 @@ exports[`UserList matches snapshot 1`] = `
         </span>
       </div>
       <div
-        className="ant-spin-nested-loading css-dev-only-do-not-override-1vtf12y"
+        className="ant-spin-nested-loading css-dev-only-do-not-override-12jzuas"
       >
         <div
           className="ant-spin-container"
         >
           <div
-            className="ant-table-wrapper css-dev-only-do-not-override-1vtf12y"
+            className="ant-table-wrapper css-dev-only-do-not-override-12jzuas"
           >
             <div
-              className="ant-spin-nested-loading css-dev-only-do-not-override-1vtf12y"
+              className="ant-spin-nested-loading css-dev-only-do-not-override-12jzuas"
             >
               <div
                 className="ant-spin-container"
@@ -135,10 +141,10 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper sc-jTrPJq iCGpyE sc-CQMxN kCONhf css-dev-only-do-not-override-1vtf12y"
+                                className="ant-checkbox-wrapper sc-jTrPJq iCGpyE sc-iXMwsk blHMAt css-dev-only-do-not-override-12jzuas"
                               >
                                 <span
-                                  className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
+                                  className="ant-checkbox css-dev-only-do-not-override-12jzuas"
                                 >
                                   <input
                                     aria-checked={false}
@@ -232,10 +238,10 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper css-dev-only-do-not-override-1vtf12y"
+                                className="ant-checkbox-wrapper css-dev-only-do-not-override-12jzuas"
                               >
                                 <span
-                                  className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
+                                  className="ant-checkbox css-dev-only-do-not-override-12jzuas"
                                 >
                                   <input
                                     aria-label="Select user user1"
@@ -316,10 +322,10 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper css-dev-only-do-not-override-1vtf12y"
+                                className="ant-checkbox-wrapper css-dev-only-do-not-override-12jzuas"
                               >
                                 <span
-                                  className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
+                                  className="ant-checkbox css-dev-only-do-not-override-12jzuas"
                                 >
                                   <input
                                     aria-label="Select user user1"
@@ -400,10 +406,10 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper css-dev-only-do-not-override-1vtf12y"
+                                className="ant-checkbox-wrapper css-dev-only-do-not-override-12jzuas"
                               >
                                 <span
-                                  className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
+                                  className="ant-checkbox css-dev-only-do-not-override-12jzuas"
                                 >
                                   <input
                                     aria-label="Select user deactivedUser"
@@ -481,11 +487,11 @@ exports[`UserList matches snapshot 1`] = `
       </div>
       <nav
         aria-label="Pagination"
-        className="sc-lnAgIa dfiqjP sc-gKWViP VieOE"
+        className="sc-lnAgIa dfiqjP sc-gSyXaG kqcVCz"
         role="navigation"
       >
         <ul
-          className="ant-pagination css-dev-only-do-not-override-1vtf12y"
+          className="ant-pagination css-dev-only-do-not-override-12jzuas"
           style={{}}
         >
           <li
@@ -541,13 +547,13 @@ exports[`UserList matches snapshot 1`] = `
       </nav>
     </div>
     <div
-      className="sc-fNGOfv cQrRev"
+      className="sc-dFWdGd giWeLZ"
     >
       <label
-        className="ant-checkbox-wrapper sc-jTrPJq iCGpyE css-dev-only-do-not-override-1vtf12y"
+        className="ant-checkbox-wrapper sc-jTrPJq iCGpyE css-dev-only-do-not-override-12jzuas"
       >
         <span
-          className="ant-checkbox css-dev-only-do-not-override-1vtf12y"
+          className="ant-checkbox css-dev-only-do-not-override-12jzuas"
         >
           <input
             checked={false}
@@ -569,11 +575,12 @@ exports[`UserList matches snapshot 1`] = `
         className="sc-eDDNvR jGthFV"
       >
         <button
-          className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU fUCNCZ"
+          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ"
           data-testid="deactivate-btn"
           disabled={true}
           onClick={[Function]}
           status={null}
+          style={{}}
           type="button"
         >
           <span>
@@ -581,11 +588,12 @@ exports[`UserList matches snapshot 1`] = `
           </span>
         </button>
         <button
-          className="ant-btn css-dev-only-do-not-override-1vtf12y ant-btn-primary sc-hLseeU fUCNCZ"
+          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ"
           data-testid="delete-btn"
           disabled={true}
           onClick={[Function]}
           status="error"
+          style={{}}
           type="button"
         >
           <span>

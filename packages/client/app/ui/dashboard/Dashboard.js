@@ -12,6 +12,7 @@ import {
   Empty,
 } from '../common'
 import { AssignHEButton } from '../question'
+import useBreakpoint from '../_helpers/useBreakpoint'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -39,22 +40,7 @@ const StyledTabs = styled(Tabs)`
   }
 `
 
-const StyledCreateQuestionButton = styled(Button)`
-  > span:not([role='img']) {
-    display: none;
-  }
-
-  @media (min-width: ${th('mediaQueries.small')}) {
-    > span:not([role='img']) {
-      display: inline-block;
-      margin-inline-start: 0;
-    }
-
-    > span[role='img'] {
-      display: none;
-    }
-  }
-`
+const StyledCreateQuestionButton = styled(Button)``
 
 // QUESTION how to handle search, filter and pagination with multiple sections
 const Dashboard = props => {
@@ -75,6 +61,8 @@ const Dashboard = props => {
     withFilters,
     filters,
   } = props
+
+  const isMobile = useBreakpoint('(max-width: 900px)')
 
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -126,7 +114,16 @@ const Dashboard = props => {
     onSearch(searchParams)
   }, [searchParams])
 
-  const CreateQuestionButton = (
+  const CreateQuestionButton = isMobile ? (
+    <StyledCreateQuestionButton
+      aria-label="Create item"
+      data-testid="create-question-btn"
+      icon={<PlusOutlined />}
+      onClick={onClickCreate}
+      title="Create item"
+      type="primary"
+    />
+  ) : (
     <StyledCreateQuestionButton
       aria-label="Create item"
       data-testid="create-question-btn"

@@ -5,7 +5,7 @@ exports[`Input matches snapshot (default input) 1`] = `
   className="sc-dmqHEX"
 >
   <input
-    className="ant-input css-dev-only-do-not-override-1vtf12y sc-hLseeU fPUOfG"
+    className="ant-input css-dev-only-do-not-override-12jzuas sc-hLseeU fPUOfG"
     disabled={false}
     onBlur={[Function]}
     onChange={[Function]}
@@ -23,11 +23,11 @@ exports[`Input matches snapshot (password type) 1`] = `
   className="sc-dmqHEX"
 >
   <span
-    className="ant-input-affix-wrapper ant-input-password sc-jTrPJq kBnSpZ css-dev-only-do-not-override-1vtf12y"
+    className="ant-input-affix-wrapper ant-input-password sc-jTrPJq kBnSpZ css-dev-only-do-not-override-12jzuas"
     onClick={[Function]}
   >
     <input
-      className="ant-input css-dev-only-do-not-override-1vtf12y"
+      className="ant-input css-dev-only-do-not-override-12jzuas"
       disabled={false}
       hidden={null}
       onBlur={[Function]}

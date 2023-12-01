@@ -61,6 +61,9 @@ module.exports = {
     uploads: 'uploads',
     pool: { min: 0, max: 10, idleTimeoutMillis: 1000 },
     useFileStorage: true,
+    cron: {
+      path: path.join(__dirname, '..', 'services', 'cron.service.js'),
+    },
   },
   teams: {
     global: {
