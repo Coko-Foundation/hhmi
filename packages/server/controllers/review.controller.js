@@ -1,6 +1,14 @@
-const { useTransaction, logger } = require('@coko/server')
-const { Review, TeamMember, Team } = require('../models')
+const { useTransaction, logger, createFile } = require('@coko/server')
+const { File, Identity } = require('@coko/server/src/models')
+const config = require('config')
+
+const { Review, TeamMember, Team, QuestionVersion } = require('../models')
 const { REVIEWER_STATUSES } = require('./constants')
+const { getFileUrl } = require('./file.controllers')
+const CokoNotifier = require('../services/notify')
+
+const HE_TEAM = config.teams.nonGlobal.handlingEditor
+const EDITOR_TEAM = config.teams.global.editor
 
 const reviewSubmittedStatus = {
   pending: false,
@@ -19,31 +27,96 @@ const submitReview = async (
   questionVersionId,
   content,
   userId,
+  attachments = [],
   options = {},
 ) => {
+  const CONTROLLER_MESSAGE = `${baseMessage} submitReview:`
+
   try {
-    const review = await Review.createReview(
-      questionVersionId,
-      userId,
-      content,
-      reviewSubmittedStatus,
-      options,
-    )
+    return useTransaction(async trx => {
+      logger.info(
+        `${CONTROLLER_MESSAGE} creating new review for questionVersion ${questionVersionId} by user ${userId}`,
+      )
 
-    // const teamMember = await TeamMember.query()
-    //   .leftJoin('teams', 'teams.id', 'team_id')
-    //   .findOne({
-    //     userId: review.reviewerId,
-    //     role: 'reviewer',
-    //     objectId: review.questionVersionId,
-    //   })
+      const questionVersion = await QuestionVersion.findById(questionVersionId)
 
-    // notify('reviewSubitted', {reviewId: review.id, userId})
+      const attachmentData = await Promise.all(attachments)
 
-    // await stopJob(`review-reminder-${teamMember.id}`)
-    // await stopJob(`revoke-invitation-after-accept-${teamMember.id}`)
+      const review = await Review.createReview(
+        questionVersionId,
+        userId,
+        content,
+        reviewSubmittedStatus,
+        { trx },
+      )
 
-    return review.id
+      const uploadedAttachments = await Promise.all(
+        attachmentData.map(async attachment => {
+          const stream = attachment.createReadStream()
+
+          const storedFile = await createFile(
+            stream,
+            attachment.filename,
+            null,
+            null,
+            [],
+            review.id,
+            { trx },
+          )
+
+          return storedFile
+        }),
+      )
+
+      const attachmentsWithUrl = await Promise.all(
+        uploadedAttachments.map(async file => {
+          const url = getFileUrl(file, 'medium')
+          return {
+            href: url,
+            filename: file.name,
+          }
+        }),
+      )
+
+      const handlingEditorTeam = await Team.findOne({
+        objectId: questionVersion.questionId,
+        role: HE_TEAM.role,
+      })
+
+      const handlingEditors = await TeamMember.find({
+        teamId: handlingEditorTeam.id,
+      })
+
+      const editorTeam = await Team.findOne({
+        role: EDITOR_TEAM.role,
+        global: true,
+      })
+
+      const editors = await TeamMember.find({
+        teamId: editorTeam.id,
+      })
+
+      const identities = await Identity.query(trx)
+        .whereIn(
+          'userId',
+          handlingEditors.result.map(he => he.userId),
+        )
+        .orWhereIn(
+          'userId',
+          editors.result.map(e => e.userId),
+        )
+
+      identities.forEach(id => {
+        const notifier = new CokoNotifier()
+        notifier.notify('hhmi.submitReview', {
+          attachments: attachmentsWithUrl,
+          review,
+          to: id.email,
+        })
+      })
+
+      return review.id
+    })
   } catch (e) {
     throw new Error(e)
   }
@@ -107,7 +180,26 @@ const inviteMaxReviewers = async (questionVersion, options = {}) => {
   }
 }
 
+const getAttachments = async reviewId => {
+  const files = await useTransaction(trx => {
+    return File.query(trx)
+      .select('files.name', 'files.storedObjects')
+      .where({ objectId: reviewId })
+  })
+
+  const filesWithUrl = await Promise.all(
+    files.map(async file => {
+      const url = getFileUrl(file, 'medium')
+
+      return { url, name: file.name }
+    }),
+  )
+
+  return filesWithUrl
+}
+
 module.exports = {
   submitReview,
   inviteMaxReviewers,
+  getAttachments,
 }
