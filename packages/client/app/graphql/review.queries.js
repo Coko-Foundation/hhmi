@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client'
 
 const SUBMIT_REVIEW = gql`
-  mutation SubmitReview($questionVersionId: ID!, $content: String) {
-    submitReview(questionVersionId: $questionVersionId, content: $content)
+  mutation SubmitReview($input: SubmitReviewInput) {
+    submitReview(input: $input)
   }
 `
 

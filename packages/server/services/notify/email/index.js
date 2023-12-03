@@ -1,4 +1,5 @@
 const { logger } = require('@coko/server')
+const moment = require('moment')
 
 const config = require('config')
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -11,7 +12,7 @@ const { Question, Identity, User, QuestionVersion } = require('../../../models')
 const flatten = require('../../../controllers/flattenMetadataValues')
 
 const sendEmail = data => {
-  const { content, subject, text, to } = data
+  const { attachments, content, subject, text, to } = data
 
   const emailData = {
     from: config.get('mailer.from'),
@@ -19,6 +20,7 @@ const sendEmail = data => {
     subject: `${subject}`,
     text: text || content,
     to,
+    attachments: attachments || [],
   }
 
   mailer.send(emailData)
@@ -325,7 +327,51 @@ const moveQuestionVersionToReview = async context => {
 
     return { content, text, subject, to }
   } catch (e) {
-    logger.error('Failed to create email for move question version to review')
+    logger.error(
+      `Failed to create email for move question version to review: ${e}`,
+    )
+    throw new Error(e)
+  }
+}
+
+const submitReview = async ({ attachments, review, to }) => {
+  try {
+    const { questionVersionId, content: reviewContent, reviewerId } = review
+
+    const questionVersion = await QuestionVersion.findById(questionVersionId)
+    const reviewer = await User.findById(reviewerId)
+
+    const link = `${clientUrl}/question/${questionVersion.questionId}`
+    const subject = 'HHMI BioInteractive Assessment Builder: Review submitted'
+
+    const content = `
+	<p>
+		${
+      reviewer.displayName
+    } has completed the review of an item in the Assessment Builder.
+	</p>
+	<p>
+		Click on <a href="${link}">this link</a> to view the item.
+		If you cannot see the link, copy and paste the following link into your browser.
+		<br/>
+		${link}
+	</p>
+	<h2>
+		Review by ${reviewer.displayName} submitted at ${moment(review.updated).format(
+      'MMMM DD, YYYY, h:mm:ss a',
+    )}
+	</h2>
+	<pre>${reviewContent}</pre>
+	`
+
+    const text = `${reviewer.displayName} has completed the review of an item in the Assessment Builder.
+	\nCopy and paste the following link into your browser to view the item.
+	\n${link}
+	`
+
+    return { attachments, content, subject, text, to }
+  } catch (e) {
+    logger.error('Failed to create email for submit review')
     throw new Error(e)
   }
 }
@@ -342,5 +388,6 @@ module.exports = {
     'hhmi.rejectInvitation': rejectInvitation,
     'hhmi.acceptInvitation': acceptInvitation,
     'hhmi.moveQuestionVersionToReview': moveQuestionVersionToReview,
+    'hhmi.submitReview': submitReview,
   },
 }

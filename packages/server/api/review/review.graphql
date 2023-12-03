@@ -1,3 +1,9 @@
+input SubmitReviewInput {
+  questionVersionId: ID!
+  content: String
+  attachments: [Upload!]
+}
+
 type ReviewStatus {
   pending: Boolean
   submitted: Boolean
@@ -9,6 +15,7 @@ type Review {
   reviewerId: ID!
 
   content: String
+  attachments: [Attachment!]
   status: ReviewStatus
 }
 
@@ -17,5 +24,5 @@ type Review {
 # }
 
 extend type Mutation {
-  submitReview(questionVersionId: ID!, content: String): ID!
+  submitReview(input: SubmitReviewInput!): ID!
 }

@@ -1,5 +1,11 @@
-const { Review, QuestionVersion, User } = require('../../models')
-const { createUser } = require('../../models/__tests__/__helpers__/users')
+const { internet } = require('faker')
+const { Review, QuestionVersion, User, Team } = require('../../models')
+
+const {
+  createUser,
+  createIdentity,
+} = require('../../models/__tests__/__helpers__/users')
+
 const clearDb = require('../../models/__tests__/_clearDb')
 
 const {
@@ -49,10 +55,39 @@ describe('Review Controller', () => {
 
   test('submitReview creates a review for the given user', async () => {
     const question = await createEmptyQuestion()
+    const editor = await createUser()
+    const handlingEditor1 = await createUser()
+    const handlingEditor2 = await createUser()
+
+    await createIdentity(editor, internet.email(), false, null)
+
+    await createIdentity(handlingEditor1, internet.email(), false, null)
+
+    await createIdentity(handlingEditor2, internet.email(), false, null)
 
     const questionVersion = await QuestionVersion.findOne({
       questionId: question.id,
     })
+
+    const editorTeam = await Team.insert({
+      role: 'editor',
+      global: true,
+      displayName: 'Managing Editor',
+    })
+
+    await Team.updateMembershipByTeamId(editorTeam.id, [editor.id])
+
+    const handlingEditorTeam = await Team.insert({
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+      objectId: questionVersion.questionId,
+      objectType: 'question',
+    })
+
+    await Team.updateMembershipByTeamId(handlingEditorTeam.id, [
+      handlingEditor1.id,
+      handlingEditor2.id,
+    ])
 
     const reviewer = await createUser()
 
