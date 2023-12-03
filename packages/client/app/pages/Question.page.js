@@ -1015,11 +1015,14 @@ const QuestionPage = props => {
     return acceptOrRejectInvitation(mutationData)
   }
 
-  const handleSubmitReview = async content => {
+  const handleSubmitReview = async ({ attachments, content }) => {
     const mutationData = {
       variables: {
-        questionVersionId: version?.id,
-        content,
+        input: {
+          questionVersionId: version?.id,
+          attachments,
+          content,
+        },
       },
     }
 

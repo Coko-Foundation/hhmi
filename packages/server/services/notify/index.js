@@ -76,6 +76,9 @@ class CokoNotifier {
     'hhmi.moveQuestionVersionToReview': {
       notifyBy: ['email'],
     },
+    'hhmi.submitReview': {
+      notifyBy: ['email'],
+    },
     // ...
   }
 

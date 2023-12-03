@@ -1,3 +1,5 @@
+const { internet } = require('faker')
+
 const createGraphQLServer = require('./helpers/createTestServer')
 
 const {
@@ -10,6 +12,13 @@ const {
 } = require('../../models')
 
 const clearDb = require('../../models/__tests__/_clearDb')
+
+const {
+  createUser,
+  createIdentity,
+} = require('../../models/__tests__/__helpers__/users')
+
+const { createQuestion } = require('../../controllers/question.controllers')
 
 // gql queries
 const GET_AUTHOR_DASHBOARD = `
@@ -923,8 +932,10 @@ describe('Question API authorization', () => {
       userId: user.id,
     })
 
-    const question = await Question.insert({})
+    const author = await createUser()
+    const question = await createQuestion(author.id)
     const questionVersion = await Question.getVersions(question.id)
+    await createIdentity(author, internet.email(), false, null)
 
     const testServer = await createGraphQLServer(user.id)
 
