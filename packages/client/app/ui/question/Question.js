@@ -383,6 +383,7 @@ const Question = props => {
     productionChatParticipants,
     qtiZipLoading,
     showAssignHEButton,
+    showPreviewButton,
     canAssignAuthor,
     showNextQuestionLink,
     submitting,
@@ -412,6 +413,7 @@ const Question = props => {
   const [autoSaving, setAutoSaving] = useState(false)
   const [showMetadata, setShowMetadata] = useState(isUserLoggedIn)
   const [activeKey, setActiveKey] = useState(defaultActiveKey)
+  const [preview, setPreview] = useState(facultyView)
 
   const readOnly =
     (editorView && !isInProduction && isSubmitted) ||
@@ -1179,6 +1181,11 @@ const Question = props => {
 
   const RightArea = (
     <RightAreaWrapper id="question-actions" tabIndex="-1">
+      {showPreviewButton && (
+        <Button onClick={() => setPreview(prev => !prev)}>
+          {!preview ? 'Preview' : 'Continue editing'}
+        </Button>
+      )}
       {readOnly ? null : (
         <AutoSaving
           autoSaving={autoSaving}
@@ -1314,12 +1321,14 @@ const Question = props => {
                           complexSetEditLink={complexSetEditLink}
                           content={editorContent}
                           innerRef={waxRef}
-                          layout={facultyView ? TestModeLayout : HhmiLayout}
+                          layout={preview ? TestModeLayout : HhmiLayout}
                           leadingContent={leadingContent}
                           onContentChange={handleQuestionContentChange}
                           onImageUpload={onImageUpload}
-                          published={facultyView && isPublished}
-                          readOnly={readOnly || !selectedQuestionType}
+                          published={preview && isPublished}
+                          readOnly={
+                            readOnly || preview || !selectedQuestionType
+                          }
                           selectedQuestionType={selectedQuestionType}
                           withFeedback={showMetadata}
                         />
@@ -1354,7 +1363,7 @@ const Question = props => {
                           </SkipToTop>
                         </>
                       }
-                      showMetadata={showMetadata}
+                      showMetadata={showMetadata && !preview}
                     />
                   </>
                 ),
@@ -1462,6 +1471,7 @@ Question.propTypes = {
   canPublish: PropTypes.bool,
   canAssignAuthor: PropTypes.bool,
   showAssignHEButton: PropTypes.bool,
+  showPreviewButton: PropTypes.bool,
   showNextQuestionLink: PropTypes.bool,
   facultyView: PropTypes.bool,
   metadata: PropTypes.shape({
@@ -1786,6 +1796,7 @@ Question.defaultProps = {
   questionAgreedTc: false,
   canAssignAuthor: false,
   showAssignHEButton: true,
+  showPreviewButton: false,
   showNextQuestionLink: false,
   facultyView: false,
   refetchUser: () => {},

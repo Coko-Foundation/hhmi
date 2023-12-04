@@ -1038,6 +1038,7 @@ const QuestionPage = props => {
         }
         showAuthorChatTab={showAuthorChatTab}
         showNextQuestionLink={false}
+        showPreviewButton={isAuthor && !version?.submitted}
         showProductionChatTab={showProductionChatTab}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
