@@ -15721,36 +15721,47 @@ const metadata = {
   ],
   questionTypes: [
     {
-      value: 'multipleChoice',
-      label: 'Multiple Answers',
+      label: 'Recommended',
+      options: [
+        {
+          value: 'multipleChoice',
+          label: 'Multiple Answers',
+        },
+        {
+          value: 'multipleChoiceSingleCorrect',
+          label: 'Multiple Choice',
+        },
+        {
+          value: 'essay',
+          label: 'Essay',
+        },
+        {
+          value: 'matching',
+          label: 'Matching',
+        },
+        {
+          value: 'trueFalse',
+          label: 'Multiple True / False',
+        },
+      ],
     },
     {
-      value: 'multipleChoiceSingleCorrect',
-      label: 'Multiple Choice',
-    },
-    {
-      value: 'trueFalse',
-      label: 'Multiple True / False',
-    },
-    {
-      value: 'trueFalseSingleCorrect',
-      label: 'True / False',
-    },
-    {
-      value: 'fillInTheBlank',
-      label: 'Fill in the blank',
-    },
-    {
-      value: 'essay',
-      label: 'Essay',
-    },
-    {
-      value: 'matching',
-      label: 'Matching',
-    },
-    {
-      value: 'multipleDropdowns',
-      label: 'Multiple dropdowns',
+      label: 'Formative only',
+      options: [
+        {
+          value: 'trueFalseSingleCorrect',
+          label: 'True / False',
+        },
+
+        {
+          value: 'fillInTheBlank',
+          label: 'Fill in the blank',
+        },
+        {
+          value: 'multipleDropdowns',
+          label: 'Multiple dropdowns',
+        },
+      ],
     },
   ],
 }

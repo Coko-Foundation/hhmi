@@ -61,9 +61,27 @@ class WaxToScormConverter {
     const metadata = metadataResolver()
     const metadataContent = {}
 
-    metadataContent.questionType = metadata.questionTypes.find(
-      q => q.value === this.#questionVersion.questionType,
-    ).label
+    const recommendedOptions = metadata.questionTypes.find(
+      q => q.label === 'Recommended',
+    ).options
+
+    const formativeOptions = metadata.questionTypes.find(
+      q => q.label === 'Formative only',
+    ).options
+
+    if (
+      recommendedOptions.some(
+        options => options.value === this.#questionVersion.questionType,
+      )
+    ) {
+      metadataContent.questionType = recommendedOptions.find(q => {
+        return q.value === this.#questionVersion.questionType
+      }).label
+    } else {
+      metadataContent.questionType = formativeOptions.find(q => {
+        return q.value === this.#questionVersion.questionType
+      }).label
+    }
 
     const topics = this.#questionVersion.topics.map(
       selectedTopic => selectedTopic.topic,

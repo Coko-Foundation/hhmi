@@ -13,7 +13,10 @@ export default gql`
       }
       questionTypes {
         label
-        value
+        options {
+          label
+          value
+        }
       }
       blooms {
         cognitive {

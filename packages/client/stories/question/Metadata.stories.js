@@ -18,6 +18,9 @@ export const Author = () => {
     <Metadata
       complexItemSetOptions={complexItemSet}
       metadata={metadataTransformer(metadata)}
+      onAutoSave={() => {
+        console.log('saving...')
+      }}
       onFormFinish={() => console.log('on form finish')}
       resources={resources}
     />

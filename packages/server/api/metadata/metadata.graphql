@@ -1,9 +1,14 @@
+type QuestionTypes {
+  label: String!
+  options: [SimpleValueLabelPair!]!
+}
+
 type Metadata {
   topics: [TopicsMetadata!]!
   frameworks: [FrameworksMetadata!]!
   introToBioMeta: [IntroductoryBioMetadata!]!
   blooms: BloomsType
-  questionTypes: [SimpleValueLabelPair]!
+  questionTypes: [QuestionTypes]!
 }
 
 type SimpleValueLabelPair {
