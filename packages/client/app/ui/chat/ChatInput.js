@@ -149,11 +149,15 @@ const ChatInput = props => {
           data={participants}
           displayTransform={(_, display) => `@${display}`}
           renderSuggestion={entry => {
-            return (
-              <span>{`${entry.display} ${
-                entry.role === 'handlingEditor' ? '(HE)' : ''
-              }`}</span>
-            )
+            if (entry.role === 'author') {
+              return <span>{`${entry.display} (Author)`}</span>
+            }
+
+            if (entry.role === 'handlingEditor') {
+              return <span>{`${entry.display} (HE)`}</span>
+            }
+
+            return <span>{entry.display}</span>
           }}
           trigger="@"
         />
