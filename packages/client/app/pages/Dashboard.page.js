@@ -397,7 +397,7 @@ const DashboardPage = () => {
     },
     isReviewer && {
       label: 'Reviewer Items',
-      values: 'reviewer',
+      value: 'reviewer',
       questions: mappedDataReviewer,
       totalCount: reviewerData?.totalCount,
       showBulkActions: false,

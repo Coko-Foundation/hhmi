@@ -1404,7 +1404,7 @@ const dashboardDataMapper = ({
         }
       : null
 
-    const reviewSubmitted = !!reviews.find(
+    const reviewSubmitted = !!reviews?.find(
       review => review.reviewerId === id && review.status.submitted,
     )
 

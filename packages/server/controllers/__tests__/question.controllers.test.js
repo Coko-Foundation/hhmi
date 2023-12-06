@@ -19,6 +19,7 @@ const {
   changeAmountOfReviewers,
   changeReviewerAutomationStatus,
   reviewerStatus,
+  getReviewerChatParticipants,
 } = require('../question.controllers')
 
 const {
@@ -693,9 +694,7 @@ describe('Question Controller', () => {
     const handlingEditor2 = await createUser()
 
     await createIdentity(editor, internet.email(), false, null)
-
     await createIdentity(handlingEditor1, internet.email(), false, null)
-
     await createIdentity(handlingEditor2, internet.email(), false, null)
 
     let questionVersion = await QuestionVersion.findOne({
@@ -760,6 +759,7 @@ describe('Question Controller', () => {
   test('questionVersionReviews returns reviews for the given questionVersionId', async () => {
     const question1 = await createEmptyQuestion()
     const question2 = await createEmptyQuestion()
+    const question3 = await createEmptyQuestion()
 
     const questionVersion1 = await QuestionVersion.findOne({
       questionId: question1.id,
@@ -767,6 +767,10 @@ describe('Question Controller', () => {
 
     const questionVersion2 = await QuestionVersion.findOne({
       questionId: question2.id,
+    })
+
+    const questionVersion3 = await QuestionVersion.findOne({
+      questionId: question3.id,
     })
 
     let results = await Review.getReviewsForQuestionVersion(questionVersion1.id)
@@ -828,6 +832,7 @@ describe('Question Controller', () => {
 
     const group1 = [user1.id, user2.id, user3.id]
     results = await Review.getReviewsForQuestionVersion(questionVersion1.id)
+
     expect(results).toHaveLength(3)
     results.forEach(r => expect(group1).toContain(r.reviewerId))
 
@@ -845,5 +850,104 @@ describe('Question Controller', () => {
     expect(results).toHaveLength(1)
     expect(results[0].reviewerId).toBe(user3.id)
     expect(results[0].content).toBe(review32.content)
+
+    results = await Review.getReviewsForQuestionVersion(questionVersion3.id)
+    expect(results).toHaveLength(0)
+  })
+
+  test('getReviewerChatParticipants retrieves the correct participants', async () => {
+    const question = await createEmptyQuestion()
+
+    const questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    const reviewer1 = await createUser()
+    const reviewer2 = await createUser()
+    const editor1 = await createUser()
+    const editor2 = await createUser()
+    const handlingEditor = await createUser()
+
+    const editorTeam = await Team.insert({
+      role: 'editor',
+      global: true,
+      displayName: 'Managing Editor',
+    })
+
+    await Team.updateMembershipByTeamId(editorTeam.id, [editor1.id, editor2.id])
+
+    const handlingEditorTeam = await Team.insert({
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.updateMembershipByTeamId(handlingEditorTeam.id, [
+      handlingEditor.id,
+    ])
+
+    await updateReviewerPool(questionVersion.id, [reviewer1.id, reviewer2.id])
+    await acceptOrRejectInvitation(questionVersion.id, true, '', reviewer1.id)
+    await acceptOrRejectInvitation(
+      questionVersion.id,
+      false,
+      'nah',
+      reviewer2.id,
+    )
+
+    const otherQuestion = await createEmptyQuestion()
+
+    const otherQuestionVersion = await QuestionVersion.findOne({
+      questionId: otherQuestion.id,
+    })
+
+    const otherReviewer = await createUser()
+    const otherHandlingEditor = await createUser()
+
+    const otherHandlingEditorTeam = await Team.insert({
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+      objectId: otherQuestion.id,
+      objectType: 'question',
+    })
+
+    await Team.updateMembershipByTeamId(otherHandlingEditorTeam.id, [
+      otherHandlingEditor.id,
+    ])
+
+    await updateReviewerPool(otherQuestionVersion.id, [otherReviewer.id])
+    await acceptOrRejectInvitation(
+      otherQuestionVersion.id,
+      true,
+      '',
+      otherReviewer.id,
+    )
+
+    const expectedParticipantIds = [
+      editor1.id,
+      editor2.id,
+      handlingEditor.id,
+      reviewer1.id,
+    ]
+
+    const otherParticipantIds = [
+      otherHandlingEditor.id,
+      otherReviewer.id,
+      reviewer2.id,
+    ]
+
+    const participants = await getReviewerChatParticipants(question.id)
+    const receivedParticipantIds = participants.map(p => p.id)
+
+    expectedParticipantIds.forEach(participantId =>
+      expect(receivedParticipantIds).toContain(participantId),
+    )
+
+    otherParticipantIds.forEach(otherParticipantId =>
+      expect(receivedParticipantIds).not.toContain(otherParticipantId),
+    )
+
+    expect(true).toBe(true)
   })
 })

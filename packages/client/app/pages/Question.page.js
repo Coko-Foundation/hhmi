@@ -41,6 +41,7 @@ import {
   CREATE_CHAT_THREAD,
   GET_AUTHOR_CHAT_PARTICIPANTS,
   GET_PRODUCTION_CHAT_PARTICIPANTS,
+  GET_REVIEWER_CHAT_PARTICIPANTS,
   MESSAGE_CREATED_SUBSCRIPTION,
   CANCEL_EMAIL_NOTIFICATION,
   ACCEPT_OR_REJECT_REVIEW_INVITATION,
@@ -51,6 +52,7 @@ import {
   hasRole,
   hasGlobalRole,
   questionTypes,
+  REVIEWER_STATUSES,
 } from '../utilities'
 
 const AUTOSAVE_DELAY = 500
@@ -217,6 +219,14 @@ const QuestionPage = props => {
     },
   })
 
+  const {
+    data: { getReviewerChatParticipants: reviewerChatParticipants } = {},
+  } = useQuery(GET_REVIEWER_CHAT_PARTICIPANTS, {
+    variables: {
+      id,
+    },
+  })
+
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
   )
@@ -293,6 +303,16 @@ const QuestionPage = props => {
     },
   )
 
+  const {
+    data: { chatThread: reviewerChatThread } = {},
+    loading: reviewerChatLoading,
+  } = useQuery(GET_CHAT_THREAD, {
+    skip: !question?.reviewerChatThreadId,
+    variables: {
+      id: question?.reviewerChatThreadId,
+    },
+  })
+
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
     skip: !authorChatThread?.id,
     variables: { chatThreadId: authorChatThread?.id },
@@ -342,7 +362,35 @@ const QuestionPage = props => {
       ) {
         cancelEmailNotification({
           variables: {
-            chatThreadId: authorChatThread?.id,
+            chatThreadId: productionChatThread?.id,
+          },
+        })
+      }
+    },
+  })
+
+  useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
+    skip: !reviewerChatThread?.id,
+    variables: { chatThreadId: reviewerChatThread?.id },
+    onData: ({
+      data: {
+        data: { messageCreated },
+      },
+    }) => {
+      if (messageCreated) {
+        setReviewerChatMessages(previousMessages => [
+          ...previousMessages,
+          messageCreated,
+        ])
+      }
+
+      if (
+        messageCreated.mentions.includes(currentUser.id) &&
+        localStorage.getItem(question?.id) === 'reviewerChat'
+      ) {
+        cancelEmailNotification({
+          variables: {
+            chatThreadId: reviewerChatThread?.id,
           },
         })
       }
@@ -379,6 +427,7 @@ const QuestionPage = props => {
   // maintaining messages in a state
   const [authorChatMessages, setAuthorChatMessages] = useState([])
   const [productionChatMessages, setProductionChatMessages] = useState([])
+  const [reviewerChatMessages, setReviewerChatMessages] = useState([])
 
   useEffect(() => {
     if (authorChatThread?.messages) {
@@ -390,6 +439,11 @@ const QuestionPage = props => {
       setProductionChatMessages(productionChatThread.messages)
     }
   }, [productionChatThread])
+  useEffect(() => {
+    if (reviewerChatThread?.messages) {
+      setReviewerChatMessages(reviewerChatThread.messages)
+    }
+  }, [reviewerChatThread])
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -458,6 +512,10 @@ const QuestionPage = props => {
 
     if (version?.inProduction && !question?.productionChatThreadId) {
       createChat('productionChat')
+    }
+
+    if (version?.underReview && !question?.reviewerChatThreadId) {
+      createChat('reviewerChat')
     }
   }, [question, version])
 
@@ -555,6 +613,8 @@ const QuestionPage = props => {
   const isAdmin = hasGlobalRole(currentUser, 'admin')
   const isReviewer = hasRole(currentUser, 'reviewer')
 
+  const reviewerInviteStatus = isReviewer ? version?.reviewerStatus : null
+
   const showAuthorChatTab =
     version?.submitted && (isEditor || isHandlingEditor || isAuthor || isAdmin)
 
@@ -562,10 +622,16 @@ const QuestionPage = props => {
     version?.inProduction &&
     (isEditor || isHandlingEditor || isProductionMember || isAdmin)
 
-  const reviewerInviteStatus = isReviewer && version?.reviewerStatus
+  const showReviewerChatTab =
+    version?.underReview &&
+    (isEditor ||
+      isHandlingEditor ||
+      (isReviewer && reviewerInviteStatus === REVIEWER_STATUSES.accepted) ||
+      isAdmin)
+
   const reviews = version?.reviews
 
-  const reviewSubmitted = !!reviews.find(
+  const reviewSubmitted = !!reviews?.find(
     review => review.reviewerId === id && review.status.submitted,
   )
   // #endregion user roles
@@ -896,6 +962,11 @@ const QuestionPage = props => {
           },
         })
         break
+      case 'reviewerChat':
+        cancelEmailNotification({
+          variables: { chatThreadId: reviewerChatThread?.id },
+        })
+        break
       default:
         break
     }
@@ -903,14 +974,19 @@ const QuestionPage = props => {
     localStorage.setItem(id, activeTab)
   }
 
-  const onSendAuthorChatMessage = async (content, mentions, attachments) => {
+  const handleSendChatMessage = async (
+    content,
+    mentions,
+    attachments,
+    chatThreadId,
+  ) => {
     const fileObjects = attachments.map(attachment => attachment.originFileObj)
 
     const mutationData = {
       variables: {
         input: {
           content,
-          chatThreadId: question?.authorChatThreadId,
+          chatThreadId,
           userId: currentUser.id,
           mentions,
           attachments: fileObjects,
@@ -921,26 +997,35 @@ const QuestionPage = props => {
     return sendMessage(mutationData)
   }
 
+  const onSendAuthorChatMessage = async (content, mentions, attachments) => {
+    return handleSendChatMessage(
+      content,
+      mentions,
+      attachments,
+      question?.authorChatThreadId,
+    )
+  }
+
   const onSendProductionChatMessage = async (
     content,
     mentions,
     attachments,
   ) => {
-    const fileObjects = attachments.map(attachment => attachment.originFileObj)
+    return handleSendChatMessage(
+      content,
+      mentions,
+      attachments,
+      question?.productionChatThreadId,
+    )
+  }
 
-    const mutationData = {
-      variables: {
-        input: {
-          content,
-          chatThreadId: question?.productionChatThreadId,
-          userId: currentUser.id,
-          mentions,
-          attachments: fileObjects,
-        },
-      },
-    }
-
-    return sendMessage(mutationData)
+  const onSendReviewerChatMessage = async (content, mentions, attachments) => {
+    return handleSendChatMessage(
+      content,
+      mentions,
+      attachments,
+      question?.reviewerChatThreadId,
+    )
   }
 
   const handleAcceptReviewInvite = async () => {
@@ -1027,7 +1112,7 @@ const QuestionPage = props => {
         canAssignAuthor={isAdmin && isAuthor}
         canCreateNewVersion={isAdmin || isEditor}
         canPublish={isEditor || isHandlingEditor || isAdmin}
-        chatLoading={chatLoading}
+        chatLoading={chatLoading || reviewerChatLoading}
         complexItemSetOptions={complexItemSetOptions}
         complexSetEditLink={
           version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
@@ -1095,6 +1180,7 @@ const QuestionPage = props => {
         onSearchHE={handleSearchHE}
         onSendAuthorChatMessage={onSendAuthorChatMessage}
         onSendProductionChatMessage={onSendProductionChatMessage}
+        onSendReviewerChatMessage={onSendReviewerChatMessage}
         onSubmitReview={handleSubmitReview}
         onUnassignHandlingEditor={handleUnassignHE}
         productionChatMessages={messagesApiToUi(
@@ -1106,6 +1192,11 @@ const QuestionPage = props => {
         questionAgreedTc={false} //
         refetchUser={refetchCurrentUser}
         resources={getResources}
+        reviewerChatMessages={messagesApiToUi(
+          reviewerChatMessages,
+          currentUser?.id,
+        )}
+        reviewerChatParticipants={reviewerChatParticipants}
         reviewerView={isReviewer}
         reviewInviteStatus={reviewerInviteStatus}
         reviewSubmitted={reviewSubmitted}
@@ -1118,6 +1209,7 @@ const QuestionPage = props => {
         showNextQuestionLink={false}
         showPreviewButton={isAuthor && !version?.submitted}
         showProductionChatTab={showProductionChatTab}
+        showReviewerChatTab={showReviewerChatTab}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
       />

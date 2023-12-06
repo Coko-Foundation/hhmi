@@ -59,6 +59,18 @@ class Review extends BaseModel {
     try {
       const { trx } = options
 
+      const existingReview = await this.findOne({
+        questionVersionId,
+        reviewerId,
+      })
+
+      if (existingReview)
+        return this.patchAndFetchById(
+          existingReview.id,
+          { questionVersionId, reviewerId, content, status },
+          { trx },
+        )
+
       return this.insert(
         { questionVersionId, reviewerId, content, status },
         { trx },

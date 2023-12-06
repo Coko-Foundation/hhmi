@@ -256,6 +256,44 @@ const getProductionChatParticipants = async questionId => {
   return participants
 }
 
+const getReviewerChatParticipants = async questionId => {
+  const questionVersion = await QuestionVersion.findOne({ questionId })
+
+  const query = User.query()
+    .select('users.displayName', 'users.id', 'teams.role')
+    .leftJoin('team_members', 'users.id', 'team_members.user_id')
+    .leftJoin('teams', 'teams.id', 'team_members.team_id')
+    .where('teams.role', EDITOR_TEAM.role)
+    .orWhere(subquery => {
+      subquery
+        .where('teams.role', HE_TEAM.role)
+        .whereExists(
+          Team.query()
+            .select(1)
+            .from('questions')
+            .whereRaw('questions.id=teams.object_id')
+            .where('questions.id', questionId),
+        )
+    })
+    .orWhere(reviewerSubquery => {
+      reviewerSubquery
+        .where('teams.role', REVIEWER_TEAM.role)
+        .whereExists(
+          TeamMember.query()
+            .select(1)
+            .from('teams')
+            .whereRaw('team_members.team_id=teams.id')
+            .where('teams.object_id', questionVersion.id)
+            .where('team_members.status', REVIEWER_STATUSES.accepted),
+        )
+    })
+    .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
+
+  const participants = await query
+
+  return participants
+}
+
 /**
  * Create question & first question version
  * Add user that created it to the author team
@@ -1027,6 +1065,7 @@ module.exports = {
   getAuthorChatParticipants,
   getInProductionDashboard,
   getProductionChatParticipants,
+  getReviewerChatParticipants,
 
   createQuestion,
   duplicateQuestion,
