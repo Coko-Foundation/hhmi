@@ -393,6 +393,7 @@ export const TestMode = () => {
 export const ReviewerView = () => {
   const [inviteStatus, setInviteStatus] = useState(REVIEWER_STATUSES.invited)
   const [reviewSubmitted, setReviewSubmitted] = useState(false)
+  const [messages, setMessages] = useState(createMessages(20))
 
   const handleAccept = () =>
     new Promise(resolve => {
@@ -403,23 +404,34 @@ export const ReviewerView = () => {
       }, 1000)
     })
 
-  const handleReject = () =>
+  const handleReject = reason =>
     new Promise(resolve => {
       setTimeout(() => {
-        console.log('reviewer rejected invite')
+        console.log('reviewer rejected invite:', reason)
         setInviteStatus(REVIEWER_STATUSES.rejected)
         resolve()
       }, 1000)
     })
 
-  const handleSubmit = () =>
+  const handleSubmit = reason =>
     new Promise(resolve => {
       setTimeout(() => {
-        console.log('reviewer submitted review')
+        console.log('reviewer submitted review:', reason)
         setReviewSubmitted(true)
         resolve()
       }, 1000)
     })
+
+  const handleSendMessage = content => {
+    const msg = {
+      content,
+      date: new Date().toISOString(),
+      own: true,
+      user: name.findName(),
+    }
+
+    setMessages([...messages, msg])
+  }
 
   return (
     <Wrapper>
@@ -438,12 +450,15 @@ export const ReviewerView = () => {
         onQuestionSubmit={data => console.log(data)}
         onReviewerAcceptInvite={handleAccept}
         onReviewerRejectInvite={handleReject}
+        onSendReviewerChatMessage={handleSendMessage}
         onSubmitReview={handleSubmit}
         readOnly
         resources={resources}
+        reviewerChatMessages={messages}
         reviewerView
         reviewInviteStatus={inviteStatus}
         reviewSubmitted={reviewSubmitted}
+        showReviewerChatTab={inviteStatus === REVIEWER_STATUSES.accepted}
         submitting={false}
       />
     </Wrapper>

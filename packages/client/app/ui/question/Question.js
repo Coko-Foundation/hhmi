@@ -151,7 +151,7 @@ const StyledReviewerAcceptInviteButton = styled(ReviewerAcceptButton)`
   width: 100%;
 `
 
-const StyledReviewerSubmitInviteButton = styled(ReviewerSubmitButton)`
+const StyledSubmitReviewButton = styled(ReviewerSubmitButton)`
   width: 100%;
 `
 
@@ -1274,7 +1274,7 @@ const Question = props => {
       )}
       {reviewInviteStatus === REVIEWER_STATUSES.accepted &&
         !reviewSubmitted && (
-          <StyledReviewerSubmitInviteButton
+          <StyledSubmitReviewButton
             onSubmit={onSubmitReview}
             showDialog={showDialog}
           />

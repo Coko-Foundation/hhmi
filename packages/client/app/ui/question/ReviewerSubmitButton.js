@@ -1,19 +1,11 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
-import { grid } from '@coko/client'
 
-import { Button, TextArea, Modal } from '../common'
+import { Button, Form, TextArea, Modal, Upload } from '../common'
 
 const ModalHeader = Modal.header
 const ModalFooter = Modal.footer
 const ModalContext = React.createContext(null)
-
-const ModalContentWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${grid(2)};
-`
 
 const link = ''
 
@@ -21,16 +13,19 @@ const ReviewerSubmitButton = props => {
   const { className, onSubmit, showDialog } = props
 
   const [loading, setLoading] = useState(false)
-  const [content, setContent] = useState('')
+  const [showModal, setShowModal] = useState(false)
+  const [attachments, onAttachmentsChange] = useState([])
+  const [reviewForm] = Form.useForm()
 
-  const [modal, contextHolder] = Modal.useModal()
-
-  const handleSubmitReview = modalInstance => {
+  const handleSubmitReview = ({ content }) => {
     setLoading(true)
-    modalInstance.destroy()
+    setShowModal(false)
 
-    onSubmit({ content })
+    onSubmit({ attachments, content })
       .then(() => {
+        reviewForm.resetFields()
+        onAttachmentsChange([])
+
         showDialog(
           'success',
           'Review submitted successfully',
@@ -49,43 +44,24 @@ const ReviewerSubmitButton = props => {
       })
   }
 
-  const ModalContent = (
-    <ModalContentWrapper>
-      <span>
-        Please read the{' '}
-        <a href={link} rel="noreferrer" target="_blank">
-          guidelines on providing feedback
-        </a>{' '}
-        and provide your feedback below.
-      </span>
-      <TextArea
-        autoSize={{ minRows: 3, maxRows: 6 }}
-        onChange={e => setContent(e.target.value)}
-        placeholder="Enter review here..."
-      />
-    </ModalContentWrapper>
-  )
-
-  const handleReviewerSubmitReview = () => {
-    const confirmSubmitModal = modal.info()
-
-    confirmSubmitModal.update({
-      title: <ModalHeader>Submit Review</ModalHeader>,
-      content: ModalContent,
-      footer: (
-        <ModalFooter>
-          <Button onClick={() => confirmSubmitModal.destroy()}>Cancel</Button>
-          <Button
-            autoFocus
-            onClick={() => handleSubmitReview(confirmSubmitModal)}
-            type="primary"
-          >
-            Submit Review
-          </Button>
-        </ModalFooter>
-      ),
-    })
+  const handleAttachmentChange = ({ fileList }) => {
+    onAttachmentsChange(fileList)
   }
+
+  const handleRemoveAttachment = file => {
+    onAttachmentsChange(selectedFiles =>
+      selectedFiles.filter(item => item.uid !== file.uid),
+    )
+  }
+
+  const footer = (
+    <ModalFooter>
+      <Button onClick={() => setShowModal(false)}>Cancel</Button>
+      <Button autoFocus onClick={reviewForm.submit} type="primary">
+        Submit Review
+      </Button>
+    </ModalFooter>
+  )
 
   return (
     <ModalContext.Provider value={null}>
@@ -93,12 +69,70 @@ const ReviewerSubmitButton = props => {
         className={className}
         id="reviewerSubmitReview"
         loading={loading}
-        onClick={handleReviewerSubmitReview}
+        onClick={() => setShowModal(true)}
         type="primary"
       >
         Submit Review
       </Button>
-      {contextHolder}
+      <Modal
+        destroyOnClose
+        footer={footer}
+        onCancel={() => setShowModal(false)}
+        open={showModal}
+        title={<ModalHeader>Submit Review</ModalHeader>}
+      >
+        <Form
+          form={reviewForm}
+          layout="vertical"
+          onFinish={handleSubmitReview}
+          onValuesChange={() => reviewForm.validateFields(['content'])}
+        >
+          <Form.Item
+            label={
+              <span>
+                Please read the{' '}
+                <a href={link} rel="noreferrer" target="_blank">
+                  guidelines on providing feedback
+                </a>{' '}
+                and provide your feedback below.
+              </span>
+            }
+            name="content"
+            rules={[
+              {
+                required: true,
+                message: 'Please provide a review of the item',
+              },
+              {
+                validator(_, value) {
+                  if (value && value.length > 0) {
+                    return Promise.resolve()
+                  }
+
+                  return Promise.reject()
+                },
+              },
+            ]}
+            validateTrigger="onSubmit"
+          >
+            <TextArea
+              autoSize={{ minRows: 6, maxRows: 12 }}
+              data-testid="review-submit"
+              placeholder="Enter review here..."
+            />
+          </Form.Item>
+          <Form.Item name="attachments">
+            <Upload
+              accept="image/*,.pdf,.docx,.odt"
+              aria-label="upload-attachments"
+              files={attachments}
+              multiple
+              onChange={handleAttachmentChange}
+              onRemove={handleRemoveAttachment}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
     </ModalContext.Provider>
   )
 }
