@@ -27,6 +27,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
           underReview
           inProduction
           published
+          unpublished
           publicationDate
 
           complexItemSetId
@@ -88,6 +89,7 @@ export const GET_EDITOR_DASHBOARD = gql`
           underReview
           inProduction
           published
+          unpublished
           publicationDate
 
           complexItemSetId
@@ -148,6 +150,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
           underReview
           inProduction
           published
+          unpublished
           publicationDate
 
           complexItemSetId
@@ -208,6 +211,7 @@ export const GET_PRODUCTION_DASHBOARD = gql`
           underReview
           inProduction
           published
+          unpublished
           publicationDate
 
           complexItemSetId
@@ -313,6 +317,7 @@ export const QUESTION = gql`
         underReview
         inProduction
         published
+        unpublished
 
         topics {
           topic
@@ -385,7 +390,7 @@ export const UPDATE_QUESTION = gql`
         underReview
         inProduction
         published
-
+        unpublished
         leadingContent
         complexItemSetId
         questionType
@@ -502,6 +507,7 @@ export const CREATE_NEW_VERSION = gql`
         underReview
         inProduction
         published
+        unpublished
 
         topics {
           topic
@@ -534,7 +540,15 @@ export const CREATE_NEW_VERSION = gql`
     }
   }
 `
-
+export const UNPUBLISH_QUESTION_VERSION = gql`
+  mutation UnpublishQuestionVersion($questionVersionId: ID!) {
+    unpublishQuestionVersion(questionVersionId: $questionVersionId) {
+      id
+      unpublished
+      published
+    }
+  }
+`
 export const GET_PUBLISHED_QUESTIONS = gql`
   query GetPublishedQuestions(
     $params: FilterQuestionsParams

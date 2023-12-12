@@ -137,7 +137,7 @@ const FilterPopup = styled.div`
 4px: the sum of the SearchWraper's outline + outline offset + StyledFilterList's border
 1px: StyledFilterList's border */
   left: ${p => (p.$visualfocus ? '-4px' : '-1px')};
-  max-height: ${p => (p.$show ? '200px' : '0')};
+  max-height: ${p => (p.$show ? '230px' : '0')};
   min-width: 230px;
   overflow: hidden;
   position: absolute;
@@ -175,8 +175,19 @@ finish hiding the dropdown list 'cause if not the border remains there */
     display: flex;
     flex-direction: column;
     list-style: none;
+    overflow: hidden auto;
     padding: 0;
     width: 100%;
+
+    ::-webkit-scrollbar-thumb {
+      background-color: ${p =>
+        p.$show
+          ? p.$visualfocus
+            ? alpha('colorPrimaryBorder', 0.5)
+            : '#ccc'
+          : '#fff0'};
+      transition: background-color 0.3s ${p => p.$show && '0.5s'};
+    }
   }
 
   & > ul > li {
@@ -347,8 +358,7 @@ const FilterList = ({
         <li
           aria-label={
             isInput
-              ? // maybe we can add to the filter object a prop to optionally fill this label
-                filter?.ariaLabel || 'type your option'
+              ? filter?.ariaLabel || 'type your option'
               : `filter option: ${key}`
           }
           aria-selected={currentIndex === i}

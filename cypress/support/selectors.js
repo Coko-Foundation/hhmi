@@ -3,7 +3,7 @@ export const buttonAntModalBody = '[class="ant-modal-body"] [type="button"]'
 export const createQuestionButton = 'button[data-testid="create-question-btn"]'
 export const listItemWrapper = '[data-testid="list-item-wrapper"]'
 export const submitButton = 'button[type="submit"]'
-
+export const basicButton = 'button[type="button"]'
 export const submitQuestionButton = 'button[data-testid="submit-question-btn"]'
 
 export const antTableCell = 'td[class="ant-table-cell"]'

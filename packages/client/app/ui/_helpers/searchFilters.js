@@ -40,6 +40,11 @@ export const statusFilters = [
       },
       { label: 'Published', value: 'published', badgeBg: theme.colorSuccess },
       { label: 'Rejected', value: 'rejected', badgeBg: theme.colorError },
+      {
+        label: 'Unpublished',
+        value: 'unpublished',
+        badgeBg: theme.colorErrorAlt,
+      },
     ],
   },
   // {

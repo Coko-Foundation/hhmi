@@ -9,6 +9,7 @@ import {
   submitButton,
   antTabs,
   anchorTags,
+  basicButton,
 } from '../support/selectors'
 import { laptop } from '../support/viewport'
 import {
@@ -69,13 +70,13 @@ describe('Tests for user authentication', () => {
   it('login & user profile', () => {
     cy.visit(loginPage)
     cy.contains('h1', 'Login')
-    cy.contains('button[type="button"]', 'Log in with BioInteractive')
-    cy.contains('button[type="button"]', 'Log in with Email').click()
+    cy.contains(basicButton, 'Log in with BioInteractive')
+    cy.contains(basicButton, 'Log in with Email').click()
     cy.get(submitButton).click()
     cy.contains(alertContainer, 'Email is required')
     cy.contains(alertContainer, 'Password is required')
 
-    cy.contains('button[type="button"]', 'Choose another login method')
+    cy.contains(basicButton, 'Choose another login method')
     cy.contains(anchorTags.requestPasswordRest, 'Forgot your password?')
     cy.contains(anchorTags.signup, 'Do you want to signup instead?')
 

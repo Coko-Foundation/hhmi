@@ -192,7 +192,6 @@ const canCreateNewVersion = rule()(async (_, __, ctx) => {
 // editors and handlingEditors can reject questions
 const canRejectQuestion = rule()(async (_, __, ctx) => {
   if (!ctx.user) return false
-  if (!ctx.user) return false
 
   const UserModel = ctx.connectors.User.model
   const user = await UserModel.query().findById(ctx.user)
@@ -201,6 +200,18 @@ const canRejectQuestion = rule()(async (_, __, ctx) => {
     user.isActive &&
     ((await user.hasGlobalRole('editor')) ||
       user.hasGlobalRole('handlingEditor'))
+  )
+})
+
+const canUnpublishQuestion = rule()(async (_, __, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+
+  return (
+    user.isActive &&
+    ((await user.hasGlobalRole('editor')) || user.hasGlobalRole('admin'))
   )
 })
 
@@ -244,6 +255,7 @@ const permissions = {
     moveQuestionVersionToReview: canMoveToReview,
     moveQuestionVersionToProduction: canMoveToProduction,
     publishQuestionVersion: canPublish,
+    unpublishQuestionVersion: canUnpublishQuestion,
     createNewQuestionVersion: canCreateNewVersion,
     assignAuthorship: isAdminAndAuthor,
   },

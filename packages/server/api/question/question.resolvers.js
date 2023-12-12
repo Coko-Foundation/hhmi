@@ -21,6 +21,7 @@ const {
   moveQuestionVersionToReview,
   moveQuestionVersionToProduction,
   publishQuestionVersion,
+  unpublishQuestionVersion,
   generateWordFile,
   generateScormZip,
   generateQtiZip,
@@ -112,6 +113,10 @@ const moveQuestionVersionToProductionResolver = async (
 
 const publishQuestionVersionResolver = async (_, { questionVersionId }) => {
   return publishQuestionVersion(questionVersionId)
+}
+
+const unpublishQuestionVersionResolver = async (_, { questionVersionId }) => {
+  return unpublishQuestionVersion(questionVersionId)
 }
 
 const assignAuthorshipResolver = async (_, { questionId, userId }) => {
@@ -229,11 +234,12 @@ module.exports = {
     moveQuestionVersionToReview: moveQuestionVersionToReviewResolver,
     moveQuestionVersionToProduction: moveQuestionVersionToProductionResolver,
     publishQuestionVersion: publishQuestionVersionResolver,
+    unpublishQuestionVersion: unpublishQuestionVersionResolver,
+    createNewQuestionVersion: createNewQuestionVersionResolver,
     assignAuthorship: assignAuthorshipResolver,
     generateWordFile: generateWordFileResolver,
     generateScormZip: generateScormZipResolver,
     generateQtiZip: generateQtiZipResolver,
-    createNewQuestionVersion: createNewQuestionVersionResolver,
     uploadFiles: uploadFilesResolver,
     assignHandlingEditors: assignHandlingEditorsResolver,
     unassignHandlingEditor: unassignHandlingEditorResolver,

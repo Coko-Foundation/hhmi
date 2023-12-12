@@ -105,11 +105,9 @@ class Question extends BaseModel {
     return question
   }
 
-  // TO DO -- if there is a previous versions, you should copy its contents
   static async createNewVersion(data, options = {}) {
     const previousVersions = await this.getVersions(data.questionId, {
       latestOnly: true,
-      publishedOnly: true,
     })
 
     if (previousVersions.totalCount > 0) {
@@ -145,7 +143,7 @@ class Question extends BaseModel {
           readingLevel,
           questionType,
           inProduction: true,
-          published: false,
+          unpublished: false,
         },
         { trx: options.trx },
       )
@@ -377,6 +375,7 @@ class Question extends BaseModel {
           under_review: false,
           in_production: false,
           published: false,
+          unpublished: false,
           rejected: false,
         })
         return query
@@ -453,6 +452,7 @@ class Question extends BaseModel {
         'question_versions.under_review',
         'question_versions.in_production',
         'question_versions.published',
+        'question_versions.unpublished',
       )
     }
 
@@ -506,6 +506,7 @@ class Question extends BaseModel {
           'question_versions.under_review',
           'question_versions.in_production',
           'question_versions.published',
+          'question_versions.unpublished',
         ],
       )
     }

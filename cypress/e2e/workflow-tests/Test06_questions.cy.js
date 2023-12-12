@@ -22,6 +22,7 @@ import {
   anchorTags,
   antSelectItem,
   ProseMirror,
+  basicButton,
 } from '../../support/selectors'
 import {
   dashboard as dashboardRoute,
@@ -178,10 +179,10 @@ describe('Question Workflows', () => {
         cy.login(editor)
         cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
-        cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+        cy.contains(basicButton, 'Unpublish').should('not.exist')
         cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.get(listItemWrapper).eq(1).contains('p', 'What substance from')
-        cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+        cy.contains(basicButton, 'Unpublish').should('not.exist')
       })
 
       context('Assign handling editor', () => {
@@ -274,7 +275,7 @@ describe('Question Workflows', () => {
           // cy.get('[class="ant-checkbox-input"]').last().click()
           // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(4000)
-          cy.contains('button[type="button"]', 'Assign HE').click()
+          cy.contains(basicButton, 'Assign HE').click()
           cy.get('div[data-testid="handlingEditor-select"]').click()
           cy.contains(antSelectItem, handlingEditor1.username).click()
           cy.contains(antSelectItem, handlingEditor2.username).click()
@@ -375,13 +376,13 @@ describe('Question Workflows', () => {
         cy.login(handlingEditor1)
         cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
-        cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+        cy.contains(basicButton, 'Unpublish').should('not.exist')
         cy.contains(anchorTags.discover, 'Browse Items').click()
         cy.get(listItemWrapper)
           .eq(1)
           .contains('p', 'What substance from')
           .click()
-        cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+        cy.contains(basicButton, 'Unpublish').should('not.exist')
       })
       it('Overall question workflow', () => {
         cy.deleteAllQuestions(disableScripts)
@@ -494,10 +495,10 @@ describe('Question Workflows', () => {
       cy.login(admin)
       cy.contains(anchorTags.discover, 'Browse Items').click()
       cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
-      cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+      cy.contains(basicButton, 'Unpublish').should('not.exist')
       cy.contains(anchorTags.discover, 'Browse Items').click()
       cy.get(listItemWrapper).eq(1).contains('p', 'What substance from')
-      cy.contains('button[type="button"]', 'Edit item').should('not.exist')
+      cy.contains(basicButton, 'Unpublish').should('not.exist')
     })
   })
 

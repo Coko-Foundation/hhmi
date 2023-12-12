@@ -1329,6 +1329,7 @@ const dashboardDataMapper = ({
     inProduction,
     published,
     rejected,
+    unpublished,
   }) => {
     if (!showStatus) return null
     let status = 'Not Submitted'
@@ -1337,6 +1338,7 @@ const dashboardDataMapper = ({
     if (inProduction) status = 'In Production'
     if (published) status = 'Published'
     if (rejected) status = 'Rejected'
+    if (!published && unpublished) status = 'Unpublished'
 
     return status
   }
