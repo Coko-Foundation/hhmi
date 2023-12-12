@@ -365,6 +365,8 @@ const Question = props => {
     isSubmitted,
     isUnderReview,
     isInProduction,
+    isUnpublished,
+    canUnpublish,
     canPublish,
     loading,
     loadAuthors,
@@ -373,13 +375,14 @@ const Question = props => {
     onClickAssignHE,
     onClickNextButton,
     onClickPreviousButton,
-    onCreateNewVersion,
     onEditorContentAutoSave,
     onImageUpload,
     onMetadataAutoSave,
     onMoveToProduction,
     onMoveToReview,
     onPublish,
+    onUnpublish,
+    onCreateNewVersion,
     onQuestionSubmit,
     onReject,
     onSendAuthorChatMessage,
@@ -697,7 +700,7 @@ const Question = props => {
                       showDialog(
                         'error',
                         'Problem publishing this item',
-                        'There was an error while publishin this item. Please try again',
+                        'There was an error while publishing this item. Please try again',
                       )
                     })
                 }}
@@ -798,13 +801,51 @@ const Question = props => {
       })
   }
 
+  const showUnpublishModal = () => {
+    const confirmUnpublish = confirm()
+    confirmUnpublish.update({
+      title: <ModalHeader>Unpublish item</ModalHeader>,
+      content: `Unpublishing an item will remove it from the Browse Items page. 
+        After an item is unpublished you can choose to edit and republish it`,
+      footer: [
+        <ModalFooter key="footer">
+          <Button onClick={() => confirmUnpublish.destroy()}>Cancel</Button>
+          <Button
+            autoFocus
+            onClick={() => {
+              confirmUnpublish.destroy()
+              onUnpublish()
+                .then(() =>
+                  showDialog(
+                    'success',
+                    'Item unpublished successfully',
+                    'Item was unpublished and removed from Browse Itemms page.',
+                  ),
+                )
+                .catch(() =>
+                  showDialog(
+                    'error',
+                    'Problem unpublishing this item',
+                    'There was an error while unpublishing this item. Please try again!',
+                  ),
+                )
+            }}
+            status="danger"
+          >
+            Unpublish
+          </Button>
+        </ModalFooter>,
+      ],
+    })
+  }
+
   const showNewVersionModal = () => {
     const confirmNewVersion = confirm()
     confirmNewVersion.update({
-      title: <ModalHeader>Warning!</ModalHeader>,
-      content: `You are editing a published item. Any changes you make will be automatically saved, but not automatically published. 
-      You will need to publish this item again for the edits to be reflected in the Browse Items page.
-      After the edited item is published, the old one will not be available anymore in the Browse Items page. 
+      title: <ModalHeader>Edit unpublished item</ModalHeader>,
+      content: `This item is unpublished. You will need to publish this item again 
+      for the changes to be reflected in the Browse Items page.
+      After the item is edited, the previous version will not be available. 
       Do you wish to continue?`,
       footer: [
         <ModalFooter key="footer">
@@ -813,12 +854,19 @@ const Question = props => {
             autoFocus
             onClick={() => {
               confirmNewVersion.destroy()
-              // TODO: add error handling for this action
               onCreateNewVersion()
+                .then()
+                .catch(() =>
+                  showDialog(
+                    'error',
+                    'Problem updating this item',
+                    'Item cannot be updated',
+                  ),
+                )
             }}
             status="danger"
           >
-            Create new version
+            Edit
           </Button>
         </ModalFooter>,
       ],
@@ -1022,7 +1070,12 @@ const Question = props => {
           </StyledButton>
         </>
       )}
-      {isPublished && canCreateNewVersion && (
+      {isPublished && canUnpublish && (
+        <StyledButton onClick={showUnpublishModal} type="primary">
+          Unpublish
+        </StyledButton>
+      )}
+      {isUnpublished && canCreateNewVersion && (
         <StyledButton onClick={showNewVersionModal} type="primary">
           Edit item
         </StyledButton>
@@ -1094,32 +1147,43 @@ const Question = props => {
             Publish
           </StyledButton>
         )}
-        {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
-          <>
-            <StyledButton
-              id="doNotAccept"
-              onClick={handleReject}
-              status="danger"
-              type="primary"
-            >
-              Do not accept
-            </StyledButton>
 
-            <StyledButton
-              id="moveToReview"
-              onClick={handleMoveToReview}
-              type="primary"
-            >
-              Move to review
-            </StyledButton>
-          </>
+        {isSubmitted &&
+          !isUnderReview &&
+          !isInProduction &&
+          !isPublished &&
+          !isUnpublished && (
+            <>
+              <StyledButton
+                id="doNotAccept"
+                onClick={handleReject}
+                status="danger"
+                type="primary"
+              >
+                Do not accept
+              </StyledButton>
+
+              <StyledButton
+                id="moveToReview"
+                onClick={handleMoveToReview}
+                type="primary"
+              >
+                Move to review
+              </StyledButton>
+            </>
+          )}
+
+        {isPublished && canUnpublish && (
+          <StyledButton onClick={showUnpublishModal} type="primary">
+            Unpublish
+          </StyledButton>
         )}
-
-        {isPublished && canCreateNewVersion && (
+        {isUnpublished && canCreateNewVersion && (
           <StyledButton onClick={showNewVersionModal} type="primary">
             Edit item
           </StyledButton>
         )}
+
         {showNextQuestionLink && NextQuestion}
       </ActionsWrapper>
       <Popup
@@ -1171,7 +1235,12 @@ const Question = props => {
           onExport={onClickExportToQti}
         />
       )}
-      {isPublished && canCreateNewVersion && (
+      {isPublished && canUnpublish && (
+        <StyledButton onClick={showUnpublishModal} type="primary">
+          Unpublish
+        </StyledButton>
+      )}
+      {isUnpublished && canCreateNewVersion && (
         <StyledButton onClick={showNewVersionModal} type="primary">
           Edit item
         </StyledButton>
@@ -1211,7 +1280,12 @@ const Question = props => {
               onExport={onClickExportToQti}
             />
           )}
-          {isPublished && canCreateNewVersion && (
+          {isPublished && canUnpublish && (
+            <StyledButton onClick={showUnpublishModal} type="primary">
+              Unpublish
+            </StyledButton>
+          )}
+          {isUnpublished && canCreateNewVersion && (
             <StyledButton onClick={showNewVersionModal} type="primary">
               Edit item
             </StyledButton>
@@ -1272,7 +1346,12 @@ const Question = props => {
                   <>
                     {isRejected && (
                       <Ribbon status="error">
-                        This item has been rejected by the editors
+                        This item has been rejected by the editors.
+                      </Ribbon>
+                    )}
+                    {isUnpublished && (
+                      <Ribbon status="error">
+                        This item has been unpublished by the editors.
                       </Ribbon>
                     )}
                     <PanelWrapper
@@ -1324,7 +1403,7 @@ const Question = props => {
                           </SkipToTop>
                         </>
                       }
-                      showMetadata={showMetadata && !preview}
+                      showMetadata={showMetadata && (!preview || facultyView)}
                     />
                   </>
                 ),
@@ -1403,7 +1482,6 @@ Question.propTypes = {
   onClickPreviousButton: PropTypes.func,
   onChangeAnnouncement: PropTypes.func,
   onClickNextButton: PropTypes.func,
-  onCreateNewVersion: PropTypes.func,
   onEditorContentAutoSave: PropTypes.func,
   onImageUpload: PropTypes.func,
   onQuestionSubmit: PropTypes.func.isRequired,
@@ -1411,6 +1489,8 @@ Question.propTypes = {
   onMoveToReview: PropTypes.func,
   onMoveToProduction: PropTypes.func,
   onPublish: PropTypes.func,
+  onUnpublish: PropTypes.func,
+  onCreateNewVersion: PropTypes.func,
   onReject: PropTypes.func,
   onSendAuthorChatMessage: PropTypes.func,
   onSendProductionChatMessage: PropTypes.func,
@@ -1428,6 +1508,8 @@ Question.propTypes = {
   isUnderReview: PropTypes.bool,
   isInProduction: PropTypes.bool,
   isUserLoggedIn: PropTypes.bool,
+  isUnpublished: PropTypes.bool,
+  canUnpublish: PropTypes.bool,
   editorView: PropTypes.bool,
   canPublish: PropTypes.bool,
   canAssignAuthor: PropTypes.bool,
@@ -1725,11 +1807,12 @@ Question.defaultProps = {
   authorChatMessages: [],
   productionChatMessages: [],
   onChangeAnnouncement: () => {},
-  onCreateNewVersion: () => {},
   onFetchMoreMessages: () => {},
   onMoveToReview: () => {},
   onMoveToProduction: () => {},
   onPublish: () => {},
+  onUnpublish: () => {},
+  onCreateNewVersion: () => {},
   onReject: () => {},
   onSendAuthorChatMessage: () => {},
   onSendProductionChatMessage: () => {},
@@ -1752,6 +1835,8 @@ Question.defaultProps = {
   isSubmitted: false,
   isUnderReview: false,
   isInProduction: false,
+  isUnpublished: false,
+  canUnpublish: false,
   canPublish: false,
   editorView: false,
   questionAgreedTc: false,

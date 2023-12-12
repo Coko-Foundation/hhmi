@@ -20,7 +20,7 @@ exports[`SearchFiltered tests Matches snapshot 1`] = `
     onKeyDown={[Function]}
   >
     <div
-      className="sc-iAEyYk ixAChZ"
+      className="sc-iAEyYk bqNA-DS"
     >
       <span
         id="filterlistlabel"

@@ -61,6 +61,7 @@ describe('ChatThreads', () => {
         )
         .click()
       cy.contains(antTabs, 'Author chat').click()
+      cy.reload()
     })
 
     it('sending a message', () => {
@@ -174,6 +175,7 @@ describe('ChatThreads', () => {
           )
           .click()
         cy.contains(antTabs, 'Author chat').click()
+        cy.reload()
       })
 
       it('displays correct participants', () => {

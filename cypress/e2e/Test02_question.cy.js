@@ -15,6 +15,7 @@ import {
   submitQuestionButton,
   anchorTags,
   ProseMirror,
+  basicButton,
 } from '../support/selectors'
 import {
   dashboard as dashboardRoute,
@@ -66,7 +67,7 @@ describe('Testing questions', () => {
         '[class="ant-modal-confirm-content"]',
         'All content will be replaced by the new item type.',
       )
-      cy.contains('button[type="button"]', 'Yes, update').click()
+      cy.contains(basicButton, 'Yes, update').click()
       cy.get('.multiple-choice-single-correct')
     })
 
@@ -222,13 +223,20 @@ describe('Testing questions', () => {
         .contains(ProseMirror, 'Plants growing under direct sunlight')
         .click()
       cy.wait('@GQLReq')
-      cy.contains('button[type="button"]', 'Edit item').click()
-      cy.contains(antModalConfirmTitle, 'Warning!')
+      cy.contains(basicButton, 'Unpublish').click()
+      cy.contains(
+        antModalContent,
+        'Unpublishing an item will remove it from the Browse Items page. After an item is unpublished you can choose to edit and republish it',
+      )
+      cy.contains(buttonAntModalBody, 'Unpublish').click()
+
+      cy.contains(basicButton, 'Edit item').click()
+      cy.contains(antModalConfirmTitle, 'Edit unpublished item')
       cy.contains(
         '[class="ant-modal-confirm-content"]',
-        `You are editing a published item. Any changes you make will be automatically saved, but not automatically published. You will need to publish this item again for the edits to be reflected in the Browse Items page. After the edited item is published, the old one will not be available anymore in the Browse Items page. Do you wish to continue?`,
+        `This item is unpublished. You will need to publish this item again for the changes to be reflected in the Browse Items page. After the item is edited, the previous version will not be available. Do you wish to continue?`,
       )
-      cy.contains(buttonAntModalBody, 'Create new version').click()
+      cy.contains(buttonAntModalBody, 'Edit').click()
       cy.wait('@GQLReq')
 
       cy.get('[contenteditable="true"]', {

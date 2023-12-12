@@ -13,6 +13,7 @@ const variantColor = ({ variant }) => {
     'Under Review': () => th('colorWarning'),
     'In Production': () => th('colorPrimary'),
     Published: () => th('colorSuccess'),
+    Unpublished: () => th('colorErrorAlt'),
     default: () => th('colorBackground'),
   }
 

@@ -7,6 +7,7 @@ import {
   listItemWrapper,
   submitButton,
   ProseMirror,
+  basicButton,
 } from '../support/selectors'
 import { getDateInFormat } from '../utils/helpers'
 import { laptop } from '../support/viewport'
@@ -120,7 +121,7 @@ describe('Discover page tests', () => {
     )
     cy.contains('[data-testid="subtopic-value"]', 'General Chemistry')
 
-    cy.contains('button[type="button"]', 'Clear filters').click()
+    cy.contains(basicButton, 'Clear filters').click()
     cy.contains(
       '[data-testid="topic-select"]',
       'Biochemistry & Molecular Biology',

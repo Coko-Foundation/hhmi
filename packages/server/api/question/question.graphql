@@ -23,6 +23,7 @@ type QuestionVersion {
   underReview: Boolean!
   inProduction: Boolean!
   published: Boolean!
+  unpublished: Boolean!
 
   publicationDate: DateTime
 
@@ -261,6 +262,8 @@ extend type Mutation {
   moveQuestionVersionToReview(questionVersionId: ID!): QuestionVersion!
   moveQuestionVersionToProduction(questionVersionId: ID!): QuestionVersion!
   publishQuestionVersion(questionVersionId: ID!): QuestionVersion!
+  unpublishQuestionVersion(questionVersionId: ID!): QuestionVersion!
+  createNewQuestionVersion(questionId: ID!): Question!
 
   assignAuthorship(questionId: ID!, userId: ID!): Boolean
 
@@ -283,7 +286,6 @@ extend type Mutation {
 
   generateScormZip(questionVersionId: ID!): String!
   generateQtiZip(questionVersionId: ID!): String!
-  createNewQuestionVersion(questionId: ID!): Question!
   uploadFiles(files: [Upload!]!): [File!]!
 
   assignHandlingEditors(

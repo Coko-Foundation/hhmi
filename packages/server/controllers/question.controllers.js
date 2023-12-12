@@ -12,6 +12,7 @@ const {
   ComplexItemSet,
 } = require('../models')
 
+const CokoNotifier = require('../services/notify')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const { clearTempImageFiles } = require('./helpers')
 const { labels } = require('./constants')
@@ -475,10 +476,34 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
       submitted: true,
       inProduction: false,
       published: true,
+      unpublished: false,
       publicationDate: new Date(),
     },
     { trx: options.trx },
   )
+}
+
+const unpublishQuestionVersion = async (questionVersionId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} unpublishQuestionVersion:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} unpublishing question version with id ${questionVersionId}`,
+  )
+
+  const modifiedVersion = await modifyQuestionVersion(
+    questionVersionId,
+    {
+      published: false,
+      unpublished: true,
+    },
+    { trx: options.trx },
+  )
+
+  const notifier = new CokoNotifier()
+  notifier.notify('hhmi.questionUnpublished', {
+    questionId: modifiedVersion.questionId,
+  })
+
+  return modifiedVersion
 }
 
 const assignAuthorship = async (questionId, userId, options = {}) => {
@@ -873,6 +898,7 @@ module.exports = {
   moveQuestionVersionToReview,
   moveQuestionVersionToProduction,
   publishQuestionVersion,
+  unpublishQuestionVersion,
   rejectQuestion,
   submitQuestion,
   createNewQuestionVersion,

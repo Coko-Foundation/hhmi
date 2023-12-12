@@ -43,6 +43,7 @@ import {
   GET_PRODUCTION_CHAT_PARTICIPANTS,
   MESSAGE_CREATED_SUBSCRIPTION,
   CANCEL_EMAIL_NOTIFICATION,
+  UNPUBLISH_QUESTION_VERSION,
 } from '../graphql'
 import {
   useMetadata,
@@ -194,7 +195,6 @@ const QuestionPage = props => {
   } = useQuery(QUESTION, {
     variables: {
       id,
-      published: testMode, // get latest published version if in test mode
     },
   })
 
@@ -246,11 +246,16 @@ const QuestionPage = props => {
     },
   )
 
+  const [unpublishQuestionVersionMutation] = useMutation(
+    UNPUBLISH_QUESTION_VERSION,
+    {
+      onCompleted: () => history.push(`/question/${id}/`),
+    },
+  )
+
   const [createNewQuestionVersionMutation] = useMutation(CREATE_NEW_VERSION, {
     variables: { questionId: id },
-    onCompleted: () => {
-      history.push(`/question/${id}/`)
-    },
+    refetchQueries: [{ query: QUESTION, variables: { id } }],
   })
 
   const [cancelEmailNotification] = useMutation(CANCEL_EMAIL_NOTIFICATION)
@@ -436,6 +441,8 @@ const QuestionPage = props => {
           title = 'In production - Question editor page'
         } else if (version.underReview) {
           title = 'Under review - Question editor page'
+        } else if (version.unpublished) {
+          title = 'Unpublished - Question editor page'
         } else if (version.submitted) {
           title = 'Submitted - Question editor page'
         } else {
@@ -528,7 +535,11 @@ const QuestionPage = props => {
   const isAdmin = hasGlobalRole(currentUser, 'admin')
 
   const showAuthorChatTab =
-    version?.submitted && (isEditor || isHandlingEditor || isAuthor || isAdmin)
+    version?.submitted &&
+    !version?.published &&
+    !version?.unpublished &&
+    !question?.rejected &&
+    (isEditor || isHandlingEditor || isAuthor || isAdmin)
 
   const showProductionChatTab =
     version?.inProduction &&
@@ -730,6 +741,16 @@ const QuestionPage = props => {
     return publishQuestionVersionMutation(mutationData)
   }
 
+  const handleUnpublish = () => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version.id,
+      },
+    }
+
+    return unpublishQuestionVersionMutation(mutationData)
+  }
+
   const handleReject = () => {
     return rejectQuestionMutation()
   }
@@ -785,7 +806,7 @@ const QuestionPage = props => {
       },
     }
 
-    createNewQuestionVersionMutation(mutationData)
+    return createNewQuestionVersionMutation(mutationData)
   }
 
   const handleImageUpload = async file => {
@@ -929,7 +950,7 @@ const QuestionPage = props => {
   }
 
   // when no published version was found
-  if (testMode && question && question.versions.length === 0) {
+  if (testMode && question && question.versions[0].published === false) {
     return (
       <Result
         // replace link with a Button with to="/dashboard" after MR is merged
@@ -955,6 +976,7 @@ const QuestionPage = props => {
         canAssignAuthor={isAdmin && isAuthor}
         canCreateNewVersion={isAdmin || isEditor}
         canPublish={isEditor || isHandlingEditor || isAdmin}
+        canUnpublish={isAdmin || isEditor}
         chatLoading={chatLoading}
         complexItemSetOptions={complexItemSetOptions}
         complexSetEditLink={
@@ -977,7 +999,8 @@ const QuestionPage = props => {
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
         // unless the question has already been published
         isInProduction={
-          version?.inProduction || (isAdmin && isAuthor && !version?.published)
+          version?.inProduction ||
+          (isAdmin && isAuthor && !version?.published && !version?.unpublished)
         }
         isPublished={version?.published}
         // admins have editorial rights (publishing rights) on their own questions
@@ -985,6 +1008,7 @@ const QuestionPage = props => {
         isSubmitted={version?.submitted || (isAdmin && isAuthor)}
         // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
         isUnderReview={version?.underReview}
+        isUnpublished={version?.unpublished}
         isUserLoggedIn={!!currentUser}
         leadingContent={
           version?.leadingContent.length
@@ -1022,6 +1046,7 @@ const QuestionPage = props => {
         onSendAuthorChatMessage={onSendAuthorChatMessage}
         onSendProductionChatMessage={onSendProductionChatMessage}
         onUnassignHandlingEditor={handleUnassignHE}
+        onUnpublish={handleUnpublish}
         productionChatMessages={messagesApiToUi(
           productionChatMessages,
           currentUser?.id,
@@ -1034,7 +1059,10 @@ const QuestionPage = props => {
         searchHELoading={loadingSearchHE}
         selectedQuestionType={selectedQuestionType}
         showAssignHEButton={
-          version?.submitted && !version?.published && isEditor
+          version?.submitted &&
+          !version?.published &&
+          !version?.unpublished &&
+          isEditor
         }
         showAuthorChatTab={showAuthorChatTab}
         showNextQuestionLink={false}

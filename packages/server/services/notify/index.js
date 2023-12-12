@@ -49,6 +49,9 @@ class CokoNotifier {
     'hhmi.questionRejected': {
       notifyBy: ['email'],
     },
+    'hhmi.questionUnpublished': {
+      notifyBy: ['email'],
+    },
     'hhmi.chatMention': {
       notifyBy: ['email'],
     },
