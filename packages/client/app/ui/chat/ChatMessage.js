@@ -1,55 +1,58 @@
 import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
-import styled, { css } from 'styled-components'
-import DOMPurify from 'dompurify'
+import styled from 'styled-components'
 import { PaperClipOutlined } from '@ant-design/icons'
 
 import { grid, th } from '@coko/client'
 
-import { DateParser, VisuallyHiddenElement } from '../common'
+import { ChatBox, DateParser, VisuallyHiddenElement } from '../common'
+import { alpha } from '../_helpers/themeUtils'
 
-const pullRight = css`
-  margin-left: auto;
+// const pullRight = css`
+//   margin-left: auto;
+// `
+
+const MessageWrapper = styled.div`
+  display: flex;
+
+  // thinking in options for the message displayed on the opposite side of the Chatbox
+  flex-direction: ${props => (props.own ? 'row-reverse' : 'row')};
+  padding: 1rem;
+  transition: background-color 0.2s;
+  width: 100%;
+
+  &:focus,
+  &:active {
+    background-color: ${alpha('colorSelection', 0.2)};
+    border: none;
+    outline: none;
+  }
 `
 
-const Message = styled.div`
-  align-self: baseline;
-  background: ${props =>
+const Message = styled(ChatBox)`
+  --background: ${props =>
     props.own ? th('colorBackgroundHue') : th('colorPrimary')};
-  border-radius: ${props =>
-    props.own ? '15px 0 15px 15px' : '0 15px 15px 15px'};
-  box-shadow: rgb(50 50 93 / 25%) 0 2px 4px -2px,
-    rgb(0 0 0 / 30%) 0 1px 2px -3px;
-  color: ${props => (props.own ? th('colorTextDark') : th('colorTextReverse'))};
+  --triangle-x: ${props => (props.own ? '35px' : 'calc(100% - 35px)')};
+  --skew: ${props => (props.own ? '25deg' : '-25deg')};
+  --border: #0000;
+  align-self: baseline;
+  border-radius: 1rem;
+  color: ${props => (props.own ? '#555' : th('colorTextReverse'))};
   display: inline-block;
-  margin-block: 10px;
-  max-inline-size: 50%;
-  min-inline-size: 30%;
-  ${props =>
-    props.own &&
-    css`
-      ${pullRight}
-
-      span {
-        ${pullRight}
-      }
-    `};
-  padding: ${grid(2)};
-
-  &:focus {
-    outline: ${props => `${props.theme.lineWidth * 4}px`} solid
-      ${th('colorPrimaryBorder')};
-    outline-offset: 1px;
-  }
-
-  & .mention {
-    cursor: pointer;
-    font-weight: 900;
-  }
+  filter: drop-shadow(0 0 5px #0002);
+  max-width: 400px;
+  min-width: 300px;
+  padding: ${grid(3)};
+  user-select: none;
 
   > * + * {
     margin-block-start: ${grid(3)};
   }
+`
+
+const StyledMention = styled.span`
+  cursor: pointer;
+  font-weight: 900;
 `
 
 const Name = styled.div`
@@ -57,7 +60,9 @@ const Name = styled.div`
   font-weight: bold;
 `
 
-const Content = styled.div``
+const Content = styled.div`
+  padding: 0 0.5rem;
+`
 
 const Date = styled.div`
   display: flex;
@@ -95,6 +100,24 @@ const AttachmentItem = styled.a`
   }
 `
 
+const MessageContent = ({ content, participants }) => {
+  const parts = content.split(/(@\w+)/g)
+
+  const output = parts.map((part, index) => {
+    // checking if the mentioned user is a part of participants in the chat
+    return part.startsWith('@') && participants.includes(part.slice(1)) ? (
+      // eslint-disable-next-line react/no-array-index-key
+      <StyledMention data-testid="user-mention" key={`${part}-${index}`}>
+        {part}
+      </StyledMention>
+    ) : (
+      part
+    )
+  })
+
+  return <Content>{output}</Content>
+}
+
 const ChatMessage = forwardRef((props, ref) => {
   const {
     attachments,
@@ -107,60 +130,49 @@ const ChatMessage = forwardRef((props, ref) => {
     ...rest
   } = props
 
-  const parts = content.split(/(@\w+)/g)
-  let output = ''
-  parts.forEach(part => {
-    // checking if the mentioned user is a part of participants in the cat
-    if (part.startsWith('@') && participants.includes(part.slice(1))) {
-      output += `<span class="mention" data-testid="user-mention">${part}</span>`
-      return
-    }
-
-    output += part
-  })
-  const sanitizedHTML = DOMPurify.sanitize(output)
-
   return (
-    <Message
-      className={className}
-      data-testid={own ? 'author-message' : 'participant-message'}
-      own={own}
-      ref={ref}
-      tabIndex={0}
-      {...rest}
-    >
-      {!own && <Name>{user}</Name>}
-      <VisuallyHiddenElement as="p">
-        {own ? 'you said' : 'said'}
-      </VisuallyHiddenElement>
-
-      <Content>
-        <div
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: sanitizedHTML }}
-        />
-      </Content>
-      {attachments.length > 0 && (
-        <Attachments>
-          {attachments.map(attachment => (
-            <AttachmentItem
-              data-testid="message-attachment"
-              href={attachment.url}
-              key={attachment.name}
-              target="_blank"
-            >
-              <PaperClipOutlined />
-              {attachment.name}
-            </AttachmentItem>
-          ))}
-        </Attachments>
-      )}
-      <Date data-testid="time-indicator">
-        <DateParser timestamp={date}>
-          {(_, timeAgo) => <span>{timeAgo} ago</span>}
-        </DateParser>
-      </Date>
-    </Message>
+    <MessageWrapper own={own} tabIndex={0}>
+      <Message
+        className={className}
+        content={
+          <>
+            <MessageContent content={content} participants={participants} />
+            {attachments.length > 0 && (
+              <Attachments>
+                {attachments.map(attachment => (
+                  <AttachmentItem
+                    data-testid="message-attachment"
+                    href={attachment.url}
+                    key={attachment.name}
+                    target="_blank"
+                  >
+                    <PaperClipOutlined />
+                    {attachment.name}
+                  </AttachmentItem>
+                ))}
+              </Attachments>
+            )}
+            <Date data-testid="time-indicator">
+              <DateParser timestamp={date}>
+                {(_, timeAgo) => <span>{timeAgo} ago</span>}
+              </DateParser>
+            </Date>
+          </>
+        }
+        data-testid={own ? 'author-message' : 'participant-message'}
+        header={
+          <>
+            <Name>{!own ? user : 'You'} said:</Name>
+            <VisuallyHiddenElement as="p">
+              {own ? 'you said' : 'said'}
+            </VisuallyHiddenElement>
+          </>
+        }
+        own={own}
+        ref={ref}
+        {...rest}
+      />
+    </MessageWrapper>
   )
 })
 
@@ -177,6 +189,14 @@ ChatMessage.defaultProps = {
   attachments: [],
   own: false,
   user: null,
+  participants: [],
+}
+MessageContent.propTypes = {
+  content: PropTypes.string,
+  participants: PropTypes.arrayOf(PropTypes.string),
+}
+MessageContent.defaultProps = {
+  content: '',
   participants: [],
 }
 

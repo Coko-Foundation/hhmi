@@ -11,9 +11,18 @@ import { Button, Upload } from '../common'
 import { inputShadow } from '../common/_reusableStyles'
 
 const MainContainer = styled('div')`
+  background-color: #f5f5f5;
+  box-shadow: 0 0 12px #0002;
   display: flex;
   flex-direction: row;
+  padding: 0.5rem 1rem;
+  z-index: 3;
+`
+
+const InputWrapper = styled.span`
+  display: flex;
   position: relative;
+  width: 100%;
 `
 
 const StyledMentionsInput = styled(MentionsInput)`
@@ -23,7 +32,6 @@ const StyledMentionsInput = styled(MentionsInput)`
   position: relative;
 
   textarea {
-    border: 1px solid ${th('colorBorder')};
     max-height: 70px;
     ${inputShadow};
     overflow: auto;
@@ -152,32 +160,51 @@ const ChatInput = props => {
             if (entry.role === 'author') {
               return <span>{`${entry.display} (Author)`}</span>
             }
+      <InputWrapper>
+        <StyledMentionsInput
+          className="mentions-input"
+          forceSuggestionsAboveCursor
+          inputRef={inputRef}
+          onChange={handleTextChange}
+          onKeyDown={handleKeyDown}
+          value={inputValue}
+          {...rest}
+        >
+          <Mention
+            appendSpaceOnAdd
+            data={participants.filter(p => p.id !== currentUser.id)}
+            displayTransform={(_, display) => `@${display}`}
+            renderSuggestion={entry => {
+              if (entry.role === 'author') {
+                return <span>{`${entry.display} (Author)`}</span>
+              }
 
-            if (entry.role === 'handlingEditor') {
-              return <span>{`${entry.display} (HE)`}</span>
-            }
+              if (entry.role === 'handlingEditor') {
+                return <span>{`${entry.display} (HE)`}</span>
+              }
 
-            return <span>{entry.display}</span>
-          }}
-          trigger="@"
+              return <span>{entry.display}</span>
+            }}
+            trigger="@"
+          />
+        </StyledMentionsInput>
+        <StyledUpload
+          accept="image/*,.pdf,.docx,.odt"
+          aria-label="upload-attachments"
+          files={attachments}
+          multiple
+          onChange={handleAttachmentChange}
+          onRemove={handleRemoveAttachment}
         />
-      </StyledMentionsInput>
-      <StyledUpload
-        accept="image/*,.pdf,.docx,.odt"
-        aria-label="upload-attachments"
-        files={attachments}
-        multiple
-        onChange={handleAttachmentChange}
-        onRemove={handleRemoveAttachment}
-      />
-      <SendButton
-        $inactive={inputValue.length === 0 && attachments.length === 0}
-        data-testid="send-btn"
-        onClick={handleSend}
-        type="primary"
-      >
-        <SendOutlined />
-      </SendButton>
+        <SendButton
+          $inactive={inputValue.length === 0 && attachments.length === 0}
+          data-testid="send-btn"
+          onClick={handleSend}
+          type="primary"
+        >
+          <SendOutlined />
+        </SendButton>
+      </InputWrapper>
     </MainContainer>
   )
 }

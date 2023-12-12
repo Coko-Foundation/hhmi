@@ -8,12 +8,19 @@ import ChatMessage from './ChatMessage'
 import { Button, Empty, Spin, VisuallyHiddenElement } from '../common'
 
 const Wrapper = styled.div`
+  background: linear-gradient(60deg, #f2fdfd, #d0e1e1);
+  /* background-color: #061616; */
   display: flex;
   flex-direction: column-reverse;
   height: 100%;
   overflow: auto;
   overflow-anchor: none;
   overscroll-behavior: contain;
+  z-index: 1;
+
+  ::-webkit-scrollbar-track {
+    background-color: #fff5;
+  }
 
   * + * {
     margin-top: ${grid(1)};
@@ -23,7 +30,6 @@ const Wrapper = styled.div`
 const MessagesWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding-inline: 4px;
 `
 
 const StyledInfiniteScroll = styled(InfiniteScroll)`
@@ -40,9 +46,23 @@ const SpinnerWrapper = styled.div`
   order: -1;
 `
 
-const TopMessageWrapper = styled.p`
+const TopMessageWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: center;
   order: ${props => (props.infiniteScroll ? '-1' : '0')};
+  padding: 0.8rem 1.5rem;
+
   text-align: center;
+  width: 100%;
+
+  & > p {
+    background-color: #fff;
+    border-radius: 1rem;
+    box-shadow: 0 0 12px #0001;
+    margin: 0;
+    padding: 0.2rem 1rem;
+  }
 `
 
 const ChatMessageList = props => {
@@ -65,7 +85,7 @@ const ChatMessageList = props => {
         dataLength={messages.length}
         endMessage={
           <TopMessageWrapper infiniteScroll>
-            Start of the conversation
+            <p>Start of the conversation</p>
           </TopMessageWrapper>
         }
         hasMore={hasMore}
@@ -117,7 +137,7 @@ const ChatMessageList = props => {
           {hasMore ? (
             <Button onClick={onFetchMore}>Load older</Button>
           ) : (
-            'Start of the conversation'
+            <p>Start of the conversation</p>
           )}
         </TopMessageWrapper>
       </>
