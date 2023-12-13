@@ -4,19 +4,19 @@ steps:
     branches:
       - live
     env:
-      SERVER_URL: //www.assessmentbuilder-node.hhmi.byf1.dev
+      SERVER_URL: https://www.assessmentbuilder-node.hhmi.byf1.dev
 
   - label: Build App
     command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
     branches:
       - main
     env:
-      SERVER_URL: //stage.assessmentbuilder-node.hhmi.byf1.dev
+      SERVER_URL: https://stage.assessmentbuilder-node.hhmi.byf1.dev
 
   - label: Build App
     command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
     branches:
-      - "!live"
-      - "!main"
+      - '!live'
+      - '!main'
     env:
-      SERVER_URL: //dev.assessmentbuilder-node.hhmi.byf1.dev
+      SERVER_URL: https://dev.assessmentbuilder-node.hhmi.byf1.dev

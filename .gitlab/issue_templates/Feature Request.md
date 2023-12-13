@@ -29,5 +29,5 @@
 
 
 
-/label ~feature ~scope
+/label ~feature ~scope::backlog
 /assign @Natasha

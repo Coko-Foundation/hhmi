@@ -178,7 +178,65 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
     }
   }
 `
+export const GET_PRODUCTION_DASHBOARD = gql`
+  query GetInProductionDashboard(
+    $orderBy: String
+    $ascending: Boolean
+    $page: Int
+    $pageSize: Int
+    $searchQuery: String
+  ) {
+    getInProductionDashboard(
+      orderBy: $orderBy
+      ascending: $ascending
+      page: $page
+      pageSize: $pageSize
+      searchQuery: $searchQuery
+    ) {
+      result {
+        id
+        rejected
+        author {
+          displayName
+        }
+        versions(latestOnly: true, publishedOnly: false) {
+          id
+          content
 
+          submitted
+          underReview
+          inProduction
+          published
+          publicationDate
+
+          complexItemSetId
+          topics {
+            topic
+            subtopic
+          }
+
+          courses {
+            course
+            units {
+              # application
+              # courseTopic
+              # essentialKnowledge
+              learningObjective
+              # skill
+              understanding
+              # unit
+            }
+          }
+
+          cognitiveLevel
+          # affectiveLevel
+          # psychomotorLevel
+        }
+      }
+      totalCount
+    }
+  }
+`
 export const ASSING_HANDLING_EDITORS = gql`
   mutation assignHandlingEditors($questionIds: [ID!]!, $userIds: [ID!]!) {
     assignHandlingEditors(questionIds: $questionIds, userIds: $userIds) {
@@ -200,6 +258,25 @@ export const GET_QUESTION_HANDLING_EDITORS = gql`
     getQuestionsHandlingEditors(questionId: $questionId) {
       id
       displayName
+    }
+  }
+`
+
+export const GET_AUTHOR_CHAT_PARTICIPANTS = gql`
+  query GetAuthorChatParticipants($id: ID!) {
+    getAuthorChatParticipants(id: $id) {
+      id
+      display: displayName
+      role
+    }
+  }
+`
+export const GET_PRODUCTION_CHAT_PARTICIPANTS = gql`
+  query GetProductionChatParticipants($id: ID!) {
+    getProductionChatParticipants(id: $id) {
+      id
+      display: displayName
+      role
     }
   }
 `
@@ -278,7 +355,8 @@ export const QUESTION = gql`
         leadingContent
       }
 
-      chatThreadId
+      authorChatThreadId
+      productionChatThreadId
       heAssigned
     }
   }

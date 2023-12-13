@@ -109,13 +109,23 @@ Cypress.Commands.add(
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000)
 
-    cy.get('.ProseMirror').first().type('Question 1', { force: true })
+    cy.get('.multiple-choice  .ProseMirror')
+      .first()
+      .type('Question 1', { force: true })
   },
 )
 
 Cypress.Commands.add('logout', () => {
   cy.get('[data-testid="usermenu-btn"]').click()
-  cy.get('[data-testid="logout-btn"]').click()
+  cy.get('[data-testid="logout-btn"]').click({ force: true })
+})
+
+Cypress.Commands.add('createQuestionWidget', () => {
+  cy.get('[data-testid="questionType-select"]').scrollIntoView().click()
+  cy.contains('Multiple Answers').click({ force: true })
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(2000)
+  cy.get('.multiple-choice').should('exist')
 })
 
 Cypress.Commands.add('resetDB', disabled => {
@@ -248,7 +258,22 @@ Cypress.Commands.add(
         .its('stdout')
         .should('contains', ` question - ${questionId} added to set "${title}"`)
     } else {
-      cy.log(`addQuestionToComplexItemSet is command disabled`)
+      cy.log(`addQuestionToComplexItemSet command is disabled`)
     }
   },
 )
+
+Cypress.Commands.add('createChat', (disabled, questionId) => {
+  if (!disabled) {
+    cy.exec(
+      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js createChat ${questionId}`,
+    )
+      .its('stdout')
+      .should(
+        'contains',
+        `[seedQuestions]: chat thread created for question ${questionId}`,
+      )
+  } else {
+    cy.log('createChat command is disabled')
+  }
+})

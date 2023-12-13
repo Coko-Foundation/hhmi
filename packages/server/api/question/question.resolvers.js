@@ -8,8 +8,10 @@ const {
   getReviewerDashboard,
   getManagingEditorDashboard,
   getPublishedQuestionsIds,
+  getAuthorChatParticipants,
   assignAuthorship,
   getHandlingEditorDashboard,
+  getInProductionDashboard,
 
   createQuestion,
   updateQuestion,
@@ -27,11 +29,11 @@ const {
   assignHandlingEditors,
   unassignHandlingEditor,
   getQuestionsHandlingEditors,
-
   getChatThreadForQuestion,
 
   uploadFiles,
   getImageUrls,
+  getProductionChatParticipants,
 } = require('../../controllers/question.controllers')
 
 const questionResolver = async (_, { id, options }) => {
@@ -56,6 +58,10 @@ const getReviewerDashboardResolver = async (_, args, ctx) => {
 
 const getManagingEditorDashboardResolver = async (_, args, ctx) => {
   return getManagingEditorDashboard(ctx.user, args)
+}
+
+const getInProductionDashboardResolver = async (_, args, ctx) => {
+  return getInProductionDashboard(ctx.user, args)
 }
 
 const createQuestionResolver = async (_, { input }, ctx) => {
@@ -121,7 +127,10 @@ const versionsResolver = async (
   //   question.id,
   //   latestOnly,
   // )
-  return getQuestionVersions(question.id, { latestOnly, publishedOnly })
+  return getQuestionVersions(question.id, {
+    latestOnly,
+    publishedOnly,
+  })
 }
 
 const versionQuestionResolver = async version => {
@@ -176,13 +185,25 @@ const unassignHandlingEditorResolver = async (_, { questionId, userId }) => {
   return unassignHandlingEditor(questionId, userId)
 }
 
-const chatThreadResolver = async question => {
-  return getChatThreadForQuestion(question.id)
+const authorChatThreadResolver = async question => {
+  return getChatThreadForQuestion(question.id, 'authorChat')
+}
+
+const productionChatThreadResolver = async question => {
+  return getChatThreadForQuestion(question.id, 'productionChat')
 }
 
 const heAssignedResolver = async question => {
   const assignedHEs = await getQuestionsHandlingEditors(question.id)
   return assignedHEs.length > 0
+}
+
+const getAuthorChatParticipantsResolver = async (_, { id }) => {
+  return getAuthorChatParticipants(id)
+}
+
+const getProductionChatParticipantsResolver = async (_, { id }) => {
+  return getProductionChatParticipants(id)
 }
 
 module.exports = {
@@ -195,6 +216,9 @@ module.exports = {
     getPublishedQuestionsIds: getPublishedQuestionsIdsResolver,
     getHandlingEditorDashboard: getHandlingEditorDashboardResolver,
     getQuestionsHandlingEditors: getQuestionsHandlingEditorsResolver,
+    getAuthorChatParticipants: getAuthorChatParticipantsResolver,
+    getInProductionDashboard: getInProductionDashboardResolver,
+    getProductionChatParticipants: getProductionChatParticipantsResolver,
   },
   Mutation: {
     createQuestion: createQuestionResolver,
@@ -217,7 +241,8 @@ module.exports = {
   Question: {
     versions: versionsResolver,
     author: authorResolver,
-    chatThreadId: chatThreadResolver,
+    authorChatThreadId: authorChatThreadResolver,
+    productionChatThreadId: productionChatThreadResolver,
     heAssigned: heAssignedResolver,
   },
   QuestionVersion: {

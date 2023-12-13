@@ -3,12 +3,9 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { Wax, DefaultSchema } from 'wax-prosemirror-core'
 import {
-  AnnotationToolGroupService,
-  DisplayToolGroupService,
   InlineAnnotationsService,
   LinkService,
   ListsService,
-  ListToolGroupService,
 } from 'wax-prosemirror-services'
 
 const waxConfig = () => ({
@@ -27,12 +24,9 @@ const waxConfig = () => ({
   ],
 
   services: [
-    new AnnotationToolGroupService(),
-    new DisplayToolGroupService(),
     new InlineAnnotationsService(),
     new LinkService(),
     new ListsService(),
-    new ListToolGroupService(),
   ],
 })
 

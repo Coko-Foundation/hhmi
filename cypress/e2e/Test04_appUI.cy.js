@@ -225,10 +225,7 @@ describe('Search filter', () => {
 
     cy.get(listItemWrapper)
       .eq(1)
-      .contains(
-        ProseMirror,
-        'What substance from Bacillus thuringiensis was most likely inserted into rice plants',
-      )
+      .contains(ProseMirror, 'What substance from Bacillus')
       .click()
 
     cy.url().then(url => {

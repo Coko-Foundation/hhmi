@@ -37,6 +37,7 @@ export { default as VisuallyHiddenElement } from './VisuallyHiddenElement'
 export { default as Footer } from './Footer'
 export { default as Header } from './Header'
 export { default as Link } from './HhmiLink'
+export { default as Upload } from './Upload'
 
 export * from './Headings'
 export * from './Typography'

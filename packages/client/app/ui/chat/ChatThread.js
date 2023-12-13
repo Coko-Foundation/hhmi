@@ -25,6 +25,7 @@ const StyledChatInput = styled(ChatInput)`
 
 const ChatThread = props => {
   const {
+    participants,
     announcementText,
     hasMore,
     isActive,
@@ -87,11 +88,14 @@ const ChatThread = props => {
         infiniteScroll={infiniteScroll}
         messages={messages}
         onFetchMore={onFetchMore}
+        participants={participants}
         {...rest}
       />
       <StyledChatInput
+        aria-label="Write a message"
         onSend={onSendMessage}
-        placeholder="Write to author"
+        participants={participants}
+        placeholder="Write a message"
         type="text"
       />
       {announcementText && (
@@ -111,6 +115,13 @@ ChatThread.propTypes = {
   onSendMessage: PropTypes.func,
   hasMore: PropTypes.bool,
   infiniteScroll: PropTypes.bool,
+  participants: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      display: PropTypes.string,
+      role: PropTypes.string,
+    }),
+  ),
 }
 
 ChatThread.defaultProps = {
@@ -120,6 +131,7 @@ ChatThread.defaultProps = {
   onFetchMore: () => {},
   hasMore: false,
   onSendMessage: () => {},
+  participants: [],
   infiniteScroll: false,
 }
 
