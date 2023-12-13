@@ -77,13 +77,13 @@ const questionRejected = async context => {
     const authorIdentity = await Identity.findOne({ userId: author.id })
 
     const content = `
-    <p>Thank you for your submission to the HHMI BioInteractive Assessment Builder.</p>
     <p>  
-      An item you submitted has not been accepted by the Editorial Board. 
-      You may view the reasons why an item may not be accepted <a href="#">at this page</a>.
+    Thank you for your submission to the HHMI BioInteractive Assessment Builder. 
+    This item has not been accepted by the Editorial Board. 
+    You may view the reasons why an item may not be accepted <a href="https://docs.google.com/document/d/11ouizynaBlamTANf-crPdlKL91eXhDioHdiy6rL2ArA/edit">at this page</a>.
     </p>
     <p>
-       Click on <a href="${link}"> this link</a> to view the unaccepted item. 
+       Click on <a href="${link}">this link</a> to view the unaccepted item. 
        If you cannot see the link, copy and paste the following link into your browser.
       <br/>
       ${link}
@@ -97,8 +97,7 @@ const questionRejected = async context => {
     return {
       content,
       text,
-      subject:
-        'Item not accepted for inclusion in the HHMI BioInteractive Assessment Builder',
+      subject: 'HHMI BioInteractive Assessment Builder: Item not accepted',
       to: authorIdentity.email,
     }
   } catch (e) {

@@ -431,7 +431,21 @@ const rejectQuestion = async (questionId, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} rejectQuestion:`
   logger.info(`${CONTROLLER_MESSAGE} rejecting question with id ${questionId}`)
 
-  return modifyQuestion(questionId, { rejected: true }, { trx: options.trx })
+  try {
+    const question = await modifyQuestion(
+      questionId,
+      { rejected: true },
+      { trx: options.trx },
+    )
+
+    const notifier = new CokoNotifier()
+    notifier.notify('hhmi.questionRejected', { questionId })
+
+    return question
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
 }
 
 const moveQuestionVersionToReview = async (questionVersionId, options = {}) => {

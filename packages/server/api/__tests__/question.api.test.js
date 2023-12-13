@@ -6,6 +6,7 @@ const {
   QuestionVersion,
   Team,
   TeamMember,
+  Identity,
 } = require('../../models')
 
 const clearDb = require('../../models/__tests__/_clearDb')
@@ -805,6 +806,18 @@ describe('Question API authorization', () => {
       isActive: true,
     })
 
+    const author = await User.insert({
+      isActive: true,
+    })
+
+    await Identity.insert({
+      userId: author.id,
+      email: 'user@coko.foundation',
+      isSocial: false,
+      isVerified: true,
+      isDefault: true,
+    })
+
     const globalTeam = await Team.insert({
       role: 'editor',
       displayName: 'Managing Editor',
@@ -817,6 +830,19 @@ describe('Question API authorization', () => {
     })
 
     const question = await Question.insert({})
+
+    const team = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      global: false,
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await TeamMember.insert({
+      teamId: team.id,
+      userId: author.id,
+    })
 
     const testServer = await createGraphQLServer(user.id)
 
