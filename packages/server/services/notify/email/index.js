@@ -142,45 +142,6 @@ const questionUnpublished = async context => {
   }
 }
 
-const questionUnpublished = async context => {
-  try {
-    const { questionId } = context
-    const link = `${clientUrl}/question/${questionId}`
-
-    // notify author
-    const author = await Question.getAuthor(questionId)
-
-    const authorIdentity = await Identity.findOne({ userId: author.id })
-
-    const content = `
-    <p>  
-      An item that you authored and was previously published has been unpublished by the Editorial Board.
-    </p>
-    <p>
-       Click on <a href="${link}">this link</a> to view the unpublished item. 
-       If you cannot see the link, copy and paste the following link into your browser.
-      <br/>
-      ${link}
-    </p>
-  `
-
-    const text = `HHMI BioInteractive Assessment Builder: Your item has been unpublished.
-          \nCopy and paste the following link into your browser to view the unpublished item.
-          \n${link}`
-
-    return {
-      content,
-      text,
-      subject:
-        'An item you authored has been unpublished - HHMI BioInteractive Assessment Builder',
-      to: authorIdentity.email,
-    }
-  } catch (e) {
-    logger.error('Failed to create email for question rejected')
-    throw new Error(e)
-  }
-}
-
 const productionChatActivityDigest = async context => {
   const { questionId, userId } = context
 
