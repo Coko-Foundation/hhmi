@@ -273,6 +273,7 @@ class Question extends BaseModel {
         .leftJoin('users', 'users.id', 'team_members.user_id')
         .select(
           'questions.*',
+          'question_versions.published',
           'question_versions.publication_date',
           'question_versions.topics',
           'question_versions.content_text',
@@ -284,9 +285,9 @@ class Question extends BaseModel {
           'question_versions.complex_item_set_id',
         )
         .distinctOn('questions.id')
-        .where({
-          published: true,
-        })
+        // .where({
+        //   published: true,
+        // })
         .orderBy([
           'questions.id',
           { column: 'question_versions.created', order: 'desc' },
@@ -296,7 +297,12 @@ class Question extends BaseModel {
 
       // wrapped into a parent query so that the subsequent ordering is applied to unique question versions
       // and not between versions of the same question
-      const parentQuery = Question.query(options.trx).select('*').from(query)
+      const parentQuery = Question.query(options.trx)
+        .select('*')
+        .from(query)
+        .where({
+          published: true,
+        })
 
       if (params.filters || params.searchQuery) {
         this.applyFilters(params.filters, params.searchQuery, parentQuery)

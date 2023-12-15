@@ -174,6 +174,28 @@ const scanContentForQuestionType = content => {
     : null
 }
 
+const clearPublishedQuestionsCache = cache => {
+  const cachedPublishedQuestionsQueries = Object.keys(
+    cache.data.data.ROOT_QUERY,
+  )
+    .filter(key => key.startsWith('getPublishedQuestions'))
+    .reduce(
+      (cur, key) =>
+        Object.assign(cur, { [key]: cache.data.data.ROOT_QUERY[key] }),
+      {},
+    )
+
+  Object.keys(cachedPublishedQuestionsQueries).forEach(cachedField => {
+    cache.modify({
+      fields: {
+        [cachedField](_, { DELETE }) {
+          return DELETE
+        },
+      },
+    })
+  })
+}
+
 const QuestionPage = props => {
   const { testMode } = props
 
@@ -245,13 +267,17 @@ const QuestionPage = props => {
     PUBLISH_QUESTION_VERSION,
     {
       refetchQueries: [{ query: QUESTION, variables: { id, published: true } }],
+      update: clearPublishedQuestionsCache,
     },
   )
 
   const [unpublishQuestionVersionMutation] = useMutation(
     UNPUBLISH_QUESTION_VERSION,
     {
-      onCompleted: () => history.push(`/question/${id}/`),
+      onCompleted: () => {
+        history.push(`/question/${id}/`)
+      },
+      update: clearPublishedQuestionsCache,
     },
   )
 
