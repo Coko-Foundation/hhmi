@@ -352,6 +352,7 @@ const Question = props => {
     editorContent,
     leadingContent,
     complexSetEditLink,
+    complexItemSetId,
     editorView,
     facultyView,
     hasMoreMessages,
@@ -1358,6 +1359,7 @@ const Question = props => {
                       condition={false}
                       editor={
                         <QuestionEditor
+                          complexItemSetId={complexItemSetId}
                           complexSetEditLink={complexSetEditLink}
                           content={editorContent}
                           innerRef={waxRef}
@@ -1776,6 +1778,7 @@ Question.propTypes = {
   ),
   qtiZipLoading: PropTypes.bool,
   complexSetEditLink: PropTypes.string,
+  complexItemSetId: PropTypes.string,
   handlingEditors: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string,
@@ -1857,6 +1860,7 @@ Question.defaultProps = {
   productionChatParticipants: [],
   qtiZipLoading: false,
   complexSetEditLink: null,
+  complexItemSetId: null,
   handlingEditors: [],
   onSearchHE: () => {},
   searchHELoading: false,

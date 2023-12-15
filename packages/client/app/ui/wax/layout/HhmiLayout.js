@@ -158,7 +158,7 @@ const HhmiLayout = ({ editor }) => {
   const { options } = useContext(WaxContext)
   const { fullScreen } = options
 
-  const { leadingContent, complexSetEditLink } = useContext(
+  const { leadingContent, complexSetEditLink, complexItemSetId } = useContext(
     ComplexItemSetContext,
   )
 
@@ -188,7 +188,7 @@ const HhmiLayout = ({ editor }) => {
                   <WaxWrapper
                     config={config}
                     content={leadingContent}
-                    key={JSON.stringify(leadingContent)}
+                    key={complexItemSetId}
                     layout={LeadingContentLayout}
                     readOnly
                   />

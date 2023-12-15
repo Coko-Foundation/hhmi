@@ -66,6 +66,7 @@ const QuestionEditor = props => {
     withFeedback,
     leadingContent,
     complexSetEditLink,
+    complexItemSetId,
     selectedQuestionType,
   } = props
 
@@ -132,6 +133,7 @@ const QuestionEditor = props => {
     () => ({
       leadingContent,
       complexSetEditLink,
+      complexItemSetId,
     }),
     [leadingContent],
   )
@@ -197,6 +199,7 @@ QuestionEditor.propTypes = {
   withFeedback: PropTypes.bool,
   published: PropTypes.bool,
   complexSetEditLink: PropTypes.string,
+  complexItemSetId: PropTypes.string,
   selectedQuestionType: PropTypes.shape(),
 }
 
@@ -209,6 +212,7 @@ QuestionEditor.defaultProps = {
   published: false,
   withFeedback: true,
   complexSetEditLink: null,
+  complexItemSetId: null,
   selectedQuestionType: null,
 }
 

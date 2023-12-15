@@ -84,6 +84,8 @@ const metadataApiToUi = (values, testMode) => {
     ...values,
     courses: transformedCoursesData,
     belongsToComplexItemSet: !!values.complexItemSetId,
+    content: null,
+    leadingContent: null,
   }
 }
 
@@ -978,6 +980,7 @@ const QuestionPage = props => {
         canPublish={isEditor || isHandlingEditor || isAdmin}
         canUnpublish={isAdmin || isEditor}
         chatLoading={chatLoading}
+        complexItemSetId={version?.complexItemSetId}
         complexItemSetOptions={complexItemSetOptions}
         complexSetEditLink={
           version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
