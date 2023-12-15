@@ -17,7 +17,7 @@ const MessageWrapper = styled.div`
 
   // thinking in options for the message displayed on the opposite side of the Chatbox
   flex-direction: ${props => (props.own ? 'row-reverse' : 'row')};
-  padding: 1rem;
+  padding: 1rem 5%;
   transition: background-color 0.2s;
   width: 100%;
 
@@ -39,7 +39,7 @@ const Message = styled(ChatBox)`
   border-radius: 1rem;
   color: ${props => (props.own ? '#555' : th('colorTextReverse'))};
   display: inline-block;
-  filter: drop-shadow(0 0 5px #0002);
+  filter: drop-shadow(0 0 5px #0222);
   max-width: 400px;
   min-width: 300px;
   padding: ${grid(3)};

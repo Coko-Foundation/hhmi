@@ -14,6 +14,10 @@ const Wrapper = styled.div`
   height: 100%;
   overflow: hidden;
   padding: 0;
+
+  @media screen and (min-width: 800px) {
+    flex-direction: row;
+  }
 `
 
 const StyledChatMessageList = styled(ChatMessageList)`
@@ -26,12 +30,13 @@ const StyledChatInput = styled(ChatInput)`
 `
 
 const UserIcon = styled.img`
+  align-self: flex-end;
   aspect-ratio: 1 / 1;
   background-color: #e3e8e8;
   border-radius: 50%;
   margin: 0;
   outline: 1px solid ${alpha('colorPrimary', 0.3)};
-  width: 20px;
+  width: 30px;
 `
 
 const StyledChatHeader = styled.div`
@@ -43,21 +48,39 @@ const StyledChatHeader = styled.div`
   display: flex;
   gap: 0.5rem;
   justify-content: flex-start;
+  min-width: 200px;
   padding: 0.7rem 1rem;
-  z-index: 3;
+  z-index: 5;
 
   > :first-child {
-    /* color: #777; */
+    align-self: flex-start;
+    font-size: ${th('fontSizeBaseSmaller')};
+    font-weight: 700;
     margin: 0.3rem 0;
+    text-decoration: underline;
+    text-transform: uppercase;
   }
 
   > :nth-child(2) {
-    /* background-color: #fff;
-    border: 1px solid #0003; */
     display: flex;
     gap: 0.5rem;
-    /* padding: 0.5rem; */
     width: 100%;
+  }
+
+  @media screen and (min-width: 800px) {
+    background-color: ${th('colorSecondary')};
+    box-shadow: 0 0 12px #0001;
+    color: #dfeded;
+    flex-direction: column;
+    padding: 0.5rem;
+
+    > :first-child {
+      text-decoration: none;
+    }
+
+    > :nth-child(2) {
+      flex-direction: column;
+    }
   }
 `
 
@@ -66,10 +89,15 @@ const StyledParticipants = styled.span`
   border-right: 1px solid ${alpha('colorPrimary', 0.3)};
   cursor: pointer;
   display: flex;
-  font-size: ${th('fontSizeBaseSmaller')};
+  font-size: ${th('fontSizeBaseSmall')};
   gap: 0.5rem;
   padding: 0.3rem 1rem 0.3rem 0.5rem;
   user-select: none;
+
+  @media screen and (min-width: 800px) {
+    border: none;
+    border-bottom: 1px solid ${alpha('colorPrimaryBorder', 0.6)};
+  }
 `
 
 const ChatThread = props => {
@@ -133,7 +161,7 @@ const ChatThread = props => {
 
   return (
     <Wrapper onKeyDown={handleKeyDown} ref={wrapperRef}>
-      {showParticipants && (
+      {showParticipants && participants.length > 0 && (
         <StyledChatHeader>
           <p>Participants:</p>
           <span>
@@ -141,27 +169,32 @@ const ChatThread = props => {
               // eslint-disable-next-line react/no-array-index-key
               <StyledParticipants key={`${p.id}-${i}`}>
                 <UserIcon alt={p.display} src={userIcon} />
-                {p.display} <small>({p.role})</small>
+                <span style={{ display: 'flex', flexDirection: 'column' }}>
+                  <strong style={{ lineHeight: 1 }}>{p.display}</strong>{' '}
+                  <small>({p.role})</small>
+                </span>
               </StyledParticipants>
             ))}
           </span>
         </StyledChatHeader>
       )}
-      <StyledChatMessageList
-        hasMore={hasMore}
-        infiniteScroll={infiniteScroll}
-        messages={messages}
-        onFetchMore={onFetchMore}
-        participants={participants}
-        {...rest}
-      />
-      <StyledChatInput
-        aria-label="Write a message"
-        onSend={onSendMessage}
-        participants={participants}
-        placeholder="Write a message"
-        type="text"
-      />
+      <span style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        <StyledChatMessageList
+          hasMore={hasMore}
+          infiniteScroll={infiniteScroll}
+          messages={messages}
+          onFetchMore={onFetchMore}
+          participants={participants}
+          {...rest}
+        />
+        <StyledChatInput
+          aria-label="Write a message"
+          onSend={onSendMessage}
+          participants={participants}
+          placeholder="Write a message"
+          type="text"
+        />
+      </span>
       {announcementText && (
         <VisuallyHiddenElement aria-live="assertive" role="alert">
           {announcementText}
