@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { grid, th } from '@coko/client'
+import { grid, th, uuid } from '@coko/client'
 import ChatInput from './ChatInput'
 import userIcon from '../../../static/user.svg'
 import ChatMessageList from './ChatMessageList'
@@ -20,6 +20,14 @@ const Wrapper = styled.div`
   }
 `
 
+const ChatWrapper = styled.span`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: hidden;
+  width: 100%;
+`
+
 const StyledChatMessageList = styled(ChatMessageList)`
   flex-grow: 1;
   overflow-y: auto;
@@ -36,7 +44,11 @@ const UserIcon = styled.img`
   border-radius: 50%;
   margin: 0;
   outline: 1px solid ${alpha('colorPrimary', 0.3)};
-  width: 30px;
+  width: 20px;
+
+  /* @media screen and (min-width: 800px) {
+    width: 32px;
+  } */
 `
 
 const StyledChatHeader = styled.div`
@@ -48,22 +60,32 @@ const StyledChatHeader = styled.div`
   display: flex;
   gap: 0.5rem;
   justify-content: flex-start;
+  min-height: 40px;
   min-width: 200px;
-  padding: 0.7rem 1rem;
+  overflow: auto hidden;
+  padding: 0.5rem;
+  width: 100%;
   z-index: 5;
 
+  ::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: none;
+  }
+
   > :first-child {
-    align-self: flex-start;
+    align-self: center;
     font-size: ${th('fontSizeBaseSmaller')};
     font-weight: 700;
-    margin: 0.3rem 0;
-    text-decoration: underline;
+    margin: 0;
     text-transform: uppercase;
   }
 
   > :nth-child(2) {
     display: flex;
-    gap: 0.5rem;
+    flex-direction: row;
     width: 100%;
   }
 
@@ -72,10 +94,10 @@ const StyledChatHeader = styled.div`
     box-shadow: 0 0 12px #0001;
     color: #dfeded;
     flex-direction: column;
-    padding: 0.5rem;
+    width: 25%;
 
     > :first-child {
-      text-decoration: none;
+      align-self: flex-start;
     }
 
     > :nth-child(2) {
@@ -84,19 +106,29 @@ const StyledChatHeader = styled.div`
   }
 `
 
-const StyledParticipants = styled.span`
+const StyledParticipant = styled.span`
   align-items: center;
   border-right: 1px solid ${alpha('colorPrimary', 0.3)};
   cursor: pointer;
   display: flex;
   font-size: ${th('fontSizeBaseSmall')};
   gap: 0.5rem;
-  padding: 0.3rem 1rem 0.3rem 0.5rem;
+  padding: 0 0.5rem;
   user-select: none;
+
+  > span {
+    display: flex;
+    gap: 0.3rem;
+
+    > strong {
+      line-height: 1;
+    }
+  }
 
   @media screen and (min-width: 800px) {
     border: none;
     border-bottom: 1px solid ${alpha('colorPrimaryBorder', 0.6)};
+    padding: 0.7rem 1rem 0.7rem 0.5rem;
   }
 `
 
@@ -166,19 +198,17 @@ const ChatThread = props => {
           <p>Participants:</p>
           <span>
             {participants.map((p, i) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <StyledParticipants key={`${p.id}-${i}`}>
+              <StyledParticipant key={uuid()}>
                 <UserIcon alt={p.display} src={userIcon} />
-                <span style={{ display: 'flex', flexDirection: 'column' }}>
-                  <strong style={{ lineHeight: 1 }}>{p.display}</strong>{' '}
-                  <small>({p.role})</small>
+                <span>
+                  <strong>{p.display}</strong> <small>({p.role})</small>
                 </span>
-              </StyledParticipants>
+              </StyledParticipant>
             ))}
           </span>
         </StyledChatHeader>
       )}
-      <span style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+      <ChatWrapper>
         <StyledChatMessageList
           hasMore={hasMore}
           infiniteScroll={infiniteScroll}
@@ -194,7 +224,7 @@ const ChatThread = props => {
           placeholder="Write a message"
           type="text"
         />
-      </span>
+      </ChatWrapper>
       {announcementText && (
         <VisuallyHiddenElement aria-live="assertive" role="alert">
           {announcementText}

@@ -21,10 +21,6 @@ const Wrapper = styled.div`
   ::-webkit-scrollbar-track {
     background-color: #fff5;
   }
-
-  * + * {
-    margin-top: ${grid(1)};
-  }
 `
 
 const MessagesWrapper = styled.div`

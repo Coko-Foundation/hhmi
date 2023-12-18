@@ -1,5 +1,5 @@
 /* stylelint-disable string-quotes */
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { MentionsInput, Mention } from 'react-mentions'
@@ -42,8 +42,8 @@ const InputWrapper = styled.span`
 
 const StyledMentionsInput = styled(MentionsInput)`
   flex-grow: 1;
-  margin: ${grid(1)};
   max-height: 70px;
+  min-height: 30px;
   position: relative;
 
   textarea {
@@ -51,7 +51,7 @@ const StyledMentionsInput = styled(MentionsInput)`
     max-height: 70px;
     ${inputShadow};
     overflow: auto;
-    padding: ${grid(1)} ${grid(10)} ${grid(1)} ${grid(2)};
+    padding: ${grid(1.5)} ${grid(10)} ${grid(1)} ${grid(3)};
 
     &:focus {
       box-shadow: none;
@@ -128,6 +128,10 @@ const ChatInput = props => {
   const [attachments, setAttachments] = useState([])
 
   const inputRef = useRef(null)
+
+  useEffect(() => {
+    inputRef?.current && (inputRef.current.style.overflow = 'visible')
+  }, [inputRef])
 
   const handleTextChange = (_, newValue, __, mentioned) => {
     setInputValue(newValue)

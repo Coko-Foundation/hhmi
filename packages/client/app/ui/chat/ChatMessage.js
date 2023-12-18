@@ -1,10 +1,11 @@
 import React, { forwardRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { PaperClipOutlined } from '@ant-design/icons'
+import { CopyOutlined, PaperClipOutlined } from '@ant-design/icons'
 
-import { grid, th } from '@coko/client'
+import { grid, th, uuid } from '@coko/client'
 
+import { Tooltip } from 'antd'
 import { ChatBox, DateParser, VisuallyHiddenElement } from '../common'
 import { alpha } from '../_helpers/themeUtils'
 
@@ -15,9 +16,9 @@ import { alpha } from '../_helpers/themeUtils'
 const MessageWrapper = styled.div`
   display: flex;
 
-  // thinking in options for the message displayed on the opposite side of the Chatbox
+  // thinking in options for the message to be displayed on the opposite side of the Chatbox
   flex-direction: ${props => (props.own ? 'row-reverse' : 'row')};
-  padding: 1rem 5%;
+  padding: 1rem 1.5rem;
   transition: background-color 0.2s;
   width: 100%;
 
@@ -40,13 +41,19 @@ const Message = styled(ChatBox)`
   color: ${props => (props.own ? '#555' : th('colorTextReverse'))};
   display: inline-block;
   filter: drop-shadow(0 0 5px #0222);
-  max-width: 400px;
+  max-width: 80%;
   min-width: 300px;
   padding: ${grid(3)};
+  padding-top: 0.3rem;
   user-select: none;
 
-  > * + * {
-    margin-block-start: ${grid(3)};
+  @media screen and (max-width: 800px) {
+    max-width: 90%;
+  }
+
+  @media screen and (max-width: 400px) {
+    max-width: 90%;
+    min-width: 90%;
   }
 `
 
@@ -55,19 +62,29 @@ const StyledMention = styled.span`
   font-weight: 900;
 `
 
-const Name = styled.div`
-  font-size: ${th('fontSizeBaseSmall')};
+const Name = styled.span`
+  font-size: ${th('fontSizeBase')};
   font-weight: bold;
+  padding-top: 0.1rem;
 `
 
 const Content = styled.div`
+  border-bottom: 1px solid ${p => (!p.own ? '#fff2' : '#0001')};
+  border-top: 1px solid ${p => (!p.own ? '#fff2' : '#0001')};
   display: flex;
   flex-direction: column;
-  padding: 0 0.5rem;
+  padding: 0.5rem 1rem 0.5rem 0.5rem;
 
   > span {
     margin: 0;
   }
+`
+
+const StyledCopy = styled(CopyOutlined)``
+
+const MessageLine = styled.span`
+  overflow: hidden;
+  overflow-wrap: break-word;
 `
 
 const Date = styled.div`
@@ -75,6 +92,7 @@ const Date = styled.div`
   font-size: ${th('fontSizeBaseSmall')};
   font-style: italic;
   justify-content: flex-end;
+  padding-top: ${grid(1)};
 `
 
 const Attachments = styled.div`
@@ -106,25 +124,31 @@ const AttachmentItem = styled.a`
   }
 `
 
-const MessageContent = ({ content, participants }) => {
-  const lines = content.split('\n').map(line => {
+const MessageHeader = styled.span`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+`
+
+const MessageContent = ({ content, participants, ...rest }) => {
+  const lines = content.split('\n').map((line, i) => {
     const parts = line.split(/(@\w+)/g)
 
-    const output = parts.map((part, index) => {
-      return part.startsWith('@') && participants.includes(part.slice(1)) ? (
-        // eslint-disable-next-line react/no-array-index-key
-        <StyledMention data-testid="user-mention" key={`${part}-${index}`}>
+    const output = parts.map(part =>
+      part.startsWith('@') && participants.includes(part.slice(1)) ? (
+        <StyledMention data-testid="user-mention" key={uuid()}>
           {part}
         </StyledMention>
       ) : (
-        part
-      )
-    })
+        part || (i !== 0 && <br key={uuid()} />) /// if line is empty and is not the first, retrun a linebreak (means user intentionally made it)
+      ),
+    )
 
-    return <span>{output}</span>
+    return <MessageLine key={uuid()}>{output}</MessageLine>
   })
 
-  return <Content>{lines}</Content>
+  return <Content {...rest}>{lines}</Content>
 }
 
 const ChatMessage = forwardRef((props, ref) => {
@@ -139,13 +163,25 @@ const ChatMessage = forwardRef((props, ref) => {
     ...rest
   } = props
 
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(content)
+    } catch (err) {
+      throw ('Failed to copy', err)
+    }
+  }
+
   return (
     <MessageWrapper own={own} tabIndex={0}>
       <Message
         className={className}
         content={
           <>
-            <MessageContent content={content} participants={participants} />
+            <MessageContent
+              content={content}
+              own={own}
+              participants={participants}
+            />
             {attachments.length > 0 && (
               <Attachments>
                 {attachments.map(attachment => (
@@ -161,21 +197,26 @@ const ChatMessage = forwardRef((props, ref) => {
                 ))}
               </Attachments>
             )}
-            <Date data-testid="time-indicator">
-              <DateParser timestamp={date}>
-                {(_, timeAgo) => <span>{timeAgo} ago</span>}
-              </DateParser>
-            </Date>
           </>
         }
         data-testid={own ? 'author-message' : 'participant-message'}
+        footer={
+          <Date data-testid="time-indicator">
+            <DateParser timestamp={date}>
+              {(_, timeAgo) => <span>{timeAgo} ago</span>}
+            </DateParser>
+          </Date>
+        }
         header={
-          <>
-            <Name>{!own ? user : 'You'} said:</Name>
+          <MessageHeader>
+            <Name>{!own ? user : 'You'}:</Name>
             <VisuallyHiddenElement as="p">
-              {own ? 'you said' : 'said'}
+              {own ? 'you said' : `${user} said`}
             </VisuallyHiddenElement>
-          </>
+            <Tooltip title="Copy message content">
+              <StyledCopy onClick={handleCopy} />
+            </Tooltip>
+          </MessageHeader>
         }
         own={own}
         ref={ref}
