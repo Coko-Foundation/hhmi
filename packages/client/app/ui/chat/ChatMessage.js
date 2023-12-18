@@ -169,7 +169,7 @@ const ChatMessage = forwardRef((props, ref) => {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(content)
+      await navigator.clipboard.writeText(content.split('<br />').join('\n')) // to show copy the messages that were sent before this change
     } catch (err) {
       throw ('Failed to copy', err)
     }
