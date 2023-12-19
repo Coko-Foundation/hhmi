@@ -338,7 +338,7 @@ const Authenticated = ({ children }) => {
 }
 
 const routes = (
-  <Authenticate currentUserQuery={CURRENT_USER} loadingComponent={<Loader />}>
+  <Authenticate currentUserQuery={CURRENT_USER} loadingComponent={Loader}>
     <Wrapper>
       <GlobalStyles />
       <NotificationsProvider>
