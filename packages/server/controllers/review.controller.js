@@ -117,19 +117,12 @@ const submitReview = async (
 }
 
 const inviteMaxReviewers = async (questionVersion, options = {}) => {
-  const { amountOfReviewers: MAX_REVIEWERS, id, reviewerPool } = questionVersion
+  const { amountOfReviewers: MAX_REVIEWERS, reviewerPool } = questionVersion
 
   try {
     return useTransaction(async trx => {
-      const reviewerTeam = await Team.findOne({
-        objectId: id,
-        role: 'reviewer',
-      })
-
       const reviewerTeamMembers = await Promise.all(
-        reviewerPool.map(reviewerId =>
-          TeamMember.findOne({ teamId: reviewerTeam.id, userId: reviewerId }),
-        ),
+        reviewerPool.map(teamMemberId => TeamMember.findById(teamMemberId)),
       )
 
       const invitedAlready = reviewerTeamMembers.filter(member =>

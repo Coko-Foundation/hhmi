@@ -580,15 +580,32 @@ describe('Question Controller', () => {
 
     questionVersion = await updateReviewerPool(questionVersion.id, ids)
 
+    const team = await Team.findTeamByRoleAndObject(
+      'reviewer',
+      questionVersion.id,
+    )
+
+    const teamMember1 = await TeamMember.findOne({
+      teamId: team.id,
+      userId: user1.id,
+    })
+
+    const teamMember2 = await TeamMember.findOne({
+      teamId: team.id,
+      userId: user2.id,
+    })
+
+    const teamMemberIds = [teamMember1.id, teamMember2.id]
+
     expect(questionVersion.reviewerPool).toHaveLength(2)
-    questionVersion.reviewerPool.forEach(userId =>
-      expect(ids).toContain(userId),
+    questionVersion.reviewerPool.forEach(teamMemberId =>
+      expect(teamMemberIds).toContain(teamMemberId),
     )
 
     questionVersion = await updateReviewerPool(questionVersion.id, [user2.id])
 
     expect(questionVersion.reviewerPool).toHaveLength(1)
-    expect(questionVersion.reviewerPool[0]).toBe(user2.id)
+    expect(questionVersion.reviewerPool[0]).toBe(teamMember2.id)
   })
 
   test('changeAmountOfReviewers updates number of reviewers', async () => {

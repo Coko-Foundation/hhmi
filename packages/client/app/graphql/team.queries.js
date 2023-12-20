@@ -163,6 +163,22 @@ const REVOKE_REVIEWER_INVITATION = gql`
   }
 `
 
+const SEARCH_FOR_REVIEWERS = gql`
+  query SearchForReviewers($searchTerm: String!, $questionVersionId: ID!) {
+    searchForReviewers(
+      searchTerm: $searchTerm
+      questionVersionId: $questionVersionId
+    ) {
+      id
+      displayName
+      email
+      topicsReviewing
+      receivedTraining
+      receivedInclusiveLanguageTraining
+    }
+  }
+`
+
 export {
   TEAM,
   GLOBAL_TEAMS,
@@ -174,4 +190,5 @@ export {
   ACCEPT_OR_REJECT_REVIEW_INVITATION,
   INVITE_REVIEWER,
   REVOKE_REVIEWER_INVITATION,
+  SEARCH_FOR_REVIEWERS,
 }

@@ -441,6 +441,19 @@ export const QUESTION = gql`
             submitted
           }
         }
+        reviewerPool {
+          id
+          status
+          reviewSubmitted
+          user {
+            id
+            displayName
+            email
+            topicsReviewing
+            receivedTraining
+            receivedInclusiveLanguageTraining
+          }
+        }
       }
 
       authorChatThreadId

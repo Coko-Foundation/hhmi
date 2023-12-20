@@ -50,6 +50,7 @@ import {
   INVITE_REVIEWER,
   UPDATE_REVIEWER_POOL,
   REVOKE_REVIEWER_INVITATION,
+  SEARCH_FOR_REVIEWERS,
 } from '../graphql'
 import {
   useMetadata,
@@ -57,9 +58,11 @@ import {
   hasGlobalRole,
   questionTypes,
   REVIEWER_STATUSES,
+  flattenReviewerPool,
 } from '../utilities'
 
 const AUTOSAVE_DELAY = 500
+const REVIEWER_SEARCH_DELAY = 500
 
 // #region transformations
 const metadataApiToUi = (values, testMode) => {
@@ -648,6 +651,8 @@ const QuestionPage = props => {
   const [revokeReviewerInvitation] = useMutation(REVOKE_REVIEWER_INVITATION, {
     refetchQueries: refetchQuestionVariables,
   })
+
+  const [searchForReviewers] = useMutation(SEARCH_FOR_REVIEWERS)
   // #endregion hooks
 
   // #region user roles
@@ -685,7 +690,7 @@ const QuestionPage = props => {
     review => review.reviewerId === id && review.status.submitted,
   )
 
-  const reviewerPool = version?.reviewerPool || []
+  const reviewerPool = flattenReviewerPool(version?.reviewerPool || [])
   // #endregion user roles
 
   // #region handlers
@@ -1164,21 +1169,29 @@ const QuestionPage = props => {
     return updateReviewerPool(mutationData)
   }
 
+  const debouncedReviewerSearch = debounce(
+    (searchTerm, questionVersionId, resolve) => {
+      const mutationData = {
+        variables: {
+          searchTerm,
+          questionVersionId,
+        },
+      }
+
+      searchForReviewers(mutationData).then(results => resolve(results))
+    },
+    REVIEWER_SEARCH_DELAY,
+  )
+
   const handleReviewerSearch = async searchTerm => {
-    // TODO:
-    return Promise.reject()
-    // if (!searchTerm) return Promise.resolve([])
+    if (!searchTerm) {
+      debouncedReviewerSearch.cancel()
+      return Promise.resolve([])
+    }
 
-    // const mutationData = {
-    //   variables: {
-    //     searchTerm,
-    //     questionVersionId: version?.id,
-    //   },
-    // }
-
-    // debounce
-
-    // return searchForReviewers(mutationData)
+    return new Promise(resolve => {
+      debouncedReviewerSearch(searchTerm, version?.id, resolve)
+    })
   }
 
   const handleReviewerTableChange = async tableData => {

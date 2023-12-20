@@ -314,6 +314,13 @@ const searchForReviewers = async (searchTerm, questionVersionId) => {
         { trx },
       )
 
+      const teamMembers = await TeamMember.findByIds(
+        questionVersion.reviewerPool,
+        { trx },
+      )
+
+      const userIds = teamMembers.map(t => t.userId)
+
       const search = `%${searchTerm}%`
 
       const searchQuery = User.query(trx)
@@ -345,7 +352,7 @@ const searchForReviewers = async (searchTerm, questionVersionId) => {
           builder
             .select('users.id')
             .from('users')
-            .whereIn('users.id', questionVersion.reviewerPool)
+            .whereIn('users.id', userIds)
             .pluck('id'),
         )
 

@@ -1518,6 +1518,26 @@ const callOn = (key = '', options = {}, fallback = () => null) => {
     : () => null
 }
 
+const flattenReviewerPool = reviewerPool => {
+  const flatPool = reviewerPool.map(r => ({
+    id: r.user.id,
+    displayName: r.user.displayName,
+    email: r.user.email,
+    invited: r.status === REVIEWER_STATUSES.invited,
+    invitationRevoked: r.status === REVIEWER_STATUSES.revoked,
+    acceptedInvitation: r.status === REVIEWER_STATUSES.accepted,
+    rejectedInvitation: r.status === REVIEWER_STATUSES.rejected,
+    reviewSubmitted: r.reviewSubmitted,
+    topics: r.user.topicsReviewing.map(
+      topic => profileOptions.topics.find(t => t.value === topic).label,
+    ),
+    assessmentTraining: r.user.receivedTraining,
+    languageTraining: r.user.receivedInclusiveLanguageTraining,
+  }))
+
+  return flatPool
+}
+
 export {
   extractDocumentText,
   extractTopicsAndSubtopics,
@@ -1546,4 +1566,5 @@ export {
   safeIndex,
   callOn,
   REVIEWER_STATUSES,
+  flattenReviewerPool,
 }
