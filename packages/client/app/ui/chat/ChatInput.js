@@ -177,23 +177,6 @@ const ChatInput = props => {
 
   return (
     <MainContainer>
-      <StyledMentionsInput
-        className="mentions-input"
-        forceSuggestionsAboveCursor
-        inputRef={inputRef}
-        onChange={handleTextChange}
-        onKeyDown={handleKeyDown}
-        value={inputValue}
-        {...rest}
-      >
-        <Mention
-          appendSpaceOnAdd
-          data={participants.filter(p => p.id !== currentUser.id)}
-          displayTransform={(_, display) => `@${display}`}
-          renderSuggestion={entry => {
-            if (entry.role === 'author') {
-              return <span>{`${entry.display} (Author)`}</span>
-            }
       <InputWrapper>
         <StyledMentionsInput
           className="mentions-input"
