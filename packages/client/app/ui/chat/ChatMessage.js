@@ -9,15 +9,12 @@ import { Tooltip } from 'antd'
 import { ChatBox, DateParser, VisuallyHiddenElement } from '../common'
 import { alpha } from '../_helpers/themeUtils'
 
-// const pullRight = css`
-//   margin-left: auto;
-// `
-
 const MessageWrapper = styled.div`
   display: flex;
 
   // thinking in options for the message to be displayed on the opposite side of the Chatbox
   flex-direction: ${props => (props.own ? 'row-reverse' : 'row')};
+  justify-content: space-between;
   padding: 1rem 1.5rem;
   transition: background-color 0.2s;
   width: 100%;
@@ -38,6 +35,7 @@ const Message = styled(ChatBox)`
   --border: #0000;
   align-self: baseline;
   border-radius: 1rem;
+  box-shadow: inset 0 0 12px ${p => (!p.own ? '#0884' : '#ddd4')};
   color: ${props => (props.own ? '#555' : th('colorTextReverse'))};
   display: inline-block;
   filter: drop-shadow(0 0 5px #0222);

@@ -305,6 +305,7 @@ describe('ChatThreads', () => {
       cy.reload()
 
       cy.get('[placeholder="Write a message"]').type('@')
+      cy.contains('[role="listbox"]', user2.username)
       cy.contains('[role="listbox"]', handlingEditor1.username)
       cy.contains('[role="listbox"]', productionMember1.username)
       cy.contains('[role="listbox"]', productionMember2.username)

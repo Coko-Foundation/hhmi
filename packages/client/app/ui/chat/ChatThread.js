@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { grid, th, uuid } from '@coko/client'
+import { grid, th, useCurrentUser, uuid } from '@coko/client'
 import ChatInput from './ChatInput'
 import userIcon from '../../../static/user.svg'
 import ChatMessageList from './ChatMessageList'
@@ -58,7 +58,6 @@ const StyledChatHeader = styled.div`
   box-shadow: 0 0 12px #0003;
   color: ${th('colorPrimary')};
   display: flex;
-  gap: 0.5rem;
   justify-content: flex-start;
   min-height: 40px;
   min-width: 200px;
@@ -106,6 +105,34 @@ const StyledChatHeader = styled.div`
   }
 `
 
+const ParticipantsTitle = styled.span`
+  align-items: center;
+  background-color: #aaa2;
+  display: flex;
+  gap: 1rem;
+  height: 30px;
+  justify-content: space-between;
+  padding: 0 1rem;
+  width: fit-content;
+
+  > :nth-child(1) {
+    /* background-color: #033; */
+    font-size: 14px;
+    text-transform: capitalize;
+  }
+
+  > :nth-child(2) {
+    /* background-color: #000; */
+    font-size: 16px;
+  }
+
+  @media screen and (min-width: 800px) {
+    background-color: #0002;
+    gap: 0.5rem;
+    width: 100%;
+  }
+`
+
 const StyledParticipant = styled.span`
   align-items: center;
   border-right: 1px solid ${alpha('colorPrimary', 0.3)};
@@ -113,7 +140,7 @@ const StyledParticipant = styled.span`
   display: flex;
   font-size: ${th('fontSizeBaseSmall')};
   gap: 0.5rem;
-  padding: 0 0.5rem;
+  padding: 0 1rem;
   user-select: none;
 
   > span {
@@ -148,6 +175,7 @@ const ChatThread = props => {
 
   const wrapperRef = useRef()
   const [focusableElements, setFocusableElements] = useState([])
+  const { currentUser } = useCurrentUser()
 
   const moveTo = direction => {
     const currentIndex = focusableElements.indexOf(document.activeElement)
@@ -195,13 +223,16 @@ const ChatThread = props => {
     <Wrapper onKeyDown={handleKeyDown} ref={wrapperRef}>
       {showParticipants && participants.length > 0 && (
         <StyledChatHeader>
-          <p>Participants:</p>
+          <ParticipantsTitle>
+            <span>Participants: </span> <span>{participants.length || ''}</span>
+          </ParticipantsTitle>
           <span>
             {participants.map((p, i) => (
               <StyledParticipant key={uuid()}>
                 <UserIcon alt={p.display} src={userIcon} />
                 <span>
-                  <strong>{p.display}</strong> <small>({p.role})</small>
+                  <strong>{currentUser.id === p.id ? 'You' : p.display}</strong>{' '}
+                  <small>({p.role})</small>
                 </span>
               </StyledParticipant>
             ))}

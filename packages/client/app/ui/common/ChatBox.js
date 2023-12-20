@@ -9,7 +9,7 @@ const StyledChatBox = styled.span`
   --triangle-x: ${p => `${p.$tx ?? '20'}px`};
   --triangle-height: ${p => `${p.$th ?? '10'}px`};
   --triangle-width: ${p => `${p.$tw ?? '8'}px`};
-  --skew: ${p => `${p.$skew ?? '25'}deg`};
+  --skew: ${p => `${p.$skew ?? '25deg'}`};
 
   background-color: var(--background);
   border: var(--border-width) solid var(--border);
@@ -33,8 +33,8 @@ const StyledChatBox = styled.span`
     content: '';
     height: 0;
     position: absolute;
-    right: calc(var(--triangle-x) - (var(--border-width)));
-    transform: skewX(var(--skew));
+    right: calc(var(--triangle-x) - (var(--border-width)) + 1px);
+    transform: skewX(calc(var(--skew)));
     width: 0;
   }
 
