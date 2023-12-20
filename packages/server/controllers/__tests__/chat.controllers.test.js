@@ -1,5 +1,6 @@
-const { uuid } = require('@coko/server')
+const { uuid, pubsubManager } = require('@coko/server')
 const { ChatThread, ChatMessage } = require('@coko/server/src/models')
+const clearDb = require('../../models/__tests__/_clearDb')
 
 const {
   createChatThread,
@@ -11,9 +12,18 @@ const {
 
 const { User } = require('../../models/index')
 
+const { destroy } = pubsubManager
+
 const content = 'Duis accumsan ultrices nulla. Vivamus eu ante ullamcorper'
 
 describe('Chat controller', () => {
+  beforeEach(() => clearDb())
+
+  afterAll(async () => {
+    await clearDb()
+    const knex = ChatThread.knex()
+    knex.destroy()
+  })
   it('createChatThread creates chat thread with given relatedObjectId and chatType', async () => {
     const id = uuid()
 
@@ -42,6 +52,9 @@ describe('Chat controller', () => {
 
     // cancel email notification for this test
     cancelEmailNotification(participant1, chatThread.id)
+
+    const destroyPromise = destroy()
+    await destroyPromise
 
     expect(message.chatThreadId).toBe(chatThread.id)
     expect(message.content).toBe(content)

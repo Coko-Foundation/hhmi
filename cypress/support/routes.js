@@ -9,4 +9,6 @@ export const requestPasswordReset = '/request-password-reset'
 export const login = '/login'
 export const signup = '/signup'
 export const sets = '/sets'
+export const notifications = '/notifications'
+
 export const graphqlEndpoint = 'http://localhost:3000/graphql'

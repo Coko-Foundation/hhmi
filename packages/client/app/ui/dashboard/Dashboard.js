@@ -27,7 +27,7 @@ const StyledTabs = styled(Tabs)`
   height: 100%;
 
   .ant-tabs-content-holder {
-    border-top: 1px solid ${th('colorBorder')};
+    /* border-top: 1px solid ${th('colorBorder')}; */
 
     .ant-tabs-content {
       height: 100%;

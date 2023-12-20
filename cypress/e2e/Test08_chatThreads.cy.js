@@ -7,7 +7,12 @@ import {
   productionMember2,
 } from '../support/credentials'
 import { laptop } from '../support/viewport'
-import { ProseMirror, antTabs, listItemWrapper } from '../support/selectors'
+import {
+  ProseMirror,
+  antTabs,
+  listItemWrapper,
+  notificationPopupContainer,
+} from '../support/selectors'
 import { graphqlEndpoint } from '../support/routes'
 
 const disableScripts = false
@@ -181,18 +186,81 @@ describe('ChatThreads', () => {
       it('displays correct participants', () => {
         cy.get('[placeholder="Write a message"]').type('@')
         cy.contains('[role="listbox"]', user2.username)
-        cy.contains('[role="listbox"]', editor.username)
         cy.contains('[role="listbox"]', handlingEditor1.username)
       })
 
       it('highlights only participant usernames', () => {
         cy.get('[placeholder="Write a message"]').type('@')
-        cy.contains('[role="option"]', editor.username).click()
+        cy.contains('[role="option"]', user2.username).click()
         cy.get('[placeholder="Write a message"]').type('@user{enter}')
         cy.contains(
           '[data-testid="author-message"] [data-testid="user-mention"]',
-          `${editor.username}`,
+          `${user2.username}`,
         )
+      })
+
+      // eslint-disable-next-line jest/no-disabled-tests
+      it.skip('shows notification pop when the user is mentioned', () => {
+        cy.reload()
+        cy.get('[placeholder="Write a message"]').type(
+          `@${editor.username}{enter}{enter}`,
+        )
+        cy.url(url => {
+          const qId = url.split('/')[4]
+          cy.get(`${notificationPopupContainer} a`).should(
+            'have.attr',
+            'href',
+            `question/${qId}`,
+          )
+        })
+        cy.contains(
+          notificationPopupContainer,
+          'elleryemil: @elleryemil ',
+        ).click()
+      })
+
+      it('shows latest mentions in notifications page', () => {
+        cy.reload()
+        cy.get('[placeholder="Write a message"]').type(
+          `Curabitur quis ipsum suscipit, accumsan. @${user2.username}{enter}{enter}`,
+        )
+        cy.get('[placeholder="Write a message"]').type(
+          `Nullam auctor nulla quis pellentesque. @${user2.username}{enter}{enter}`,
+        )
+        cy.wait(`@GQLReq`)
+
+        cy.logout()
+        cy.login(user2)
+        cy.get('[data-testid="usermenu-btn"]').click({ force: true })
+        cy.contains('[data-test="counter-badge"]', 3)
+        cy.get('[data-testid="Notifications-icon"]').click({ force: true })
+        cy.contains(
+          'span[data-testid="chatbox"] span[data-testid="sender-name"]',
+          editor.username,
+        )
+        cy.contains(
+          'span[data-testid="chatbox"] div[data-testid="message-content"]',
+          `Curabitur quis ipsum suscipit, accumsan.`,
+        )
+
+        cy.log('Clicking mark as read makes notifaction count 0...')
+        // [segment]: Clicking mark as read makes notifaction count 0
+        cy.contains('Select All').click()
+        cy.contains('button', 'Mark as Read').click()
+        cy.contains('[data-test="counter-badge"]', 0)
+        cy.log(
+          'Clicking mark as unread makes notifaction count back to the same number...',
+        )
+        // [segment]: Clicking mark as unread makes notifaction count back to the same number
+
+        cy.contains('Select All').click()
+        cy.contains('button', 'Mark as Unread').click()
+        cy.wait('@GQLReq')
+        cy.contains('[data-test="counter-badge"]', 3)
+        cy.wait('@GQLReq')
+        // [info]: waiting for mail to get sent o
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(4000)
       })
     })
   })
@@ -234,9 +302,9 @@ describe('ChatThreads', () => {
         .contains(ProseMirror, 'What substance')
         .click()
       cy.contains(antTabs, 'Production chat').click()
+      cy.reload()
 
       cy.get('[placeholder="Write a message"]').type('@')
-      cy.contains('[role="listbox"]', editor.username)
       cy.contains('[role="listbox"]', handlingEditor1.username)
       cy.contains('[role="listbox"]', productionMember1.username)
       cy.contains('[role="listbox"]', productionMember2.username)

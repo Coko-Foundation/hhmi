@@ -26,17 +26,13 @@ const sendEmail = data => {
 
 const chatMention = async context => {
   try {
-    const { mention, userId, chatThreadId } = context
+    const { mention, newMessage: { userId, chatThreadId } = {} } = context
 
     const mentionedUserIdentity = await Identity.findOne({ userId: mention })
     const sender = await User.findById(userId)
     const senderDisplayName = await User.getDisplayName(sender)
     const chatThread = await ChatThread.findById(chatThreadId)
     const link = `${clientUrl}/question/${chatThread?.relatedObjectId}#${chatThread?.chatType}`
-
-    // console.log(mentionedUserIdentity)
-    // console.log(sender)
-    // console.log(chatThread.relatedObjectId)
 
     const content = `
         <p>User ${senderDisplayName} mentioned you in a conversation.</p>

@@ -8,6 +8,7 @@ const User = require('./user/user.model')
 const List = require('./list/list.model')
 const ListMember = require('./listMember/listMember.model')
 const ComplexItemSet = require('./complexItemSet/complexItemSet.model')
+const Notification = require('./notification/notification.model')
 
 module.exports = {
   Question,
@@ -19,4 +20,5 @@ module.exports = {
   List,
   ListMember,
   ComplexItemSet,
+  Notification,
 }

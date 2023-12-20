@@ -28,7 +28,7 @@ const StyledHeading = styled.div`
 `
 
 const StyledList = styled(List)`
-  padding-block-start: ${grid(5)};
+  /* padding-block-start: ${grid(5)}; */
 
   ul.ant-list-items > * + * {
     border-top: 1px solid ${th('colorBorder')};

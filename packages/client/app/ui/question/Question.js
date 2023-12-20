@@ -80,7 +80,7 @@ const Wrapper = styled.div`
 
   @media (min-width: ${th('mediaQueries.medium')}) {
     .ant-tabs-content-holder {
-      border-top: 1px solid ${th('colorBorder')};
+      /* border-top: 1px solid ${th('colorBorder')}; */
     }
   }
 `
@@ -142,6 +142,7 @@ const StyledAssignHEButton = styled(AssignHEButton)`
 const RightAreaWrapper = styled.div`
   align-items: center;
   display: flex;
+  text-transform: initial;
 `
 
 const StyledCheckbox = styled(Checkbox)`
@@ -1338,6 +1339,7 @@ const Question = props => {
       <Wrapper>
         <Spin renderBackground={false} spinning={loading}>
           <StyledTabs
+            $activebg="#fff"
             activeKey={activeKey}
             items={[
               {

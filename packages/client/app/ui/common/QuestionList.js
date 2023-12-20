@@ -27,7 +27,7 @@ RenderItem.propTypes = {
 }
 
 const StyledList = styled(List)`
-  padding-top: ${grid(4)};
+  /* padding-top: ${grid(4)}; */
 
   .ant-list {
     box-shadow: inset 0 0 4px ${th('colorBorder')};

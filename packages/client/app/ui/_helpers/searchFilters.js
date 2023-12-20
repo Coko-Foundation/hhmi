@@ -71,3 +71,18 @@ export const statusFilters = [
   //   ],
   // },
 ]
+
+export const notificationMessageFilters = [
+  {
+    key: { label: 'Status', value: 'status' },
+    values: [
+      { label: 'Read', value: true, badgeBg: theme.colorSuccessAlt },
+      { label: 'Unread', value: false, badgeBg: theme.colorErrorAlt },
+      { label: 'All', value: null, badgeBg: theme.colorPrimary },
+    ],
+  },
+  {
+    key: { label: 'From', value: 'messageAuthor' },
+    values: [{ label: '%', value: '%' }],
+  },
+]

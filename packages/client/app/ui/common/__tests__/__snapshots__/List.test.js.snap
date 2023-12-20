@@ -2,66 +2,71 @@
 
 exports[`list matches snapshot 1`] = `
 <div
-  className="sc-dKfzgJ hcQWTi"
+  className="sc-bALXmG glJwaP"
 >
   <div
-    className="ant-list ant-list-split sc-lnAgIa vPndH css-dev-only-do-not-override-12jzuas"
+    className="sc-bZPPFW VuGkF"
+    id="list-content-wrapper"
   >
     <div
-      className="ant-spin-nested-loading css-dev-only-do-not-override-12jzuas"
+      className="ant-list ant-list-split sc-ilEZps gsgGrK css-dev-only-do-not-override-12jzuas"
     >
       <div
-        className="ant-spin-container"
+        className="ant-spin-nested-loading css-dev-only-do-not-override-12jzuas"
       >
-        <ul
-          className="ant-list-items"
+        <div
+          className="ant-spin-container"
         >
-          <li
-            className="sc-cyRfQX jwoNut"
-            data-testid="list-item-wrapper"
+          <ul
+            className="ant-list-items"
           >
-            <div>
-              Eaque laboriosam magnam perspiciatis delectus sunt et voluptatum et fugiat. Architecto molestias iure.
-            </div>
-          </li>
-          <li
-            className="sc-cyRfQX jwoNut"
-            data-testid="list-item-wrapper"
-          >
-            <div>
-              Autem eaque temporibus rerum vero consequuntur modi incidunt. Quis facere et saepe consequatur dignissimos ipsa adipisci eos.
-            </div>
-          </li>
-          <li
-            className="sc-cyRfQX jwoNut"
-            data-testid="list-item-wrapper"
-          >
-            <div>
-              Vel non aperiam nam quos perspiciatis temporibus. Nam ex quasi beatae cum est nesciunt.
-            </div>
-          </li>
-          <li
-            className="sc-cyRfQX jwoNut"
-            data-testid="list-item-wrapper"
-          >
-            <div>
-              Rem culpa nostrum quia non sed quod. Et est nesciunt aliquam non adipisci aut error qui.
-            </div>
-          </li>
-          <li
-            className="sc-cyRfQX jwoNut"
-            data-testid="list-item-wrapper"
-          >
-            <div>
-              Possimus dicta earum. Placeat mollitia doloribus nisi.
-            </div>
-          </li>
-        </ul>
+            <li
+              className="sc-kMrHXl MoqYU"
+              data-testid="list-item-wrapper"
+            >
+              <div>
+                Eaque laboriosam magnam perspiciatis delectus sunt et voluptatum et fugiat. Architecto molestias iure.
+              </div>
+            </li>
+            <li
+              className="sc-kMrHXl MoqYU"
+              data-testid="list-item-wrapper"
+            >
+              <div>
+                Autem eaque temporibus rerum vero consequuntur modi incidunt. Quis facere et saepe consequatur dignissimos ipsa adipisci eos.
+              </div>
+            </li>
+            <li
+              className="sc-kMrHXl MoqYU"
+              data-testid="list-item-wrapper"
+            >
+              <div>
+                Vel non aperiam nam quos perspiciatis temporibus. Nam ex quasi beatae cum est nesciunt.
+              </div>
+            </li>
+            <li
+              className="sc-kMrHXl MoqYU"
+              data-testid="list-item-wrapper"
+            >
+              <div>
+                Rem culpa nostrum quia non sed quod. Et est nesciunt aliquam non adipisci aut error qui.
+              </div>
+            </li>
+            <li
+              className="sc-kMrHXl MoqYU"
+              data-testid="list-item-wrapper"
+            >
+              <div>
+                Possimus dicta earum. Placeat mollitia doloribus nisi.
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
   <div
-    className="sc-gjTGSA eOWxhQ"
+    className="sc-hhGHuG gugXej"
   >
     <div />
     <nav
