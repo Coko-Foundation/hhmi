@@ -448,12 +448,12 @@ const metadata = {
                     },
                     {
                       label:
-                        'SYI-1.A.2 Living systems depend on the properties of water',
+                        'SYI-1.A.2 Living systems depend on the properties of water.',
                       value: 'SYI-1.A.2',
                     },
                     {
                       label:
-                        'SYI-1.A.3 H-bonds result in cohesion, adhesion, and surface tension',
+                        'SYI-1.A.3 H-bonds result in cohesion, adhesion, and surface tension.',
                       value: 'SYI-1.A.3',
                     },
                   ],
@@ -471,12 +471,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.A.1 Organisms have to exchange matter with the environment',
+                        'ENE-1.A.1 Organisms have to exchange matter with the environment.',
                       value: 'ENE-1.A.1',
                     },
                     {
                       label:
-                        'ENE-1-A.2 Atoms from environment build new molecules',
+                        'ENE-1-A.2 Atoms from the environment are necessary to build new molecules.',
                       value: 'ENE-1-A.2',
                     },
                   ],
@@ -493,7 +493,7 @@ const metadata = {
                   value: 'SYI-1.B',
                   essentialKnowledge: [
                     {
-                      label: 'SYI-1.B.1 Hydrolysis and dehydration synthesis',
+                      label: 'SYI-1.B.1 Hydrolysis and dehydration synthesis.',
                       value: 'SYI-1.B.1',
                     },
                   ],
@@ -511,7 +511,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-1.B.2 Structure & function of polymers comes form how the monomers are assembled',
+                        'SYI-1.B.2 Structure & function of polymers comes from how the monomers are assembled.',
                       value: 'SYI-1.B.2',
                     },
                   ],
@@ -530,7 +530,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        "SYI-1.C.1 Directionality of subcomponents affects structure/function of polymer (5'-3', carboxyl terminus of proteins, primary, secondary, tertiary protein structure, monomer chains of carbohydrates)",
+                        "SYI-1.C.1 Directionality of subcomponents affects structure/function of a/the polymer (5'-3', carboxyl terminus of proteins, primary, secondary, tertiary protein structure, monomer chains of carbohydrates).",
                       value: 'SYI-1.C.1',
                     },
                   ],
@@ -547,7 +547,7 @@ const metadata = {
                   value: 'IST-1.A',
                   essentialKnowledge: [
                     {
-                      label: 'IST-1.A.1 DNA/RNA similarities and differences ',
+                      label: 'IST-1.A.1 DNA/RNA similarities and differences.',
                       value: 'IST-1.A.1',
                     },
                   ],
@@ -571,18 +571,18 @@ const metadata = {
                   essentialKnowledge: [
                     { label: 'SYI-1.D.1 Ribosomes', value: 'SYI-1.D.1' },
                     {
-                      label: 'SYI-1.D.2 Ribosomes are universal',
+                      label: 'SYI-1.D.2 Ribosomes are universal.',
                       value: 'SYI-1.D.2',
                     },
                     {
-                      label: 'SYI-1.D.3 ER (smooth, rough)',
+                      label: 'SYI-1.D.3 ER (smooth, rough).',
                       value: 'SYI-1.D.3',
                     },
-                    { label: 'SYI-1.D.4 Golgi', value: 'SYI-1.D.4' },
-                    { label: 'SYI-1.D.5 Mitochondria', value: 'SYI-1.D.5' },
-                    { label: 'SYI-1.D.6 Lysosomes', value: 'SYI-1.D.6' },
-                    { label: 'SYI-1.D.7 Vacuoles', value: 'SYI-1.D.7' },
-                    { label: 'SYI-1.D.8 Chloroplasts', value: 'SYI-1.D.8' },
+                    { label: 'SYI-1.D.4 Golgi.', value: 'SYI-1.D.4' },
+                    { label: 'SYI-1.D.5 Mitochondria.', value: 'SYI-1.D.5' },
+                    { label: 'SYI-1.D.6 Lysosomes.', value: 'SYI-1.D.6' },
+                    { label: 'SYI-1.D.7 Vacuoles.', value: 'SYI-1.D.7' },
+                    { label: 'SYI-1.D.8 Chloroplasts.', value: 'SYI-1.D.8' },
                   ],
                 },
               ],
@@ -598,56 +598,56 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-1.E.1 Organelles support cell function (ER, mitochondria, lysosomes, vacuoles)',
+                        'SYI-1.E.1 Organelles support cell function (ER, mitochondria, lysosomes, vacuoles).',
                       value: 'SYI-1.E.1',
                     },
                   ],
                 },
                 {
                   label:
-                    'SYI-1.F Describe the structural features of a cell that allow organisms to capture, store, and use energy.',
+                    'SYI-1.F Describe the structural features of a cell that allows organisms to capture, store, and use energy.',
                   value: 'SYI-1.F',
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-1.F.1 inner membrane inc. SA for ATP production',
+                        'SYI-1.F.1 Inner membrane inc. SA for ATP production.',
                       value: 'SYI-1.F.1',
                     },
                     {
-                      label: 'SYI-1.F.2 Thylakoids and stroma',
+                      label: 'SYI-1.F.2 Thylakoids and stroma.',
                       value: 'SYI-1.F.2',
                     },
                     {
-                      label: 'SYI-1.F.3 Thylakoids in stacks (grana)',
+                      label: 'SYI-1.F.3 Thylakoids in stacks (grana).',
                       value: 'SYI-1.F.3',
                     },
                     {
                       label:
-                        'SYI-1.F.4 Membranes contain chlorophyll pigment and e- transport proteins',
+                        'SYI-1.F.4 Membranes contain chlorophyll pigment and e- transport proteins.',
                       value: 'SYI-1.F.4',
                     },
                     {
                       label:
-                        'SYI-1.F.5 Light-dependent reactions occur in grana',
+                        'SYI-1.F.5 Light-dependent reactions occur in grana.',
                       value: 'SYI-1.F.5',
                     },
                     {
                       label:
-                        'SYI-1.F.6 Stroma = fluid between inner chloroplast membrane and thylakoids',
+                        'SYI-1.F.6 Stroma = fluid between inner chloroplast membrane and thylakoids.',
                       value: 'SYI-1.F.6',
                     },
                     {
-                      label: 'SYI-1.F.7 Carbon fixation occurs in stroma',
+                      label: 'SYI-1.F.7 Carbon fixation occurs in stroma.',
                       value: 'SYI-1.F.7',
                     },
                     {
                       label:
-                        'SYI-1.F.8 Krebs cycle occurs in mitochondrial matrix',
+                        'SYI-1.F.8 Krebs cycle occurs in mitochondrial matrix.',
                       value: 'SYI-1.F.8',
                     },
                     {
                       label:
-                        'SYI-1.F.9 e- transport and ATP synthesis occur on inner mitochondrial membrane',
+                        'SYI-1.F.9 E-transport and ATP synthesis occur on the inner mitochondrial membrane.',
                       value: 'SYI-1.F.9',
                     },
                   ],
@@ -665,12 +665,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.B.1 SA:VOL affect ability of organisms to exchange materials (all equations given)',
+                        'ENE-1.B.1 SA:VOL affect ability of organisms to exchange materials (all equations given).',
                       value: 'ENE-1.B.1',
                     },
                     {
                       label:
-                        'ENE-1B.2 SA of plasma membrane must be large enough to exchange materials (affects cell size, leads to folds, sa-vol decreases with size)',
+                        'ENE-1B.2 SA of plasma membrane must be large enough to exchange materials (affects cell size, leads to folds, sa-vol decreases with size).',
                       value: 'ENE-1B.2',
                     },
                   ],
@@ -681,7 +681,7 @@ const metadata = {
                   value: 'ENE-1.C',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-1.C.1 Adaptations to exchange materials',
+                      label: 'ENE-1.C.1 Adaptations to exchange materials.',
                       value: 'ENE-1.C.1',
                     },
                   ],
@@ -694,16 +694,16 @@ const metadata = {
               learningObjectives: [
                 {
                   label:
-                    'ENE-2.A Describe the roles of each of the components of the cell membrane in maintaining the internal environment of the cell.',
+                    'ENE-2.A Describe the roles of the components of the cell membrane in maintaining the internal environment of the cell.',
                   value: 'ENE-2.A',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-2.A.1 Phospholipids hydrophobic/hydrophilic',
+                      label: 'ENE-2.A.1 Phospholipids hydrophobic/hydrophilic.',
                       value: 'ENE-2.A.1',
                     },
                     {
                       label:
-                        'ENE-2.A.2 Embedded proteins can be hydrophobic, hydrophilic, polar, non-polar',
+                        'ENE-2.A.2 Embedded proteins can be hydrophobic, hydrophilic, polar, non-polar.',
                       value: 'ENE-2.A.2',
                     },
                   ],
@@ -714,7 +714,7 @@ const metadata = {
                   value: 'ENE-2.B',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-2.B.1 Fluid Mosaic model',
+                      label: 'ENE-2.B.1 Fluid Mosaic model.',
                       value: 'ENE-2.B.1',
                     },
                   ],
@@ -731,26 +731,27 @@ const metadata = {
                   value: 'ENE-2.C',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-2.C.1 Structure --> selective permeability',
+                      label: 'ENE-2.C.1 Structure --> selective permeability.',
                       value: 'ENE-2.C.1',
                     },
                     {
-                      label: 'ENE-2.C.2 Membrane = separates internal/external',
+                      label:
+                        'ENE-2.C.2 Membrane = separates internal/external.',
                       value: 'ENE-2.C.2',
                     },
                     {
                       label:
-                        'ENE-2.C.3 Selective permeability --> membrane structure',
+                        'ENE-2.C.3 Selective permeability --> membrane structure.',
                       value: 'ENE-2.C.3',
                     },
                     {
                       label:
-                        'ENE-2.C.4 Small nonpolar (CO2, O2, N2) pass thru; hydrophilic (large polar, ions) move thru protein channels',
+                        'ENE-2.C.4 Small nonpolar (CO2, O2, N2) pass through; hydrophilic (large polar, ions) move through protein channels.',
                       value: 'ENE-2.C.4',
                     },
                     {
                       label:
-                        'ENE-2.C.5 Polar uncharged (e.g., H2O) pass thru in small amounts',
+                        'ENE-2.C.5 Polar uncharged (e.g., H2O) pass through in small amounts.',
                       value: 'ENE-2.C.5',
                     },
                   ],
@@ -762,12 +763,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-2.D.1 Cell walls --> structural boundary and a permeability barrier',
+                        'ENE-2.D.1 Cell walls --> structural boundary and a permeability barrier.',
                       value: 'ENE-2.D.1',
                     },
                     {
                       label:
-                        'ENE-2.D.2 Cell walls of plants, prokaryotes, fungi --> complex carbohydrates',
+                        'ENE-2.D.2 Cell walls of plants, prokaryotes, fungi --> complex carbohydrates.',
                       value: 'ENE-2.D.2',
                     },
                   ],
@@ -784,16 +785,16 @@ const metadata = {
                   value: 'ENE-2.E',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-2.E.1 Passive transport definition',
+                      label: 'ENE-2.E.1 Passive transport definition.',
                       value: 'ENE-2.E.1',
                     },
                     {
                       label:
-                        'ENE-2.E.2 Passive transport important in dumping wastes',
+                        'ENE-2.E.2 Passive transport is important in dumping wastes.',
                       value: 'ENE-2.E.2',
                     },
                     {
-                      label: 'ENE-2.E.3 Active transport definition',
+                      label: 'ENE-2.E.3 Active transport definition.',
                       value: 'ENE-2.E.3',
                     },
                   ],
@@ -805,11 +806,11 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-2.F.1 Selective permeability --> concentration gradients',
+                        'ENE-2.F.1 Selective permeability --> concentration gradients.',
                       value: 'ENE-2.F.1',
                     },
                     {
-                      label: 'ENE-2.F.2 Endocytosis & exocytosis',
+                      label: 'ENE-2.F.2 Endocytosis & exocytosis.',
                       value: 'ENE-2.F.2',
                     },
                   ],
@@ -827,22 +828,22 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-2.G.1 Membrane proteins are needed for facilitated diff. of large polar molecules and charged molecules (e.g., aquaporins for lots of water, channel proteins for Na+ and K+); membranes may get polarized by movement of ions',
+                        'ENE-2.G.1 Membrane proteins are needed for facilitated diff. of large polar molecules and charged molecules (e.g., aquaporins for lots of water, channel proteins for Na+ and K+); membranes may get polarized by the movement of ions.',
                       value: 'ENE-2.G.1',
                     },
                     {
                       label:
-                        'ENE-2.G.2 Membrane proteins needed for active transport',
+                        'ENE-2.G.2 Membrane proteins are needed for active transport.',
                       value: 'ENE-2.G.2',
                     },
                     {
                       label:
-                        'ENE-2.G.3 Metabolic energy needed for active transport and to establish and maintain concentration gradients',
+                        'ENE-2.G.3 Metabolic energy is needed for active transport and to establish and maintain concentration gradients.',
                       value: 'ENE-2.G.3',
                     },
                     {
                       label:
-                        'ENE-2.G.4 Na+/K+ ATPase --> maintains membrane potential',
+                        'ENE-2.G.4 Na+/K+ ATPase --> Maintains membrane potential.',
                       value: 'ENE-2.G.4',
                     },
                   ],
@@ -859,7 +860,8 @@ const metadata = {
                   value: 'ENE-2.H',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-2.H.1 Hypotonic/hypertonic/isotonic; osmosis',
+                      label:
+                        'ENE-2.H.1 Hypotonic/hypertonic/isotonic; osmosis.',
                       value: 'ENE-2.H.1',
                     },
                   ],
@@ -871,12 +873,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-2.I.1 Moving stuff across membranes necc. for growth and homeostasis',
+                        'ENE-2.I.1 Moving stuff across membranes neccessary for growth and homeostasis.',
                       value: 'ENE-2.I.1',
                     },
                     {
                       label:
-                        'ENE-2.I.2 Osmoregulation maintains water balance (solute potential = –iCRT)',
+                        'ENE-2.I.2 Osmoregulation maintains water balance (solute potential = –iCRT).',
                       value: 'ENE-2.I.2',
                     },
                   ],
@@ -894,7 +896,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-2.J.1 Stuff moves across membranes in lots of ways (active/passive, endocytosis, exocytosis)',
+                        'ENE-2.J.1 Stuff moves across membranes in lots of ways (active/passive, endocytosis, exocytosis).',
                       value: 'ENE-2.J.1',
                     },
                   ],
@@ -912,7 +914,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-2.K.1 Membranes and membrane-bound organelles compartmentalize reactions and processes',
+                        'ENE-2.K.1 Membranes and membrane-bound organelles compartmentalize reactions and processes.',
                       value: 'ENE-2.K.1',
                     },
                   ],
@@ -924,7 +926,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-2.L.1 Internal membranes minimize competing interactions by increasing SA for reactions to occur',
+                        'ENE-2.L.1 Internal membranes minimize competing interactions by increasing SA for reactions to occur.',
                       value: 'ENE-2.L.1',
                     },
                   ],
@@ -937,10 +939,13 @@ const metadata = {
               learningObjectives: [
                 {
                   label:
-                    'EVO-1.A Describe similarities and/or differences in compartmentalization between prokaryotic and eukaryotic cells.',
+                    'EVO-1.A Describe the similarities and/or differences in compartmentalization between prokaryotic and eukaryotic cells.',
                   value: 'EVO-1.A',
                   essentialKnowledge: [
-                    { label: 'EVO-1.A.1 Endosymbiosis', value: 'EVO-1.A.1' },
+                    {
+                      label: 'EVO-1.A.1 Endosymbiosis from once free-living',
+                      value: 'EVO-1.A.1',
+                    },
                     {
                       label:
                         'EVO-1.A.2 Prokaryotes generally lack internal membranes, but have specialized regions',
@@ -958,7 +963,11 @@ const metadata = {
                     'EVO-1.B Describe the relationship between the functions of endosymbiotic organelles and their free-living counterparts.',
                   value: 'EVO-1.B',
                   essentialKnowledge: [
-                    { label: 'EVO-1.B.1. Endosymbiosis', value: 'EVO-1.B.1.' },
+                    {
+                      label:
+                        'EVO-1.B.1. Endosymbiosis from previously free-living',
+                      value: 'EVO-1.B.1.',
+                    },
                   ],
                 },
               ],
@@ -977,10 +986,10 @@ const metadata = {
                   label: 'ENE-1.D Describe the properties of enzymes.',
                   value: 'ENE-1.D',
                   essentialKnowledge: [
-                    { label: 'ENE-1.D.1 Active site', value: 'ENE-1.D.1' },
+                    { label: 'ENE-1.D.1 Active site.', value: 'ENE-1.D.1' },
                     {
                       label:
-                        'ENE-1.D.2 Enzyme-mediated rxns, substrate must be compatible with active site',
+                        'ENE-1.D.2 Enzyme-mediated rxns, substrate must be compatible with the active site.',
                       value: 'ENE-1.D.2',
                     },
                   ],
@@ -998,7 +1007,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.E.1 Enzymes are catalysts, lower activation energy',
+                        'ENE-1.E.1 Enzymes are catalysts, lower activation energy.',
                       value: 'ENE-1.E.1',
                     },
                   ],
@@ -1016,11 +1025,11 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.F.1 Denaturation by pH/temp can affect the efficiency of the enzyme',
+                        'ENE-1.F.1 Denaturation by pH/temp can affect the efficiency of the enzyme.',
                       value: 'ENE-1.F.1',
                     },
                     {
-                      label: 'ENE-1.F.2 Denaturation is sometimes reversible',
+                      label: 'ENE-1.F.2 Denaturation is sometimes reversible.',
                       value: 'ENE-1.F.2',
                     },
                   ],
@@ -1031,22 +1040,22 @@ const metadata = {
                   value: 'ENE-1.G',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-1.G.1 pH can affect structure (h-bonds)',
+                      label: 'ENE-1.G.1 pH can affect structure (h-bonds).',
                       value: 'ENE-1.G.1',
                     },
                     {
                       label:
-                        'ENE-1.G.2 Relative [ ]s of substrate and enzyme affect efficiency',
+                        'ENE-1.G.2 Relative [ ]s of substrate and enzyme affect efficiency.',
                       value: 'ENE-1.G.2',
                     },
                     {
                       label:
-                        'ENE-1.G.3 Inc. temp --> inc. speed of molecules & therefore rate of reaction',
+                        'ENE-1.G.3 Inc. temp --> inc. speed of molecules & therefore rate of reaction.',
                       value: 'ENE-1.G.3',
                     },
                     {
                       label:
-                        'ENE-1.G.4 Competitive inhibitor molecules can bond reversible or irreversibly to active site/non-competitive inhibitors bind allosteric sites',
+                        'ENE-1.G.4 Competitive inhibitor molecules can bond reversible or irreversibly to active site/non-competitive inhibitors bind allosteric sites.',
                       value: 'ENE-1.G.4',
                     },
                   ],
@@ -1063,17 +1072,17 @@ const metadata = {
                   value: 'ENE-1.H',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-1.H.1 Living things need constant energy',
+                      label: 'ENE-1.H.1 Living things need constant energy.',
                       value: 'ENE-1.H.1',
                     },
                     {
                       label:
-                        'ENE-1.H.2 Life requires ordered systems and do not violate Second Law of T. (energy in > energy out; cell processes that release energy may be coupled with processes that need it; loss of order/energy = death)',
+                        'ENE-1.H.2 Life requires ordered systems and do not violate Second Law of T. (energy in > energy out; cell processes that release energy may be coupled with processes that need it; loss of order/energy = death).',
                       value: 'ENE-1.H.2',
                     },
                     {
                       label:
-                        'ENE-1.H.3 Order of steps in energy pathways inc. efficiency. Products --> reactants in next step.',
+                        'ENE-1.H.3 Order of steps in energy pathways is inc. efficiency. Products --> reactants in next step.',
                       value: 'ENE-1.H.3',
                     },
                   ],
@@ -1091,11 +1100,11 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.I.1 Organisms capture and store energy (eukaryotic and prokaryotic photosynthesis); prokaryotic photosynthesis gave atm. O2',
+                        'ENE-1.I.1 Organisms capture and store energy (eukaryotic and prokaryotic photosynthesis); prokaryotic photosynthesis gave atm. O2.',
                       value: 'ENE-1.I.1',
                     },
                     {
-                      label: 'ENE-1.I.2 Light-dependent rxns',
+                      label: 'ENE-1.I.2 Light-dependent rxns.',
                       value: 'ENE-1.I.2',
                     },
                   ],
@@ -1106,26 +1115,26 @@ const metadata = {
                   value: 'ENE-1.J',
                   essentialKnowledge: [
                     {
-                      label: 'ENE-1.J.1 Chlorophylls; photosystems I & II',
+                      label: 'ENE-1.J.1 Chlorophylls; photosystems I & II.',
                       value: 'ENE-1.J.1',
                     },
                     {
                       label:
-                        'ENE-1.J.2 Photosystems I & II are in internal chloroplast membranes, connected to ETC',
+                        'ENE-1.J.2 Photosystems I & II are in internal chloroplast membranes, connected to ETC.',
                       value: 'ENE-1.J.2',
                     },
                     {
-                      label: 'ENE-1.J.3 ETC --> electrochemical gradient',
+                      label: 'ENE-1.J.3 ETC --> electrochemical gradient.',
                       value: 'ENE-1.J.3',
                     },
                     {
                       label:
-                        'ENE-1.J.4 Electrochem. gradient --> ATP synthase ',
+                        'ENE-1.J.4 Electrochem. gradient --> ATP synthase.',
                       value: 'ENE-1.J.4',
                     },
                     {
                       label:
-                        'ENE-1.J.5 Energy captured in light-dependent rxns --> ATP and NADPH, which power Calvin cycle (in stroma)',
+                        'ENE-1.J.5 Energy captured in light-dependent rxns --> ATP and NADPH, which power Calvin cycle (in stroma).',
                       value: 'ENE-1.J.5',
                     },
                   ],
@@ -1143,17 +1152,17 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.K.1 Fermentation & cellular resp definition',
+                        'ENE-1.K.1 Fermentation & cellular respiration definition.',
                       value: 'ENE-1.K.1',
                     },
                     {
                       label:
-                        'ENE-1.K.2 Cellular resp. in eukaryotes involves enzyme-catalyzed rxns',
+                        'ENE-1.K.2 Cellular resp. in eukaryotes involves enzyme-catalyzed rxns.',
                       value: 'ENE-1.K.2',
                     },
                     {
                       label:
-                        'ENE-1.K.3 ETC (chloroplasts, mitochondria, prok. membranes); in cellular resp, NADH + FADH2 --> O2 as final acceptor (except in anaerobic prokaryotes); in photosynthesis, terminal acceptor is NADP+; proton gradient; H+ forced thru ATP synthase via chemiosmosis (oxidative phosphorylation); in cellular resp, decoupling oxidative phos from ETC --> heat (endothermy!)',
+                        'ENE-1.K.3 ETC (chloroplasts, mitochondria, prok. membranes); in cellular respiration, NADH + FADH2 --> O2 as final acceptor (except in anaerobic prokaryotes); in photosynthesis, terminal acceptor is NADP+; proton gradient; H+ forced through ATP synthase via chemiosmosis (oxidative phosphorylation); in cellular respiration, decoupling oxidative phos from ETC --> heat (endothermy!).',
                       value: 'ENE-1.K.3',
                     },
                   ],
@@ -1166,29 +1175,29 @@ const metadata = {
                     { label: 'ENE-1.L.1 Glycolysis', value: 'ENE-1.L.1' },
                     {
                       label:
-                        'ENE-1.L.2 Pyruvate transported from cytosol to mitochondria',
+                        'ENE-1.L.2 Pyruvate transported from cytosol to mitochondria.',
                       value: 'ENE-1.L.2',
                     },
                     {
                       label:
-                        'ENE-1.L.3 Krebs (CO2 + ATP + NADH + FADH2 as products)',
+                        'ENE-1.L.3 Krebs (CO2 + ATP + NADH + FADH2 as products).',
                       value: 'ENE-1.L.3',
                     },
                     {
-                      label: 'ENE-1.L.4 ETC (NADH + FADH2 donate electrons)',
+                      label: 'ENE-1.L.4 ETC (NADH + FADH2 donate electrons).',
                       value: 'ENE-1.L.4',
                     },
                     {
-                      label: 'ENE-1.L.5 ETC (electrochemical gradient)',
+                      label: 'ENE-1.L.5 ETC (electrochemical gradient).',
                       value: 'ENE-1.L.5',
                     },
                     {
                       label:
-                        'ENE-1.L.6 Fermentation allows glycolysis to happen w/p oxygen; produces lactic acid or alcohol',
+                        'ENE-1.L.6 Fermentation allows glycolysis to happen without oxygen; produces lactic acid or alcohol.',
                       value: 'ENE-1.L.6',
                     },
                     {
-                      label: 'ENE-1.L.7 ATP --> ADP releases energy',
+                      label: 'ENE-1.L.7 ATP --> ADP releases energy.',
                       value: 'ENE-1.L.7',
                     },
                   ],
@@ -1206,12 +1215,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-3.A.1 Variation @ molecular level --> ability to respond to stimuli',
+                        'SYI-3.A.1 Variation @ molecular level --> Ability to respond to stimuli.',
                       value: 'SYI-3.A.1',
                     },
                     {
                       label:
-                        'SYI-3.A.2 Variation --> greater ability to survive and reproduce in different environments',
+                        'SYI-3.A.2 Variation --> Greater ability to survive and reproduce in different environments.',
                       value: 'SYI-3.A.2',
                     },
                   ],
@@ -1235,7 +1244,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-3.A.1 Cells communicate with cell-to-cell or w/ chemical messengers',
+                        'IST-3.A.1 Cells communicate with cell-to-cell or chemical messengers.',
                       value: 'IST-3.A.1',
                     },
                   ],
@@ -1247,7 +1256,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-3.B.1 Short-distances, cells communicate with regulators that target cells nearby; some signals travel far',
+                        'IST-3.B.1 Short-distances, cells communicate with regulators that target cells nearby; some signals travel far.',
                       value: 'IST-3.B.1',
                     },
                   ],
@@ -1265,12 +1274,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-3.C.1 Link signal reception with cellular responses',
+                        'IST-3.C.1 Link signal reception with cellular responses.',
                       value: 'IST-3.C.1',
                     },
                     {
                       label:
-                        'IST-3.C.2 Many include protein modification and phosphorylation cascades',
+                        'IST-3.C.2 Many include protein modification and phosphorylation cascades.',
                       value: 'IST-3.C.2',
                     },
                   ],
@@ -1282,12 +1291,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-3.D.1 Ligand (messenger; peptide, small chemical, protein) recognized by receptor protein. Ex. G protein-coupled receptors (eukaryotes)',
+                        'IST-3.D.1 Ligand (messenger; peptide, small chemical, protein) recognized by receptor protein. Ex. G protein-coupled receptors (eukaryotes).',
                       value: 'IST-3.D.1',
                     },
                     {
                       label:
-                        'IST-3.D.2 Signaling cascades --> amplification of signal',
+                        'IST-3.D.2 Signaling cascades --> amplification of signal.',
                       value: 'IST-3.D.2',
                     },
                   ],
@@ -1305,7 +1314,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-3.E.1 Influences how cell responds to its environment',
+                        'IST-3.E.1 Influences how a cell responds to its environment.',
                       value: 'IST-3.E.1',
                     },
                   ],
@@ -1317,7 +1326,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-3.F.1 Can --> changes in gene expression/cell function, apoptosis',
+                        'IST-3.F.1 Can --> changes in gene expression/cell function, apoptosis.',
                       value: 'IST-3.F.1',
                     },
                   ],
@@ -1335,12 +1344,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-3.G.1 Changes to pathway (e.g., from mutation) --> changes in cellular response ',
+                        'IST-3.G.1 Changes to pathway (e.g., from mutation) --> changes in cellular response.',
                       value: 'IST-3.G.1',
                     },
                     {
                       label:
-                        'IST-3.G.2 Chemicals can interfere with signaling --> activation or inhibition',
+                        'IST-3.G.2 Chemicals can interfere with signaling --> activation or inhibition.',
                       value: 'IST-3.G.2',
                     },
                   ],
@@ -1358,7 +1367,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-3.A.1 Feedback --> maintain internal environments and respond to changes',
+                        'ENE-3.A.1 Feedback --> maintain internal environments and respond to changes.',
                       value: 'ENE-3.A.1',
                     },
                   ],
@@ -1370,7 +1379,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-3.B.1 If system is disturbed, negative feedback turns system back to set point. Operates at molecular and cellular levels.',
+                        'ENE-3.B.1 If system is disturbed, negative feedback turns the system back to its set point. It operates at molecular and cellular levels.',
                       value: 'ENE-3.B.1',
                     },
                   ],
@@ -1382,7 +1391,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-3.C.1 Amplify responses; variable initiating response is moved further from initial point. Amplification happens when stimulus is further activated, which then initiates additional response',
+                        'ENE-3.C.1 Amplify responses; variable initiating response is moved further from initial point. Amplification happens when stimulus is further activated, which then initiates an additional response.',
                       value: 'ENE-3.C.1',
                     },
                   ],
@@ -1400,12 +1409,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.B.1 Eukaryotes divide and transmit genetic info in two regulated processes',
+                        'IST-1.B.1 Eukaryotes divide and transmit genetic info in two regulated processes.',
                       value: 'IST-1.B.1',
                     },
                     {
                       label:
-                        'IST-1.B.2 Interphase (G1, S, G2), mitosis, cytokinesis; G0 = no growth',
+                        'IST-1.B.2 Interphase (G1, S, G2), mitosis, cytokinesis; G0 = no growth.',
                       value: 'IST-1.B.2',
                     },
                   ],
@@ -1417,7 +1426,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.C.1 Mitosis --> 2 identical daughter cells (PMAT); tissue repair, growth, asexual reproduction',
+                        'IST-1.C.1 Mitosis --> 2 identical daughter cells (PMAT); tissue repair, growth, asexual reproduction.',
                       value: 'IST-1.C.1',
                     },
                   ],
@@ -1434,11 +1443,12 @@ const metadata = {
                   value: 'IST-1.D',
                   essentialKnowledge: [
                     {
-                      label: 'IST-1.D.1 Internal checkpoints regulate cycle',
+                      label:
+                        'IST-1.D.1 Internal checkpoints regulate through the cycle.',
                       value: 'IST-1.D.1',
                     },
                     {
-                      label: 'IST-1.D.2 Cyclins/cyclin-dependent kinases',
+                      label: 'IST-1.D.2 Cyclins/cyclin-dependent kinases.',
                       value: 'IST-1.D.2',
                     },
                   ],
@@ -1450,7 +1460,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.E.1 Disruptions to cell cycle --> apoptosis or cancer',
+                        'IST-1.E.1 Disruptions to cell cycle --> apoptosis or cancer.',
                       value: 'IST-1.E.1',
                     },
                   ],
@@ -1474,7 +1484,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.F.1 Meiosis --> haploid gametes; Meiosis I/Meiosis II',
+                        'IST-1.F.1 Meiosis --> haploid gametes; Meiosis I/Meiosis II.',
                       value: 'IST-1.F.1',
                     },
                   ],
@@ -1486,7 +1496,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.G.1 Mitosis/meiosis are similar (chromosome segregation) but different (number and chromosome copies in daughter cells)',
+                        'IST-1.G.1 Mitosis/meiosis are similar (chromosome segregation) but different (number and chromosome copies in daughter cells).',
                       value: 'IST-1.G.1',
                     },
                   ],
@@ -1504,17 +1514,17 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.H.1 Homologous chromosomes separate in meiosis I',
+                        'IST-1.H.1 Homologous chromosomes separate in meiosis I.',
                       value: 'IST-1.H.1',
                     },
                     {
                       label:
-                        'IST-1.H.2 Homologous chromatids cross-over in meiosis I',
+                        'IST-1.H.2 Homologous chromatids cross-over in meiosis I.',
                       value: 'IST-1.H.2',
                     },
                     {
                       label:
-                        'IST-1.H.3 Sexual reproduction --> diversity (crossing-over, random assortment, fertilization)',
+                        'IST-1.H.3 Sexual reproduction --> diversity (crossing-over, random assortment, fertilization).',
                       value: 'IST-1.H.3',
                     },
                   ],
@@ -1531,20 +1541,20 @@ const metadata = {
                   value: 'EVO-2.A',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-2.A.1 DNA and RNA carry info',
+                      label: 'EVO-2.A.1 DNA and RNA carry info.',
                       value: 'EVO-2.A.1',
                     },
                     {
-                      label: 'EVO-2.A.2 Ribosomes are in all life',
+                      label: 'EVO-2.A.2 Ribosomes are in all life.',
                       value: 'EVO-2.A.2',
                     },
                     {
-                      label: 'EVO-2.A.3 Genetic code shared by all organisms',
+                      label: 'EVO-2.A.3 Genetic code shared by all organisms.',
                       value: 'EVO-2.A.3',
                     },
                     {
                       label:
-                        'EVO-2.A.4 Core metabolic pathways across all domains',
+                        'EVO-2.A.4 Core metabolic pathways across all domains.',
                       value: 'EVO-2.A.4',
                     },
                   ],
@@ -1556,12 +1566,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        "IST-1.I.1 Mendel's laws (genes on different chromosomes)",
+                        "IST-1.I.1 Mendel's laws (genes on different chromosomes).",
                       value: 'IST-1.I.1',
                     },
                     {
                       label:
-                        'IST-1.I.2 Fertilization --> diploid zygote (Punnett Sqs; monohybrid, dihybrid, sex-linked, linked)',
+                        'IST-1.I.2 Fertilization --> diploid zygote (Punnett Sqs; monohybrid, dihybrid, sex-linked, linked).',
                       value: 'IST-1.I.2',
                     },
                   ],
@@ -1579,20 +1589,20 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.J.1 Traits resulting from genetically-linked genes',
+                        'IST-1.J.1 Traits resulting from genetically-linked genes.',
                       value: 'IST-1.J.1',
                     },
                     {
-                      label: 'IST-1.J.2 Sex-linked traits (pedigrees)',
+                      label: 'IST-1.J.2 Sex-linked traits (pedigrees).',
                       value: 'IST-1.J.2',
                     },
                     {
-                      label: 'IST-1.J.3 Traits the result from multiple genes',
+                      label: 'IST-1.J.3 Traits the result from multiple genes.',
                       value: 'IST-1.J.3',
                     },
                     {
                       label:
-                        'IST-1.J.4 Traits resulting from non-nuclear inheritance (chloroplasts, mitochondria)',
+                        'IST-1.J.4 Traits resulting from non-nuclear inheritance (chloroplasts, mitochondria).',
                       value: 'IST-1.J.4',
                     },
                   ],
@@ -1610,7 +1620,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-3.B.1 Environmental factors; phenotypic plasticity',
+                        'SYI-3.B.1 Environmental factors; phenotypic plasticity.',
                       value: 'SYI-3.B.1',
                     },
                   ],
@@ -1628,17 +1638,17 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-3.C.1 Segregation, independent assortment, fertilization --> genetic variation in populations',
+                        'SYI-3.C.1 Segregation, independent assortment, fertilization --> genetic variation in populations.',
                       value: 'SYI-3.C.1',
                     },
                     {
                       label:
-                        'SYI-3.C.2 Chromosomal basis of inheritance means we can understand how traits go from parent to offspring',
+                        'SYI-3.C.2 Chromosomal basis of inheritance means we can understand how traits go from parent to offspring.',
                       value: 'SYI-3.C.2',
                     },
                     {
                       label:
-                        'SYI-3.C.3 Certain genetic disorders can be attributed to the inheritance of a single allele or chromosomal change (i.e., nondisjunction)',
+                        'SYI-3.C.3 Certain genetic disorders can be attributed to the inheritance of a single allele or chromosomal change (i.e., nondisjunction).',
                       value: 'SYI-3.C.3',
                     },
                   ],
@@ -1662,17 +1672,17 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.K.1 DNA, sometimes RNA = primary source of heritable info',
+                        'IST-1.K.1 DNA, sometimes RNA = primary source of heritable info.',
                       value: 'IST-1.K.1',
                     },
                     {
                       label:
-                        'IST-1.K.2 Genetic info is transmitted from one generation to the next via DNA and RNA; eukaryotic have linear chromosomes, prokaryotic typically has one circular one',
+                        'IST-1.K.2 Genetic info is transmitted from one generation to the next via DNA and RNA; eukaryotic have linear chromosomes, prokaryotic typically has one circular one.',
                       value: 'IST-1.K.2',
                     },
                     {
                       label:
-                        'IST-1.K.3 Prokaryotes and eukaryotes can have plasmids',
+                        'IST-1.K.3 Prokaryotes and eukaryotes can have plasmids.',
                       value: 'IST-1.K.3',
                     },
                   ],
@@ -1684,7 +1694,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.L.1 DNA (sometimes RNA) has conserved base-pairing G-C; A-T/U',
+                        'IST-1.L.1 DNA (sometimes RNA) has conserved base-pairing G-C; A-T/U.',
                       value: 'IST-1.L.1',
                     },
                   ],
@@ -1702,7 +1712,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.M.1 DNA replication ensures continuity of hereditary expression',
+                        'IST-1.M.1 DNA replication ensures continuity of hereditary expression.',
                       value: 'IST-1.M.1',
                     },
                   ],
@@ -1735,7 +1745,7 @@ const metadata = {
                     },
                     {
                       label:
-                        'IST-1.N.4 DNA template strand = noncoding strand, minus strand, or antisense strand. Which strand is template depends on the gene',
+                        'IST-1.N.4 DNA template strand = noncoding strand, minus strand, or antisense strand. Which strand is the template depends on the gene.',
                       value: 'IST-1.N.4',
                     },
                     {
@@ -1856,12 +1866,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-2.D.1 Gene regulation results in differential gene expression and influences function',
+                        'IST-2.D.1 Gene regulation results in differential gene expression and influences function.',
                       value: 'IST-2.D.1',
                     },
                     {
                       label:
-                        'IST-2.D.2 Certain small RNA molecules = regulators',
+                        'IST-2.D.2 Certain small RNA molecules = regulators.',
                       value: 'IST-2.D.2',
                     },
                   ],
@@ -1878,12 +1888,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-2.E.1 Change to genotype can --> change in phenotype (function of gene changes)',
+                        'IST-2.E.1 Change to genotype can --> change in phenotype (function of gene changes).',
                       value: 'IST-2.E.1',
                     },
                     {
                       label:
-                        'IST-2.E.2 Mutations can change the type or amount of protein produced and therefore phenotype; Mutations can be +/- or neutral based on their effect',
+                        'IST-2.E.2 Mutations can change the type or amount of protein produced and therefore the phenotype; Mutations can be +/- or neutral based on their effect.',
                       value: 'IST-2.E.2',
                     },
                   ],
@@ -1895,12 +1905,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-4.A.1 Mutations are primary source of genetic variation. Caused by: errors in replication of DNA repair, external factors; Whether mutation is +/- or neutral depends on environment.',
+                        'IST-4.A.1 Mutations are the primary source of genetic variation. Caused by: errors in replication of DNA repair, external factors; Whether mutation is +/- or neutral depends on environment.',
                       value: 'IST-4.A.1',
                     },
                     {
                       label:
-                        'IST-4.A.2 Errors in meiosis or mitosis can change phenotype (chromosome # issues)',
+                        'IST-4.A.2 Errors in meiosis or mitosis can change the phenotype (chromosome # issues).',
                       value: 'IST-4.A.2',
                     },
                   ],
@@ -1912,7 +1922,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-4.B.1 Changes in genotype may affect phenotypes subject to natural selection (Examples of environments where changes are selected for: horizontal gene transfer, viral recombination, reproduction processes that increase genetic variation are conserved)',
+                        'IST-4.B.1 Changes in genotype may affect phenotypes subject to natural selection (Examples of environments where changes are selected for: horizontal gene transfer, viral recombination, reproduction processes that increase genetic variation are conserved).',
                       value: 'IST-4.B.1',
                     },
                   ],
@@ -1930,7 +1940,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-1.P.1 Genetic engineering techniques (electrophoresis, PCR, bacterial transformation); DNA sequencing determines the order of nucleotides in a DNA molecule',
+                        'IST-1.P.1 Genetic engineering techniques (electrophoresis, PCR, bacterial transformation); DNA sequencing determines the order of nucleotides in a DNA molecule.',
                       value: 'IST-1.P.1',
                     },
                   ],
@@ -1952,11 +1962,13 @@ const metadata = {
                   value: 'EVO-1.C',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-1.C.1. Nat sel = major mechanism of evo',
+                      label:
+                        'EVO-1.C.1. Natural selection = major mechanism of evolution.',
                       value: 'EVO-1.C.1.',
                     },
                     {
-                      label: 'EVO-1.C.2 Process of nat sel according to Darwin',
+                      label:
+                        'EVO-1.C.2 Process of natural selection according to Darwin.',
                       value: 'EVO-1.C.2',
                     },
                   ],
@@ -1968,12 +1980,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-1.D.1 Evo fitness = measure of reproductive success',
+                        'EVO-1.D.1 Evolution fitness = measure of reproductive success.',
                       value: 'EVO-1.D.1',
                     },
                     {
                       label:
-                        'EVO-1.D.2 Stability of biotic/abiotic factors affect rate and direction of evolution from generation to generation',
+                        'EVO-1.D.2 Stability of biotic/abiotic factors affect rate and direction of evolution from generation to generation.',
                       value: 'EVO-1.D.2',
                     },
                   ],
@@ -1991,16 +2003,17 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-1.E.1 Nat sel acts on phenotypic variation in populations',
+                        'EVO-1.E.1 Natural selection acts on phenotypic variation in populations.',
                       value: 'EVO-1.E.1',
                     },
                     {
-                      label: 'EVO-1.E.2 Env. change exerts selection pressures',
+                      label:
+                        'EVO-1.E.2 Enviromental change exerts selection pressures.',
                       value: 'EVO-1.E.2',
                     },
                     {
                       label:
-                        'EVO-1.E.3 Some phenotypic variations significantly +/- fitness',
+                        'EVO-1.E.3 Some phenotypic variations significantly +/- fitness.',
                       value: 'EVO-1.E.3',
                     },
                   ],
@@ -2017,7 +2030,7 @@ const metadata = {
                   value: 'EVO-1.F',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-1.F.1 Artificial selection',
+                      label: 'EVO-1.F.1 Artificial selection.',
                       value: 'EVO-1.F.1',
                     },
                   ],
@@ -2028,7 +2041,7 @@ const metadata = {
                   value: 'EVO-1.G',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-1.G.1 Convergent evolution',
+                      label: 'EVO-1.G.1 Convergent evolution.',
                       value: 'EVO-1.G.1',
                     },
                   ],
@@ -2046,7 +2059,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-1.H.1 Evolution is also driven by random occurrences (mutation, genetic drift, gene flow)',
+                        'EVO-1.H.1 Evolution is also driven by random occurrences (mutation, genetic drift, gene flow).',
                       value: 'EVO-1.H.1',
                     },
                   ],
@@ -2058,7 +2071,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-1.I.1 Reduction of genetic variation w/in sub population can inc. differences between populations (bottlenecks)',
+                        'EVO-1.I.1 Environmental change exerts selection pressures.',
                       value: 'EVO-1.I.1',
                     },
                   ],
@@ -2070,7 +2083,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-1.J.1 Mutation = genetic variation, which is acted on by NS',
+                        'EVO-1.J.1 Mutation = genetic variation, which is acted on by NS.',
                       value: 'EVO-1.J.1',
                     },
                   ],
@@ -2088,7 +2101,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-1.K.1 H-W rules (large pop., no migration, no net mutation, random mating, no selection)',
+                        'EVO-1.K.1 H-W rules (large population, no migration, no net mutation, random mating, no selection).',
                       value: 'EVO-1.K.1',
                     },
                     {
@@ -2105,12 +2118,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-1.L.1 Changes in allele frequencies = evolution',
+                        'EVO-1.L.1 Changes in allele frequencies = evolution.',
                       value: 'EVO-1.L.1',
                     },
                     {
                       label:
-                        'EVO-1.L.2 Small populations more susceptible to random impacts than large ones.',
+                        'EVO-1.L.2 Small populations are more susceptible to random impacts than larger ones.',
                       value: 'EVO-1.L.2',
                     },
                   ],
@@ -2127,7 +2140,7 @@ const metadata = {
                   value: 'EVO-1.M',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-1.M.1 Many fields support evolution',
+                      label: 'EVO-1.M.1 Many fields support evolution.',
                       value: 'EVO-1.M.1',
                     },
                   ],
@@ -2139,12 +2152,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-1.N.1 Fossils (that can be dated) & morphological homologies = evidence',
+                        'EVO-1.N.1 Fossils (that can be dated) & morphological homologies = evidence.',
                       value: 'EVO-1.N.1',
                     },
                     {
                       label:
-                        'EVO-1.N.2 Comparing DNA/protein amino acid sequences = evidence for common ancestry',
+                        'EVO-1.N.2 Comparing DNA/protein amino acid sequences = evidence for common ancestry.',
                       value: 'EVO-1.N.2',
                     },
                   ],
@@ -2156,12 +2169,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-2.B.1 Many molecular/cellular features are conserved',
+                        'EVO-2.B.1 Many molecular/cellular features are conserved.',
                       value: 'EVO-2.B.1',
                     },
                     {
                       label:
-                        'EVO-2.B.2 Structure/function evidence supports relatedness across domains',
+                        'EVO-2.B.2 Structure/function evidence supports relatedness across domains.',
                       value: 'EVO-2.B.2',
                     },
                   ],
@@ -2179,7 +2192,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-2.C.1 Membrane-bound organelles, linear chromosomes, genes with introns = evidence of common euk. ancestry',
+                        'EVO-2.C.1 Membrane-bound organelles, linear chromosomes, genes with introns = evidence of common eukaryote ancestry.',
                       value: 'EVO-2.C.1',
                     },
                   ],
@@ -2196,12 +2209,12 @@ const metadata = {
                   value: 'EVO-3.A',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-3.A.1 Populations continue to evolve',
+                      label: 'EVO-3.A.1 Populations continue to evolve.',
                       value: 'EVO-3.A.1',
                     },
                     {
                       label:
-                        'EVO-3.A.2 All species evolved and continue to evolve (genome changes, fossil record, chemical resistance, pathogens/emergent diseases)',
+                        'EVO-3.A.2 All species evolved and continue to evolve (genome changes, fossil record, chemical resistance, pathogens/emergent diseases).',
                       value: 'EVO-3.A.2',
                     },
                   ],
@@ -2219,7 +2232,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-3.B.1 Trees/cladograms show: relationships, lineages. Phyo trees show amt of change as calibrated by molecules or fossils; Traits gained/lost; shared, shared-derived, out-groups; molecular data typically more accurate and reliable evidence ',
+                        'EVO-3.B.1 Trees/cladograms show: relationships, lineages. Phyo trees show the amount of change calibrated by molecules or fossils; traits gained/lost; shared, shared-derived, out-groups; molecular data is typically more accurate and reliable evidence.',
                       value: 'EVO-3.B.1',
                     },
                   ],
@@ -2231,12 +2244,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-3.C.1 Trees/cladograms show speciation and MRCA',
+                        'EVO-3.C.1 Trees/cladograms show speciation and MRCA.',
                       value: 'EVO-3.C.1',
                     },
                     {
                       label:
-                        'EVO-3.C.2 Trees/cladograms can be made from morph. traits or molecular; can be of extinct or extant',
+                        'EVO-3.C.2 Trees/cladograms can be made from morphological traits or molecular; can be of extinct or extant.',
                       value: 'EVO-3.C.2',
                     },
                     {
@@ -2257,10 +2270,13 @@ const metadata = {
                     'EVO-3.D Describe the conditions under which new species may arise.',
                   value: 'EVO-3.D',
                   essentialKnowledge: [
-                    { label: 'EVO-3.D.1 Repro. isolation', value: 'EVO-3.D.1' },
+                    {
+                      label: 'EVO-3.D.1 Reproduction isolation',
+                      value: 'EVO-3.D.1',
+                    },
                     {
                       label:
-                        'EVO-3.D.2 Biological species concept (sexually reproducing organisms)',
+                        'EVO-3.D.2 Biological species concept (sexually reproducing organisms).',
                       value: 'EVO-3.D.2',
                     },
                   ],
@@ -2271,12 +2287,12 @@ const metadata = {
                   value: 'EVO-3.E',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-3.E.1 Punk Eq. and gradualism',
+                      label: 'EVO-3.E.1 Punctuated equilibrium and gradualism.',
                       value: 'EVO-3.E.1',
                     },
                     {
                       label:
-                        'EVO-3.E.2 Divergent evolution; Speciation common during adaptive radiations',
+                        'EVO-3.E.2 Divergent evolution; Speciation common during adaptive radiations.',
                       value: 'EVO-3.E.2',
                     },
                   ],
@@ -2287,17 +2303,17 @@ const metadata = {
                   value: 'EVO-3.F',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-3.F.1 Speciation --> diversity',
+                      label: 'EVO-3.F.1 Speciation --> diversity.',
                       value: 'EVO-3.F.1',
                     },
                     {
                       label:
-                        'EVO-3.F.2 Speciation can be allopatric or sympatric',
+                        'EVO-3.F.2 Speciation can be allopatric or sympatric.',
                       value: 'EVO-3.F.2',
                     },
                     {
                       label:
-                        'EVO-3.F.3 Prezygotic and postzygotic mechanisms can prevent gene flow',
+                        'EVO-3.F.3 Prezygotic and postzygotic mechanisms can prevent gene flow.',
                       value: 'EVO-3.F.3',
                     },
                   ],
@@ -2314,11 +2330,11 @@ const metadata = {
                   value: 'EVO-3.G',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-3.G.1 Extinctions have always occurred',
+                      label: 'EVO-3.G.1 Extinctions have always occurred.',
                       value: 'EVO-3.G.1',
                     },
                     {
-                      label: 'EVO-3.G.2 +Extinctions during ecological stress',
+                      label: 'EVO-3.G.2 +Extinctions during ecological stress.',
                       value: 'EVO-3.G.2',
                     },
                   ],
@@ -2330,7 +2346,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-3.H.1 Humans can change ecosystems, which --> extinction',
+                        'EVO-3.H.1 Humans can change ecosystems, which --> extinction.',
                       value: 'EVO-3.H.1',
                     },
                   ],
@@ -2342,7 +2358,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'EVO-3.I.1 Rate of speciation - rate of extinction = diversity',
+                        'EVO-3.I.1 Rate of speciation - rate of extinction = diversity.',
                       value: 'EVO-3.I.1',
                     },
                   ],
@@ -2353,7 +2369,7 @@ const metadata = {
                   value: 'EVO-3.J',
                   essentialKnowledge: [
                     {
-                      label: 'EVO-3.J.1 Extinction --> new niches',
+                      label: 'EVO-3.J.1 Extinction --> new niches.',
                       value: 'EVO-3.J.1',
                     },
                   ],
@@ -2371,7 +2387,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-3.D.1 Amt of variation affects population dynamics (e.g., ability to respond to change, resilience); Adv. alleles in one environment may become DISadvantageous alleles in another environment',
+                        'SYI-3.D.1 Amount of variation affects population dynamics (e.g., ability to respond to change, resilience); Advantageous alleles in one environment may become DISadvantageous alleles in another environment.',
                       value: 'SYI-3.D.1',
                     },
                   ],
@@ -2389,10 +2405,10 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-3.E.1 Several hypotheses... Earth formed 4.6 bya, life about 3.9–3.5 bya; organic from inorganic precursors + O2; organic from meteorite',
+                        'SYI-3.E.1 Several hypotheses... Earth formed 4.6 bya, life about 3.9–3.5 bya; organic from inorganic precursors + O2; organic from meteorite.',
                       value: 'SYI-3.E.1',
                     },
-                    { label: 'SYI-3.E.2 RNA world', value: 'SYI-3.E.2' },
+                    { label: 'SYI-3.E.2 RNA world.', value: 'SYI-3.E.2' },
                   ],
                 },
               ],
@@ -2414,12 +2430,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-3.D.1 Organisms respond via behavior and physiology',
+                        'ENE-3.D.1 Organisms respond via behavior and physiology.',
                       value: 'ENE-3.D.1',
                     },
                     {
                       label:
-                        'ENE-3.D.2 Organisms exchange info in response to external cues, which can change behavior',
+                        'ENE-3.D.2 Organisms exchange info in response to external cues, which can change behavior.',
                       value: 'ENE-3.D.2',
                     },
                   ],
@@ -2431,16 +2447,16 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'IST-5.A.1 Individuals act on info and communicate it to others',
+                        'IST-5.A.1 Individuals act on info and communicate it to others.',
                       value: 'IST-5.A.1',
                     },
                     {
-                      label: 'IST-5.A.2 Communication methods (signaling)',
+                      label: 'IST-5.A.2 Communication methods (signaling).',
                       value: 'IST-5.A.2',
                     },
                     {
                       label:
-                        'IST-5.A.3 Responses are vital to nat. sel & evolution (innate and learned behavior, cooperative behaviors)',
+                        'IST-5.A.3 Responses are vital to natural selection & evolution (innate and learned behavior, cooperative behaviors).',
                       value: 'IST-5.A.3',
                     },
                   ],
@@ -2458,7 +2474,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.M.1 Energy --> maintain organization, grow, reproduce (endotherm vs. ectotherm, reproductive strategies, relationship between size and metabolic rate, net + energy means growth or energy storage, net loss means loss of mass/death)',
+                        'ENE-1.M.1 Energy --> maintain organization, grow, reproduce (endotherm vs. ectotherm, reproductive strategies, relationship between size and metabolic rate, net + energy means growth or energy storage, net loss means loss of mass/death).',
                       value: 'ENE-1.M.1',
                     },
                   ],
@@ -2470,12 +2486,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.N.1 Changes in energy available affects population size',
+                        'ENE-1.N.1 Changes in energy available affects population size.',
                       value: 'ENE-1.N.1',
                     },
                     {
                       label:
-                        'ENE-1.N.2 Disruptions in energy result in ecosystem disruptions (change in sunlight --> food pyramid)',
+                        'ENE-1.N.2 Disruptions in energy result in ecosystem disruptions (change in sunlight --> food pyramid).',
                       value: 'ENE-1.N.2',
                     },
                   ],
@@ -2487,7 +2503,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-1.O.1 Autotrophs (photosynthetic, chemosynthetic)',
+                        'ENE-1.O.1 Autotrophs (photosynthetic, chemosynthetic).',
                       value: 'ENE-1.O.1',
                     },
                     { label: 'ENE-1.O.2 Heterotrophs', value: 'ENE-1.O.2' },
@@ -2506,12 +2522,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-1.G.1 Individuals and populations interact with each other and environment in complex ways',
+                        'SYI-1.G.1 Individuals and populations interact with each other and environment in complex ways.',
                       value: 'SYI-1.G.1',
                     },
                     {
                       label:
-                        'SYI-1.G.2 Lots of adaptations related to energy/matter in a particular environment (population equations [dN/dt = B-D]) Expon growth (dN/dt= rmax N) occurs when unconstrained',
+                        'SYI-1.G.2 Lots of adaptations related to energy/matter in a particular environment (population equations [dN/dt = B-D]) Expon growth (dN/dt= rmax N) occurs when unconstrained.',
                       value: 'SYI-1.G.2',
                     },
                   ],
@@ -2529,12 +2545,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-1.H.1 Pop density can exceed resource availability',
+                        'SYI-1.H.1 Pop density can exceed resource availability.',
                       value: 'SYI-1.H.1',
                     },
                     {
                       label:
-                        'SYI-1.H.2 Limits from density-dependent and density-independent --> Logistic growth',
+                        'SYI-1.H.2 Limits from density-dependent and density-independent --> Logistic growth.',
                       value: 'SYI-1.H.2',
                     },
                   ],
@@ -2552,7 +2568,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-4.A.1 Community structure = species composition and species diversity',
+                        'ENE-4.A.1 Community structure = species composition and species diversity.',
                       value: 'ENE-4.A.1',
                     },
                   ],
@@ -2568,17 +2584,17 @@ const metadata = {
                     },
                     {
                       label:
-                        'ENE-4.B.2 Interactions among populations determine how they access energy and matter in a community',
+                        'ENE-4.B.2 Interactions among populations determine how they access energy and matter in a community.',
                       value: 'ENE-4.B.2',
                     },
                     {
                       label:
-                        'ENE-4.B.3 Relationships can be characterized as +/- (predator-prey, trophic cascades, niche partitioning)',
+                        'ENE-4.B.3 Relationships can be characterized as +/- (predator-prey, trophic cascades, niche partitioning).',
                       value: 'ENE-4.B.3',
                     },
                     {
                       label:
-                        'ENE-4.B.4 Competition, predation, symbioses (comm, parasit, mutual)',
+                        'ENE-4.B.4 Competition, predation, symbioses (comm, parasit, mutual).',
                       value: 'ENE-4.B.4',
                     },
                   ],
@@ -2590,7 +2606,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'ENE-4.C.1 Cooperation/coordination can result in benefits',
+                        'ENE-4.C.1 Cooperation/coordination can result in benefits.',
                       value: 'ENE-4.C.1',
                     },
                   ],
@@ -2608,12 +2624,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-3.F.1 Nat/artificial ecosystems with less diversity --> less resilient',
+                        'SYI-3.F.1 Nat/artificial ecosystems with less diversity --> less resilient.',
                       value: 'SYI-3.F.1',
                     },
                     {
                       label:
-                        'SYI-3.F.2 Keystone species, producers, essential abiotic/biotic factors contribute to maintaining diversity',
+                        'SYI-3.F.2 Keystone species, producers, essential abiotic/biotic factors contribute to maintaining diversity.',
                       value: 'SYI-3.F.2',
                     },
                   ],
@@ -2625,11 +2641,11 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-3.G.1 Species diversity can influence organization of ecosystem',
+                        'SYI-3.G.1 Species diversity can influence organization of ecosystem.',
                       value: 'SYI-3.G.1',
                     },
                     {
-                      label: 'SYI-3.G.2 Keystone species definition',
+                      label: 'SYI-3.G.2 Keystone species definition.',
                       value: 'SYI-3.G.2',
                     },
                   ],
@@ -2645,9 +2661,12 @@ const metadata = {
                     'EVO-1.O Explain the interaction between the environment and random or preexisting variations in populations.',
                   value: 'EVO-1.O',
                   essentialKnowledge: [
-                    { label: 'EVO-1.O.1 Adaptation def.', value: 'EVO-1.O.1' },
                     {
-                      label: 'EVO-1.O.2 Mutations are random',
+                      label: 'EVO-1.O.1 Adaptation definition.',
+                      value: 'EVO-1.O.1',
+                    },
+                    {
+                      label: 'EVO-1.O.2 Mutations are random.',
                       value: 'EVO-1.O.2',
                     },
                   ],
@@ -2659,11 +2678,11 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-2.A.1 Invasives exploit new niches and out-compete other organisms',
+                        'SYI-2.A.1 Invasives exploit new niches and out-compete other organisms.',
                       value: 'SYI-2.A.1',
                     },
                     {
-                      label: 'SYI-2.A.2 Invasives can have expon. growth',
+                      label: 'SYI-2.A.2 Invasives can have exponential growth.',
                       value: 'SYI-2.A.2',
                     },
                   ],
@@ -2675,12 +2694,12 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-2.B.1 Distribution of ecosystems changes over time (HUMANS!)',
+                        'SYI-2.B.1 Distribution of ecosystems changes over time (HUMANS!).',
                       value: 'SYI-2.B.1',
                     },
                     {
                       label:
-                        'SYI-2.B.2 Human impact accelerates local change (new diseases, habitat change)',
+                        'SYI-2.B.2 Human impact accelerates local change (new diseases, habitat change).',
                       value: 'SYI-2.B.2',
                     },
                   ],
@@ -2692,7 +2711,7 @@ const metadata = {
                   essentialKnowledge: [
                     {
                       label:
-                        'SYI-2.C.1 Geological/meteorological events affect habitat change and distribution (see: biogeography)',
+                        'SYI-2.C.1 Geological/meteorological events affect habitat change and distribution (see: biogeography).',
                       value: 'SYI-2.C.1',
                     },
                   ],
