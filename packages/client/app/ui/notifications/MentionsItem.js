@@ -220,7 +220,6 @@ const MentionsItem = ({ item, markAs }) => {
   return (
     <ListItemContent $unread={unread}>
       <Chatbox
-        data-testid="chatbox"
         content={
           <MessageContent data-testid="message-content">
             <span>
@@ -231,13 +230,16 @@ const MentionsItem = ({ item, markAs }) => {
             </span>
             <ActionsWrapper>
               <Link to={itemLink}>Go to Item</Link>
-              <Link to={chatLink}>Go to Chat</Link>
+              <Link onClick={() => markAs(true, [id])} to={chatLink}>
+                Go to Chat
+              </Link>
               <button onClick={() => markAs(unread, [id])} type="button">
                 Mark as {unread ? 'read' : 'unread'}
               </button>
             </ActionsWrapper>
           </MessageContent>
         }
+        data-testid="chatbox"
         header={
           <MessageFromHeader>
             <span>
