@@ -92,7 +92,6 @@ const Wrapper = styled.div`
 
 const StyledButton = styled(Button)`
   margin-right: ${grid(2)};
-  width: 100%;
 
   @media (min-width: ${th('mediaQueries.mediumPlus')}) {
     width: auto;
@@ -155,7 +154,7 @@ const StyledAssignHEButton = styled(AssignHEButton)`
 const RightAreaWrapper = styled.div`
   align-items: center;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   text-transform: initial;
   width: 100%;
 `
