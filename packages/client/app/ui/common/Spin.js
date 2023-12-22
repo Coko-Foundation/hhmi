@@ -12,6 +12,9 @@ import { grid } from '@coko/client'
 const StyledSpin = styled(({ isNested, renderBackground, ...rest }) => (
   <AntSpin {...rest} />
 ))`
+  &&& {
+    max-height: unset;
+  }
   ${props =>
     props.isNested &&
     css`
@@ -111,7 +114,9 @@ const Spin = props => {
     </StyledSpin>
   )
 
-  if (!showChildren) return <NestedWrapper>{spin}</NestedWrapper>
+  if (!showChildren)
+    return <NestedWrapper className={className}>{spin}</NestedWrapper>
+
   return spin
 }
 
