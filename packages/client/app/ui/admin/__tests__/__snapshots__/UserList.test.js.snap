@@ -2,13 +2,13 @@
 
 exports[`UserList matches snapshot 1`] = `
 <div
-  className="sc-gABjDL bmSqXN"
+  className="sc-iNKjke cRgPqf"
 >
   <section
-    className="sc-gxJnBp jaXOEd"
+    className="sc-iKSnhI fBBmce"
   >
     <h1
-      className="ant-typography sc-joHvVE hbYyeq css-dev-only-do-not-override-12jzuas"
+      className="ant-typography sc-bnUeTB kOxLtw css-dev-only-do-not-override-12jzuas"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,13 +18,13 @@ exports[`UserList matches snapshot 1`] = `
       User Manager
     </h1>
     <div
-      className="sc-spCdH gIGoMO sc-hfoRWe dkHEjH"
+      className="sc-ldYLUo jNoZVV sc-eWFnVD ijzYiC"
     >
       <div
-        className="sc-ejMzOU iJSKsH"
+        className="sc-DgeDX fXMAfn"
       >
         <span
-          className="ant-input-group-wrapper ant-input-search sc-iCmkLe kfpYcl css-dev-only-do-not-override-12jzuas"
+          className="ant-input-group-wrapper ant-input-search sc-cPlDXj jMGold css-dev-only-do-not-override-12jzuas"
         >
           <span
             className="ant-input-wrapper ant-input-group css-dev-only-do-not-override-12jzuas"
@@ -141,7 +141,7 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper sc-gLDzan RqRmZ sc-eoqJBP eaSmEt css-dev-only-do-not-override-12jzuas"
+                                className="ant-checkbox-wrapper sc-irTswW kIOznH sc-behMKO bLPwIM css-dev-only-do-not-override-12jzuas"
                               >
                                 <span
                                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -487,7 +487,7 @@ exports[`UserList matches snapshot 1`] = `
       </div>
       <nav
         aria-label="Pagination"
-        className="sc-iKGpAt kjUTHT sc-khrQBJ daZMic"
+        className="sc-jItqcz cksJKU sc-ebKDBO erSTep"
         role="navigation"
       >
         <ul
@@ -547,10 +547,10 @@ exports[`UserList matches snapshot 1`] = `
       </nav>
     </div>
     <div
-      className="sc-bqMaVX fkJaGu"
+      className="sc-eTNrTh kjUPcC"
     >
       <label
-        className="ant-checkbox-wrapper sc-gLDzan RqRmZ css-dev-only-do-not-override-12jzuas"
+        className="ant-checkbox-wrapper sc-irTswW kIOznH css-dev-only-do-not-override-12jzuas"
       >
         <span
           className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -572,10 +572,10 @@ exports[`UserList matches snapshot 1`] = `
         </span>
       </label>
       <div
-        className="sc-eDDNvR jGthFV"
+        className="sc-jsMahE dWkREu"
       >
         <button
-          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ"
+          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB lbFdVm"
           data-testid="deactivate-btn"
           disabled={true}
           onClick={[Function]}
@@ -588,7 +588,7 @@ exports[`UserList matches snapshot 1`] = `
           </span>
         </button>
         <button
-          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ"
+          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB lbFdVm"
           data-testid="delete-btn"
           disabled={true}
           onClick={[Function]}
@@ -603,7 +603,7 @@ exports[`UserList matches snapshot 1`] = `
       </div>
     </div>
     <span
-      className="sc-gjTGSA fuiUoE"
+      className="sc-hhGHuG knQjWx"
       id="action-status"
       role="status"
     />

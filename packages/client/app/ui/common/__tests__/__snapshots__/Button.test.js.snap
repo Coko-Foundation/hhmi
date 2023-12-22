@@ -2,7 +2,7 @@
 
 exports[`Button matches snapshot 1`] = `
 <button
-  className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default sc-dmqHEX dQohVp"
+  className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default sc-fsQiph jwhfSZ"
   disabled={false}
   onClick={[Function]}
   status={null}

@@ -2,10 +2,10 @@
 
 exports[`ChatInput matches snapshot 1`] = `
 <div
-  className="sc-gABjDL bitvmf"
+  className="sc-iNKjke dhrgEt"
 >
   <div
-    className="sc-joHvVE fxXELZ mentions-input sc-joHvVE--multiLine"
+    className="sc-bnUeTB ccNcDX mentions-input sc-bnUeTB--multiLine"
     style={
       {
         "overflowY": "visible",
@@ -14,11 +14,11 @@ exports[`ChatInput matches snapshot 1`] = `
     }
   >
     <div
-      className="sc-joHvVE__control"
+      className="sc-bnUeTB__control"
       style={{}}
     >
       <div
-        className="sc-joHvVE__highlighter"
+        className="sc-bnUeTB__highlighter"
         style={
           {
             "border": "1px solid transparent",
@@ -36,7 +36,7 @@ exports[`ChatInput matches snapshot 1`] = `
          
       </div>
       <textarea
-        className="sc-joHvVE__input"
+        className="sc-bnUeTB__input"
         onBlur={[Function]}
         onChange={[Function]}
         onCompositionEnd={[Function]}
@@ -69,7 +69,7 @@ exports[`ChatInput matches snapshot 1`] = `
     </div>
   </div>
   <span
-    className="ant-upload-wrapper sc-cRQaBJ fuaUiU sc-gxJnBp goOwcF css-dev-only-do-not-override-12jzuas"
+    className="ant-upload-wrapper sc-eoqJBP evPOSu sc-iKSnhI eqdWYi css-dev-only-do-not-override-12jzuas"
   >
     <div
       className="ant-upload ant-upload-select"
@@ -124,7 +124,7 @@ exports[`ChatInput matches snapshot 1`] = `
     />
   </span>
   <button
-    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU iQloaX sc-hfoRWe gDQQNG"
+    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB leliJo sc-eWFnVD leOhBz"
     data-testid="send-btn"
     disabled={false}
     onClick={[Function]}

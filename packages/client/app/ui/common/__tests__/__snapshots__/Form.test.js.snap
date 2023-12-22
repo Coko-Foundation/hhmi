@@ -2,7 +2,7 @@
 
 exports[`Form matches snapshot 1`] = `
 <div
-  className="sc-hLseeU gTQpGv"
+  className="sc-qRumB eauyUM"
 >
   <form
     className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas"
@@ -11,10 +11,10 @@ exports[`Form matches snapshot 1`] = `
     onSubmit={[Function]}
   >
     <div
-      className="sc-jTrPJq"
+      className="sc-kFuwaP"
     >
       <input
-        className="ant-input css-dev-only-do-not-override-12jzuas sc-gLDzan lhFuEK"
+        className="ant-input css-dev-only-do-not-override-12jzuas sc-irTswW bYAZgs"
         disabled={false}
         onBlur={[Function]}
         onChange={[Function]}
@@ -27,10 +27,10 @@ exports[`Form matches snapshot 1`] = `
       />
     </div>
     <div
-      className="sc-jTrPJq"
+      className="sc-kFuwaP"
     >
       <span
-        className="ant-input-affix-wrapper ant-input-password sc-fsQiph cqilML css-dev-only-do-not-override-12jzuas"
+        className="ant-input-affix-wrapper ant-input-password sc-fbJfA wYQP css-dev-only-do-not-override-12jzuas"
         onClick={[Function]}
       >
         <input
@@ -51,7 +51,7 @@ exports[`Form matches snapshot 1`] = `
           <button
             aria-checked={false}
             aria-label="Show password"
-            className="sc-iAEyYk jwtKJD ant-input-password-icon"
+            className="sc-csCMJt eEuGXR ant-input-password-icon"
             onClick={[Function]}
             onMouseDown={[Function]}
             onMouseUp={[Function]}
@@ -85,7 +85,7 @@ exports[`Form matches snapshot 1`] = `
       </span>
     </div>
     <button
-      className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-button sc-qRumB egCkMh"
+      className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-button sc-brKeYL cSRXoL"
       data-testid="submit-btn"
       disabled={false}
       onClick={[Function]}

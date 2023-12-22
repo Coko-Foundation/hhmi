@@ -2,11 +2,11 @@
 
 exports[`Footer matches snapshot 1`] = `
 <footer
-  className="sc-dmqHEX bNSkSz"
+  className="sc-fsQiph fFkwZv"
   role="contentinfo"
 >
   <ul
-    className="sc-hLseeU kYypAG"
+    className="sc-qRumB jEtWGJ"
   >
     <li>
       <a

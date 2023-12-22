@@ -2,10 +2,10 @@
 
 exports[`Select matches snapshot 1`] = `
 <span
-  className="sc-hLseeU"
+  className="sc-qRumB"
 >
   <div
-    className="ant-select sc-eDDNvR fAQJIF css-dev-only-do-not-override-12jzuas ant-select-multiple ant-select-show-arrow"
+    className="ant-select sc-jsMahE jMhsbm css-dev-only-do-not-override-12jzuas ant-select-multiple ant-select-show-arrow"
     data-testid="test-select"
     onBlur={[Function]}
     onFocus={[Function]}

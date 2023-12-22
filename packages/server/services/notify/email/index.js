@@ -1,10 +1,8 @@
-const { logger } = require('@coko/server')
+const { logger, clientUrl } = require('@coko/server')
 
 const config = require('config')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const mailer = require('@pubsweet/component-send-email')
-
-const clientUrl = config.has('clientUrl') && config.get('clientUrl')
 
 const { ChatThread } = require('@coko/server/src/models')
 const { Question, Identity, User } = require('../../../models')

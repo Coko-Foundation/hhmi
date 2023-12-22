@@ -2,13 +2,13 @@
 
 exports[`Popup matches snapshot 1`] = `
 <div
-  className="sc-ldFCYb jLzKyX"
+  className="sc-dxroEu cIwVHs"
 >
   <button
     aria-controls="popup-1"
     aria-expanded={false}
     aria-haspopup="dialog"
-    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default sc-hLseeU kWOTMC"
+    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default sc-qRumB egCkMh"
     data-testid="toggle-btn"
     disabled={false}
     onClick={[Function]}
@@ -21,7 +21,7 @@ exports[`Popup matches snapshot 1`] = `
     </span>
   </button>
   <div
-    className="sc-ejdXBC jqkOZY"
+    className="sc-fYdXmn zMVVa"
     id="popup-1"
     onBlur={[Function]}
     onKeyDown={[Function]}

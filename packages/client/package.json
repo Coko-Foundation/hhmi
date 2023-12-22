@@ -29,7 +29,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
     "@apollo/client": "^3.6.8",
-    "@coko/client": "0.0.46",
+    "@coko/client": "0.0.56",
     "@pubsweet/ui": "^12.6.13",
     "antd": "^5.6.1",
     "dompurify": "^3.0.6",
