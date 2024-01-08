@@ -117,6 +117,7 @@ const rolesText = {
   author: '(Author)',
   handlingEditor: '(HE)',
   editor: '(Editor)',
+  production: '(Production)',
 }
 // TODO -- this needs to be a wax editor with two plugins (mention & task)
 

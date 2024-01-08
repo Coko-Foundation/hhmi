@@ -199,7 +199,7 @@ const QuestionWrapper = styled.div`
   background-color: ${th('colorBackground')};
   display: grid;
   grid-template-columns: ${props => (props.showMetadata ? `2fr 1fr` : '2fr')};
-  height: 100%;
+  height: calc(100% - 49px); // 49px is the height of the subheader
 `
 
 const StyledTabs = styled(Tabs)`
@@ -1459,7 +1459,8 @@ const Question = props => {
                 children: (
                   <TabContentWrapper>
                     <span style={{ display: 'flex' }}>
-                      {facultyView && FacultyHeader}
+                      Participants:{' '}
+                      {[...new Set(authorChatParticipants)]?.length || ''}
                     </span>
                     <ChatThread
                       announcementText={announcementText}
@@ -1479,7 +1480,8 @@ const Question = props => {
                 children: (
                   <TabContentWrapper>
                     <span style={{ display: 'flex' }}>
-                      {facultyView && FacultyHeader}
+                      Participants:{' '}
+                      {[...new Set(productionChatParticipants)]?.length || ''}
                     </span>
                     <ChatThread
                       isActive={activeKey === 'productionChat'}

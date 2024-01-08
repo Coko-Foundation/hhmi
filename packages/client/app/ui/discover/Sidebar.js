@@ -16,7 +16,7 @@ const Wrapper = styled.aside`
   background-color: ${th('colorBackground')};
   height: 100%;
   overflow: hidden;
-  padding: ${grid(2)} 0;
+  padding: 0;
 
   > div {
     height: 100%;
@@ -43,7 +43,7 @@ const FormFieldsContainer = styled.div`
 const Footer = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: ${grid(4)} ${grid(2)} 0 ${grid(4)};
+  padding: ${grid(4)} ${grid(2.5)} ${grid(2.3)};
 `
 
 const apCourses = ['apBiology', 'apEnvironmentalScience']

@@ -75,14 +75,6 @@ const StyledChatHeader = styled.div`
   }
 
   > :first-child {
-    align-self: center;
-    font-size: ${th('fontSizeBaseSmaller')};
-    font-weight: 700;
-    margin: 0;
-    text-transform: uppercase;
-  }
-
-  > :nth-child(2) {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -96,40 +88,8 @@ const StyledChatHeader = styled.div`
     width: 25%;
 
     > :first-child {
-      align-self: flex-start;
-    }
-
-    > :nth-child(2) {
       flex-direction: column;
     }
-  }
-`
-
-const ParticipantsTitle = styled.span`
-  align-items: center;
-  background-color: #aaa2;
-  display: flex;
-  gap: 1rem;
-  height: 30px;
-  justify-content: space-between;
-  padding: 0 1rem;
-  width: fit-content;
-
-  > :nth-child(1) {
-    /* background-color: #033; */
-    font-size: 14px;
-    text-transform: capitalize;
-  }
-
-  > :nth-child(2) {
-    /* background-color: #000; */
-    font-size: 16px;
-  }
-
-  @media screen and (min-width: 800px) {
-    background-color: #0002;
-    gap: 0.5rem;
-    width: 100%;
   }
 `
 
@@ -223,11 +183,8 @@ const ChatThread = props => {
     <Wrapper onKeyDown={handleKeyDown} ref={wrapperRef}>
       {showParticipants && participants.length > 0 && (
         <StyledChatHeader>
-          <ParticipantsTitle>
-            <span>Participants: </span> <span>{participants.length || ''}</span>
-          </ParticipantsTitle>
           <span>
-            {participants.map((p, i) => (
+            {[...new Set(participants)].map((p, i) => (
               <StyledParticipant key={uuid()}>
                 <UserIcon alt={p.display} src={userIcon} />
                 <span>

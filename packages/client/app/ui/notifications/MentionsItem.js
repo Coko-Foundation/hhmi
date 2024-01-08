@@ -38,6 +38,7 @@ const Chatbox = styled(ChatBox)`
   border-radius: 25px;
   filter: drop-shadow(0 0 5px #0001);
   outline: 1px solid #0000;
+  padding: 0 0 0.4rem;
   transition: border 0.3s;
 
   &::before,
