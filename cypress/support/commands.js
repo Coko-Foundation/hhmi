@@ -108,7 +108,7 @@ Cypress.Commands.add(
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000)
 
-    cy.get('.multiple-choice-single-correct .ProseMirror')
+    cy.get('.multiple-choice .ProseMirror >div .ProseMirror')
       .eq(0)
       .click()
       .focus()

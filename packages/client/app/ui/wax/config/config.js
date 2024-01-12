@@ -12,7 +12,7 @@ import {
 } from 'wax-prosemirror-services'
 
 import { QuestionsService } from 'wax-questions-service'
-import { TablesService, columnResizing } from 'wax-table-service'
+import { TablesService, tableEditing } from 'wax-table-service'
 
 import { DefaultSchema } from 'wax-prosemirror-core'
 
@@ -51,7 +51,7 @@ export default {
   ],
 
   SchemaService: DefaultSchema,
-  PmPlugins: [columnResizing()],
+  PmPlugins: [tableEditing()],
 
   ImageService: { showAlt: true },
 
