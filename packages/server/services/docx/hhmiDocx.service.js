@@ -1,4 +1,5 @@
 const cloneDeep = require('lodash/cloneDeep')
+const { startCase, capitalize } = require('lodash')
 
 const {
   AlignmentType,
@@ -105,6 +106,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       question_list: this.questionListHandler,
       question: this.questionHandler,
       leading_content: this.leadingContentHandler,
+      numerical_answer_container: this.numericalAnswerContainerHandler,
     }
 
     this.config.styles.paragraphStyles.push({
@@ -269,6 +271,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
               multipleDropdownSolutions: {},
               multipleDropdownFeedback: {},
               essaySolutions: {},
+              numericalSolutions: {},
+              numericalFeedback: {},
             },
           ]
 
@@ -660,6 +664,36 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   }
   // #endregion essay
 
+  // #region numerical
+
+  numericalAnswerContainerHandler = numericalQuestion => {
+    const {
+      id,
+      answerType,
+      answersExact,
+      answersRange,
+      answersPrecise,
+      feedback,
+    } = numericalQuestion.attrs
+
+    let answers = []
+
+    if (answerType === 'exactAnswer') {
+      answers = answersExact
+    } else if (answerType === 'rangeAnswer') {
+      answers = answersRange
+    } else if (answerType === 'preciseAnswer') {
+      answers = answersPrecise
+    }
+
+    this.questionReference[this.questionCounter].numericalSolutions[id] =
+      answers
+    this.questionReference[this.questionCounter].numericalFeedback[id] =
+      feedback
+
+    return [...this.contentParser(numericalQuestion.content)]
+  }
+
   // #region feedback
   feedbackParser = () => {
     let content = [
@@ -981,6 +1015,49 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
         content = content.concat(feedbackContent)
       })
+
+      const numericalSolutionKeys = Object.keys(question.numericalSolutions)
+
+      numericalSolutionKeys.forEach((groupId, i) => {
+        const answers = question.numericalSolutions[groupId]
+        const listContent = []
+
+        if (numericalSolutionKeys.length > 1) {
+          listContent.push(
+            new Paragraph({
+              children: [
+                new TextRun({
+                  text: `Numerical ${i + 1}`,
+                }),
+              ],
+            }),
+          )
+        }
+
+        Object.entries(answers).forEach(([key, value]) => {
+          const solution = new Paragraph({
+            children: [
+              new TextRun({
+                text: `${capitalize(startCase(key))}: ${value}`,
+              }),
+            ],
+          })
+
+          listContent.push(solution)
+        })
+
+        const feedbacknumerical = new Paragraph({
+          children: [
+            new TextRun({
+              text: question.numericalFeedback[groupId],
+            }),
+          ],
+        })
+
+        listContent.push(feedbacknumerical)
+
+        content = content.concat(listContent)
+      })
     })
 
     return content
@@ -1218,6 +1295,8 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           multipleDropdownSolutions: {},
           multipleDropdownFeedback: {},
           essaySolutions: {},
+          numericalSolutions: {},
+          numericalFeedback: {},
         })
       }
 

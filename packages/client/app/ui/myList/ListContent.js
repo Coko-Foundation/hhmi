@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
@@ -95,7 +96,7 @@ const ListContent = ({
   ...rest
 }) => {
   const [modal, contextHolder] = Modal.useModal()
-  const { confirm, error } = modal
+  const { confirm, error, warning } = modal
 
   const [selectedQuestions, setSelectedQuestions] = useState([])
   const [draggable, setDraggable] = useState(true)
@@ -111,8 +112,80 @@ const ListContent = ({
     return onExport(selectedQuestions, searchParams.orderBy, showFeedback)
   }
 
-  const handleExportQTI = showFeedback => {
-    onExportQTI(selectedQuestions, searchParams.orderBy)
+  const handleExportQTI = () => {
+    // if exporting more than one question (list export) exclude numerical answer types
+    if (selectedQuestions.length > 1) {
+      const nonNumericalQuestionIds = selectedQuestions.filter(
+        qid => questions.find(q => q.id === qid)?.type !== 'numerical',
+      )
+
+      if (nonNumericalQuestionIds.length < selectedQuestions.length) {
+        const warningModal = warning()
+
+        if (nonNumericalQuestionIds.length === 0) {
+          warningModal.update({
+            title: <ModalHeader>No valid items to export</ModalHeader>,
+            content: (
+              <p>
+                Your selection contains only items of the type "numerical
+                answer", which cannot be exported as a list. You can export
+                numerical answer items individually.
+              </p>
+            ),
+            footer: [
+              <ModalFooter key="footer">
+                <Button
+                  autoFocus
+                  key="ok-error"
+                  onClick={() => {
+                    warningModal.destroy()
+                  }}
+                >
+                  Ok
+                </Button>
+              </ModalFooter>,
+            ],
+          })
+        } else {
+          warningModal.update({
+            title: (
+              <ModalHeader>
+                Numerical answers will not be included in the export
+              </ModalHeader>
+            ),
+            content: (
+              <p>
+                Your selection contains items of the type "numerical answer",
+                which cannot be included in a list export. The export will
+                contain all other selected items. You can export numerical
+                answer items individually.
+              </p>
+            ),
+            footer: [
+              <ModalFooter key="footer">
+                <Button
+                  autoFocus
+                  key="continue"
+                  onClick={() => {
+                    exportToQTI(nonNumericalQuestionIds)
+                    warningModal.destroy()
+                  }}
+                  type="primary"
+                >
+                  Continue
+                </Button>
+              </ModalFooter>,
+            ],
+          })
+        }
+      }
+    } else {
+      onExportQTI(selectedQuestions)
+    }
+  }
+
+  const exportToQTI = questionIds => {
+    onExportQTI(questionIds, searchParams.orderBy)
       .then(() => {})
       .catch(e => {
         const errorModal = error()

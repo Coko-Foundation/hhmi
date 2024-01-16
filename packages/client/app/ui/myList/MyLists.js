@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import React, { createContext, useState } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
@@ -259,7 +260,7 @@ const MyLists = props => {
   const [selectedRows, setSelectedRows] = useState([])
 
   const [modal, contextHolder] = Modal.useModal()
-  const { confirm, error } = modal
+  const { confirm, error, warning } = modal
   const [newListForm] = Form.useForm()
 
   const handleSelectionChange = selectedRowKey => {
@@ -271,6 +272,69 @@ const MyLists = props => {
   }
 
   const handleExportListQTI = () => {
+    const listToExport = data.find(l => l.key === selectedRows[0])
+    const { numberOfQuestions, numberOfNumericalQuestions } = listToExport
+
+    if (numberOfNumericalQuestions > 0) {
+      const warningModal = warning()
+
+      if (numberOfNumericalQuestions < numberOfQuestions) {
+        warningModal.update({
+          title: <ModalHeader>List contains numerical answers</ModalHeader>,
+          content: (
+            <p>
+              The list you're about to export contains items of the type
+              "numerical answer". These items will be excluded from the final
+              export. You can export numerical answer items individually.
+            </p>
+          ),
+          footer: [
+            <ModalFooter key="footer">
+              <Button
+                autoFocus
+                key="warning-continue"
+                onClick={() => {
+                  exportToQti()
+                  warningModal.destroy()
+                }}
+                type="primary"
+              >
+                Continue
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      } else {
+        warningModal.update({
+          title: <ModalHeader>List contains numerical answers</ModalHeader>,
+          content: (
+            <p>
+              The list you're about to export contains only items of the type
+              "numerical answer". These items cannot be exported as a list. You
+              can export numerical answer items individually.
+            </p>
+          ),
+          footer: [
+            <ModalFooter key="footer">
+              <Button
+                autoFocus
+                key="ok-error"
+                onClick={() => {
+                  warningModal.destroy()
+                }}
+              >
+                Ok
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      }
+    } else {
+      exportToQti()
+    }
+  }
+
+  const exportToQti = () => {
     onExportQTI(selectedRows[0])
       .then(() => {})
       .catch(e => {
