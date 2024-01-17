@@ -9,6 +9,18 @@ const StyledAssignReviewers = styled(UIAssignReviewers)`
   div:nth-child(3) {
     overflow-x: auto;
   }
+
+  > div:nth-child(2) {
+    > div:first-child {
+      display: none;
+    }
+
+    > div:nth-child(2) {
+      > div:not(:nth-child(3)) {
+        display: none;
+      }
+    }
+  }
 `
 
 const additionalReviewerColumns = [
