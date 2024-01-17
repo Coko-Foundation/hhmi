@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { useQuery, useSubscription } from '@apollo/client'
+import React, { useContext, useMemo, useState } from 'react'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
 import { useCurrentUser } from '@coko/client'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
@@ -49,7 +49,7 @@ export const useNotifications = () => useContext(NotificationsContext)
 
 export const NotificationsProvider = ({ children }) => {
   const [tabKey, setTabKey] = useState('messages')
-
+  const client = useApolloClient()
   const [unreadMentions, setUnreadMentions] = useState(0)
 
   const [messageToPreview, setMessageToPreview] = useState({})
@@ -57,13 +57,14 @@ export const NotificationsProvider = ({ children }) => {
   const [newNotification, setNewNotification] = useState(null)
   const { currentUser } = useCurrentUser()
 
-  const { data: unreadCount, loading: unreadCountLoading } = useQuery(
-    GET_UNREAD_NOTIFICATIONS_COUNT,
-  )
+  useQuery(GET_UNREAD_NOTIFICATIONS_COUNT, {
+    onCompleted: data =>
+      setUnreadMentions(data?.getUnreadNotificationsCount[0]?.count),
+  })
 
   useSubscription(NOTIFICATION_SUBSCRIPTION, {
     skip: !currentUser?.id,
-    onData: ({
+    onData: async ({
       data: {
         data: {
           newNotification: { from, content },
@@ -102,6 +103,9 @@ export const NotificationsProvider = ({ children }) => {
           },
         }
       })
+      await client.refetchQueries({
+        include: ['GetUnreadNotificationsCount', 'GetUserNotifications'],
+      })
     },
   })
 
@@ -130,13 +134,6 @@ export const NotificationsProvider = ({ children }) => {
     setTabKey,
     setMessageToPreview,
   ])
-
-  useEffect(() => {
-    !unreadCountLoading &&
-      unreadCount &&
-      unreadCount.getUnreadNotificationsCount[0] !== undefined &&
-      setUnreadMentions(unreadCount.getUnreadNotificationsCount[0]?.count)
-  }, [unreadCountLoading])
 
   return (
     <NotificationsContext.Provider value={values}>

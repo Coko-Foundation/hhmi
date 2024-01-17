@@ -213,7 +213,6 @@ const formatDate = dateString => {
 const MentionsItem = ({ item, markAs }) => {
   const { from, content, date, id, unread, links } = item
   const [chatLink, itemLink] = links
-  const senderName = from?.split(' ')
   const [day, hours] = formatDate(date).split(' ')
   const { width } = useWindowSize()
 
@@ -243,9 +242,9 @@ const MentionsItem = ({ item, markAs }) => {
         header={
           <MessageFromHeader>
             <span>
-              <UserIcon alt={`user-${senderName[0]}`} src={userIcon} />
+              <UserIcon alt={`user-${from}`} src={userIcon} />
               <MessageSender data-testid="sender-name">
-                <small>from:</small>@{senderName[0]}
+                <small>from:</small>@{from}
               </MessageSender>
             </span>
             <ListItemContentDate>
