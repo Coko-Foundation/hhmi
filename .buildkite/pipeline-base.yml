@@ -15,6 +15,15 @@ definitions:
     docker-agents: &docker-agents
       agents:
         queue: "docker-builders"
+  git-remote-repo: &git-remote-repo
+    remote: shvqcj74czxki@git.us-2.platform.sh:shvqcj74czxki.git
+  ssh-defaults: &ssh-defaults
+    ssh:
+      keyscan: git.us-2.platform.sh
+  git: &git
+    git:
+      name: F1 Builder
+      email: support+f1builder@forumone.com
 env:
   # If you do not declare buildkit:1 then arguments using for --target
   # do not work correctly and they will build every steps.
@@ -59,14 +68,14 @@ steps:
   - wait: ~
 
   # Deploy the built application.
-  - label: ":capistrano: Deploy Client"
+  - label: ":pipeline: Deploy Client"
     key: "deploy-client"
     timeout_in_minutes: 15
     concurrency: 1
     concurrency_group: '$BUILDKITE_PIPELINE_SLUG/$BUILDKITE_BRANCH/deploy'
     branches:
       - integration
-      - main
+      - main-platformsh
       - live
     plugins:
       # Log into ECR for this build step to access prebuilt images.
@@ -77,21 +86,35 @@ steps:
       - forumone/extract#v0.2.0:
           verbose: true
           image: ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-client
-          from: /home/node/app/_build
-          to: ${DOCKERFILE_CLIENT}/public
+          from: /home/node/app
+          to: ${DOCKERFILE_CLIENT}/client
 
       # Execute a Capistrano deployment using the defined branch to
       # environment mapping.
       #- forumone/capistrano#v0.5.1:
-      - forumone/capistrano#v0.5.1:
-          require-stage: true
+      - forumone/artifact-push#v0.3.1:
+          verbose: false
+          source-directory: ${ARTIFACT_LOCATION}
+          <<: *git-remote-repo
           branches:
-            integration: client-dev
-            main: client-stage
-            live: client-prod
-          extra-args:
-            - "platform=html"
-            - "app=client"
+            #            - match: live
+            #              target: master
+            - match: main
+              target: main
+            - match: integration
+              target: integration
+          <<: *ssh-defaults
+          <<: *git
+          files:
+            force-add:
+              - client
+            ignore:
+              - .platform/
+              - minio/*
+              - server/*
+              - drupal/*
+              - client/.environment
+              - client/platformsh-scripts/*
 
   - label: ":capistrano: Deploy Server"
     key: "deploy-server"
@@ -100,7 +123,7 @@ steps:
     concurrency_group: '$BUILDKITE_PIPELINE_SLUG/$BUILDKITE_BRANCH/deploy-server'
     branches:
       - integration
-      - main
+      - main-platformsh
       - live
     plugins:
       # Log into ECR for this build step to access prebuilt images.
@@ -112,17 +135,31 @@ steps:
           verbose: true
           image: ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-server
           from: /home/node/hhmi
-          to: ${DOCKERFILE_SERVER}
+          to: ${DOCKERFILE_SERVER}/server
 
       # Execute a Capistrano deployment using the defined branch to
       # environment mapping.
       #- forumone/capistrano#v0.5.1:
-      - forumone/capistrano#v0.5.1:
-          require-stage: true
+      - forumone/artifact-push#v0.3.1:
+          verbose: false
+          source-directory: ${ARTIFACT_LOCATION}
+          <<: *git-remote-repo
           branches:
-            integration: server-dev
-            main: server-stage
-            live: server-prod
-          extra-args:
-            - "platform=node"
-            - "app=server"
+            #            - match: live
+            #              target: master
+            - match: main-platformsh
+              target: main
+            - match: integration
+              target: integration
+          <<: *ssh-defaults
+          <<: *git
+          files:
+            force-add:
+              - server
+            ignore:
+              - .platform/
+              - minio/*
+              - client/*
+              - drupal/*
+              - server/.environment
+              - client/platformsh-scripts/*

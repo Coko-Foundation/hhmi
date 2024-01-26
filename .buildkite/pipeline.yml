@@ -4,14 +4,14 @@ steps:
     branches:
       - live
     env:
-      SERVER_URL: https://www.assessmentbuilder-node.hhmi.byf1.dev
+      SERVER_URL: https://30779a260b80196a185294a3cb9a5745
 
   - label: Build App
     command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
     branches:
-      - main
+      - main-platformsh
     env:
-      SERVER_URL: https://stage.assessmentbuilder-node.hhmi.byf1.dev
+      SERVER_URL: https://30779a260b80196a185294a3cb9a5745
 
   - label: Build App
     command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
@@ -19,4 +19,4 @@ steps:
       - '!live'
       - '!main'
     env:
-      SERVER_URL: https://dev.assessmentbuilder-node.hhmi.byf1.dev
+      SERVER_URL: https://30779a260b80196a185294a3cb9a5745
