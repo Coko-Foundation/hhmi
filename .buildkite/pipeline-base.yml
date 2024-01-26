@@ -93,8 +93,8 @@ steps:
       # environment mapping.
       #- forumone/capistrano#v0.5.1:
       - forumone/artifact-push#v0.3.1:
-          verbose: false
-          source-directory: ${ARTIFACT_LOCATION}
+          verbose: true
+          source-directory: ${DOCKERFILE_CLIENT}
           <<: *git-remote-repo
           branches:
             #            - match: live
@@ -142,7 +142,7 @@ steps:
       #- forumone/capistrano#v0.5.1:
       - forumone/artifact-push#v0.3.1:
           verbose: false
-          source-directory: ${ARTIFACT_LOCATION}
+          source-directory: ${DOCKERFILE_SERVER}
           <<: *git-remote-repo
           branches:
             #            - match: live
