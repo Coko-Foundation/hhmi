@@ -8,7 +8,7 @@ RUN apt-get update \
     g++ \
     python3
 
-WORKDIR /home/node/hhmi/server
+WORKDIR /home/node/hhmi
 
 COPY . .
 

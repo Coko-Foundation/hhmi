@@ -6,7 +6,7 @@ RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y
 
-WORKDIR /home/node/app/client
+WORKDIR /home/node/app
 
 COPY package.json .
 COPY yarn.lock .
