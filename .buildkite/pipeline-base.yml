@@ -87,7 +87,7 @@ steps:
           verbose: true
           image: ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-client
           from: /home/node/app
-          to: ${DOCKERFILE_CLIENT}/
+          to: ${DOCKERFILE_CLIENT}/client
 
       # Execute a Capistrano deployment using the defined branch to
       # environment mapping.
@@ -99,7 +99,7 @@ steps:
           branches:
             #            - match: live
             #              target: master
-            - match: main
+            - match: main-platformsh
               target: main
             - match: integration
               target: integration
@@ -118,6 +118,7 @@ steps:
 
   - label: ":capistrano: Deploy Server"
     key: "deploy-server"
+    depends_on: deploy-client
     timeout_in_minutes: 15
     concurrency: 1
     concurrency_group: '$BUILDKITE_PIPELINE_SLUG/$BUILDKITE_BRANCH/deploy-server'
@@ -135,7 +136,7 @@ steps:
           verbose: true
           image: ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-server
           from: /home/node/hhmi
-          to: ${DOCKERFILE_SERVER}/
+          to: ${DOCKERFILE_SERVER}/server
 
       # Execute a Capistrano deployment using the defined branch to
       # environment mapping.
