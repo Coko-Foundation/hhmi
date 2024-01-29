@@ -2,35 +2,35 @@
 
 exports[`MultipleQuestion matches snapshot 1`] = `
 <div
-  className="sc-jrPfva cnXGhT"
+  className="sc-dHTlsg jazlDS"
 >
   <div
-    className="sc-dZYMIT SwQMe"
+    className="sc-jFyCeV hzsIFI"
   >
     <span
-      className="sc-iXMwsk"
+      className="sc-fLGeYu"
     >
       Answer 
       3
     </span>
   </div>
   <div
-    className="sc-dFWdGd jMNAcp"
+    className="sc-cUHWEf srIdZ"
   >
     <div
-      className="sc-bImIVK gjPorm"
+      className="sc-fIOiVY bNBHwS"
     >
       <div
-        className="sc-dHTlsg lagrZV"
+        className="sc-jrzrYa jYTJlh"
       >
         <div
           className="sc-CxMgy eamUCL"
         />
         <span
-          className="sc-gKziwN sc-cQGx gzjtGj"
+          className="sc-bZMpAI sc-hFRZIz yjjGX"
         >
           <span
-            className="sc-gvIEuo hTTEUW"
+            className="sc-hXrGnx iVNfJW"
           >
             Correct?
           </span>
@@ -63,15 +63,15 @@ exports[`MultipleQuestion matches snapshot 1`] = `
         </span>
       </div>
       <div
-        className="sc-jFyCeV dcLol"
+        className="sc-gABjDL jla-DvC"
       >
         <span
-          className="sc-fLGeYu kbMvId"
+          className="sc-joHvVE ikTbZl"
         >
           Feedback
         </span>
         <input
-          className="sc-cUHWEf ixTEdP"
+          className="sc-gxJnBp egwojs"
           onChange={[Function]}
           placeholder="Insert feedback"
           type="text"
@@ -80,10 +80,10 @@ exports[`MultipleQuestion matches snapshot 1`] = `
       </div>
     </div>
     <div
-      className="sc-hFRZIz bfxhIt"
+      className="sc-cRQaBJ jyeKpl"
     >
       <button
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-lgQHWK iIfAnK"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-ALVnD eEbGUF"
         data-testid="add-option"
         disabled={false}
         onClick={[Function]}
@@ -123,7 +123,7 @@ exports[`MultipleQuestion matches snapshot 1`] = `
         </span>
       </button>
       <button
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-lgQHWK iIfAnK"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-ALVnD eEbGUF"
         data-testid="remove-option"
         disabled={false}
         onClick={[Function]}

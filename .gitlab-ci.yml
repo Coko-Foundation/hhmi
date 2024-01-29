@@ -86,12 +86,11 @@ server unit test:
     - docker:23-dind
   script:
     - cp .env.ci .env
-    - docker-compose up -d db
+    - docker-compose up -d server db
     - docker pull $IMAGE_ORG/$IMAGE_NAME_SERVER_DEVELOPMENT:$CI_COMMIT_SHA
     - |
       docker run \
       --network hhmi_default \
-      -e NODE_ENV=test \
       -e POSTGRES_HOST=db -e POSTGRES_PORT=5432 -e POSTGRES_DB=hhmi_dev -e POSTGRES_USER=hhmi_dev_user -e POSTGRES_PASSWORD=hhmi_dev_user_password \
       -e BIOINTERACTIVE_OAUTH_API_USER_URI=bio.int/api -e BIOINTERACTIVE_OAUTH_TOKEN_URI=bio.int/token -e BIOINTERACTIVE_OAUTH_CLIENT_ID=123 -e BIOINTERACTIVE_OAUTH_CLIENT_SECRET=321 -e BIOINTERACTIVE_OAUTH_REDIRECT_URI=hhmi.co/biointeractive-oauth \
       -e PUBSWEET_SECRET=superSecretThing \

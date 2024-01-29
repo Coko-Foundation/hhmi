@@ -2,13 +2,13 @@
 
 exports[`Login matches snapshot 1`] = `
 <div
-  className="sc-hVkBjg elsmwP"
+  className="sc-eKYjST ktWmwP"
 >
   <div
-    className="sc-dHTlsg gWDCbv"
+    className="sc-jrzrYa enyyXT"
   >
     <h1
-      className="ant-typography sc-dFWdGd iCRAqY css-dev-only-do-not-override-12jzuas"
+      className="ant-typography sc-cUHWEf jXUcTM css-dev-only-do-not-override-12jzuas"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,10 +18,10 @@ exports[`Login matches snapshot 1`] = `
       Login
     </h1>
     <div
-      className="sc-bImIVK"
+      className="sc-fIOiVY"
     >
       <button
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU iQloaX sc-hFRZIz ccKEoX"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB leliJo sc-cRQaBJ eTcpwT"
         disabled={false}
         onClick={[Function]}
         status={null}

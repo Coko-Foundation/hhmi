@@ -48,7 +48,7 @@ import { CURRENT_USER } from './graphql'
 const LayoutWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
 `
 
 const regexPaths = [
@@ -229,7 +229,7 @@ const StyledSpin = styled(Spin)`
   place-content: center;
 `
 
-const Loader = () => <StyledSpin spinning />
+const Loader = props => <StyledSpin {...props} renderBackground={false} />
 
 const SiteHeader = () => {
   const headerLinks = {
@@ -312,7 +312,7 @@ const Authenticated = ({ children }) => {
 }
 
 const routes = (
-  <Authenticate currentUserQuery={CURRENT_USER} loadingComponent={<Loader />}>
+  <Authenticate currentUserQuery={CURRENT_USER} loadingComponent={Loader}>
     <Wrapper>
       <GlobalStyles />
       <SiteHeader />

@@ -2,10 +2,10 @@
 
 exports[`Input matches snapshot (default input) 1`] = `
 <div
-  className="sc-dmqHEX"
+  className="sc-fsQiph"
 >
   <input
-    className="ant-input css-dev-only-do-not-override-12jzuas sc-hLseeU fPUOfG"
+    className="ant-input css-dev-only-do-not-override-12jzuas sc-qRumB gfCBwx"
     disabled={false}
     onBlur={[Function]}
     onChange={[Function]}
@@ -20,10 +20,10 @@ exports[`Input matches snapshot (default input) 1`] = `
 
 exports[`Input matches snapshot (password type) 1`] = `
 <div
-  className="sc-dmqHEX"
+  className="sc-fsQiph"
 >
   <span
-    className="ant-input-affix-wrapper ant-input-password sc-jTrPJq kBnSpZ css-dev-only-do-not-override-12jzuas"
+    className="ant-input-affix-wrapper ant-input-password sc-kFuwaP eNEqsE css-dev-only-do-not-override-12jzuas"
     onClick={[Function]}
   >
     <input
@@ -43,7 +43,7 @@ exports[`Input matches snapshot (password type) 1`] = `
       <button
         aria-checked={false}
         aria-label="Show password"
-        className="sc-eDDNvR kGBXjS ant-input-password-icon"
+        className="sc-jsMahE kUlwtl ant-input-password-icon"
         onClick={[Function]}
         onMouseDown={[Function]}
         onMouseUp={[Function]}

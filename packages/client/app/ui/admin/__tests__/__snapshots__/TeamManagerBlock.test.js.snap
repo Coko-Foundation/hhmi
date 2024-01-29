@@ -2,10 +2,10 @@
 
 exports[`TeamManagerBlock matches snapshot 1`] = `
 <div
-  className="sc-frTjsE kCqIik"
+  className="sc-bImIVK KTsAC"
 >
   <h2
-    className="ant-typography sc-cQGx fJLhXr css-dev-only-do-not-override-12jzuas"
+    className="ant-typography sc-hFRZIz egGFJb css-dev-only-do-not-override-12jzuas"
     style={
       {
         "WebkitLineClamp": undefined,
@@ -19,10 +19,10 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
     </span>
   </h2>
   <div
-    className="sc-kFuwaP eKsANT"
+    className="sc-hAtEyd ceSoro"
   >
     <form
-      className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas sc-jrPfva jhVdbt"
+      className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas sc-dHTlsg hmYnxs"
       data-testid="form-content"
       onReset={[Function]}
       onSubmit={[Function]}
@@ -58,10 +58,10 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 className="ant-form-item-control-input-content"
               >
                 <span
-                  className="sc-bALXmG"
+                  className="sc-eACynP"
                 >
                   <div
-                    className="ant-select ant-select-in-form-item sc-ivnCJf eEaQZQ css-dev-only-do-not-override-12jzuas ant-select-multiple ant-select-show-arrow ant-select-show-search"
+                    className="ant-select ant-select-in-form-item sc-bZPPFW eLHIcP css-dev-only-do-not-override-12jzuas ant-select-multiple ant-select-show-arrow ant-select-show-search"
                     data-testid="select-editor"
                     onBlur={[Function]}
                     onFocus={[Function]}
@@ -185,7 +185,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
       </div>
       <button
         aria-labelledby="editor-team"
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ sc-dZYMIT"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB lbFdVm sc-jFyCeV"
         disabled={true}
         onClick={[Function]}
         status={null}
@@ -199,11 +199,11 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
     </form>
   </div>
   <div
-    className="sc-cCYyox fgmuLb sc-bImIVK lnqHnd"
+    className="sc-ehsgIH gHXfoc sc-fIOiVY kOcZxh"
   >
     <div
       aria-labelledby="team-editor"
-      className="ant-list ant-list-split sc-jMAIzZ cZXzqE css-dev-only-do-not-override-12jzuas"
+      className="ant-list ant-list-split sc-hVkBjg dffcmR css-dev-only-do-not-override-12jzuas"
       data-testid="editor-list"
       role="group"
     >
@@ -217,11 +217,11 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
             className="ant-list-items"
           >
             <li
-              className="sc-cRZddA iJvHiU"
+              className="sc-kiLEMZ ftIJmO"
               data-testid="list-item-wrapper"
             >
               <label
-                className="ant-checkbox-wrapper sc-jTrPJq iCGpyE sc-cPlDXj fgPOWd css-dev-only-do-not-override-12jzuas"
+                className="ant-checkbox-wrapper sc-kFuwaP hJuBMp sc-kZGvTt dNJGzw css-dev-only-do-not-override-12jzuas"
               >
                 <span
                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -240,17 +240,17 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 </span>
               </label>
               <div
-                className="sc-dFWdGd"
+                className="sc-cUHWEf"
               >
                 user1
               </div>
             </li>
             <li
-              className="sc-cRZddA iJvHiU"
+              className="sc-kiLEMZ ftIJmO"
               data-testid="list-item-wrapper"
             >
               <label
-                className="ant-checkbox-wrapper sc-jTrPJq iCGpyE sc-cPlDXj fgPOWd css-dev-only-do-not-override-12jzuas"
+                className="ant-checkbox-wrapper sc-kFuwaP hJuBMp sc-kZGvTt dNJGzw css-dev-only-do-not-override-12jzuas"
               >
                 <span
                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -269,17 +269,17 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 </span>
               </label>
               <div
-                className="sc-dFWdGd"
+                className="sc-cUHWEf"
               >
                 user2
               </div>
             </li>
             <li
-              className="sc-cRZddA iJvHiU"
+              className="sc-kiLEMZ ftIJmO"
               data-testid="list-item-wrapper"
             >
               <label
-                className="ant-checkbox-wrapper sc-jTrPJq iCGpyE sc-cPlDXj fgPOWd css-dev-only-do-not-override-12jzuas"
+                className="ant-checkbox-wrapper sc-kFuwaP hJuBMp sc-kZGvTt dNJGzw css-dev-only-do-not-override-12jzuas"
               >
                 <span
                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -298,17 +298,17 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 </span>
               </label>
               <div
-                className="sc-dFWdGd"
+                className="sc-cUHWEf"
               >
                 user3
               </div>
             </li>
             <li
-              className="sc-cRZddA iJvHiU"
+              className="sc-kiLEMZ ftIJmO"
               data-testid="list-item-wrapper"
             >
               <label
-                className="ant-checkbox-wrapper sc-jTrPJq iCGpyE sc-cPlDXj fgPOWd css-dev-only-do-not-override-12jzuas"
+                className="ant-checkbox-wrapper sc-kFuwaP hJuBMp sc-kZGvTt dNJGzw css-dev-only-do-not-override-12jzuas"
               >
                 <span
                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -327,7 +327,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 </span>
               </label>
               <div
-                className="sc-dFWdGd"
+                className="sc-cUHWEf"
               >
                 user4
               </div>
@@ -338,7 +338,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
     </div>
   </div>
   <button
-    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-hLseeU fUCNCZ sc-iXMwsk"
+    className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB lbFdVm sc-fLGeYu"
     data-testid="remove-editor"
     disabled={true}
     onClick={[Function]}
