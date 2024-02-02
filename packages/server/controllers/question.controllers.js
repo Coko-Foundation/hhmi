@@ -1242,13 +1242,18 @@ const reviewerPool = async questionVersion => {
 
   const pool = await Promise.all(
     teamMemberIds.map(async t => {
-      const member = await TeamMember.findById(t)
+      try {
+        const member = await TeamMember.findById(t)
 
-      return member
+        return member
+      } catch (e) {
+        logger.error(e)
+        return null
+      }
     }),
   )
 
-  return pool
+  return pool.filter(r => !!r)
 }
 
 module.exports = {
