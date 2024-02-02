@@ -1,7 +1,12 @@
 const path = require('path')
 const config = require('config')
 
-const { createFile, logger, useTransaction } = require('@coko/server')
+const {
+  createFile,
+  logger,
+  useTransaction,
+  pubsubManager,
+} = require('@coko/server')
 
 const {
   User,
@@ -23,6 +28,7 @@ const metadataResolver = require('./metadataHandler')
 const resources = require('./resourcesData')
 const { getImageUrls, findImages } = require('./utils')
 const { inviteMaxReviewers } = require('./review.controller')
+const { actions } = require('./constants')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
@@ -30,6 +36,8 @@ const EDITOR_TEAM = config.teams.nonGlobal.editor
 const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
 const PRODUCTION_TEAM = config.teams.global.production
+
+const { getPubsub } = pubsubManager
 
 const getQuestion = async (questionId, options = {}) => {
   const { trx } = options
@@ -455,6 +463,13 @@ const submitQuestion = async (
     options,
     CONTROLLER_MESSAGE,
   )
+
+  const managingEditors = await Team.filterGlobalTeamMembers('editor')
+  const pubsub = await getPubsub()
+
+  managingEditors.result.forEach(editor =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
+  )
   // set agreedTc = true in Question and return
   return modifyQuestion(questionId, { agreedTc }, options, CONTROLLER_MESSAGE)
 }
@@ -517,6 +532,26 @@ const moveQuestionVersionToReview = async (questionVersionId, options = {}) => {
     questionVersion,
   })
 
+  // send dashboard update signal to relevant users: editors, handling editors, author
+  const author = await Question.getAuthor(questionVersion.questionId)
+
+  const handlingEditors = await Question.getHandlingEditors(
+    questionVersion.questionId,
+  )
+
+  const managingEditors = await Team.filterGlobalTeamMembers('editor')
+
+  const pubsub = await getPubsub()
+  pubsub.publish(`${actions.DASHBOARD_UPDATED}.${author.id}`, 'author')
+
+  handlingEditors.forEach(he =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${he.id}`, 'handlingEditor'),
+  )
+
+  managingEditors.result.forEach(editor =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
+  )
+
   return questionVersion
 }
 
@@ -529,11 +564,48 @@ const moveQuestionVersionToProduction = async (
     `${CONTROLLER_MESSAGE} moving question version with id ${questionVersionId} to production`,
   )
 
-  return modifyQuestionVersion(
+  const questionVersion = await modifyQuestionVersion(
     questionVersionId,
     { underReview: false, inProduction: true },
     { trx: options.trx },
   )
+
+  // send dashboard update signal to relevant users: editors, handling editors, author, reviewers and production team
+  const author = await Question.getAuthor(questionVersion.questionId)
+
+  const handlingEditors = await Question.getHandlingEditors(
+    questionVersion.questionId,
+  )
+
+  const managingEditors = await Team.filterGlobalTeamMembers('editor')
+
+  const reviewers = await reviewerPool(questionVersion)
+
+  const productionTeam = await Team.filterGlobalTeamMembers('production')
+
+  const pubsub = await getPubsub()
+  pubsub.publish(`${actions.DASHBOARD_UPDATED}.${author.id}`, 'author')
+
+  handlingEditors.forEach(he =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${he.id}`, 'handlingEditor'),
+  )
+
+  managingEditors.result.forEach(editor =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
+  )
+
+  reviewers.forEach(reviewer => {
+    pubsub.publish(
+      `${actions.DASHBOARD_UPDATED}.${reviewer.userId}`,
+      'reviewer',
+    )
+  })
+
+  productionTeam.result.forEach(prod =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${prod.id}`, 'production'),
+  )
+
+  return questionVersion
 }
 
 const publishQuestionVersion = async (questionVersionId, options = {}) => {
@@ -542,7 +614,7 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
     `${CONTROLLER_MESSAGE} publishing question version with id ${questionVersionId}`,
   )
 
-  return modifyQuestionVersion(
+  const questionVersion = await modifyQuestionVersion(
     questionVersionId,
     {
       // set submitted to true in case it was not set before (fast published by admins); needed to retrieve question with editor query
@@ -554,6 +626,34 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
     },
     { trx: options.trx },
   )
+
+  // send dashboard update signal to relevant users: editors, handling editors, author and production team
+  const author = await Question.getAuthor(questionVersion.questionId)
+
+  const handlingEditors = await Question.getHandlingEditors(
+    questionVersion.questionId,
+  )
+
+  const managingEditors = await Team.filterGlobalTeamMembers('editor')
+
+  const productionTeam = await Team.filterGlobalTeamMembers('production')
+
+  const pubsub = await getPubsub()
+  pubsub.publish(`${actions.DASHBOARD_UPDATED}.${author.id}`, 'author')
+
+  handlingEditors.forEach(he =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${he.id}`, 'handlingEditor'),
+  )
+
+  managingEditors.result.forEach(editor =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
+  )
+
+  productionTeam.result.forEach(prod =>
+    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${prod.id}`, 'production'),
+  )
+
+  return questionVersion
 }
 
 const unpublishQuestionVersion = async (questionVersionId, options = {}) => {
@@ -886,6 +986,14 @@ const assignHandlingEditors = async (questionIds, userIds, options = {}) => {
     }),
   )
 
+  const pubsub = await getPubsub()
+  userIds.forEach(handlingEditorId =>
+    pubsub.publish(
+      `${actions.DASHBOARD_UPDATED}.${handlingEditorId}`,
+      'handlingEditor',
+    ),
+  )
+
   return result
 }
 
@@ -912,7 +1020,17 @@ const unassignHandlingEditor = async (questionId, userId, options = {}) => {
   try {
     return useTransaction(
       async trx => {
-        return Team.removeNonGlobalTeam(questionId, userId, { trx })
+        const result = await Team.removeNonGlobalTeam(questionId, userId, {
+          trx,
+        })
+
+        const pubsub = await getPubsub()
+
+        pubsub.publish(
+          `${actions.DASHBOARD_UPDATED}.${userId}`,
+          'handlingEditor',
+        )
+        return result
       },
       { trx: options.trx, passedTrxOnly: true },
     )

@@ -266,7 +266,9 @@ const QuestionPage = props => {
 
   const [updateQuestionMutation] = useMutation(UPDATE_QUESTION)
 
-  const [submitQuestionMutation] = useMutation(SUBMIT_QUESTION)
+  const [submitQuestionMutation] = useMutation(SUBMIT_QUESTION, {
+    refetchQueries: [{ query: QUESTION, variables: { id } }],
+  })
 
   const [createChatThreadMutation] = useMutation(CREATE_CHAT_THREAD)
 

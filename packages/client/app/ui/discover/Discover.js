@@ -30,6 +30,13 @@ const Wrapper = styled.div`
     border-right: 1px solid ${th('colorSecondary')};
   }
 
+  /* stylelint-disable-next-line string-quotes */
+  div[class^='List__FooterWrapper'] {
+    @media screen and (min-width: 600px) {
+      flex-direction: row;
+    }
+  }
+
   @media screen and (max-width: 900px) {
     display: flex;
     flex-direction: column;

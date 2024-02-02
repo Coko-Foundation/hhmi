@@ -121,10 +121,12 @@ const StyledLoader = styled(Indicator)`
 `
 
 const FooterWrapper = styled.div`
+  align-items: start;
   background-color: ${th('colorBackground')};
   border: 1px solid ${th('colorBorder')};
   display: flex;
   flex-direction: column;
+  gap: ${grid(2)};
 
   justify-content: space-between;
   padding: ${grid(2)};

@@ -312,6 +312,12 @@ export const GET_PRODUCTION_DASHBOARD = gql`
   }
 `
 
+export const DASHBOARD_SUBSCRIPTION = gql`
+  subscription DashboardUpdated {
+    dashboardUpdate
+  }
+`
+
 export const ASSING_HANDLING_EDITORS = gql`
   mutation assignHandlingEditors($questionIds: [ID!]!, $userIds: [ID!]!) {
     assignHandlingEditors(questionIds: $questionIds, userIds: $userIds) {

@@ -1041,6 +1041,15 @@ describe('Question API authorization', () => {
     })
 
     const question = await Question.insert({})
+
+    const authorTeamQuestion = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(authorTeamQuestion.id, user.id)
     const questionVersion = await Question.getVersions(question.id)
 
     const testServer = await createGraphQLServer(user.id)
@@ -1106,6 +1115,7 @@ describe('Question API authorization', () => {
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('allows active editors to publish questions', async () => {
     const user = await User.insert({
       isActive: true,
@@ -1123,6 +1133,15 @@ describe('Question API authorization', () => {
     })
 
     const question = await Question.insert({})
+
+    const authorTeamQuestion = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(authorTeamQuestion.id, user.id)
     const questionVersion = await Question.getVersions(question.id)
 
     const testServer = await createGraphQLServer(user.id)

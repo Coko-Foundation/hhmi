@@ -1,4 +1,4 @@
-const { logger, useTransaction } = require('@coko/server')
+const { logger, useTransaction, pubsubManager } = require('@coko/server')
 const config = require('config')
 const { uniq } = require('lodash')
 
@@ -17,6 +17,9 @@ const { inviteMaxReviewers } = require('./review.controller')
 
 const metadataValues = require('./metadataValues')
 const CokoNotifier = require('../services/notify')
+const { actions } = require('./constants')
+
+const { getPubsub } = pubsubManager
 
 const HE_TEAM = config.teams.nonGlobal.handlingEditor
 const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
@@ -244,6 +247,9 @@ const inviteReviewer = async (questionVersionId, reviewerId) => {
     }
   }
 
+  const pubsub = await getPubsub()
+  pubsub.publish(`${actions.DASHBOARD_UPDATED}.${reviewerId}`, 'reviewer')
+
   const notifier = new CokoNotifier()
   notifier.notify('hhmi.reviewerInvited', {
     reviewerId,
@@ -292,6 +298,9 @@ const revokeInvitation = async (questionVersionId, reviewerId) => {
       if (questionVersion.isReviewerAutomationOn) {
         await inviteMaxReviewers(questionVersion, { trx })
       }
+
+      const pubsub = await getPubsub()
+      pubsub.publish(`${actions.DASHBOARD_UPDATED}.${reviewerId}`, 'reviewer')
 
       const notifier = new CokoNotifier()
       notifier.notify('hhmi.revokeInvitation', {
