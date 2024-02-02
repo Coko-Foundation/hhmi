@@ -8,6 +8,7 @@ module.exports = {
   actions: {
     MESSAGE_CREATED: 'MESSAGE_CREATED',
     NEW_NOTIFICATION: 'NEW_NOTIFICATION',
+    DASHBOARD_UPDATED: 'DASHBOARD_UPDATED',
   },
   REVIEWER_STATUSES: {
     accepted: 'acceptedInvitation',

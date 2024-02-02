@@ -27,6 +27,13 @@ const StyledTabs = styled(Tabs)`
       overflow: hidden;
     }
   }
+
+  /* stylelint-disable-next-line string-quotes */
+  div[class^='List__FooterWrapper'] {
+    @media screen and (min-width: 600px) {
+      flex-direction: row;
+    }
+  }
 `
 
 const TabItem = styled.span`

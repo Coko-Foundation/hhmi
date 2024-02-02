@@ -1,3 +1,6 @@
+const { pubsubManager } = require('@coko/server')
+const { actions } = require('../../controllers/constants')
+
 const {
   getAuthor,
   getQuestion,
@@ -44,6 +47,8 @@ const {
   questionVersionReviews,
   reviewerPool,
 } = require('../../controllers/question.controllers')
+
+const { getPubsub } = pubsubManager
 
 const questionResolver = async (_, { id, options }) => {
   return getQuestion(id, options)
@@ -300,6 +305,18 @@ module.exports = {
     updateReviewerPool: updateReviewerPoolResolver,
     changeAmountOfReviewers: changeAmountOfReviewersResolver,
     changeReviewerAutomationStatus: changeReviewerAutomationStatusResolver,
+  },
+  Subscription: {
+    dashboardUpdate: {
+      resolve: dashboardId => {
+        return dashboardId
+      },
+      subscribe: async (_payload, _vars, ctx) => {
+        const pubsub = await getPubsub()
+
+        return pubsub.asyncIterator(`${actions.DASHBOARD_UPDATED}.${ctx.user}`)
+      },
+    },
   },
   Question: {
     versions: versionsResolver,

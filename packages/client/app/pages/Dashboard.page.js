@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
+import {
+  useQuery,
+  useLazyQuery,
+  useMutation,
+  useSubscription,
+} from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 
 import { Dashboard, VisuallyHiddenElement } from 'ui'
@@ -14,6 +19,7 @@ import {
   GET_COMPLEX_ITEM_SETS_OPTIONS,
   FILTER_GLOBAL_TEAM_MEMBERS,
   GET_PRODUCTION_DASHBOARD,
+  DASHBOARD_SUBSCRIPTION,
 } from '../graphql'
 import {
   hasGlobalRole,
@@ -158,6 +164,20 @@ const DashboardPage = () => {
       updateSearchResultAnnounce(data, 'getReviewerDashboard'),
   })
 
+  useSubscription(DASHBOARD_SUBSCRIPTION, {
+    onData: ({
+      data: {
+        data: { dashboardUpdate },
+      },
+    }) => {
+      // compare currentTabKey with dashboardId
+      // if they match, refetch current tab's dashboard query
+      if (dashboardUpdate && dashboardUpdate === currentTabKey) {
+        runQuery()
+      }
+    },
+  })
+
   const authorData = authorResponse && authorResponse.getAuthorDashboard
   const editorData = editorResponse && editorResponse.getManagingEditorDashboard
   const handlingEditorData = heResponse && heResponse.getHandlingEditorDashboard
@@ -250,6 +270,11 @@ const DashboardPage = () => {
 
   const runQuery = query => {
     const { query: roleQuery } = queryMapper
+
+    if (!roleQuery[currentTabKey]) {
+      // reset dashboardLastUsedTab if it doesn't match user role
+      localStorage.setItem('dashboardLastUsedTab', 'author')
+    }
 
     const queryVariables = {
       variables: {

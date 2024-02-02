@@ -38,6 +38,12 @@ const StyledTabs = styled(Tabs)`
       }
     }
   }
+
+  div[class^='List__FooterWrapper'] {
+    @media screen and (min-width: 600px) {
+      flex-direction: row;
+    }
+  }
 `
 
 const StyledCreateQuestionButton = styled(Button)``
