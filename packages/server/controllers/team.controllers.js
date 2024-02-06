@@ -66,6 +66,8 @@ const updateGlobalTeams = async teams => {
         teams.map(team => {
           const { removedMembers } = team
 
+          const dbTeam = result.find(r => r.id === team.id)
+
           if (removedMembers) {
             removedMembers.map(async member => {
               await TeamMember.query()
@@ -77,7 +79,7 @@ const updateGlobalTeams = async teams => {
                     .from('team_members')
                     .leftJoin('teams', 'team_members.team_id', 'teams.id')
                     .where('teams.global', false)
-                    .whereIn('teams.role', [HE_TEAM.role, REVIEWER_TEAM.role])
+                    .whereIn('teams.role', [dbTeam?.role])
                 })
             })
           }
@@ -335,9 +337,8 @@ const searchForReviewers = async (searchTerm, questionVersionId) => {
         trx,
       })
 
-      const teamMembers = await TeamMember.findByIds(
+      const teamMembers = await TeamMember.query(trx).findByIds(
         questionVersion.reviewerPool,
-        { trx },
       )
 
       const globalReviewerTeam = await Team.findGlobalTeamByRole(
