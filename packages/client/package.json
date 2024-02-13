@@ -42,10 +42,10 @@
     "react-mentions": "^4.4.10",
     "react-router-dom": "^5.2.0",
     "styled-components": "^5.3.0",
-    "wax-prosemirror-core": "^0.9.8",
-    "wax-prosemirror-services": "^0.9.8",
-    "wax-questions-service": "^0.9.8",
-    "wax-table-service": "^0.9.8"
+    "wax-prosemirror-core": "^0.9.9",
+    "wax-prosemirror-services": "^0.9.9",
+    "wax-questions-service": "^0.9.9",
+    "wax-table-service": "^0.9.9"
   },
   "devDependencies": {
     "@coko/lint": "^2.0.1",
