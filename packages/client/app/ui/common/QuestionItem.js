@@ -123,7 +123,7 @@ const QuestionItem = props => {
     metadata,
     content,
     status,
-    assigned,
+    statusLabel,
     href,
     id,
     courses,
@@ -173,8 +173,8 @@ const QuestionItem = props => {
         {status ? (
           <StatusContainer>
             <Status
-              assigned={assigned}
               data-testid="question-status"
+              label={statusLabel}
               status={status}
             />
           </StatusContainer>
@@ -249,7 +249,7 @@ QuestionItem.propTypes = {
     content: PropTypes.arrayOf(PropTypes.shape()),
   }),
   status: PropTypes.string,
-  assigned: PropTypes.bool,
+  statusLabel: PropTypes.string,
   href: PropTypes.string,
   id: PropTypes.string,
   courses: PropTypes.arrayOf(
@@ -273,7 +273,7 @@ QuestionItem.propTypes = {
 QuestionItem.defaultProps = {
   content: null,
   status: null,
-  assigned: false,
+  statusLabel: null,
   href: '#',
   id: uuid(),
   courses: [],

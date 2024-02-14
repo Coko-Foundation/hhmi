@@ -7,10 +7,14 @@ const {
 const { db } = require('@pubsweet/db-manager')
 
 const { ChatThread } = require('@coko/server/src/models')
+const config = require('config')
 
 const QuestionVersion = require('../questionVersion/questionVersion.model')
 const User = require('../user/user.model')
-const { applyListQueryOptions } = require('../helpers')
+const { applyListQueryOptions, hasRoleHelper } = require('../helpers')
+const { REVIEWER_STATUSES } = require('../../controllers/constants')
+
+const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
 
 class Question extends BaseModel {
   static get tableName() {
@@ -369,7 +373,7 @@ class Question extends BaseModel {
     }
   }
 
-  static applyStatusFilter(status, query) {
+  static applyStatusFilter(status, query, role) {
     switch (status) {
       case '':
       case null:
@@ -391,6 +395,13 @@ class Question extends BaseModel {
         return query
 
       default:
+        if (role === REVIEWER_TEAM.role) {
+          query.whereIn('team_members.status', [
+            REVIEWER_STATUSES.accepted,
+            REVIEWER_STATUSES.invited,
+          ])
+        }
+
         // all other statuses: under_review, in_production or published AND not rejected
         query.where({ [status]: true, rejected: false })
         return query
@@ -435,18 +446,27 @@ class Question extends BaseModel {
     const { status, searchQuery } = filters
 
     const query = Question.query(options.trx)
-      .leftJoin('teams', 'questions.id', 'teams.object_id')
+
+    if (status || searchQuery) {
+      query.leftJoin(
+        'question_versions',
+        'questions.id',
+        'question_versions.question_id',
+      )
+    }
+
+    query
+      .leftJoin(
+        'teams',
+        role === REVIEWER_TEAM.role ? 'question_versions.id' : 'questions.id',
+        'teams.object_id',
+      )
       .leftJoin('team_members', 'team_members.team_id', 'teams.id')
 
     const selectFields = ['questions.*', 'teams.role', 'team_members.user_id']
 
     if (status || searchQuery) {
       query
-        .leftJoin(
-          'question_versions',
-          'questions.id',
-          'question_versions.question_id',
-        )
         .distinctOn('questions.id')
         .orderBy([
           'questions.id',
@@ -469,7 +489,7 @@ class Question extends BaseModel {
 
     // status filter
     if (status) {
-      this.applyStatusFilter(status, query)
+      this.applyStatusFilter(status, query, role)
     }
 
     if (searchQuery) {
@@ -731,6 +751,14 @@ class Question extends BaseModel {
     query.debug()
 
     return applyListQueryOptions(query, options)
+  }
+
+  static async hasRole(userId, manuscriptVersionId, role) {
+    return hasRoleHelper(userId, manuscriptVersionId, role)
+  }
+
+  async hasRole(userId, role) {
+    return hasRoleHelper(userId, this.id, role)
   }
 }
 

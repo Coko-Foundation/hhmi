@@ -93,6 +93,7 @@ class List extends BaseModel {
         'question_versions.publication_date',
         'question_versions.content_text',
         'question_versions.complex_item_set_id',
+        'question_versions.question_type',
       )
       .distinctOn('questions.id')
       .where({

@@ -86,6 +86,8 @@ const FooterList = styled.ul`
 
     a {
       color: ${th('colorTextReverse')};
+      text-decoration: underline;
+      text-decoration-color: ${th('colorTertiary')};
 
       &:hover {
         color: ${th('colorTertiary')};

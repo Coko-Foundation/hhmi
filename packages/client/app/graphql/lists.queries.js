@@ -40,6 +40,13 @@ export const GET_LISTS = gql`
         id
         title
         created
+        questions {
+          result {
+            versions(latestOnly: true) {
+              questionType
+            }
+          }
+        }
       }
       totalCount
     }
@@ -96,6 +103,7 @@ export const GET_LIST = gql`
 
             cognitiveLevel
             complexItemSetId
+            questionType
           }
         }
         totalCount

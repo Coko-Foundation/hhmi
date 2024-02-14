@@ -1,6 +1,7 @@
 export { default as AutoComplete } from './AutoComplete'
 export { default as Button } from './Button'
 export { default as ButtonGroup } from './ButtonGroup'
+export { default as ChatBox } from './ChatBox'
 export { default as Checkbox } from './Checkbox'
 export { default as CheckboxGroup } from './CheckboxGroup'
 export { default as Collapse } from './Collapse'
@@ -38,7 +39,9 @@ export { default as Footer } from './Footer'
 export { default as Header } from './Header'
 export { default as Link } from './HhmiLink'
 export { default as Upload } from './Upload'
+export { default as ToastNotification } from './ToastNotification'
 
+export * from '../notifications/NotificationIcon'
 export * from './Headings'
 export * from './Typography'
 

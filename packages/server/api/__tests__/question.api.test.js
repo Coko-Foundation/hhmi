@@ -1,3 +1,5 @@
+const { internet } = require('faker')
+
 const createGraphQLServer = require('./helpers/createTestServer')
 
 const {
@@ -10,6 +12,27 @@ const {
 } = require('../../models')
 
 const clearDb = require('../../models/__tests__/_clearDb')
+
+const {
+  createUser,
+  createIdentity,
+} = require('../../models/__tests__/__helpers__/users')
+
+const {
+  createQuestion,
+  updateReviewerPool,
+} = require('../../controllers/question.controllers')
+
+const {
+  createEmptyQuestion,
+} = require('../../controllers/__tests__/__helpers__/questions')
+
+const {
+  acceptOrRejectInvitation,
+} = require('../../controllers/team.controllers')
+
+const { REVIEWER_STATUSES } = require('../../controllers/constants')
+const { submitReview } = require('../../controllers/review.controller')
 
 // gql queries
 const GET_AUTHOR_DASHBOARD = `
@@ -159,7 +182,7 @@ mutation CreateNewQuestionVersion($questionId: ID!) {
 `
 
 const GET_QUESTION = `
-query getQuestion($id:ID!){
+query getQuestion($id:ID!, $published: Boolean){
   question(id:$id){
     id
     agreedTc
@@ -168,6 +191,16 @@ query getQuestion($id:ID!){
       displayName
       givenNames
     }
+	versions(latestOnly: true, publishedOnly: $published) {
+        reviewerStatus
+        reviews {
+          id
+		  content
+          status {
+            submitted
+          }
+        }
+	}
   }
 }
 `
@@ -923,8 +956,10 @@ describe('Question API authorization', () => {
       userId: user.id,
     })
 
-    const question = await Question.insert({})
+    const author = await createUser()
+    const question = await createQuestion(author.id)
     const questionVersion = await Question.getVersions(question.id)
+    await createIdentity(author, internet.email(), false, null)
 
     const testServer = await createGraphQLServer(user.id)
 
@@ -1006,6 +1041,15 @@ describe('Question API authorization', () => {
     })
 
     const question = await Question.insert({})
+
+    const authorTeamQuestion = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(authorTeamQuestion.id, user.id)
     const questionVersion = await Question.getVersions(question.id)
 
     const testServer = await createGraphQLServer(user.id)
@@ -1071,6 +1115,7 @@ describe('Question API authorization', () => {
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('allows active editors to publish questions', async () => {
     const user = await User.insert({
       isActive: true,
@@ -1088,6 +1133,15 @@ describe('Question API authorization', () => {
     })
 
     const question = await Question.insert({})
+
+    const authorTeamQuestion = await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
+    await Team.addMember(authorTeamQuestion.id, user.id)
     const questionVersion = await Question.getVersions(question.id)
 
     const testServer = await createGraphQLServer(user.id)
@@ -1184,5 +1238,104 @@ describe('Question API authorization', () => {
     expect(isAdmin).toBe(true)
     expect(result.errors).toBe(undefined)
     expect(result.data).not.toBe(null)
+  })
+
+  it('fetches the correct reviewer status', async () => {
+    const user = await createUser()
+    const question = await createEmptyQuestion()
+    const editor = await createUser()
+    const handlingEditor1 = await createUser()
+    const handlingEditor2 = await createUser()
+
+    await createIdentity(editor, internet.email(), false, null)
+    await createIdentity(handlingEditor1, internet.email(), false, null)
+    await createIdentity(handlingEditor2, internet.email(), false, null)
+
+    let questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    const editorTeam = await Team.insert({
+      role: 'editor',
+      global: true,
+      displayName: 'Managing Editor',
+    })
+
+    await Team.updateMembershipByTeamId(editorTeam.id, [editor.id])
+
+    const handlingEditorTeam = await Team.insert({
+      role: 'handlingEditor',
+      displayName: 'Handling Editor',
+      objectId: questionVersion.questionId,
+      objectType: 'question',
+    })
+
+    await Team.updateMembershipByTeamId(handlingEditorTeam.id, [
+      handlingEditor1.id,
+      handlingEditor2.id,
+    ])
+
+    questionVersion = await QuestionVersion.findOne({
+      questionId: question.id,
+    })
+
+    const reviewer = await createUser()
+    await createIdentity(reviewer, internet.email(), false, null)
+
+    const userTestServer = await createGraphQLServer(user.id)
+
+    let result = await userTestServer.executeOperation({
+      query: GET_QUESTION,
+      variables: {
+        id: question.id,
+        published: false,
+      },
+    })
+
+    const [userResultVersion] = result.data.question.versions
+
+    expect(userResultVersion.reviewerStatus).toBe(null)
+    expect(userResultVersion.reviews).toHaveLength(0)
+
+    await updateReviewerPool(questionVersion.id, [reviewer.id])
+    await acceptOrRejectInvitation(questionVersion.id, true, null, reviewer.id)
+
+    const reviewerTestServer = await createGraphQLServer(reviewer.id)
+
+    result = await reviewerTestServer.executeOperation({
+      query: GET_QUESTION,
+      variables: {
+        id: question.id,
+        published: false,
+      },
+    })
+
+    const [reviewerResultVersion] = result.data.question.versions
+
+    expect(reviewerResultVersion.reviewerStatus).toBe(
+      REVIEWER_STATUSES.accepted,
+    )
+    expect(reviewerResultVersion.reviews).toHaveLength(1)
+    expect(reviewerResultVersion.reviews[0].content).toBeFalsy()
+
+    const reviewContent = 'Looks good I guess...'
+
+    await submitReview(questionVersion.id, reviewContent, reviewer.id)
+
+    result = await reviewerTestServer.executeOperation({
+      query: GET_QUESTION,
+      variables: {
+        id: question.id,
+        published: false,
+      },
+    })
+
+    const [reviewerResultVersion2] = result.data.question.versions
+
+    expect(reviewerResultVersion2.reviewerStatus).toBe(
+      REVIEWER_STATUSES.accepted,
+    )
+    expect(reviewerResultVersion2.reviews).toHaveLength(1)
+    expect(reviewerResultVersion2.reviews[0].content).toBe(reviewContent)
   })
 })

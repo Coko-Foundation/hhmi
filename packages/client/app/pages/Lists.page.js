@@ -141,6 +141,10 @@ const ListsPage = () => {
         created: list.created,
         titleText: list.title,
         onRenameList: handleRenameList,
+        numberOfQuestions: list.questions?.result.length,
+        numberOfNumericalQuestions: list.questions?.result.filter(
+          q => q.versions[0].questionType === 'numerical',
+        ).length,
       }))}
       loading={loading}
       onCreateNewList={handleCreateList}

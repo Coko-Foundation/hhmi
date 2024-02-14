@@ -1309,7 +1309,47 @@ const questionTypes = [
       ],
     },
   },
+  {
+    waxValue: 'numerical_answer_container',
+    metadataValue: 'numerical',
+    startingData: {
+      type: 'doc',
+      content: [
+        {
+          type: 'numerical_answer_container',
+          attrs: {
+            id: 'f9c33d03-68ee-4c27-8a03-5072447fac1a',
+            class: 'numerical-answer',
+            feedback: '',
+            answerType: '',
+            answersExact: [],
+            answerExact: '',
+            answersRange: [],
+            answerRange: '',
+            answersPrecise: [],
+            answerPrecise: '',
+          },
+          content: [
+            {
+              type: 'paragraph',
+              attrs: {
+                class: 'paragraph',
+              },
+            },
+          ],
+        },
+      ],
+    },
+  },
 ]
+
+const REVIEWER_STATUSES = {
+  accepted: 'acceptedInvitation',
+  added: 'notInvited',
+  invited: 'invited',
+  rejected: 'rejectedInvitation',
+  revoked: 'invitationRevoked',
+}
 
 const dashboardDataMapper = ({
   questions,
@@ -1319,7 +1359,9 @@ const dashboardDataMapper = ({
   showAuthor,
   relatedQuestionIds,
   testMode,
-  showAssigned,
+  showStatusLabel,
+  includeType,
+  userId,
 }) => {
   if (!questions) return null
 
@@ -1343,12 +1385,36 @@ const dashboardDataMapper = ({
     return status
   }
 
+  const renderStatusLabel = ({
+    heAssigned,
+    reviewerStatus,
+    reviewSubmitted,
+  }) => {
+    if (!showStatus) return null
+
+    const { accepted, invited } = REVIEWER_STATUSES
+    let label = null
+
+    if (heAssigned) return 'Assigned'
+    if (reviewSubmitted) return 'Submitted'
+    if (reviewerStatus === accepted) label = 'In Progress'
+    if (reviewerStatus === invited) label = 'Invitation'
+
+    return label
+  }
+
   return questions.map(question => {
     const { id, versions, rejected, heAssigned } = question
     const latestVersion = versions[0]
 
-    const { content, publicationDate, cognitiveLevel, complexItemSetId } =
-      latestVersion
+    const {
+      content,
+      publicationDate,
+      cognitiveLevel,
+      complexItemSetId,
+      reviewerStatus,
+      reviews,
+    } = latestVersion
 
     const parsedContent = extractDocumentText(content)
 
@@ -1375,6 +1441,10 @@ const dashboardDataMapper = ({
         }
       : null
 
+    const reviewSubmitted = !!reviews?.find(
+      review => review.reviewerId === userId && review.status.submitted,
+    )
+
     return {
       metadata: [
         { label: 'topic', value: topics.topics },
@@ -1392,7 +1462,9 @@ const dashboardDataMapper = ({
       ],
       content: parsedContent,
       status: renderStatus({ ...latestVersion, rejected }),
-      heAssigned: showAssigned && heAssigned,
+      statusLabel:
+        showStatusLabel &&
+        renderStatusLabel({ heAssigned, reviewerStatus, reviewSubmitted }),
       href:
         testMode && latestVersion.published
           ? `/question/${id}/test`
@@ -1401,6 +1473,7 @@ const dashboardDataMapper = ({
       courses,
       state: { relatedQuestionIds },
       complexItemSet,
+      ...(includeType ? { type: latestVersion.questionType } : {}),
     }
   })
 }
@@ -1459,26 +1532,65 @@ const conditionalWord = (cased, options) => {
 /* callOn() DESCRIPTION:
 - uses strategy pattern to safely execute a callback (if exists) defined on the 'options' object
  and returns its reference.
- - the 'key' must be a string thst matches one of the 'options' keys
- if not, the 'fallback' wll be returned
- - in case that we not pass a value for fallback, or the value we pass is not (or not returns) a function ref,
- it will return a ref to a default function that returns null
  - USAGE: if we have a dynamic string, for example the typeof some data,
  it can be implemented like this:
     callOn(typeof data, {
        string: () =>  console.log('is string'),
        number: () =>  console.log('is number'),
        object: somefunctionReference
+       default: console.log
       }, () => console.log('not valid type of data'))(arguments)
 */
 
 const callOn = (key = '', options = {}, fallback = () => null) => {
-  // eslint-disable-next-line no-nested-ternary
-  return isFunction(options[key])
-    ? options[key]
-    : isFunction(fallback)
-    ? fallback
-    : () => null
+  if (isFunction(options[key])) return options[key]
+  if (isFunction(options?.default)) return options.default
+  if (isFunction(fallback)) return fallback
+  return () => null
+}
+
+const ellipsis = (str, length) =>
+  str.length > length ? `${str.substring(0, length)}...` : str
+
+const boolOrNull = val => (typeof val === 'boolean' ? val : null)
+
+const flattenReviewerPool = reviewerPool => {
+  const flatPool = reviewerPool.map(r => ({
+    id: r.user.id,
+    displayName: r.user.displayName,
+    email: r.user.defaultIdentity.email,
+    invited: r.status && r.status !== REVIEWER_STATUSES.added,
+    invitationRevoked: r.status === REVIEWER_STATUSES.revoked,
+    acceptedInvitation: r.status === REVIEWER_STATUSES.accepted,
+    rejectedInvitation: r.status === REVIEWER_STATUSES.rejected,
+    reviewSubmitted: r.reviewSubmitted,
+    topics:
+      r.user.topicsReviewing
+        ?.map(topic => profileOptions.topics.find(t => t.value === topic).label)
+        .join(', ') || '',
+    assessmentTraining: r.user.receivedTraining,
+    languageTraining: r.user.receivedInclusiveLanguageTraining,
+  }))
+
+  return flatPool
+}
+
+const flattenReviewerSearchResults = searchResults => {
+  const flatResults = searchResults.map(r => ({
+    id: r.id,
+    displayName: r.displayName,
+    email: r.defaultIdentity.email,
+    topics:
+      r.topicsReviewing
+        ?.map(topic => profileOptions.topics.find(t => t.value === topic).label)
+        .join(', ') || '',
+    assessmentTraining: r.receivedTraining,
+    languageTraining: r.receivedInclusiveLanguageTraining,
+    label: r.displayName,
+    value: r.id,
+  }))
+
+  return flatResults
 }
 
 export {
@@ -1508,4 +1620,9 @@ export {
   conditionalWord,
   safeIndex,
   callOn,
+  ellipsis,
+  boolOrNull,
+  REVIEWER_STATUSES,
+  flattenReviewerPool,
+  flattenReviewerSearchResults,
 }

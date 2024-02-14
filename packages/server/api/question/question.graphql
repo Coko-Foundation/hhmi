@@ -8,6 +8,7 @@ type Question {
   author: User
   authorChatThreadId: ID
   productionChatThreadId: ID
+  reviewerChatThreadId: ID
   heAssigned: Boolean
 }
 
@@ -42,6 +43,12 @@ type QuestionVersion {
   complexItemSetId: ID
   leadingContent: String
   lastEdit: DateTime
+
+  amountOfReviewers: Int
+  isReviewerAutomationOn: Boolean
+  reviewerPool: [TeamMember!]!
+  reviews(currentUserOnly: Boolean): [Review!]!
+  reviewerStatus: String
 }
 
 type Topic {
@@ -223,7 +230,7 @@ extend type Query {
     ascending: Boolean
     page: Int
     pageSize: Int
-    searchQuery: String
+    filters: DashboardFilters
   ): QuestionsResponse!
 
   getManagingEditorDashboard(
@@ -253,6 +260,7 @@ extend type Query {
   getQuestionsHandlingEditors(questionId: ID!): [User!]!
   getAuthorChatParticipants(id: ID!): [User!]!
   getProductionChatParticipants(id: ID!): [User!]!
+  getReviewerChatParticipants(id: ID!): [User!]!
 }
 
 extend type Mutation {
@@ -293,4 +301,23 @@ extend type Mutation {
     userIds: [ID!]!
   ): [AssignHandlingEditorsResponse!]!
   unassignHandlingEditor(questionId: ID!, userId: ID!): Boolean
+
+  updateReviewerPool(
+    questionVersionId: ID!
+    reviewerIds: [ID!]!
+  ): QuestionVersion!
+
+  changeAmountOfReviewers(
+    questionVersionId: ID!
+    amount: Int!
+  ): QuestionVersion!
+
+  changeReviewerAutomationStatus(
+    questionVersionId: ID!
+    value: Boolean!
+  ): QuestionVersion!
+}
+
+extend type Subscription {
+  dashboardUpdate: String!
 }

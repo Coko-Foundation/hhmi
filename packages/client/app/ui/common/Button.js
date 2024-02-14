@@ -116,7 +116,7 @@ const Button = props => {
 
   useEffect(() => {
     if (autoFocus) {
-      buttonRef.current?.focus()
+      buttonRef?.current?.focus()
     }
   }, [])
 

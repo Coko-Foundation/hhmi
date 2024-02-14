@@ -48,19 +48,23 @@ const sendMessage = async (
         logger.info(
           `${CONTROLLER_MESSAGE} creating a new message for chat thread with id ${chatThreadId}`,
         )
-        return ChatMessage.insert(
+
+        const chatMessage = await ChatMessage.insert(
           { chatThreadId, userId, content, mentions },
           { trx: tr, ...restOptions },
         )
+
+        return chatMessage
       },
       { trx, passedTrxOnly: true },
     )
 
+    const notifier = new CokoNotifier()
+
     mentions.forEach(mention => {
+      // setup a timeout to send emails with delay (and possibility of being canceled)
       globalTimeouts[`${mention}-${chatThreadId}`] = setTimeout(() => {
-        // send an email that they've been mentioned
-        const notifier = new CokoNotifier()
-        notifier.notify('hhmi.chatMention', { mention, userId, chatThreadId })
+        notifier.notify('hhmi.chatMention', { mention, newMessage }, 'email')
       }, 10000)
     })
 

@@ -11,10 +11,12 @@ const {
     objectNullable,
     string,
     stringNullable,
+    integerPositive,
+    arrayOfIds,
   },
 } = require('@coko/server')
 
-const { extractDocumentText } = require('../helpers')
+const { extractDocumentText, hasRoleHelper } = require('../helpers')
 const Question = require('../question/question.model')
 const ComplexItemSet = require('../complexItemSet/complexItemSet.model')
 
@@ -175,8 +177,20 @@ class QuestionVersion extends BaseModel {
 
         questionType: stringNullable,
         lastEdit: dateNullable,
+
+        amountOfReviewers: integerPositive,
+        isReviewerAutomationOn: boolean,
+        reviewerPool: arrayOfIds,
       },
     }
+  }
+
+  static async hasRole(userId, manuscriptVersionId, role) {
+    return hasRoleHelper(userId, manuscriptVersionId, role)
+  }
+
+  async hasRole(userId, role) {
+    return hasRoleHelper(userId, this.id, role)
   }
 }
 

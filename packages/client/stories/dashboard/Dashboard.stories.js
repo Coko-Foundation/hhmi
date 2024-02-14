@@ -11,6 +11,7 @@ import {
   getRandomCourse,
   getRandomObjectivesForCourse,
   getRandomStatus,
+  getRandomStatusLabel,
 } from '../../app/utilities/question/_utils'
 
 const generateCoursesForQuestion = () => {
@@ -33,7 +34,7 @@ const generateCoursesForQuestion = () => {
   return courses
 }
 
-const makeData = n =>
+const makeData = (n, role = null) =>
   createData(n, i => ({
     id: uuid(),
     title: lorem.words(6),
@@ -53,7 +54,11 @@ const makeData = n =>
     },
     metadata: generateMetadata(),
     courses: generateCoursesForQuestion(),
-    status: getRandomStatus(),
+    status: role === 'reviewer' ? 'Under Review' : getRandomStatus(),
+    statusLabel:
+      role === 'reviewer'
+        ? getRandomStatusLabel()
+        : (role === 'editor' || role === 'handlingEditor') && 'Assigned',
     href: '#',
   }))
 
@@ -83,6 +88,7 @@ const searchFunction = params => {
     totalResults - 10 * (params.page - 1) > 10
       ? 10
       : totalResults - 10 * (params.page - 1),
+    params.role,
   )
 
   return data
@@ -237,6 +243,88 @@ export const EditorDashboard = args => {
         sortOptions={sortOptions}
         tabsContent={tabs}
         {...args}
+      />
+    </Wrapper>
+  )
+}
+
+export const ReviewerDashboard = args => {
+  const [loading, setLoading] = useState(true)
+  const [initialTabKey, setInitialTabKey] = useState('author')
+
+  const [author, setAuthorQuestions] = useState({
+    questions: [],
+    totalCount: 0,
+  })
+
+  const [reviewer, setReviewerQuestions] = useState({
+    questions: [],
+    totalCount: 0,
+  })
+
+  const handleSearch = params => {
+    const { query = '', page = 1, sortBy, role = 'reviewer' } = params
+    console.log(`${query}, ${page}, ${sortBy}, ${role}`)
+
+    setInitialTabKey(role)
+
+    if (role === 'author') {
+      setAuthorQuestions({ questions: [], loading: true })
+    } else if (role === 'reviewer') {
+      setReviewerQuestions({ questions: [], loading: true })
+    }
+
+    setTimeout(() => {
+      const data = searchFunction(params)
+
+      if (role === 'author') {
+        setAuthorQuestions({
+          questions: data,
+          totalCount: totalResults,
+          loading: false,
+        })
+      } else if (role === 'reviewer') {
+        setReviewerQuestions({
+          questions: data,
+          totalCount: totalResults,
+          loading: false,
+        })
+      }
+
+      setLoading(false)
+    }, 500)
+  }
+
+  const handleClickCreate = () => console.log('create')
+
+  const tabs = [
+    {
+      label: 'Authored Questions',
+      value: 'author',
+      questions: author.questions,
+      totalCount: author.totalCount,
+      loading: author.loading,
+    },
+    {
+      label: 'Reviewer Items',
+      value: 'reviewer',
+      questions: reviewer.questions,
+      totalCount: reviewer.totalCount,
+      loading: reviewer.loading,
+    },
+  ]
+
+  return (
+    <Wrapper>
+      <Dashboard
+        initialTabKey={initialTabKey}
+        loading={loading}
+        onClickCreate={handleClickCreate}
+        onSearch={handleSearch}
+        tabsContent={tabs}
+        {...args}
+        showSort
+        sortOptions={sortOptions}
       />
     </Wrapper>
   )

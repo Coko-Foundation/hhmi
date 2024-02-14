@@ -171,7 +171,7 @@ describe('Tests for user authentication', () => {
       ...editor,
       visitUrl: loginPage,
     })
-    cy.get('[data-testid="usermenu-btn"]').click()
+    cy.get('[data-testid="usermenu-btn"]').click({ force: true })
     cy.contains('a', 'Manage Users').should('not.exist')
     cy.contains('a', 'Manage Teams').should('not.exist')
     cy.visit(manageTeamPage, { method: 'GET' })

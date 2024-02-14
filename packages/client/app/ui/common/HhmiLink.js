@@ -5,16 +5,16 @@ import { Link } from 'react-router-dom'
 
 const StyledLink = styled(Link)`
   && {
-    color: ${th('colorText')};
+    color: ${th('colorPrimary')};
     text-decoration: underline;
 
     &:hover {
-      color: ${th('colorText')};
+      color: ${th('colorPrimary')};
       text-decoration: none;
     }
 
     &:focus {
-      color: ${th('colorText')};
+      color: ${th('colorPrimary')};
       outline: 1px solid ${th('colorPrimary')};
       text-decoration: none;
     }

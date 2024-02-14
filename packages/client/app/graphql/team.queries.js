@@ -121,6 +121,65 @@ const FILTER_GLOBAL_TEAM_MEMBERS = gql`
   }
 `
 
+const ACCEPT_OR_REJECT_REVIEW_INVITATION = gql`
+  mutation AcceptOrRejectReviewInvitation(
+    $questionVersionId: ID!
+    $accepted: Boolean!
+    $reason: String
+  ) {
+    acceptOrRejectInvitation(
+      questionVersionId: $questionVersionId
+      accepted: $accepted
+      reason: $reason
+    )
+  }
+`
+
+const INVITE_REVIEWER = gql`
+  mutation InviteReviewer($questionVersionId: ID!, $reviewerId: ID!) {
+    inviteReviewer(
+      questionVersionId: $questionVersionId
+      reviewerId: $reviewerId
+    ) {
+      id
+      user {
+        id
+      }
+      status
+    }
+  }
+`
+
+const REVOKE_REVIEWER_INVITATION = gql`
+  mutation RevokeInvitation($questionVersionId: ID!, $reviewerId: ID!) {
+    revokeInvitation(
+      questionVersionId: $questionVersionId
+      reviewerId: $reviewerId
+    ) {
+      id
+      status
+    }
+  }
+`
+
+const SEARCH_FOR_REVIEWERS = gql`
+  query SearchForReviewers($searchTerm: String!, $questionVersionId: ID!) {
+    searchForReviewers(
+      searchTerm: $searchTerm
+      questionVersionId: $questionVersionId
+    ) {
+      id
+      displayName
+      defaultIdentity {
+        email
+      }
+      topicsReviewing
+      receivedTraining
+      receivedInclusiveLanguageTraining
+    }
+  }
+`
+
 export {
   TEAM,
   GLOBAL_TEAMS,
@@ -129,4 +188,8 @@ export {
   NON_TEAM_MEMBER_USERS,
   UPDATE_GLOBAL_TEAMS,
   FILTER_GLOBAL_TEAM_MEMBERS,
+  ACCEPT_OR_REJECT_REVIEW_INVITATION,
+  INVITE_REVIEWER,
+  REVOKE_REVIEWER_INVITATION,
+  SEARCH_FOR_REVIEWERS,
 }

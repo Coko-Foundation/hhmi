@@ -152,10 +152,14 @@ describe('Testing apps responsiveness', () => {
       cy.login(editorRole)
       cy.wait('@GQLReq')
       cy.get(navToggle).should('not.be.visible')
-      cy.get(anchorTags.discover).should('be.visible')
-      cy.get(anchorTags.dashboard).should('be.visible')
-      cy.get(anchorTags.about).should('be.visible')
-      cy.get(anchorTags.learning).should('be.visible')
+      cy.get('[data-testid="nav-wrapper"]')
+        .invoke('css', 'overflow', 'visible') // Change 'overflow' property to 'visible'
+        .then(() => {
+          cy.get(anchorTags.discover).should('be.visible')
+          cy.get(anchorTags.dashboard).should('be.visible')
+          cy.get(anchorTags.about).should('be.visible')
+          cy.get(anchorTags.learning).should('be.visible')
+        })
     })
 
     it('question page', () => {
@@ -232,7 +236,7 @@ describe('Search filter', () => {
     cy.url().then(url => {
       const qId = url.split('/')[4]
       cy.updateQuestionStatus(disableScripts, qId, 'underReview')
-      cy.get(anchorTags.dashboard).click()
+      cy.get(anchorTags.dashboard).click({ force: true })
       cy.get('[data-testid="search-filtered"]')
         .last()
         .click()

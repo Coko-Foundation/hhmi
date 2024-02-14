@@ -126,7 +126,7 @@ export const workflowData = {
     operationBtn: 'Move to production',
     prompt: {
       header: 'You are about to move this item to production',
-      body: 'This item will become editable and editors can apply the feedback from the reviewer. Are you sure?',
+      body: "This item will become editable so that editors and the production team can apply the reviewers' feedback. Are you sure?",
       cancelBtn: 'Cancel',
       okBtn: 'Move to production',
     },

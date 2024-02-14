@@ -2,13 +2,13 @@
 
 exports[`Signup matches snapshot 1`] = `
 <div
-  className="sc-eKYjST ktWmwP"
+  className="sc-FeKFz cKmDwN"
 >
   <div
-    className="sc-fIOiVY dcqDyF"
+    className="sc-dCBTtU ivXMKj"
   >
     <h1
-      className="ant-typography sc-cUHWEf jXUcTM css-dev-only-do-not-override-12jzuas"
+      className="ant-typography sc-huZuEJ huzcxX css-dev-only-do-not-override-12jzuas"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,10 +18,10 @@ exports[`Signup matches snapshot 1`] = `
       Sign up
     </h1>
     <div
-      className="sc-bImIVK"
+      className="sc-kAfTll"
     >
       <div
-        className="sc-hAtEyd ceSoro"
+        className="sc-fmSAUk jvdyCW"
       >
         <form
           className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas"
@@ -60,12 +60,12 @@ exports[`Signup matches snapshot 1`] = `
                     className="ant-form-item-control-input-content"
                   >
                     <div
-                      className="sc-blLsxD"
+                      className="sc-ieZDjg"
                     >
                       <input
                         aria-required="true"
                         autoComplete="given-name"
-                        className="ant-input css-dev-only-do-not-override-12jzuas sc-ieZDjg iYnoQr"
+                        className="ant-input css-dev-only-do-not-override-12jzuas sc-dKfzgJ lldjka"
                         disabled={false}
                         id="firstName"
                         onBlur={[Function]}
@@ -114,12 +114,12 @@ exports[`Signup matches snapshot 1`] = `
                     className="ant-form-item-control-input-content"
                   >
                     <div
-                      className="sc-blLsxD"
+                      className="sc-ieZDjg"
                     >
                       <input
                         aria-required="true"
                         autoComplete="family-name"
-                        className="ant-input css-dev-only-do-not-override-12jzuas sc-ieZDjg iYnoQr"
+                        className="ant-input css-dev-only-do-not-override-12jzuas sc-dKfzgJ lldjka"
                         disabled={false}
                         id="lastName"
                         onBlur={[Function]}
@@ -168,12 +168,12 @@ exports[`Signup matches snapshot 1`] = `
                     className="ant-form-item-control-input-content"
                   >
                     <div
-                      className="sc-blLsxD"
+                      className="sc-ieZDjg"
                     >
                       <input
                         aria-required="true"
                         autoComplete="email"
-                        className="ant-input css-dev-only-do-not-override-12jzuas sc-ieZDjg iYnoQr"
+                        className="ant-input css-dev-only-do-not-override-12jzuas sc-dKfzgJ lldjka"
                         disabled={false}
                         id="email"
                         onBlur={[Function]}
@@ -222,10 +222,10 @@ exports[`Signup matches snapshot 1`] = `
                     className="ant-form-item-control-input-content"
                   >
                     <div
-                      className="sc-blLsxD"
+                      className="sc-ieZDjg"
                     >
                       <span
-                        className="ant-input-affix-wrapper ant-input-password sc-hIqOWS kCMgol css-dev-only-do-not-override-12jzuas"
+                        className="ant-input-affix-wrapper ant-input-password sc-dnwKUv hfaABX css-dev-only-do-not-override-12jzuas"
                         onClick={[Function]}
                       >
                         <input
@@ -249,7 +249,7 @@ exports[`Signup matches snapshot 1`] = `
                           <button
                             aria-checked={false}
                             aria-label="Show password"
-                            className="sc-dKfzgJ eGPeKX ant-input-password-icon"
+                            className="sc-hIqOWS eBRMRi ant-input-password-icon"
                             onClick={[Function]}
                             onMouseDown={[Function]}
                             onMouseUp={[Function]}
@@ -318,10 +318,10 @@ exports[`Signup matches snapshot 1`] = `
                     className="ant-form-item-control-input-content"
                   >
                     <div
-                      className="sc-blLsxD"
+                      className="sc-ieZDjg"
                     >
                       <span
-                        className="ant-input-affix-wrapper ant-input-password sc-hIqOWS kCMgol css-dev-only-do-not-override-12jzuas"
+                        className="ant-input-affix-wrapper ant-input-password sc-dnwKUv hfaABX css-dev-only-do-not-override-12jzuas"
                         onClick={[Function]}
                       >
                         <input
@@ -345,7 +345,7 @@ exports[`Signup matches snapshot 1`] = `
                           <button
                             aria-checked={false}
                             aria-label="Show password"
-                            className="sc-dKfzgJ eGPeKX ant-input-password-icon"
+                            className="sc-hIqOWS eBRMRi ant-input-password-icon"
                             onClick={[Function]}
                             onMouseDown={[Function]}
                             onMouseUp={[Function]}
@@ -402,7 +402,7 @@ exports[`Signup matches snapshot 1`] = `
                     className="ant-form-item-control-input-content"
                   >
                     <label
-                      className="ant-checkbox-wrapper ant-checkbox-wrapper-in-form-item sc-kFuwaP hJuBMp css-dev-only-do-not-override-12jzuas"
+                      className="ant-checkbox-wrapper ant-checkbox-wrapper-in-form-item sc-irTswW kIOznH css-dev-only-do-not-override-12jzuas"
                     >
                       <span
                         className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -425,7 +425,7 @@ exports[`Signup matches snapshot 1`] = `
                         I agree to the
                          
                         <a
-                          className="sc-gIgeMy bgaksF"
+                          className="sc-hyBYnz eDtHdv"
                           href="#termsAndCondition"
                           id="termsAndConditions"
                           onClick={[Function]}
@@ -440,7 +440,7 @@ exports[`Signup matches snapshot 1`] = `
             </div>
           </div>
           <button
-            className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB leliJo sc-hFRZIz eyepur"
+            className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB leliJo sc-dPghFd irAMiD"
             disabled={false}
             onClick={[Function]}
             status={null}
@@ -454,13 +454,13 @@ exports[`Signup matches snapshot 1`] = `
         </form>
       </div>
       <div
-        className="sc-dHTlsg dnbFaa"
+        className="sc-lmepTk cmPQGB"
       >
         <div
-          className="sc-fLGeYu bynLep"
+          className="sc-czddym htnocE"
         >
           <a
-            className="sc-gIgeMy bgaksF"
+            className="sc-hyBYnz eDtHdv"
             href="/login"
             onClick={[Function]}
           >

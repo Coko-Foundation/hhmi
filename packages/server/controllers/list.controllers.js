@@ -474,7 +474,9 @@ const exportListToQti = async (listId, orderBy, ascending) => {
       questionsOptions: { page: 0, pageSize: 1000 }, // all questions in a list
     })
 
-    const questionIds = questions.result.map(question => question.id)
+    const questionIds = questions.result
+      .filter(question => question.questionType !== 'numerical')
+      .map(question => question.id)
 
     return exportQuestionsToQti(listId, questionIds, orderBy, ascending)
   } catch (error) {

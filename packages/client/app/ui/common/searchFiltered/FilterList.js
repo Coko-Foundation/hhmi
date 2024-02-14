@@ -363,7 +363,8 @@ const FilterList = ({
           }
           aria-selected={currentIndex === i}
           id={key}
-          key={key}
+          // key={`${key}-${i}`}
+          key={`${i}-${filter?.value}`}
           onClick={e =>
             !isInput
               ? setFilterShape(currentOptions[i], e)

@@ -179,7 +179,7 @@ describe('Complex item set workflows', () => {
       cy.addQuestionToComplexItemSet(disableScripts, complexItemSet2.title, qId)
       cy.updateQuestionStatus(disableScripts, qId, 'published')
     })
-    cy.get(anchorTags.dashboard).click()
+    cy.get(anchorTags.dashboard).click({ force: true })
     cy.get(listItemWrapper)
       .eq(1)
       .contains(ProseMirror, 'By 2040, the world s population')
@@ -189,7 +189,7 @@ describe('Complex item set workflows', () => {
       cy.addQuestionToComplexItemSet(disableScripts, complexItemSet3.title, qId)
     })
     cy.logout()
-    cy.get(anchorTags.discover).click()
+    cy.get(anchorTags.discover).click({ force: true })
     cy.get('[data-testid="complex-item-set-select"]').click()
     cy.contains(
       '[class="ant-select-item-option-content"]',

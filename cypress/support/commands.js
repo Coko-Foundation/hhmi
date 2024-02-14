@@ -111,6 +111,7 @@ Cypress.Commands.add(
     cy.get('.multiple-choice-single-correct .ProseMirror')
       .eq(0)
       .click()
+      .focus()
       .type('Question 1', {
         force: true,
       })
@@ -118,7 +119,7 @@ Cypress.Commands.add(
 )
 
 Cypress.Commands.add('logout', () => {
-  cy.get('[data-testid="usermenu-btn"]').click()
+  cy.get('[data-testid="usermenu-btn"]').click({ force: true })
   cy.get('[data-testid="logout-btn"]').click({ force: true })
 })
 

@@ -1,4 +1,5 @@
-import React, { useEffect, useState, memo, useCallback } from 'react'
+/* eslint-disable no-nested-ternary */
+import React, { useEffect, useState, memo, useCallback, useRef } from 'react'
 import PropTypes, { oneOfType } from 'prop-types'
 import { isEqual } from 'lodash'
 import styled from 'styled-components'
@@ -6,10 +7,11 @@ import without from 'lodash/without'
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
 
 import { List as AntList } from 'antd'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { grid, th } from '@coko/client'
 
-import UICheckBox from './Checkbox'
+import UICheckBox, { SelectAllCheckbox } from './Checkbox'
 // import Search from './Search'
 import UISelect from './Select'
 import Pagination from './Pagination'
@@ -25,6 +27,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  position: relative;
 `
 
 const DroppableWrapper = styled.div`
@@ -34,14 +37,16 @@ const DroppableWrapper = styled.div`
 
 const SearchWrapper = styled.div`
   align-self: center;
-  padding: 0 ${grid(4)};
+  background-color: ${th('colorBackgroundHue')};
+  padding: ${grid(4)} ${grid(4)};
   width: 100%;
 `
 
 const InternalHeader = styled.div`
-  border-bottom: 1px solid ${th('colorBorder')};
+  /* border-bottom: 1px solid ${th('colorBorder')}; */
   display: flex;
-  padding: ${grid(2)};
+  outline: 1px solid #0005;
+  padding: ${grid(1)} ${grid(2)};
 `
 
 const TotalCount = styled.div`
@@ -59,10 +64,23 @@ const Select = styled(UISelect)`
   width: 150px;
 `
 
+const ContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: scroll;
+  width: 100%;
+
+  @media screen and (min-width: 1200px) {
+    flex-direction: row;
+  }
+`
+
 const ListItemWrapper = styled.li`
   align-items: center;
   display: flex;
   justify-content: stretch;
+  padding: 0;
 
   &:focus {
     outline: 2px solid ${th('colorPrimary')};
@@ -103,22 +121,35 @@ const StyledLoader = styled(Indicator)`
 `
 
 const FooterWrapper = styled.div`
+  align-items: start;
+  background-color: ${th('colorBackground')};
   border: 1px solid ${th('colorBorder')};
   display: flex;
+  flex-direction: column;
+  gap: ${grid(2)};
+
   justify-content: space-between;
   padding: ${grid(2)};
+
+  @media screen and (min-width: 1200px) {
+    flex-direction: row;
+  }
 `
 
 const CheckBox = styled(UICheckBox)`
   padding: ${grid(2)};
+  z-index: 9;
+`
+
+const StyledScrollWrapper = styled(InfiniteScroll)`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 `
 // #endregion styled
 
-const compareItem = (preProps, nextProps) => {
-  if (preProps.id === nextProps.id && preProps.selected === nextProps.selected)
-    return true
-  return false
-}
+const compareItem = (preProps, nextProps) =>
+  JSON.stringify(preProps) === JSON.stringify(nextProps)
 
 // memoize Selectable item to avoid unecessary rerendering every time an item is selected/deselected
 const SelectableItem = memo(props => {
@@ -130,6 +161,7 @@ const SelectableItem = memo(props => {
     onSelect,
     selected,
     checkboxLabel,
+    renderItemsOutsideLabel,
     ...rest
   } = props
 
@@ -151,10 +183,13 @@ const SelectableItem = memo(props => {
       {renderItem({ id, ...rest }, index)}
     </>
   ) : (
-    <CheckBox checked={selected} onChange={handleChange}>
-      <VisuallyHiddenElement>Select item: </VisuallyHiddenElement>
-      {renderItem({ id, ...rest }, index)}
-    </CheckBox>
+    <>
+      <CheckBox checked={selected} onChange={handleChange}>
+        <VisuallyHiddenElement>Select item: </VisuallyHiddenElement>
+        {!renderItemsOutsideLabel && renderItem({ id, ...rest }, index)}
+      </CheckBox>
+      {renderItemsOutsideLabel && renderItem({ id, ...rest }, index)}
+    </>
   )
 }, compareItem)
 
@@ -166,10 +201,12 @@ SelectableItem.propTypes = {
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.bool.isRequired,
   checkboxLabel: PropTypes.string,
+  renderItemsOutsideLabel: PropTypes.bool,
 }
 
 SelectableItem.defaultProps = {
   checkboxLabel: '',
+  renderItemsOutsideLabel: false,
 }
 
 // memoized SelectableItem would use old value of selectedItems when handleSelect and handleDeselect are passed as they are
@@ -194,36 +231,13 @@ function useFunction(callback) {
 // const EmptyList = () => {
 //   return 'no data'
 // }
-// Maybe we can add it as a util or turn it into a component and export it from Checkbox.js
-const selectAllCheckbox = (
-  setItems,
-  dataSource,
-  items,
-  label = 'Select All',
-) => {
-  const { length: itemslgth } = items
-  const { length: datalgth } = dataSource
-
-  const toggle = () =>
-    setItems(keys =>
-      keys.length === datalgth ? [] : dataSource.map(r => r.id),
-    )
-
-  // posible reusable util
-  const isChecked = () =>
-    itemslgth < datalgth && itemslgth !== 0 ? 'mixed' : itemslgth > 0
-
-  return (
-    <CheckBox
-      aria-checked={isChecked()}
-      checked={datalgth > 0 && itemslgth === datalgth}
-      data-testid="select-all-checkbox"
-      indeterminate={isChecked() === 'mixed'}
-      onChange={toggle}
-    >
-      {label}
-    </CheckBox>
-  )
+const defaultComponents = {
+  Header: InternalHeader,
+  ListItemWrapper,
+  FooterWrapper,
+  SearchWrapper,
+  CheckBox,
+  ContentWrapper,
 }
 
 const List = props => {
@@ -237,7 +251,9 @@ const List = props => {
     locale,
     pagination,
     renderItem,
+
     /* eslint-enable react/prop-types */
+    renderItemsOutsideLabel, // to decide if we should render the items outside the Checkbox in SelectableItem component
     itemSelection,
     loading,
     onSearch,
@@ -254,11 +270,20 @@ const List = props => {
     onDragEnd,
     selectedItems: controlledSelectedItems,
     withFilters,
+    CustomComponents,
+    subHeaderItems,
     filters,
+    infiniteScroll,
     ...rest
   } = props
 
   const [selectedItems, setSelectedItems] = useState([])
+  const listRef = useRef(null)
+
+  const customComponents = {
+    ...defaultComponents,
+    ...CustomComponents,
+  }
 
   useEffect(() => {
     itemSelection &&
@@ -289,7 +314,7 @@ const List = props => {
         return draggable ? (
           <Draggable draggableId={`draggable-${i}`} index={i}>
             {(provided, snapshot) => (
-              <ListItemWrapper
+              <customComponents.ListItemWrapper
                 data-testid="list-item-wrapper"
                 key={itemProps?.id}
                 {...provided.draggableProps}
@@ -302,44 +327,49 @@ const List = props => {
                   onDeselect={handleDeselect}
                   onSelect={handleSelect}
                   renderItem={renderItem}
+                  renderItemsOutsideLabel={renderItemsOutsideLabel}
                   selected={selectedItems.includes(itemProps?.id)}
                   {...itemProps}
                 />
-              </ListItemWrapper>
+              </customComponents.ListItemWrapper>
             )}
           </Draggable>
         ) : (
-          <ListItemWrapper data-testid="list-item-wrapper" key={itemProps?.id}>
+          <customComponents.ListItemWrapper
+            data-testid="list-item-wrapper"
+            key={itemProps?.id}
+          >
             <SelectableItem
               index={i}
               onDeselect={handleDeselect}
               onSelect={handleSelect}
               renderItem={renderItem}
+              renderItemsOutsideLabel={renderItemsOutsideLabel}
               selected={selectedItems.includes(itemProps?.id)}
               {...itemProps}
             />
-          </ListItemWrapper>
+          </customComponents.ListItemWrapper>
         )
       }
     : (itemProps, i) => {
-        return draggable ? (
-          <ListItemWrapper data-testid="list-item-wrapper">
-            <Draggable draggableId={`draggable-${i}`} index={i}>
-              {provided => (
-                <div
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                  ref={provided.innerRef}
-                >
-                  {renderItem(itemProps, i)}
-                </div>
-              )}
-            </Draggable>
-          </ListItemWrapper>
-        ) : (
-          <ListItemWrapper data-testid="list-item-wrapper">
-            {renderItem(itemProps, i)}
-          </ListItemWrapper>
+        return (
+          <customComponents.ListItemWrapper data-testid="list-item-wrapper">
+            {draggable ? (
+              <Draggable draggableId={`draggable-${i}`} index={i}>
+                {provided => (
+                  <div
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                    ref={provided.innerRef}
+                  >
+                    {renderItem(itemProps, i)}
+                  </div>
+                )}
+              </Draggable>
+            ) : (
+              renderItem(itemProps, i)
+            )}
+          </customComponents.ListItemWrapper>
         )
       }
 
@@ -414,7 +444,7 @@ const List = props => {
     passedPagination.current = largestPage
   }
 
-  const showInternalHeaderRow = showSort || showTotalCount
+  const showInternalHeaderRow = showSort || showTotalCount || subHeaderItems
   const defaultSortOption = sortOptions && sortOptions.find(o => o.isDefault)
 
   // remove `isDefault` prop from sortOptions bcs it's unrecognized when spread onto an html <option>
@@ -442,24 +472,55 @@ const List = props => {
         <Droppable droppableId="dropable-list">
           {provided => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
-              <AntList
-                dataSource={splitDataSource}
-                loading={
-                  loading
-                    ? { spinning: true, indicator: <StyledLoader /> }
-                    : { spinning: false, indicator: <StyledLoader /> }
-                }
-                locale={mergedLocale}
-                renderItem={listItemToRender}
-                {...rest}
-                pagination={false}
-              />
+              {infiniteScroll.enabled ? (
+                <StyledScrollWrapper {...infiniteScroll?.props}>
+                  <AntList
+                    dataSource={splitDataSource}
+                    loading={
+                      loading
+                        ? { spinning: true, indicator: <StyledLoader /> }
+                        : { spinning: false, indicator: <StyledLoader /> }
+                    }
+                    locale={mergedLocale}
+                    ref={listRef}
+                    renderItem={listItemToRender}
+                    {...rest}
+                    pagination={false}
+                  />
+                </StyledScrollWrapper>
+              ) : (
+                <AntList
+                  dataSource={splitDataSource}
+                  loading={
+                    loading
+                      ? { spinning: true, indicator: <StyledLoader /> }
+                      : { spinning: false, indicator: <StyledLoader /> }
+                  }
+                  locale={mergedLocale}
+                  renderItem={listItemToRender}
+                  {...rest}
+                />
+              )}
               {provided.placeholder}
             </div>
           )}
         </Droppable>
       </DroppableWrapper>
     </DragDropContext>
+  ) : infiniteScroll.enabled ? (
+    <StyledScrollWrapper {...infiniteScroll?.props}>
+      <StyledList
+        dataSource={dataSource}
+        loading={
+          loading
+            ? { spinning: true, indicator: <StyledLoader /> }
+            : { spinning: false, indicator: <StyledLoader /> }
+        }
+        locale={mergedLocale}
+        renderItem={listItemToRender}
+        {...rest}
+      />
+    </StyledScrollWrapper>
   ) : (
     <StyledList
       dataSource={splitDataSource}
@@ -477,7 +538,7 @@ const List = props => {
   return (
     <Wrapper className={className}>
       {showSearch && (
-        <SearchWrapper>
+        <customComponents.SearchWrapper>
           <Search
             aria-label="Enter text to search in list"
             autoFocus={autoFocusSearch}
@@ -487,13 +548,19 @@ const List = props => {
             placeholder={searchPlaceholder}
             withFilters={withFilters}
           />
-        </SearchWrapper>
+        </customComponents.SearchWrapper>
       )}
 
       {showInternalHeaderRow && (
-        <InternalHeader>
-          {itemSelection &&
-            selectAllCheckbox(setSelectedItems, dataSource, selectedItems)}
+        <customComponents.Header>
+          {itemSelection && (
+            <SelectAllCheckbox
+              CustomRender={{ CheckBox: customComponents.CheckBox }}
+              dataSource={dataSource}
+              items={selectedItems}
+              setItems={setSelectedItems}
+            />
+          )}
           {showTotalCount && (
             <TotalCount>
               <span>{totalCount} results</span>
@@ -517,13 +584,17 @@ const List = props => {
               </label>
             </SortWrapper>
           )}
-        </InternalHeader>
+          {subHeaderItems && subHeaderItems}
+        </customComponents.Header>
       )}
-
-      {ListToRender}
+      <customComponents.ContentWrapper id="list-content-wrapper">
+        {/* {customComponents?.AsideLeft} */}
+        {ListToRender}
+        {/* {customComponents?.AsideRight} */}
+      </customComponents.ContentWrapper>
 
       {(footerContent || showPagination) && (
-        <FooterWrapper>
+        <customComponents.FooterWrapper>
           {footerContent || <div />}
 
           {showPagination && (
@@ -532,7 +603,7 @@ const List = props => {
               pagination={passedPagination}
             />
           )}
-        </FooterWrapper>
+        </customComponents.FooterWrapper>
       )}
     </Wrapper>
   )
@@ -544,6 +615,9 @@ List.propTypes = {
   itemSelection: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
   }),
+  subHeaderItems: PropTypes.element,
+  renderItemsOutsideLabel: PropTypes.bool,
+  CustomComponents: PropTypes.shape({}),
   loading: PropTypes.bool,
   onSearch: PropTypes.func,
   onSortOptionChange: PropTypes.func,
@@ -568,15 +642,22 @@ List.propTypes = {
     oneOfType([PropTypes.string, PropTypes.bool, PropTypes.object]),
   ),
   withFilters: PropTypes.bool,
+  infiniteScroll: PropTypes.shape({
+    enabled: PropTypes.bool,
+    props: PropTypes.shape({}),
+  }),
 }
 
 List.defaultProps = {
   autoFocusSearch: false,
+  CustomComponents: defaultComponents,
   footerContent: null,
   itemSelection: null,
   loading: false,
   onSearch: null,
   onSortOptionChange: null,
+  subHeaderItems: null,
+  renderItemsOutsideLabel: false,
   searchLoading: false,
   showPagination: true,
   searchPlaceholder: null,
@@ -590,6 +671,7 @@ List.defaultProps = {
   selectedItems: [],
   filters: [],
   withFilters: false,
+  infiniteScroll: { enabled: false, props: {} },
 }
 
 List.Item = AntList.Item

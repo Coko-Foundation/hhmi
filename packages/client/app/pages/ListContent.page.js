@@ -278,6 +278,7 @@ const ListContentPage = () => {
               showAuthor: false,
               relatedQuestionsIds,
               testMode: true,
+              includeType: true,
             })
           : []
       }

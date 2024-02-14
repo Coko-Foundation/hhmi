@@ -12,12 +12,16 @@ const StyledAntUpload = styled(AntUpload)`
 
   & .ant-upload-list {
     background-color: ${th('colorBackground')};
-    border: 1px solid ${th('colorBorder')};
+    border: none;
     bottom: calc(100% + 20px);
     box-shadow: ${th('boxShadow')};
     inset-inline-end: ${grid(-3)};
     max-inline-size: 250px;
     position: absolute;
+
+    &:has(.ant-upload-list-item) {
+      border: 1px solid ${th('colorBorder')};
+    }
   }
 
   &&& .ant-upload-list-item {

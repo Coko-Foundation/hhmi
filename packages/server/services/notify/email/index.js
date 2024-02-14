@@ -1,14 +1,16 @@
 const { logger, clientUrl } = require('@coko/server')
+const moment = require('moment')
 
 const config = require('config')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const mailer = require('@pubsweet/component-send-email')
 
 const { ChatThread } = require('@coko/server/src/models')
-const { Question, Identity, User } = require('../../../models')
+const { Question, Identity, User, QuestionVersion } = require('../../../models')
+const flatten = require('../../../controllers/flattenMetadataValues')
 
 const sendEmail = data => {
-  const { content, subject, text, to } = data
+  const { attachments, content, subject, text, to } = data
 
   const emailData = {
     from: config.get('mailer.from'),
@@ -16,6 +18,7 @@ const sendEmail = data => {
     subject: `${subject}`,
     text: text || content,
     to,
+    attachments: attachments || [],
   }
 
   mailer.send(emailData)
@@ -24,17 +27,13 @@ const sendEmail = data => {
 
 const chatMention = async context => {
   try {
-    const { mention, userId, chatThreadId } = context
+    const { mention, newMessage: { userId, chatThreadId } = {} } = context
 
     const mentionedUserIdentity = await Identity.findOne({ userId: mention })
     const sender = await User.findById(userId)
     const senderDisplayName = await User.getDisplayName(sender)
     const chatThread = await ChatThread.findById(chatThreadId)
     const link = `${clientUrl}/question/${chatThread?.relatedObjectId}#${chatThread?.chatType}`
-
-    // console.log(mentionedUserIdentity)
-    // console.log(sender)
-    // console.log(chatThread.relatedObjectId)
 
     const content = `
         <p>User ${senderDisplayName} mentioned you in a conversation.</p>
@@ -59,7 +58,7 @@ const chatMention = async context => {
       to: mentionedUserIdentity.email,
     }
   } catch (e) {
-    logger.error('Failed to create email for mention')
+    logger.error(`Failed to create email for mention: ${e}`)
     throw new Error(e)
   }
 }
@@ -171,6 +170,290 @@ const productionChatActivityDigest = async context => {
   }
 }
 
+const addExternalReviewer = async context => {
+  try {
+    const { to, questionId } = context
+
+    const link = `${clientUrl}/question/${questionId}`
+
+    const content = `
+	<p>
+	  You have been invited to review an item in the Assessment Builder.
+	</p>
+	<p>
+	  Click on <a href="${link}">this link</a> to view the item and accept or reject this invitation.
+	  If you cannot see the link, copy and paste the following link into your browser.
+      <br/>
+      ${link}
+	</p>
+	`
+
+    const text = `You have been invited to review an item in the Assessment Builder.
+		\nCopy and paste the following link into your browser to view the unaccepted item.
+		\n${link}
+	`
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Invitation to review'
+
+    return { content, text, subject, to }
+  } catch (e) {
+    logger.error('Failed to create email for add external reviewer')
+    throw new Error(e)
+  }
+}
+
+const inviteReviewer = async context => {
+  try {
+    const { reviewerId, questionVersionId } = context
+
+    const questionVersion = await QuestionVersion.findById(questionVersionId)
+    const link = `${clientUrl}/question/${questionVersion.questionId}`
+    const reviewerIdentity = await Identity.findOne({ userId: reviewerId })
+
+    const content = `
+	<p>
+    You have been invited to review an item in the Assessment Builder.
+	</p>
+	<p>
+    Click on <a href="${link}">this link</a> to view the item and choose to accept or decline 
+    this review within the next seven days. We ask that reviews be completed within two weeks of acceptance. 
+    Thank you for considering sharing your expertise with the community.
+    <br/>
+    ${link}
+	</p>
+	`
+
+    const text = `You have been invited to review an item in the Assessment Builder.
+		\nCopy and paste the following link into your browser to view the unaccepted item.
+		\n${link}
+	`
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Invitation to review'
+
+    return { content, text, subject, to: reviewerIdentity.email }
+  } catch (e) {
+    logger.error('Failed to create email for invite reviewer')
+    throw new Error(e)
+  }
+}
+
+const revokeInvitation = async context => {
+  const { reviewerId } = context
+
+  const reviewerIdentity = await Identity.findOne({ userId: reviewerId })
+
+  const content = `
+    <p>
+    The editor has revoked your invitation to review an item in the Assessment Builder. 
+    This is likely because the invitation was sent to you in error or the editor didn't receive your response to the invitation within seven days.
+    </p>
+  `
+
+  const text = `Invitation to review an item has been revoked by the editor`
+
+  const subject = `HHMI BioInteractive Assessment Builder: Invitation to review revoked`
+
+  return { content, text, subject, to: reviewerIdentity.email }
+}
+
+const rejectInvitation = async context => {
+  try {
+    const { email, questionId, reviewerId, reason } = context
+
+    const reviewer = await User.findById(reviewerId)
+    const link = `${clientUrl}/question/${questionId}`
+
+    const content = `
+			  <p>
+				${reviewer.displayName} has rejected an invitation to review an item in the Assessment Builder, and provided the following reason:
+			  </p>
+        <blockquote>
+          ${reason}
+        </blockquote>
+			  <p>
+				Click on <a href="${link}">this link</a> to view the rejected invitation on the Reviewer Invites page.
+				If you cannot see the link, copy and paste the following link into your browser.
+				<br/>
+				  ${link}
+			  </p>
+		  `
+
+    const text = `${reviewer.displayName} has rejected an invitation to review an item in the Assessment Builder.
+			  \nCopy and paste the following link into your browser to view the rejected item.
+			  \n${link}
+		  `
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Invitation to review rejected'
+
+    return { content, text, subject, to: email }
+  } catch (e) {
+    logger.error('Failed to create email for reject invitation')
+    throw new Error(e)
+  }
+}
+
+const acceptInvitation = async context => {
+  try {
+    const { email, questionId, reviewerId } = context
+
+    const reviewer = await User.findById(reviewerId)
+    const link = `${clientUrl}/question/${questionId}`
+
+    const content = `
+			  <p>
+				${reviewer.displayName} has accepted an invitation to review an item in the Assessment Builder.
+			  </p>
+			  <p>
+				Click on <a href="${link}">this link</a> to view the accepted invitation on the Reviewer Invites page.
+				If you cannot see the link, copy and paste the following link into your browser.
+				<br/>
+				  ${link}
+			  </p>
+		  `
+
+    const text = `${reviewer.displayName} has accepted an invitation to review an item in the Assessment Builder.
+			  \nCopy and paste the following link into your browser to view the accepted item.
+			  \n${link}
+		  `
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Invitation to review accepted'
+
+    return { content, text, subject, to: email }
+  } catch (e) {
+    logger.error('Failed to create email for reject invitation')
+    throw new Error(e)
+  }
+}
+
+const moveQuestionVersionToReview = async context => {
+  try {
+    const { questionVersion } = context
+
+    const to = `assessmentbuilder@hhmi.org`
+    const author = await Question.getAuthor(questionVersion.questionId)
+    const identity = await Identity.findOne({ userId: author.id })
+    const link = `${clientUrl}/question/${questionVersion.questionId}`
+    const bloomsLevel = flatten()[questionVersion.cognitiveLevel]
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Item passed Editorial Review'
+
+    const content = `
+	  <p>This item has passed Editorial Review and payment to the Author should proceed.</p>
+	  <p>Item details:</p>
+	  <ul>
+	    <li>Author name: ${author.displayName}</li>
+	    <li>Author email: ${identity.email}</li>
+	    <li>Item ID: ${questionVersion.questionId}</li>
+	    <li>Bloom's level of the item: ${bloomsLevel}</li>
+	  </ul>
+	  <p>
+	    Click on <a href="${link}">this link</a> to view the item.
+	    If you cannot see the link, copy and paste the following link into your browser.
+	    <br/>
+	  	${link}
+	  </p>
+	`
+
+    const text = `Item ${questionVersion.questionId} has passed Editorial Review and payment to the Author should proceed.
+	\nCopy and paste the following link into your browser to view the item.
+	\n${link}
+`
+
+    return { content, text, subject, to }
+  } catch (e) {
+    logger.error(
+      `Failed to create email for move question version to review: ${e}`,
+    )
+    throw new Error(e)
+  }
+}
+
+const submitReview = async ({ attachments, review, to }) => {
+  try {
+    const { questionVersionId, content: reviewContent, reviewerId } = review
+
+    const questionVersion = await QuestionVersion.findById(questionVersionId)
+    const reviewer = await User.findById(reviewerId)
+
+    const link = `${clientUrl}/question/${questionVersion.questionId}`
+    const subject = 'HHMI BioInteractive Assessment Builder: Review submitted'
+
+    const content = `
+	<p>
+		${
+      reviewer.displayName
+    } has completed the review of an item in the Assessment Builder.
+	</p>
+	<p>
+		Click on <a href="${link}">this link</a> to view the item.
+		If you cannot see the link, copy and paste the following link into your browser.
+		<br/>
+		${link}
+	</p>
+	<h2>
+		Review by ${reviewer.displayName} submitted at ${moment(review.updated).format(
+      'MMMM DD, YYYY, h:mm:ss a',
+    )}
+	</h2>
+	<pre>${reviewContent}</pre>
+	`
+
+    const text = `${reviewer.displayName} has completed the review of an item in the Assessment Builder.
+	\nCopy and paste the following link into your browser to view the item.
+	\n${link}
+	`
+
+    return { attachments, content, subject, text, to }
+  } catch (e) {
+    logger.error(`Failed to create email for submit review: ${e}`)
+    throw new Error(e)
+  }
+}
+
+const sendReviewCopyToReviewer = async ({ attachments, review, to }) => {
+  try {
+    const { questionVersionId, content: reviewContent, reviewerId } = review
+
+    const questionVersion = await QuestionVersion.findById(questionVersionId)
+    const reviewer = await User.findById(reviewerId)
+
+    const link = `${clientUrl}/question/${questionVersion.questionId}`
+    const subject = 'HHMI BioInteractive Assessment Builder: Review submitted'
+
+    const content = `
+      <p>You have completed the review of an item in the Assessment Builder.</p>
+      <p>Click on <a href="${link}">this link</a> to view the item. 
+      If you cannot see the link, copy and paste the following link into your browser.
+      <br/>
+      ${link}
+      </p>
+
+      <p>A copy of your review feedback is provided below.</p>
+      <h2>Review by ${reviewer.displayName} submitted at ${moment(
+      review.updated,
+    ).format('MMMM DD, YYYY, h:mm:ss a')}</h2>
+
+      <pre>${reviewContent}</pre>
+    `
+
+    const text = `You have completed the review of an item in the Assessment Builder.
+        \nCopy and paste the following link into your browser to view the item.
+        \n${link}`
+
+    return { attachments, content, subject, text, to }
+  } catch (e) {
+    logger.error(
+      `Failed to create email for reviewer after submitting the review: ${e}`,
+    )
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   sendEmail,
   handlers: {
@@ -178,5 +461,13 @@ module.exports = {
     'hhmi.questionRejected': questionRejected,
     'hhmi.questionUnpublished': questionUnpublished,
     'hhmi.productionChatActivityDigest': productionChatActivityDigest,
+    'hhmi.addExternalReviewer': addExternalReviewer,
+    'hhmi.reviewerInvited': inviteReviewer,
+    'hhmi.revokeInvitation': revokeInvitation,
+    'hhmi.rejectInvitation': rejectInvitation,
+    'hhmi.acceptInvitation': acceptInvitation,
+    'hhmi.moveQuestionVersionToReview': moveQuestionVersionToReview,
+    'hhmi.submitReview': submitReview,
+    'hhmi.sendReviewCopyToReviewer': sendReviewCopyToReviewer,
   },
 }

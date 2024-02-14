@@ -5,6 +5,7 @@ import { grid } from '@coko/client'
 import { TabsStyled as Tabs } from '../common'
 import ProfileInfo from './ProfileInfo'
 import ChangePassword from './ChangePassword'
+import theme from '../../theme'
 
 const Wrapper = styled.div``
 
@@ -116,6 +117,8 @@ const Profile = props => {
   return (
     <Wrapper className={className}>
       <StyledTabs
+        activebg={theme.colorSuccess} // prop to set active tab background-color
+        activecolor="#fff" // prop to set active tab color
         activeKey={activeKey}
         items={items}
         onTabClick={checkForUnsavedChanges}

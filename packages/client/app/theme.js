@@ -1,4 +1,7 @@
-module.exports = {
+import { css } from 'styled-components'
+import { lighten } from '@coko/client'
+
+const theme = {
   colorBackground: '#ffffff',
   colorBackgroundHue: '#f5f5f5',
   colorBody: '#000000',
@@ -11,6 +14,7 @@ module.exports = {
   colorPrimaryBorder: '#71ada9',
 
   colorInfo: '#178387',
+  colorChat: '#178369',
   colorSuccess: '#00763a',
   colorSuccessAlt: '#48a535',
   colorError: '#d43131',
@@ -75,4 +79,26 @@ module.exports = {
     mediumPlus: '1024px',
     large: '1200px',
   },
+
+  cssOverrides: {
+    ui: {
+      Ribbon: css`
+        background: ${props => {
+          const { status } = props
+          if (status === 'success') return props.theme.colorSuccess
+          if (status === 'error' || status === 'danger')
+            return props.theme.colorError
+          return lighten(props.theme.colorBorder, 0.5)
+        }};
+        color: ${props => {
+          const { status } = props
+          if (status === 'success' || status === 'error' || status === 'danger')
+            return props.theme.colorTextReverse
+          return props.theme.colorTextDark
+        }};
+      `,
+    },
+  },
 }
+
+export default theme

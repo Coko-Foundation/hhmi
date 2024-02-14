@@ -77,9 +77,9 @@ const MetadataInfo = props => {
       <MetadataHeading>Question type</MetadataHeading>
       <p>
         {
-          metadata.questionTypes.find(
-            qType => qType.value === values.questionType,
-          )?.label
+          metadata.questionTypes
+            .flatMap(group => group.options)
+            .find(qType => qType.value === values.questionType)?.label
         }
       </p>
       <MetadataHeading>Topic(s)</MetadataHeading>

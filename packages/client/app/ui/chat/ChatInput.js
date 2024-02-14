@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { MentionsInput, Mention } from 'react-mentions'
-import { grid, th } from '@coko/client'
+import { grid, th, useCurrentUser } from '@coko/client'
 
 import { SendOutlined } from '@ant-design/icons'
 
@@ -84,7 +84,7 @@ const SendButton = styled(Button)`
 
 const ChatInput = props => {
   const { className, onSend, participants, ...rest } = props
-
+  const { currentUser } = useCurrentUser()
   const [inputValue, setInputValue] = useState('')
   const [mentions, setMentions] = useState([])
   const [attachments, setAttachments] = useState([])
@@ -146,7 +146,7 @@ const ChatInput = props => {
       >
         <Mention
           appendSpaceOnAdd
-          data={participants}
+          data={participants.filter(p => p.id !== currentUser.id)}
           displayTransform={(_, display) => `@${display}`}
           renderSuggestion={entry => {
             if (entry.role === 'author') {
@@ -155,6 +155,10 @@ const ChatInput = props => {
 
             if (entry.role === 'handlingEditor') {
               return <span>{`${entry.display} (HE)`}</span>
+            }
+
+            if (entry.role === 'reviewer') {
+              return <span>{`${entry.display} (Reviewer)`}</span>
             }
 
             return <span>{entry.display}</span>
