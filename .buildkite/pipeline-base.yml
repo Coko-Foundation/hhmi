@@ -78,7 +78,7 @@ steps:
     concurrency_group: '$BUILDKITE_PIPELINE_SLUG/$BUILDKITE_BRANCH/deploy'
     branches:
       - integration
-      - main-platformsh
+      - main
       - live
     plugins:
       # Log into ECR for this build step to access prebuilt images.
@@ -100,9 +100,9 @@ steps:
           source-directory: ${ARTIFACT_LOCATION_CLIENT}
           <<: *git-remote-repo
           branches:
-            #            - match: live
-            #              target: master
-            - match: main-platformsh
+            - match: live
+              target: live
+            - match: main
               target: main
             - match: integration
               target: integration
@@ -127,7 +127,7 @@ steps:
     concurrency_group: '$BUILDKITE_PIPELINE_SLUG/$BUILDKITE_BRANCH/deploy-server'
     branches:
       - integration
-      - main-platformsh
+      - main
       - live
     plugins:
       # Log into ECR for this build step to access prebuilt images.
@@ -149,9 +149,9 @@ steps:
           source-directory: ${ARTIFACT_LOCATION_SERVER}
           <<: *git-remote-repo
           branches:
-            #            - match: live
-            #              target: master
-            - match: main-platformsh
+            - match: live
+              target: live
+            - match: main
               target: main
             - match: integration
               target: integration

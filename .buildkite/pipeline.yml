@@ -9,7 +9,7 @@ steps:
   - label: Build App
     command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
     branches:
-      - main-platformsh
+      - main
     env:
       SERVER_URL: https://30779a260b80196a185294a3cb9a5745
 
@@ -17,6 +17,6 @@ steps:
     command: buildkite-agent pipeline upload .buildkite/pipeline-base.yml
     branches:
       - '!live'
-      - '!main-platformsh'
+      - '!main'
     env:
       SERVER_URL: https://30779a260b80196a185294a3cb9a5745
