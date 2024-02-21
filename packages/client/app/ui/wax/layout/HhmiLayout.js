@@ -91,11 +91,12 @@ const EditorArea = styled.div`
     @media (min-width: ${th('mediaQueries.small')}) {
       padding: ${grid(5)};
     }
+
     /* position: relative; */
 
     /* &:focus {
-    outline: none;
-  } */
+      outline: none;
+    } */
 
     /* .wax-selection-marker {
       background: ${th('colorPrimary')};
@@ -121,6 +122,26 @@ const EditorArea = styled.div`
 
     .rc-switch-disabled::after {
       background-color: #cecece;
+    }
+
+    #numerical-list {
+      width: 280px;
+
+      /* stylelint-disable-next-line string-quotes */
+      [role='menuitem'] {
+        font-size: 14px;
+      }
+    }
+
+    button:has(+ #numerical-list) {
+      max-width: 280px;
+      width: 100%;
+    }
+
+    .numerical-answer {
+      label {
+        font-size: 14px;
+      }
     }
   }
 

@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
+import {
+  useQuery,
+  useLazyQuery,
+  useMutation,
+  useSubscription,
+} from '@apollo/client'
 import { useHistory } from 'react-router-dom'
 
 import { Dashboard, VisuallyHiddenElement } from 'ui'
@@ -8,11 +13,13 @@ import {
   GET_AUTHOR_DASHBOARD,
   GET_EDITOR_DASHBOARD,
   GET_HANDLING_EDITOR_DASHBOARD,
+  GET_REVIEWER_DASHBOARD,
   CREATE_QUESTION,
   CURRENT_USER,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
   FILTER_GLOBAL_TEAM_MEMBERS,
   GET_PRODUCTION_DASHBOARD,
+  DASHBOARD_SUBSCRIPTION,
 } from '../graphql'
 import {
   hasGlobalRole,
@@ -140,12 +147,46 @@ const DashboardPage = () => {
       updateSearchResultAnnounce(data, 'getInProductionDashboard'),
   })
 
+  const [
+    reviewerQuery,
+    {
+      data: reviewerResponse,
+      loading: reviewerLoading,
+      called: reviewerCalled,
+    },
+  ] = useLazyQuery(GET_REVIEWER_DASHBOARD, {
+    fetchPolicy: 'network-only',
+    variables: {
+      ...defaultSearchOptions,
+      page: 0,
+    },
+    onCompleted: data =>
+      updateSearchResultAnnounce(data, 'getReviewerDashboard'),
+  })
+
+  useSubscription(DASHBOARD_SUBSCRIPTION, {
+    onData: ({
+      data: {
+        data: { dashboardUpdate },
+      },
+    }) => {
+      // compare currentTabKey with dashboardId
+      // if they match, refetch current tab's dashboard query
+      if (dashboardUpdate && dashboardUpdate === currentTabKey) {
+        runQuery()
+      }
+    },
+  })
+
   const authorData = authorResponse && authorResponse.getAuthorDashboard
   const editorData = editorResponse && editorResponse.getManagingEditorDashboard
   const handlingEditorData = heResponse && heResponse.getHandlingEditorDashboard
+  const reviewerData = reviewerResponse && reviewerResponse.getReviewerDashboard
 
   const productionData =
     productionResponse && productionResponse.getInProductionDashboard
+
+  const userId = currentUserResponse?.currentUser.id
 
   const mappedDataHE =
     handlingEditorData && metadata
@@ -155,6 +196,8 @@ const DashboardPage = () => {
           complexItemSetOptions,
           showAuthor: true,
           showStatus: true,
+          showStatusLabel: true,
+          userId,
         })
       : []
 
@@ -165,6 +208,7 @@ const DashboardPage = () => {
           metadata,
           complexItemSetOptions,
           showStatus: true,
+          userId,
         })
       : []
 
@@ -176,7 +220,8 @@ const DashboardPage = () => {
           complexItemSetOptions,
           showStatus: true,
           showAuthor: true,
-          showAssigned: true,
+          showStatusLabel: true,
+          userId,
         })
       : []
 
@@ -187,27 +232,27 @@ const DashboardPage = () => {
           metadata,
           complexItemSetOptions,
           showAuthor: true,
+          userId,
         })
       : []
 
-  const queryMapper = {
-    query: {
-      author: authorQuery,
-      editor: editorQuery,
-      handlingEditor: handlingEditorQuery,
-      production: productionQuery,
-    },
-    called: {
-      author: authorCalled,
-      editor: editorCalled,
-      handlingEditor: heCalled,
-      production: productionCalled,
-    },
-  }
+  const mappedDataReviewer =
+    reviewerData && metadata
+      ? dashboardDataMapper({
+          questions: reviewerData.result,
+          metadata,
+          complexItemSetOptions,
+          showStatus: true,
+          showStatusLabel: true,
+          userId,
+        })
+      : []
 
   useEffect(() => {
-    runQuery(currentSearchQuery)
-  }, [currentTabKey, currentPage, currentSearchQuery])
+    if (currentUserResponse) {
+      runQuery(currentSearchQuery)
+    }
+  }, [currentTabKey, currentPage, currentSearchQuery, currentUserResponse])
 
   useEffect(() => {
     !handlingEditors &&
@@ -225,6 +270,11 @@ const DashboardPage = () => {
 
   const runQuery = query => {
     const { query: roleQuery } = queryMapper
+
+    if (!roleQuery[currentTabKey]) {
+      // reset dashboardLastUsedTab if it doesn't match user role
+      localStorage.setItem('dashboardLastUsedTab', 'author')
+    }
 
     const queryVariables = {
       variables: {
@@ -295,6 +345,7 @@ const DashboardPage = () => {
   // #region data
   const loading = !currentUserResponse?.currentUser // question list loading is inside the tab
   const isEditor = hasGlobalRole(currentUserResponse?.currentUser, 'editor')
+  const isReviewer = hasGlobalRole(currentUserResponse?.currentUser, 'reviewer')
 
   const isHandlingEditor = hasGlobalRole(
     currentUserResponse?.currentUser,
@@ -305,6 +356,23 @@ const DashboardPage = () => {
     currentUserResponse?.currentUser,
     'production',
   )
+
+  const queryMapper = {
+    query: {
+      author: authorQuery,
+      editor: isEditor && editorQuery,
+      handlingEditor: isHandlingEditor && handlingEditorQuery,
+      production: isProduction && productionQuery,
+      reviewer: isReviewer && reviewerQuery,
+    },
+    called: {
+      author: authorCalled,
+      editor: editorCalled,
+      handlingEditor: heCalled,
+      production: productionCalled,
+      reviewer: reviewerCalled,
+    },
+  }
 
   const tabs = [
     {
@@ -340,6 +408,14 @@ const DashboardPage = () => {
       totalCount: productionData && productionData.totalCount,
       showBulkActions: false,
       loading: productionLoading,
+    },
+    isReviewer && {
+      label: 'Reviewer Items',
+      value: 'reviewer',
+      questions: mappedDataReviewer,
+      totalCount: reviewerData?.totalCount,
+      showBulkActions: false,
+      loading: reviewerLoading,
     },
   ].filter(Boolean)
 

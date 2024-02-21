@@ -95,7 +95,7 @@ server unit test:
       -e BIOINTERACTIVE_OAUTH_API_USER_URI=bio.int/api -e BIOINTERACTIVE_OAUTH_TOKEN_URI=bio.int/token -e BIOINTERACTIVE_OAUTH_CLIENT_ID=123 -e BIOINTERACTIVE_OAUTH_CLIENT_SECRET=321 -e BIOINTERACTIVE_OAUTH_REDIRECT_URI=hhmi.co/biointeractive-oauth \
       -e PUBSWEET_SECRET=superSecretThing \
       $IMAGE_ORG/$IMAGE_NAME_SERVER_DEVELOPMENT:$CI_COMMIT_SHA \
-      yarn jest --verbose
+      yarn jest --verbose --forceExit
 
 # BUILD PRODUCTION
 

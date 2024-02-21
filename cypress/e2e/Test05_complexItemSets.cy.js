@@ -38,7 +38,7 @@ describe('Complex item set', () => {
   })
 
   it('checking if the set displays correct info from the database', () => {
-    cy.get(anchorTags.sets).click()
+    cy.get(anchorTags.sets).click({ force: true })
     cy.wait('@GQLReq')
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title)
     cy.get(listItemWrapper)
@@ -52,7 +52,7 @@ describe('Complex item set', () => {
   it('create complex item set', () => {
     // [segment]: creating a complex item set
     cy.log('creating a complex item set...')
-    cy.get(anchorTags.sets).click()
+    cy.get(anchorTags.sets).click({ force: true })
     cy.contains('button', 'Create Set').click()
     cy.contains('label', 'Complex Item Set Title')
     cy.get('input[id="title"]').type(complexItemSet2.title)
@@ -60,7 +60,7 @@ describe('Complex item set', () => {
     cy.contains('button[type="submit"]', 'Save').click()
     cy.wait('@GQLReq')
     cy.contains('Complex item set wax created successfully!')
-    cy.get(anchorTags.sets).click()
+    cy.get(anchorTags.sets).click({ force: true })
     cy.reload()
     cy.wait('@GQLReq')
     // [segment]: checking if correct complex item set info is displayed
@@ -75,7 +75,7 @@ describe('Complex item set', () => {
   })
 
   it('edit complex item set', () => {
-    cy.get(anchorTags.sets).click()
+    cy.get(anchorTags.sets).click({ force: true })
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
     cy.contains(antTabs, 'Edit').click()
 
@@ -101,7 +101,7 @@ describe('Complex item set', () => {
     })
 
     it('with "Add item to this set" button', () => {
-      cy.get(anchorTags.sets).click()
+      cy.get(anchorTags.sets).click({ force: true })
       cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)
@@ -117,14 +117,14 @@ describe('Complex item set', () => {
         complexItemSet3.leadingContent,
       )
       cy.createQuestionWidget()
-      cy.get('.multiple-choice').first().type('{enter}')
+      cy.get('.multiple-choice .ProseMirror').first().type('{enter}')
       cy.get(ProseMirror).first().type('Question1')
       cy.url().then(url => {
         const qId = url.split('/')[4]
 
         cy.updateQuestionStatus(disableScripts, qId, 'published')
       })
-      cy.get(anchorTags.sets).click()
+      cy.get(anchorTags.sets).click({ force: true })
       cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)
@@ -139,7 +139,7 @@ describe('Complex item set', () => {
     })
 
     it('from the question page', () => {
-      cy.get(anchorTags.dashboard).first().click()
+      cy.get(anchorTags.dashboard).first().click({ force: true })
       cy.wait('@GQLReq')
       cy.get(createQuestionButton).click()
       cy.get('input[data-testid="belongs-to-set-checkbox"]').click()
@@ -150,7 +150,7 @@ describe('Complex item set', () => {
         complexItemSet3.leadingContent,
       )
       cy.createQuestionWidget()
-      cy.get('.multiple-choice').first().type('{enter}')
+      cy.get('.multiple-choice .ProseMirror').first().type('{enter}')
 
       cy.get(ProseMirror).first().type('Question2')
 
@@ -158,7 +158,7 @@ describe('Complex item set', () => {
         const qId = url.split('/')[4]
         cy.updateQuestionStatus(disableScripts, qId, 'published')
       })
-      cy.get(anchorTags.sets).click()
+      cy.get(anchorTags.sets).click({ force: true })
       cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)

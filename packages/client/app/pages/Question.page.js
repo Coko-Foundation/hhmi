@@ -41,18 +41,31 @@ import {
   CREATE_CHAT_THREAD,
   GET_AUTHOR_CHAT_PARTICIPANTS,
   GET_PRODUCTION_CHAT_PARTICIPANTS,
+  GET_REVIEWER_CHAT_PARTICIPANTS,
   MESSAGE_CREATED_SUBSCRIPTION,
   CANCEL_EMAIL_NOTIFICATION,
   UNPUBLISH_QUESTION_VERSION,
+  ACCEPT_OR_REJECT_REVIEW_INVITATION,
+  SUBMIT_REVIEW,
+  INVITE_REVIEWER,
+  UPDATE_REVIEWER_POOL,
+  REVOKE_REVIEWER_INVITATION,
+  SEARCH_FOR_REVIEWERS,
+  CHANGE_AMOUNT_OF_REVIEWERS,
+  CHANGE_REVIEWER_AUTOMATION_STATUS,
 } from '../graphql'
 import {
   useMetadata,
   hasRole,
   hasGlobalRole,
   questionTypes,
+  REVIEWER_STATUSES,
+  flattenReviewerPool,
+  flattenReviewerSearchResults,
 } from '../utilities'
 
 const AUTOSAVE_DELAY = 500
+const REVIEWER_SEARCH_DELAY = 500
 
 // #region transformations
 const metadataApiToUi = (values, testMode) => {
@@ -205,11 +218,6 @@ const QuestionPage = props => {
   const { metadata } = useMetadata()
 
   const requestedTab = window.location.hash.substring(1)
-  let initialTabKey = localStorage.getItem(id) || 'editor'
-
-  if (requestedTab && requestedTab !== initialTabKey) {
-    initialTabKey = requestedTab
-  }
 
   const {
     data: { question } = {},
@@ -226,6 +234,7 @@ const QuestionPage = props => {
 
   const { data: { getAuthorChatParticipants: authorChatParticipants } = {} } =
     useQuery(GET_AUTHOR_CHAT_PARTICIPANTS, {
+      skip: !question?.versions[0]?.submitted,
       variables: {
         id,
       },
@@ -234,6 +243,16 @@ const QuestionPage = props => {
   const {
     data: { getProductionChatParticipants: productionChatParticipants } = {},
   } = useQuery(GET_PRODUCTION_CHAT_PARTICIPANTS, {
+    skip: !question?.versions[0]?.inProduction,
+    variables: {
+      id,
+    },
+  })
+
+  const {
+    data: { getReviewerChatParticipants: reviewerChatParticipants } = {},
+  } = useQuery(GET_REVIEWER_CHAT_PARTICIPANTS, {
+    skip: !question?.versions[0]?.underReview,
     variables: {
       id,
     },
@@ -247,7 +266,9 @@ const QuestionPage = props => {
 
   const [updateQuestionMutation] = useMutation(UPDATE_QUESTION)
 
-  const [submitQuestionMutation] = useMutation(SUBMIT_QUESTION)
+  const [submitQuestionMutation] = useMutation(SUBMIT_QUESTION, {
+    refetchQueries: [{ query: QUESTION, variables: { id } }],
+  })
 
   const [createChatThreadMutation] = useMutation(CREATE_CHAT_THREAD)
 
@@ -306,6 +327,8 @@ const QuestionPage = props => {
     fetchPolicy: 'network-only',
   })
 
+  const [searchForReviewers] = useLazyQuery(SEARCH_FOR_REVIEWERS)
+
   const { data: { chatThread: authorChatThread } = {}, loading: chatLoading } =
     useQuery(GET_CHAT_THREAD, {
       skip: !question?.authorChatThreadId,
@@ -323,6 +346,16 @@ const QuestionPage = props => {
       },
     },
   )
+
+  const {
+    data: { chatThread: reviewerChatThread } = {},
+    loading: reviewerChatLoading,
+  } = useQuery(GET_CHAT_THREAD, {
+    skip: !question?.reviewerChatThreadId,
+    variables: {
+      id: question?.reviewerChatThreadId,
+    },
+  })
 
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
     skip: !authorChatThread?.id,
@@ -373,7 +406,35 @@ const QuestionPage = props => {
       ) {
         cancelEmailNotification({
           variables: {
-            chatThreadId: authorChatThread?.id,
+            chatThreadId: productionChatThread?.id,
+          },
+        })
+      }
+    },
+  })
+
+  useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
+    skip: !reviewerChatThread?.id,
+    variables: { chatThreadId: reviewerChatThread?.id },
+    onData: ({
+      data: {
+        data: { messageCreated },
+      },
+    }) => {
+      if (messageCreated) {
+        setReviewerChatMessages(previousMessages => [
+          ...previousMessages,
+          messageCreated,
+        ])
+      }
+
+      if (
+        messageCreated.mentions.includes(currentUser.id) &&
+        localStorage.getItem(question?.id) === 'reviewerChat'
+      ) {
+        cancelEmailNotification({
+          variables: {
+            chatThreadId: reviewerChatThread?.id,
           },
         })
       }
@@ -410,6 +471,7 @@ const QuestionPage = props => {
   // maintaining messages in a state
   const [authorChatMessages, setAuthorChatMessages] = useState([])
   const [productionChatMessages, setProductionChatMessages] = useState([])
+  const [reviewerChatMessages, setReviewerChatMessages] = useState([])
 
   useEffect(() => {
     if (authorChatThread?.messages) {
@@ -421,6 +483,11 @@ const QuestionPage = props => {
       setProductionChatMessages(productionChatThread.messages)
     }
   }, [productionChatThread])
+  useEffect(() => {
+    if (reviewerChatThread?.messages) {
+      setReviewerChatMessages(reviewerChatThread.messages)
+    }
+  }, [reviewerChatThread])
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -492,6 +559,10 @@ const QuestionPage = props => {
     if (version?.inProduction && !question?.productionChatThreadId) {
       createChat('productionChat')
     }
+
+    if (version?.underReview && !question?.reviewerChatThreadId) {
+      createChat('reviewerChat')
+    }
   }, [question, version])
 
   // declare lazy query to be called when no `relatedQuestionsIds` from previous state
@@ -553,6 +624,62 @@ const QuestionPage = props => {
   })
 
   const [sendMessage] = useMutation(SEND_MESSAGE)
+
+  const refetchQuestionVariables = [
+    {
+      query: QUESTION,
+      variables: {
+        id,
+      },
+    },
+  ]
+
+  const [acceptOrRejectInvitation] = useMutation(
+    ACCEPT_OR_REJECT_REVIEW_INVITATION,
+    {
+      refetchQueries: [
+        {
+          query: QUESTION,
+          variables: {
+            id,
+          },
+        },
+        {
+          query: GET_REVIEWER_CHAT_PARTICIPANTS,
+          variables: {
+            id,
+          },
+        },
+      ],
+    },
+  )
+
+  const [submitReview] = useMutation(SUBMIT_REVIEW, {
+    refetchQueries: refetchQuestionVariables,
+  })
+
+  const [inviteReviewer] = useMutation(INVITE_REVIEWER, {
+    refetchQueries: refetchQuestionVariables,
+  })
+
+  const [updateReviewerPool] = useMutation(UPDATE_REVIEWER_POOL, {
+    refetchQueries: refetchQuestionVariables,
+  })
+
+  const [revokeReviewerInvitation] = useMutation(REVOKE_REVIEWER_INVITATION, {
+    refetchQueries: refetchQuestionVariables,
+  })
+
+  const [changeAmountOfReviewers] = useMutation(CHANGE_AMOUNT_OF_REVIEWERS, {
+    refetchQueries: refetchQuestionVariables,
+  })
+
+  const [changeReviewerAutomationStatus] = useMutation(
+    CHANGE_REVIEWER_AUTOMATION_STATUS,
+    {
+      refetchQueries: refetchQuestionVariables,
+    },
+  )
   // #endregion hooks
 
   // #region user roles
@@ -561,6 +688,20 @@ const QuestionPage = props => {
   const isProductionMember = hasGlobalRole(currentUser, 'production')
   const isAuthor = hasRole(currentUser, 'author', id)
   const isAdmin = hasGlobalRole(currentUser, 'admin')
+  const isReviewer = hasRole(currentUser, 'reviewer', version?.id)
+
+  const isSubmitted = version?.submitted || (isAdmin && isAuthor)
+  const isUnderReview = version?.underReview
+  const isInProduction = version?.inProduction
+  const isPublished = version?.published
+
+  const reviewerInviteStatus = isReviewer ? version?.reviewerStatus : null
+
+  let initialTabKey = localStorage.getItem(id) || 'editor'
+
+  if (requestedTab && requestedTab !== initialTabKey) {
+    initialTabKey = requestedTab
+  }
 
   const showAuthorChatTab =
     version?.submitted &&
@@ -570,8 +711,29 @@ const QuestionPage = props => {
     (isEditor || isHandlingEditor || isAuthor || isAdmin)
 
   const showProductionChatTab =
-    version?.inProduction &&
+    isInProduction &&
     (isEditor || isHandlingEditor || isProductionMember || isAdmin)
+
+  const showReviewerChatTab =
+    version?.underReview &&
+    !isAuthor &&
+    (isEditor ||
+      isHandlingEditor ||
+      (isReviewer && reviewerInviteStatus === REVIEWER_STATUSES.accepted) ||
+      isAdmin)
+
+  const reviews = version?.reviews || []
+  const amountOfReviewers = version?.amountOfReviewers || 100 // practically as many as you want
+  const automateReviewerInvites = version?.isReviewerAutomationOn
+
+  const reviewSubmitted = !!reviews.find(
+    review => review.reviewerId === currentUser?.id && review.status.submitted,
+  )
+
+  const reviewerPool = flattenReviewerPool(version?.reviewerPool || [])
+
+  const showAssignReviewersTab =
+    isUnderReview && !isAuthor && (isEditor || isHandlingEditor)
   // #endregion user roles
 
   // #region handlers
@@ -910,6 +1072,11 @@ const QuestionPage = props => {
           },
         })
         break
+      case 'reviewerChat':
+        cancelEmailNotification({
+          variables: { chatThreadId: reviewerChatThread?.id },
+        })
+        break
       default:
         break
     }
@@ -917,28 +1084,11 @@ const QuestionPage = props => {
     localStorage.setItem(id, activeTab)
   }
 
-  const onSendAuthorChatMessage = async (content, mentions, attachments) => {
-    const fileObjects = attachments.map(attachment => attachment.originFileObj)
-
-    const mutationData = {
-      variables: {
-        input: {
-          content,
-          chatThreadId: question?.authorChatThreadId,
-          userId: currentUser.id,
-          mentions,
-          attachments: fileObjects,
-        },
-      },
-    }
-
-    return sendMessage(mutationData)
-  }
-
-  const onSendProductionChatMessage = async (
+  const handleSendChatMessage = async (
     content,
     mentions,
     attachments,
+    chatThreadId,
   ) => {
     const fileObjects = attachments.map(attachment => attachment.originFileObj)
 
@@ -946,7 +1096,7 @@ const QuestionPage = props => {
       variables: {
         input: {
           content,
-          chatThreadId: question?.productionChatThreadId,
+          chatThreadId,
           userId: currentUser.id,
           mentions,
           attachments: fileObjects,
@@ -957,6 +1107,187 @@ const QuestionPage = props => {
     return sendMessage(mutationData)
   }
 
+  const onSendAuthorChatMessage = async (content, mentions, attachments) => {
+    return handleSendChatMessage(
+      content,
+      mentions,
+      attachments,
+      question?.authorChatThreadId,
+    )
+  }
+
+  const onSendProductionChatMessage = async (
+    content,
+    mentions,
+    attachments,
+  ) => {
+    return handleSendChatMessage(
+      content,
+      mentions,
+      attachments,
+      question?.productionChatThreadId,
+    )
+  }
+
+  const onSendReviewerChatMessage = async (content, mentions, attachments) => {
+    return handleSendChatMessage(
+      content,
+      mentions,
+      attachments,
+      question?.reviewerChatThreadId,
+    )
+  }
+
+  const handleAcceptReviewInvite = async () => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        accepted: true,
+      },
+    }
+
+    return acceptOrRejectInvitation(mutationData)
+  }
+
+  const handleRejectReviewInvite = async reason => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        accepted: false,
+        reason,
+      },
+    }
+
+    return acceptOrRejectInvitation(mutationData)
+  }
+
+  const handleSubmitReview = async ({ attachments, content }) => {
+    const fileObjects = attachments.map(attachment => attachment.originFileObj)
+
+    const mutationData = {
+      variables: {
+        input: {
+          questionVersionId: version?.id,
+          attachments: fileObjects,
+          content,
+        },
+      },
+    }
+
+    return submitReview(mutationData)
+  }
+
+  const handleInviteReviewer = async reviewerId => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        reviewerId,
+      },
+    }
+
+    return inviteReviewer(mutationData)
+  }
+
+  const handleAddReviewers = async newReviewerIds => {
+    const currentReviewerIds = reviewerPool.map(r => r.id)
+
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        reviewerIds: [...currentReviewerIds, ...newReviewerIds],
+      },
+    }
+
+    return updateReviewerPool(mutationData)
+  }
+
+  const handleRemoveReviewerRow = async reviewerId => {
+    const reviewerIds = reviewerPool
+      .filter(r => r.id !== reviewerId)
+      .map(i => i.id)
+
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        reviewerIds,
+      },
+    }
+
+    return updateReviewerPool(mutationData)
+  }
+
+  const debouncedReviewerSearch = debounce(
+    (searchTerm, questionVersionId, resolve) => {
+      const queryData = {
+        variables: {
+          searchTerm,
+          questionVersionId,
+        },
+      }
+
+      searchForReviewers(queryData).then(({ data }) => {
+        resolve(flattenReviewerSearchResults(data.searchForReviewers))
+      })
+    },
+    REVIEWER_SEARCH_DELAY,
+  )
+
+  const handleReviewerSearch = async searchTerm => {
+    if (!searchTerm) {
+      debouncedReviewerSearch.cancel()
+      return Promise.resolve([])
+    }
+
+    return new Promise(resolve => {
+      debouncedReviewerSearch(searchTerm, version?.id, resolve)
+    })
+  }
+
+  const handleReviewerTableChange = async tableData => {
+    const reviewerIds = tableData.map(d => d.id)
+
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        reviewerIds,
+      },
+    }
+
+    return updateReviewerPool(mutationData)
+  }
+
+  const handleRevokeReviewerInvitation = async reviewerId => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        reviewerId,
+      },
+    }
+
+    return revokeReviewerInvitation(mutationData)
+  }
+
+  const handleChangeAmountOfReviewers = async amount => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        amount,
+      },
+    }
+
+    return changeAmountOfReviewers(mutationData)
+  }
+
+  const handleReviewerInviteAutomationChange = async value => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version?.id,
+        value,
+      },
+    }
+
+    return changeReviewerAutomationStatus(mutationData)
+  }
   // #endregion handlers
 
   if (error) {
@@ -994,6 +1325,7 @@ const QuestionPage = props => {
     <>
       <VisuallyHiddenElement as="h1">{pageTitle}</VisuallyHiddenElement>
       <Question
+        amountOfReviewers={amountOfReviewers}
         assignHELoading={assignHELoading}
         authorChatMessages={messagesApiToUi(
           authorChatMessages,
@@ -1001,42 +1333,45 @@ const QuestionPage = props => {
         )}
         authorChatParticipants={authorChatParticipants}
         authors={possibleAuthors}
+        automateReviewerInvites={automateReviewerInvites}
         canAssignAuthor={isAdmin && isAuthor}
         canCreateNewVersion={isAdmin || isEditor}
         canPublish={isEditor || isHandlingEditor || isAdmin}
         canUnpublish={isAdmin || isEditor}
-        chatLoading={chatLoading}
+        chatLoading={chatLoading || reviewerChatLoading}
         complexItemSetId={version?.complexItemSetId}
         complexItemSetOptions={complexItemSetOptions}
         complexSetEditLink={
-          version?.inProduction ? `/set/${version?.complexItemSetId}` : ''
+          isInProduction ? `/set/${version?.complexItemSetId}` : ''
         }
         currentHandlingEditors={currentHandlingEditors}
         defaultActiveKey={initialTabKey}
         editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
         editorView={
-          isEditor ||
-          ((isHandlingEditor ||
-            (isProductionMember && version?.inProduction)) &&
+          (isEditor && !isAuthor) ||
+          ((isHandlingEditor || (isProductionMember && isInProduction)) &&
             !isAuthor) ||
           isAdmin
         }
-        facultyView={testMode}
+        facultyView={testMode || (isReviewer && isUnderReview)}
         handlingEditors={handlingEditors?.result || []}
-        initialMetadataValues={metadataApiToUi(version, testMode)}
+        initialMetadataValues={metadataApiToUi(
+          version,
+          testMode || (isReviewer && isUnderReview),
+        )}
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
         // unless the question has already been published
         isInProduction={
-          version?.inProduction ||
+          isInProduction ||
           (isAdmin && isAuthor && !version?.published && !version?.unpublished)
         }
-        isPublished={version?.published}
+        isPublished={isPublished}
         // admins have editorial rights (publishing rights) on their own questions
         isRejected={question?.rejected}
-        isSubmitted={version?.submitted || (isAdmin && isAuthor)}
+        isSubmitted={isSubmitted}
         // if user is admin and author, assume the question has been submitted to get the UI as if it's "in production"
-        isUnderReview={version?.underReview}
+        isUnderReview={isUnderReview}
         isUnpublished={version?.unpublished}
         isUserLoggedIn={!!currentUser}
         leadingContent={
@@ -1054,7 +1389,10 @@ const QuestionPage = props => {
           !complexItemSetOptions
         }
         metadata={metadata || {}}
+        onAddReviewers={handleAddReviewers}
         onAssignAuthor={handleAssignAuthor}
+        onAutomateReviewerChange={handleReviewerInviteAutomationChange}
+        onChangeAmountOfReviewers={handleChangeAmountOfReviewers}
         onChangeTab={persistQuestionTab}
         onClickAssignHE={handleClickAssignHE}
         onClickBackButton={handleClickBackButton}
@@ -1065,15 +1403,24 @@ const QuestionPage = props => {
         onCreateNewVersion={handleCreateNewVersion}
         onEditorContentAutoSave={handleEditorContentAutoSave}
         onImageUpload={handleImageUpload}
+        onInviteReviewer={handleInviteReviewer}
         onMetadataAutoSave={handleMetadataAutoSave}
         onMoveToProduction={handleMoveToProduction}
         onMoveToReview={handleMoveToReview}
         onPublish={handlePublish}
         onQuestionSubmit={handleQuestionSubmit}
         onReject={handleReject}
+        onRemoveReviewerRow={handleRemoveReviewerRow}
+        onReviewerAcceptInvite={handleAcceptReviewInvite}
+        onReviewerRejectInvite={handleRejectReviewInvite}
+        onReviewerSearch={handleReviewerSearch}
+        onReviewerTableChange={handleReviewerTableChange}
+        onRevokeReviewerInvitation={handleRevokeReviewerInvitation}
         onSearchHE={handleSearchHE}
         onSendAuthorChatMessage={onSendAuthorChatMessage}
         onSendProductionChatMessage={onSendProductionChatMessage}
+        onSendReviewerChatMessage={onSendReviewerChatMessage}
+        onSubmitReview={handleSubmitReview}
         onUnassignHandlingEditor={handleUnassignHE}
         onUnpublish={handleUnpublish}
         productionChatMessages={messagesApiToUi(
@@ -1085,6 +1432,15 @@ const QuestionPage = props => {
         questionAgreedTc={false} //
         refetchUser={refetchCurrentUser}
         resources={getResources}
+        reviewerChatMessages={messagesApiToUi(
+          reviewerChatMessages,
+          currentUser?.id,
+        )}
+        reviewerChatParticipants={reviewerChatParticipants}
+        reviewerPool={reviewerPool}
+        reviewerView={isReviewer && isUnderReview}
+        reviewInviteStatus={reviewerInviteStatus}
+        reviewSubmitted={reviewSubmitted}
         searchHELoading={loadingSearchHE}
         selectedQuestionType={selectedQuestionType}
         showAssignHEButton={
@@ -1093,10 +1449,12 @@ const QuestionPage = props => {
           !version?.unpublished &&
           isEditor
         }
+        showAssignReviewers={showAssignReviewersTab}
         showAuthorChatTab={showAuthorChatTab}
         showNextQuestionLink={false}
         showPreviewButton={isAuthor && !version?.submitted}
         showProductionChatTab={showProductionChatTab}
+        showReviewerChatTab={showReviewerChatTab}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
       />

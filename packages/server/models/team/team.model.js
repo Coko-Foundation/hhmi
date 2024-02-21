@@ -1,9 +1,9 @@
 const { logger } = require('@coko/server')
 const TeamModel = require('@coko/server/src/models/team/team.model')
-const TeamMember = require('@coko/server/src/models/teamMember/teamMember.model')
 const { applyListQueryOptions } = require('../helpers')
 
 const User = require('../user/user.model')
+const TeamMember = require('../teamMember/teamMember.model')
 
 class Team extends TeamModel {
   static async searchForNonTeamMemberUsers(teamId, query, options = {}) {

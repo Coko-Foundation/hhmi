@@ -2,57 +2,139 @@ const fs = require('fs')
 const xml = require('xml')
 
 const prepareAssessmentItem = questionData => {
-  const assessmentJson = {
-    assessmentItem: [
-      {
-        _attr: {
-          adaptive: 'false',
-          identifier: questionData.id,
-          timeDependent: 'false',
-          title: 'Question',
-          xmlns: 'http://www.imsglobal.org/xsd/imsqti_v2p1',
-          'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
-          'xsi:schemaLocation':
-            'http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd',
-        },
-      },
-      {
-        // responseDeclaration: [],
-      },
-      {
-        outcomeDeclaration: [
-          {
-            _attr: {
-              baseType: 'float',
-              cardinality: 'single',
-              identifier: 'SCORE',
-            },
-          },
-          {
-            defaultValue: [
-              {
-                value: 0,
+  const { questionType } = questionData
+
+  const assessmentJson =
+    questionType === 'numerical'
+      ? {
+          questestinterop: [
+            {
+              _attr: {
+                xmlns: 'http://www.imsglobal.org/xsd/ims_qtiasiv1p2',
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:schemaLocation':
+                  'http://www.imsglobal.org/xsd/ims_qtiasiv1p2 http://www.imsglobal.org/xsd/ims_qtiasiv1p2p1.xsd',
               },
-            ],
-          },
-        ],
-      },
-      {
-        itemBody: [],
-      },
-      {
-        outcomeDeclaration: [
-          {
-            _attr: {
-              baseType: 'identifier',
-              cardinality: 'single',
-              identifier: 'FEEDBACK',
             },
-          },
-        ],
-      },
-    ],
-  }
+            {
+              item: [
+                {
+                  _attr: {
+                    ident: questionData.id,
+                    title: 'Question',
+                  },
+                },
+                {
+                  itemmetadata: [
+                    {
+                      qtimetadata: [
+                        {
+                          qtimetadatafield: [
+                            {
+                              fieldlabel: 'question_type',
+                            },
+                            {
+                              fieldentry: 'numerical_question',
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  presentation: [
+                    // content goes here
+                  ],
+                },
+                {
+                  resprocessing: [
+                    {
+                      respcondition: [
+                        {
+                          _attr: {
+                            continue: 'Yes',
+                          },
+                        },
+                        {
+                          displayfeedback: [
+                            {
+                              _attr: {
+                                feedbacktype: 'Response',
+                                linkrefid: 'general_fb',
+                              },
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  itemfeedback: [
+                    {
+                      _attr: {
+                        ident: 'general_fb',
+                      },
+                    },
+                    // feedback goes here
+                  ],
+                },
+              ],
+            },
+          ],
+        }
+      : {
+          assessmentItem: [
+            {
+              _attr: {
+                adaptive: 'false',
+                identifier: questionData.id,
+                timeDependent: 'false',
+                title: 'Question',
+                xmlns: 'http://www.imsglobal.org/xsd/imsqti_v2p1',
+                'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance',
+                'xsi:schemaLocation':
+                  'http://www.imsglobal.org/xsd/imsqti_v2p1  http://www.imsglobal.org/xsd/qti/qtiv2p1/imsqti_v2p1.xsd',
+              },
+            },
+            {
+              // responseDeclaration: [],
+            },
+            {
+              outcomeDeclaration: [
+                {
+                  _attr: {
+                    baseType: 'float',
+                    cardinality: 'single',
+                    identifier: 'SCORE',
+                  },
+                },
+                {
+                  defaultValue: [
+                    {
+                      value: 0,
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              itemBody: [],
+            },
+            {
+              outcomeDeclaration: [
+                {
+                  _attr: {
+                    baseType: 'identifier',
+                    cardinality: 'single',
+                    identifier: 'FEEDBACK',
+                  },
+                },
+              ],
+            },
+          ],
+        }
 
   return assessmentJson
 }
@@ -157,7 +239,7 @@ const prepareAssessmentTest = (id, resources) => ({
   ],
 })
 
-const prepareManifest = (id, title) => {
+const prepareManifest = (id, title, numerical) => {
   const jsonManifest = {
     manifest: [
       {
@@ -174,7 +256,7 @@ const prepareManifest = (id, title) => {
       {
         metadata: [
           {
-            schema: 'QTIv2.1 Package',
+            schema: numerical ? 'QTIv1.2 Package' : 'QTIv2.1 Package',
           },
           {
             schemaversion: '1.0.0',
@@ -213,7 +295,7 @@ const prepareManifest = (id, title) => {
                               'xml:lang': 'en',
                             },
                           },
-                          '2.1',
+                          numerical ? '2.1' : '1.2',
                         ],
                       },
                     ],

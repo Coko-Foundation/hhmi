@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable class-methods-use-this */
 const fs = require('fs')
 // const xml = require('xml')
@@ -548,6 +549,81 @@ class WaxToQTIConverter {
 
   #essayAnswerHandler = (content, options) => {}
   // #endregion essay
+
+  // #region numerical
+  #numericalAnswerHandler = (content, options) => {
+    const responseIdentifier = content.attrs.id
+
+    // eslint-disable-next-line no-unused-vars
+    const {
+      answerType,
+      feedback,
+      answersPrecise: { preciseAnswer } = {},
+      answersRange: { maxAnswer, minAnswer } = {},
+      answersExact: { exactAnswer, marginError } = {},
+    } = content.attrs
+
+    this.#correctAnswers.numericalSolutions[responseIdentifier] = {
+      answerType,
+      preciseAnswer,
+      maxAnswer,
+      minAnswer,
+      exactAnswer,
+      marginError,
+    }
+    this.#correctAnswers.numericalFeedback = feedback
+
+    return [
+      {
+        material: [
+          {
+            mattext: [
+              {
+                _attr: {
+                  texttype: 'text/html',
+                },
+              },
+              {
+                div: this.#contentParser(content.content, {
+                  numericalGroupId: responseIdentifier,
+                }),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        response_str: [
+          {
+            _attr: {
+              ident: responseIdentifier,
+              rcardinality: 'Single',
+            },
+          },
+          {
+            render_fib: [
+              {
+                _attr: {
+                  fibtype: 'Decimal',
+                },
+              },
+              {
+                response_label: [
+                  {
+                    _attr: {
+                      ident: `answer-${responseIdentifier}`,
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ]
+  }
+  // #endregion numerical
+
   // #endregion question types
 
   #typeToHandlerMap = {
@@ -595,6 +671,8 @@ class WaxToQTIConverter {
     essay_question: this.#essayQuestionHandler,
     essay_prompt: this.#essayFeedbackHandler,
     essay_answer: this.#essayAnswerHandler,
+
+    numerical_answer_container: this.#numericalAnswerHandler,
   }
 
   #findHandler = type => {
@@ -659,6 +737,10 @@ class WaxToQTIConverter {
     )
 
     const essaySolutionsKeys = Object.keys(this.#correctAnswers.essaySolutions)
+
+    const numericalSolutionKeys = Object.keys(
+      this.#correctAnswers.numericalSolutions,
+    )
 
     let singleCorrect
 
@@ -1048,6 +1130,201 @@ class WaxToQTIConverter {
       responses.push({ modalFeedback })
     }
 
+    if (numericalSolutionKeys.length) {
+      const {
+        answerType,
+        preciseAnswer,
+        minAnswer,
+        maxAnswer,
+        exactAnswer,
+        marginError,
+      } = this.#correctAnswers.numericalSolutions[numericalSolutionKeys[0]]
+
+      // variables for precise answer convertion
+      let additionalDigits
+      let lowerBound
+      let upperBound
+
+      switch (answerType) {
+        case 'preciseAnswer':
+          additionalDigits = 10 - preciseAnswer.length
+
+          lowerBound =
+            Number(Number(preciseAnswer).toFixed(additionalDigits)) -
+            Number(5 / 10 ** additionalDigits)
+
+          upperBound =
+            Number(Number(preciseAnswer).toFixed(additionalDigits)) +
+            Number(5 / 10 ** additionalDigits)
+
+          responses.push({
+            respcondition: [
+              {
+                _attr: {
+                  continue: 'no',
+                },
+              },
+              {
+                conditionvar: [
+                  {
+                    or: [
+                      {
+                        varequal: [
+                          {
+                            _attr: {
+                              respident: numericalSolutionKeys[0],
+                            },
+                          },
+                          preciseAnswer,
+                        ],
+                      },
+                      {
+                        and: [
+                          {
+                            vargt: [
+                              {
+                                _attr: {
+                                  respident: numericalSolutionKeys[0],
+                                },
+                              },
+                              lowerBound,
+                            ],
+                          },
+                          {
+                            varlte: [
+                              {
+                                _attr: {
+                                  respident: numericalSolutionKeys[0],
+                                },
+                              },
+                              upperBound,
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          })
+          break
+        case 'rangeAnswer':
+          responses.push({
+            respcondition: [
+              {
+                _attr: {
+                  continue: 'no',
+                },
+              },
+              {
+                conditionvar: [
+                  {
+                    vargte: [
+                      {
+                        _attr: {
+                          respident: numericalSolutionKeys[0],
+                        },
+                      },
+                      minAnswer,
+                    ],
+                  },
+                  {
+                    varlte: [
+                      {
+                        _attr: {
+                          respident: numericalSolutionKeys[0],
+                        },
+                      },
+                      maxAnswer,
+                    ],
+                  },
+                ],
+              },
+            ],
+          })
+          break
+        case 'exactAnswer':
+          responses.push({
+            respcondition: [
+              {
+                _attr: {
+                  continue: 'no',
+                },
+              },
+              {
+                conditionvar: [
+                  {
+                    or: [
+                      {
+                        varequal: [
+                          {
+                            _attr: {
+                              respident: numericalSolutionKeys[0],
+                            },
+                          },
+                          exactAnswer,
+                        ],
+                      },
+                      {
+                        and: [
+                          {
+                            vargte: [
+                              {
+                                _attr: {
+                                  respident: numericalSolutionKeys[0],
+                                },
+                              },
+                              exactAnswer - (exactAnswer * marginError) / 100,
+                            ],
+                          },
+                          {
+                            varlte: [
+                              {
+                                _attr: {
+                                  respident: numericalSolutionKeys[0],
+                                },
+                              },
+                              Number(exactAnswer) +
+                                Number((exactAnswer * marginError) / 100),
+                            ],
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          })
+          break
+        default:
+          break
+      }
+
+      // push numerical answer feedback
+      responses.push({
+        flow_mat: [
+          {
+            material: [
+              {
+                mattext: [
+                  {
+                    _attr: {
+                      texttype: 'text/html',
+                    },
+                  },
+                  {
+                    div: this.#correctAnswers.numericalFeedback,
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+    }
+
     return responses
   }
 
@@ -1080,7 +1357,11 @@ class WaxToQTIConverter {
           multipleDropdownOptions: {},
           multipleDropdownSolutions: {},
           multipleDropdownFeedback: {},
+
           essaySolutions: {},
+
+          numericalSolutions: {},
+          numericalFeedback: {},
         }
 
         await Promise.all(
@@ -1106,11 +1387,27 @@ class WaxToQTIConverter {
 
         const assessmentItem = this.#prepareAssessmentItem(question)
 
-        assessmentItem.assessmentItem[3].itemBody = this.#contentParser(
-          question.content.content,
-        )
+        if (question.questionType === 'numerical') {
+          assessmentItem.questestinterop[1].item[2].presentation.push(
+            ...this.#contentParser(question.content.content),
+          )
+          // assessmentItem.questestinterop[1].item[2].presentation[0].material[0].mattext.push(
+          //   ...this.#contentParser(question.content.content),
+          // )
+          const numericalFeedback = this.#feedbackParser()
+          assessmentItem.questestinterop[1].item[3].resprocessing.push(
+            numericalFeedback[0],
+          )
+          assessmentItem.questestinterop[1].item[4].itemfeedback.push(
+            numericalFeedback[1],
+          )
+        } else {
+          assessmentItem.assessmentItem[3].itemBody = this.#contentParser(
+            question.content.content,
+          )
 
-        assessmentItem.assessmentItem.push(...this.#feedbackParser())
+          assessmentItem.assessmentItem.push(...this.#feedbackParser())
+        }
 
         this.#createXmlFile(
           assessmentItem,
@@ -1164,7 +1461,11 @@ class WaxToQTIConverter {
         }
       })
 
-      const jsonManifest = this.#prepareManifest(this.#id, this.#title)
+      const jsonManifest = this.#prepareManifest(
+        this.#id,
+        this.#title,
+        this.#questionVersions[0].questionType === 'numerical',
+      )
 
       itemResources.resources = [
         ...itemResources.resources,
@@ -1174,8 +1475,11 @@ class WaxToQTIConverter {
               resource: [
                 {
                   _attr: {
+                    // eslint-disable-next-line no-nested-ternary
                     type: this.#packageFiles[resourceId].test
                       ? 'imsqti_test_xmlv2p1'
+                      : this.#questionVersions[0].questionType === 'numerical'
+                      ? 'imsqti_xmlv1p2'
                       : 'imsqti_item_xmlv2p1',
                     href: `${
                       this.#packageFiles[resourceId].assessmentItems[0]

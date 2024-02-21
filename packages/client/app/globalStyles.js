@@ -4,6 +4,7 @@ import { createGlobalStyle } from 'styled-components'
 import { th, grid } from '@coko/client'
 
 export default createGlobalStyle`
+
   ::selection {
     background-color: ${th('colorSelection')} !important;
     color: ${th('colorBody')} !important;

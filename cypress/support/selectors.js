@@ -35,3 +35,4 @@ export const anchorTags = {
 }
 
 export const navToggle = '[data-testid="nav-toggle"]'
+export const notificationPopupContainer = '.ant-notification-notice-message'

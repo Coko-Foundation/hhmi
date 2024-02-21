@@ -117,7 +117,7 @@ const QuestionEditor = props => {
     setTestMode(false)
 
     const contentFeedback = JSON.parse(
-      JSON.stringify(innerRef.current.getContent()),
+      JSON.stringify(innerRef?.current?.getContent()),
     )
 
     setEditorContent(contentFeedback)

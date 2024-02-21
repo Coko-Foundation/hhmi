@@ -95,30 +95,30 @@ const Select = props => {
   const cleanUpInvalidAttrs = () => {
     // store invalid attrs in local state
     setAriaAttributes({
-      'aria-controls': selectRef.current
+      'aria-controls': selectRef?.current
         ?.querySelector('input[role="combobox"]')
         .getAttribute('aria-controls'),
-      'aria-owns': selectRef.current
+      'aria-owns': selectRef?.current
         ?.querySelector('input[role="combobox"]')
         .getAttribute('aria-owns'),
-      'aria-activedescendant': selectRef.current
+      'aria-activedescendant': selectRef?.current
         ?.querySelector('input[role="combobox"]')
         .getAttribute('aria-activedescendant'),
     })
     // remove them from the DOM node
-    selectRef.current
+    selectRef?.current
       ?.querySelector('input[role="combobox"]')
       .removeAttribute('aria-controls')
-    selectRef.current
+    selectRef?.current
       ?.querySelector('input[role="combobox"]')
       .removeAttribute('aria-owns')
-    selectRef.current
+    selectRef?.current
       ?.querySelector('input[role="combobox"]')
       .removeAttribute('aria-activedescendant')
   }
 
   useEffect(() => {
-    const innerWrapper = selectRef.current.querySelector('.ant-select')
+    const innerWrapper = selectRef?.current.querySelector('.ant-select')
     innerWrapper.removeAttribute('aria-required')
 
     // hack to fix accessibility errors
@@ -132,7 +132,7 @@ const Select = props => {
     if (open && !!ariaAttributes) {
       // reapply the stored aria attributes after opening input for the first time
       Object.keys(ariaAttributes).forEach(attr => {
-        selectRef.current
+        selectRef?.current
           .querySelector('input[role="combobox"]')
           .setAttribute(attr, ariaAttributes[attr])
       })
@@ -172,7 +172,9 @@ const Select = props => {
         open={open}
         options={options}
         showSearch={showSearch || !!onSearch}
-        suffixIcon={!options ? null : <DownOutlined />}
+        suffixIcon={
+          !options ? null : <DownOutlined onClick={() => setOpen(!open)} />
+        }
         virtual={virtual}
         {...rest}
       />

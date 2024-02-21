@@ -228,6 +228,11 @@ const getRandomStatus = () =>
     'Published',
   ][Math.floor(Math.random() * 4)]
 
+const getRandomStatusLabel = () =>
+  ['Invitation', 'In Progress', 'Review Submitted'][
+    Math.floor(Math.random() * 2)
+  ]
+
 const questionContentExample = {
   type: 'true_false_container',
   attrs: {
@@ -460,6 +465,7 @@ export {
   getRandomCourse,
   getRandomObjectivesForCourse,
   getRandomStatus,
+  getRandomStatusLabel,
   questionContentExample,
   questionContentExample2,
   questionContentExample3,

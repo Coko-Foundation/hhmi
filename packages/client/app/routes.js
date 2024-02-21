@@ -16,9 +16,20 @@ import {
   useCurrentUser,
 } from '@coko/client'
 
-import { Header, Footer, VisuallyHiddenElement, Spin } from 'ui'
+import {
+  Header,
+  Footer,
+  VisuallyHiddenElement,
+  Spin,
+  ToastNotification,
+} from 'ui'
 import GlobalStyles from './globalStyles'
-import { hasGlobalRole, MetadataProvider } from './utilities'
+import {
+  hasGlobalRole,
+  MetadataProvider,
+  NotificationsProvider,
+  useNotifications,
+} from './utilities'
 
 import {
   Login,
@@ -41,6 +52,7 @@ import {
   PageNotFound,
   ComplexItemSet,
   ComplexItemSetsList,
+  Notifications,
 } from './pages'
 
 import { CURRENT_USER } from './graphql'
@@ -79,6 +91,10 @@ const regexPaths = [
   {
     path: /^\/manage-teams$/,
     name: 'Team Manager page',
+  },
+  {
+    path: /^\/notifications$/,
+    name: 'Notifications page',
   },
   {
     path: /^\/profile$/,
@@ -242,11 +258,14 @@ const SiteHeader = () => {
     learning: '/learning',
     manageUsers: '/manage-users',
     manageTeams: '/manage-teams',
+    // tasks: '/notifications/tasks',
+    messages: '/notifications/messages',
     profile: '/profile',
     login: '/login',
   }
 
   const { currentUser, setCurrentUser } = useCurrentUser()
+  const { unreadMentions } = useNotifications()
   const client = useApolloClient()
   const history = useHistory()
   const [currentPath, setCurrentPath] = useState(history.location.pathname)
@@ -278,8 +297,15 @@ const SiteHeader = () => {
       links={headerLinks}
       loggedin={!!currentUser}
       onLogout={logout}
+      unreadMentions={unreadMentions}
     />
   )
+}
+
+const ToastNotifications = () => {
+  const { newNotification } = useNotifications()
+
+  return <ToastNotification notification={newNotification} />
 }
 
 const StyledMain = styled.main`
@@ -315,184 +341,197 @@ const routes = (
   <Authenticate currentUserQuery={CURRENT_USER} loadingComponent={Loader}>
     <Wrapper>
       <GlobalStyles />
-      <SiteHeader />
-      <MetadataProvider>
-        <StyledPage fadeInPages={false} padPages={false}>
-          <StyledMain id="main-content" tabIndex="-1">
-            <Switch>
-              <Route
-                exact
-                path="/signup-profile"
-                render={() => (
-                  <Authenticated>
-                    <UserProfile signup />
-                  </Authenticated>
-                )}
-              />
+      <NotificationsProvider>
+        <SiteHeader />
+        <MetadataProvider>
+          <StyledPage fadeInPages={false} padPages={false}>
+            <StyledMain id="main-content" tabIndex="-1">
+              <Switch>
+                <Route
+                  exact
+                  path="/signup-profile"
+                  render={() => (
+                    <Authenticated>
+                      <UserProfile signup />
+                    </Authenticated>
+                  )}
+                />
 
-              <Route
-                exact
-                path="/dashboard"
-                render={() => (
-                  <Authenticated>
-                    <Dashboard />
-                  </Authenticated>
-                )}
-              />
+                <Route
+                  exact
+                  path="/dashboard"
+                  render={() => (
+                    <Authenticated>
+                      <Dashboard />
+                    </Authenticated>
+                  )}
+                />
 
-              <Route component={Discover} exact path="/discover" />
+                <Route component={Discover} exact path="/discover" />
 
-              <Route
-                exact
-                path="/lists"
-                render={() => (
-                  <Authenticated>
-                    <Lists />
-                  </Authenticated>
-                )}
-              />
+                <Route
+                  exact
+                  path="/lists"
+                  render={() => (
+                    <Authenticated>
+                      <Lists />
+                    </Authenticated>
+                  )}
+                />
 
-              <Route
-                exact
-                path="/list/:id"
-                render={() => (
-                  <Authenticated>
-                    <ListContent />
-                  </Authenticated>
-                )}
-              />
+                <Route
+                  exact
+                  path="/list/:id"
+                  render={() => (
+                    <Authenticated>
+                      <ListContent />
+                    </Authenticated>
+                  )}
+                />
 
-              <Route
-                exact
-                path="/question/:id/test"
-                render={() => <Question testMode />}
-              />
+                <Route
+                  exact
+                  path="/question/:id/test"
+                  render={() => <Question testMode />}
+                />
 
-              <Route
-                exact
-                path="/question/:id"
-                render={() => (
-                  <Authenticated>
-                    <Question />
-                  </Authenticated>
-                )}
-              />
-              <Route
-                exact
-                path="/manage-users"
-                render={() => (
-                  <Authenticated>
-                    <ManageUsers />
-                  </Authenticated>
-                )}
-              />
+                <Route
+                  exact
+                  path="/question/:id"
+                  render={() => (
+                    <Authenticated>
+                      <Question />
+                    </Authenticated>
+                  )}
+                />
+                <Route
+                  exact
+                  path="/manage-users"
+                  render={() => (
+                    <Authenticated>
+                      <ManageUsers />
+                    </Authenticated>
+                  )}
+                />
 
-              <Route
-                exact
-                path="/manage-teams"
-                render={() => (
-                  <Authenticated>
-                    <TeamManager />
-                  </Authenticated>
-                )}
-              />
-              <Route
-                exact
-                path="/profile"
-                render={() => (
-                  <Authenticated>
-                    <UserProfile />
-                  </Authenticated>
-                )}
-              />
+                <Route
+                  exact
+                  path="/manage-teams"
+                  render={() => (
+                    <Authenticated>
+                      <TeamManager />
+                    </Authenticated>
+                  )}
+                />
+                <Route
+                  exact
+                  path="/profile"
+                  render={() => (
+                    <Authenticated>
+                      <UserProfile />
+                    </Authenticated>
+                  )}
+                />
 
-              <Route component={Login} exact path="/login" />
-              <Route component={Signup} exact path="/signup" />
-              <Route
-                component={VerifyEmail}
-                exact
-                path="/email-verification/:token"
-              />
-              <Route
-                component={RequestPasswordReset}
-                exact
-                path="/request-password-reset"
-              />
-              <Route
-                component={ResetPassword}
-                exact
-                path="/password-reset/:token"
-              />
-              <Route
-                component={VerifyCheck}
-                exact
-                path="/ensure-verified-login"
-              />
-              <Route component={DeactivatedUser} path="/deactivated-user" />
-              <Route
-                component={BioInteractiveOauth}
-                exact
-                path="/biointeractive-oauth"
-              />
-              <Route
-                exact
-                path="/sets"
-                render={() => (
-                  <Authenticated>
-                    <ComplexItemSetsList />
-                  </Authenticated>
-                )}
-              />
-              <Route
-                exact
-                path="/set/new"
-                render={() => (
-                  <Authenticated>
-                    <ComplexItemSet />
-                  </Authenticated>
-                )}
-              />
-              <Route
-                exact
-                path="/set/:id"
-                render={() => (
-                  <Authenticated>
-                    <ComplexItemSet />
-                  </Authenticated>
-                )}
-              />
-              <Route component={DeactivatedUser} path="/deactivated-user" />
-              {/* Static pages hosted elsewhere */}
-              <Route
-                component={() => (
-                  <External ariaLabel="Home page" src="/drupal/" />
-                )}
-                exact
-                path="/"
-              />
-              <Route
-                component={() => (
-                  <External ariaLabel="About page" src="/drupal/about" />
-                )}
-                exact
-                path="/about"
-              />
-              <Route
-                component={() => (
-                  <External
-                    ariaLabel="Proffessional learning page"
-                    src="/drupal/professional-learning"
-                  />
-                )}
-                exact
-                path="/learning"
-              />
-              <Route component={PageNotFound} path="/404" />
-              <Route component={PageNotFound} path="*" />
-            </Switch>
-          </StyledMain>
-        </StyledPage>
-      </MetadataProvider>
+                <Route component={Login} exact path="/login" />
+                <Route component={Signup} exact path="/signup" />
+                <Route
+                  component={VerifyEmail}
+                  exact
+                  path="/email-verification/:token"
+                />
+                <Route
+                  component={RequestPasswordReset}
+                  exact
+                  path="/request-password-reset"
+                />
+                <Route
+                  component={ResetPassword}
+                  exact
+                  path="/password-reset/:token"
+                />
+                <Route
+                  component={VerifyCheck}
+                  exact
+                  path="/ensure-verified-login"
+                />
+                <Route component={DeactivatedUser} path="/deactivated-user" />
+                <Route
+                  component={BioInteractiveOauth}
+                  exact
+                  path="/biointeractive-oauth"
+                />
+                <Route
+                  exact
+                  path="/sets"
+                  render={() => (
+                    <Authenticated>
+                      <ComplexItemSetsList />
+                    </Authenticated>
+                  )}
+                />
+                <Route
+                  path="/notifications/"
+                  render={() => (
+                    <Authenticated>
+                      <Notifications />
+                    </Authenticated>
+                  )}
+                />
+                <Route
+                  exact
+                  path="/set/new"
+                  render={() => (
+                    <Authenticated>
+                      <ComplexItemSet />
+                    </Authenticated>
+                  )}
+                />
+                {/* individual sets and their questions can be viewed by all visitors */}
+                <Route
+                  exact
+                  path="/set/:id"
+                  render={() => (
+                    <Authenticated>
+                      <ComplexItemSet />
+                    </Authenticated>
+                  )}
+                />
+                <Route component={DeactivatedUser} path="/deactivated-user" />
+                {/* Static pages hosted elsewhere */}
+                <Route
+                  component={() => (
+                    <External ariaLabel="Home page" src="/drupal/" />
+                  )}
+                  exact
+                  path="/"
+                />
+                <Route
+                  component={() => (
+                    <External ariaLabel="About page" src="/drupal/about" />
+                  )}
+                  exact
+                  path="/about"
+                />
+                <Route
+                  component={() => (
+                    <External
+                      ariaLabel="Proffessional learning page"
+                      src="/drupal/professional-learning"
+                    />
+                  )}
+                  exact
+                  path="/learning"
+                />
+                <Route component={PageNotFound} path="/404" />
+                <Route component={PageNotFound} path="*" />
+              </Switch>
+            </StyledMain>
+            <ToastNotifications />
+          </StyledPage>
+        </MetadataProvider>
+      </NotificationsProvider>
+
       <Footer
         links={{
           termsOfUse: 'https://www.hhmi.org/terms-of-use',

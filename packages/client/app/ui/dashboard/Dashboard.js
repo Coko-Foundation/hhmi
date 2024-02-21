@@ -27,7 +27,7 @@ const StyledTabs = styled(Tabs)`
   height: 100%;
 
   .ant-tabs-content-holder {
-    border-top: 1px solid ${th('colorBorder')};
+    /* border-top: 1px solid ${th('colorBorder')}; */
 
     .ant-tabs-content {
       height: 100%;
@@ -36,6 +36,12 @@ const StyledTabs = styled(Tabs)`
         height: 100%;
         margin: auto;
       }
+    }
+  }
+
+  div[class^='List__FooterWrapper'] {
+    @media screen and (min-width: 600px) {
+      flex-direction: row;
     }
   }
 `

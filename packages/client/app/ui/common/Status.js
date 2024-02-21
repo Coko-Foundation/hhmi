@@ -52,7 +52,7 @@ const StatusBadge = styled.span`
   text-align: center;
 `
 
-const AssignedBadge = styled.span`
+const LabelBadge = styled.span`
   background-color: #fff;
   border: 2px solid ${variantColor};
   border-radius: 0.5rem;
@@ -68,7 +68,7 @@ const AssignedBadge = styled.span`
 `
 
 const Status = props => {
-  const { className, status, assigned, ...rest } = props
+  const { className, status, label, ...rest } = props
 
   return (
     <Container>
@@ -77,20 +77,20 @@ const Status = props => {
         <StatusBadge className={className} variant={status} {...rest}>
           {status}
         </StatusBadge>
-        {assigned && <AssignedBadge variant={status}>Assigned</AssignedBadge>}
+        {label && <LabelBadge variant={status}>{label}</LabelBadge>}
       </BadgesWrapper>
     </Container>
   )
 }
 
 Status.propTypes = {
+  label: PropTypes.string,
   status: PropTypes.string,
-  assigned: PropTypes.bool,
 }
 
 Status.defaultProps = {
+  label: null,
   status: null,
-  assigned: false,
 }
 
 export default Status
