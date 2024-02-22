@@ -101,7 +101,7 @@ steps:
           <<: *git-remote-repo
           branches:
             - match: live
-              target: live
+              target: prod
             - match: main
               target: main
             - match: integration
@@ -150,7 +150,7 @@ steps:
           <<: *git-remote-repo
           branches:
             - match: live
-              target: live
+              target: prod
             - match: main
               target: main
             - match: integration
