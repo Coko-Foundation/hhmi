@@ -367,7 +367,15 @@ const routes = (
                   )}
                 />
 
-                <Route component={Discover} exact path="/discover" />
+                <Route
+                  exact
+                  path="/discover"
+                  render={() => (
+                    <Authenticated>
+                      <Discover />
+                    </Authenticated>
+                  )}
+                />
 
                 <Route
                   exact
@@ -392,7 +400,11 @@ const routes = (
                 <Route
                   exact
                   path="/question/:id/test"
-                  render={() => <Question testMode />}
+                  render={() => (
+                    <Authenticated>
+                      <Question testMode />
+                    </Authenticated>
+                  )}
                 />
 
                 <Route

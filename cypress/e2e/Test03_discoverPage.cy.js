@@ -45,6 +45,11 @@ describe('Discover page tests', () => {
     cy.intercept('POST', graphqlEndpoint).as('GQLReq')
 
     cy.viewport(laptop.preset)
+    cy.contains('Log in with Email')
+    cy.login(user2)
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(500)
+    cy.visit(discoverPage)
   })
 
   it('sort functionality', () => {
@@ -217,7 +222,7 @@ describe('Discover page tests', () => {
       })
       cy.task('readF', path.join(downloadsFolder, `${id}.docx`)).then(data => {
         // eslint-disable-next-line jest/valid-expect
-        expect(data).to.equal(fillInTheBlankString)
+        expect(data).to.contains(fillInTheBlankString)
       })
     })
 

@@ -188,7 +188,7 @@ describe('Complex item set workflows', () => {
       const qId = url.split('/')[4]
       cy.addQuestionToComplexItemSet(disableScripts, complexItemSet3.title, qId)
     })
-    cy.logout()
+
     cy.get(anchorTags.discover).click({ force: true })
     cy.get('[data-testid="complex-item-set-select"]').click()
     cy.contains(
