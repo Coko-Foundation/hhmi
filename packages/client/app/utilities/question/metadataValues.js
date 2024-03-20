@@ -13184,7 +13184,7 @@ const metadata = {
                 },
                 {
                   label:
-                    'Predict the consequences of checkpoint dysfunction on cell fate',
+                    'Predict the consequences of errors that affect the cell cycle.',
                   value: 'ibm-u2-t2-lo5',
                 },
                 {
