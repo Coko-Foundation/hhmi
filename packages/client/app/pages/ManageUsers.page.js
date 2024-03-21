@@ -8,6 +8,7 @@ import {
   DELETE_USERS,
   DEACTIVATE_USERS,
   ACTIVATE_USERS,
+  DELETE_RELATED_ITEMS,
 } from '../graphql'
 import { hasGlobalRole } from '../utilities'
 
@@ -80,6 +81,8 @@ const ManageUsers = () => {
     },
   })
 
+  const [deleteUsersRelatedItems] = useMutation(DELETE_RELATED_ITEMS)
+
   const [deactivateUsersMutation] = useMutation(DEACTIVATE_USERS, {
     update(cache) {
       cache.modify({
@@ -127,6 +130,11 @@ const ManageUsers = () => {
     },
   })
 
+  const handleDeleteUsers = async vars => {
+    await deleteUsersRelatedItems(vars)
+    await deleteUsersMutation(vars)
+  }
+
   const handlePageChange = page => {
     setCurrentPage(page - 1)
   }
@@ -161,7 +169,7 @@ const ManageUsers = () => {
       loading={usersLoading}
       onBulkActivate={activateUsersMutation}
       onBulkDeactivate={deactivateUsersMutation}
-      onBulkDelete={deleteUsersMutation}
+      onBulkDelete={handleDeleteUsers}
       onClickShowDeactivated={handleShowDeactivatedChange}
       onPageChange={handlePageChange}
       onSearch={handleSearch}

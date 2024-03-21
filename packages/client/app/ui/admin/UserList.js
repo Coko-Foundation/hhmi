@@ -252,7 +252,20 @@ const UserList = ({
           {capitalize(action)} {userOrUsers('capital')}
         </ModalHeader>
       ),
-      content: `Are you sure you want to ${action} the selected ${userOrUsers()}?`,
+      content: (
+        <>
+          <p>
+            Are you sure you want to {action} the selected {userOrUsers()}?
+          </p>
+          {action === 'delete' && (
+            <p>
+              Deleting the selected {userOrUsers()} will delete all their items
+              that are still in editorial flow. Published items will not be
+              affected, and the author&apos;s name will be preserved.
+            </p>
+          )}
+        </>
+      ),
       footer: [
         <ModalFooter key="footer">
           <Button key="cancel" onClick={() => dialog.destroy()}>

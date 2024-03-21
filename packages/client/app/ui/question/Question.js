@@ -469,6 +469,7 @@ const Question = props => {
     showProductionChatTab,
     showReviewerChatTab,
     showAssignReviewers,
+    hasDeletedAuthor,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -919,8 +920,21 @@ const Question = props => {
     const confirmUnpublish = confirm()
     confirmUnpublish.update({
       title: <ModalHeader>Unpublish item</ModalHeader>,
-      content: `Unpublishing an item will remove it from the Browse Items page. 
-        After an item is unpublished you can choose to edit and republish it`,
+      content: (
+        <>
+          <p>
+            Unpublishing an item will remove it from the Browse Items page.
+            After an item is unpublished you can choose to edit and republish it
+          </p>
+          {hasDeletedAuthor && (
+            <p>
+              <strong>NOTE: </strong>The author of this item has been deleted
+              from the system. If you want to edit and publish a new version of
+              the item, you will have to assign a new author to it.
+            </p>
+          )}
+        </>
+      ),
       footer: [
         <ModalFooter key="footer">
           <Button onClick={() => confirmUnpublish.destroy()}>Cancel</Button>
@@ -1132,7 +1146,8 @@ const Question = props => {
           searchLoading={searchHELoading}
         />
       )}
-      {canAssignAuthor && isPublished && (
+      {((canAssignAuthor && isPublished) ||
+        (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
         <StyledAssignAuthorButton
           authors={authors}
           loadAuthors={loadAuthors}
@@ -1193,7 +1208,7 @@ const Question = props => {
           Unpublish
         </StyledButton>
       )}
-      {isUnpublished && canCreateNewVersion && (
+      {isUnpublished && canCreateNewVersion && !hasDeletedAuthor && (
         <StyledButton onClick={showNewVersionModal} type="primary">
           Edit item
         </StyledButton>
@@ -1227,7 +1242,8 @@ const Question = props => {
             searchLoading={searchHELoading}
           />
         )}
-        {canAssignAuthor && isPublished && (
+        {((canAssignAuthor && isPublished) ||
+          (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
           <StyledAssignAuthorButton
             authors={authors}
             loadAuthors={loadAuthors}
@@ -1296,7 +1312,7 @@ const Question = props => {
             Unpublish
           </StyledButton>
         )}
-        {isUnpublished && canCreateNewVersion && (
+        {isUnpublished && canCreateNewVersion && !hasDeletedAuthor && (
           <StyledButton onClick={showNewVersionModal} type="primary">
             Edit item
           </StyledButton>
@@ -1427,6 +1443,14 @@ const Question = props => {
           Unpublish
         </StyledButton>
       )}
+      {isPublished && canAssignAuthor && (
+        <StyledAssignAuthorButton
+          authors={authors}
+          loadAuthors={loadAuthors}
+          onAssignAuthor={onAssignAuthor}
+          refetchUser={refetchUser}
+        />
+      )}
       {isUnpublished && canCreateNewVersion && (
         <StyledButton onClick={showNewVersionModal} type="primary">
           Edit item
@@ -1460,6 +1484,14 @@ const Question = props => {
             <StyledButton onClick={showUnpublishModal} type="primary">
               Unpublish
             </StyledButton>
+          )}
+          {isPublished && canAssignAuthor && (
+            <StyledAssignAuthorButton
+              authors={authors}
+              loadAuthors={loadAuthors}
+              onAssignAuthor={onAssignAuthor}
+              refetchUser={refetchUser}
+            />
           )}
           {isUnpublished && canCreateNewVersion && (
             <StyledButton onClick={showNewVersionModal} type="primary">
@@ -1529,6 +1561,8 @@ const Question = props => {
                     {isUnpublished && (
                       <Ribbon status="error">
                         This item has been unpublished by the editors.
+                        {hasDeletedAuthor &&
+                          ` The author of this item has been deleted. Assign a new author to be able to edit.`}
                       </Ribbon>
                     )}
                     {reviewInviteStatus === REVIEWER_STATUSES.revoked && (
@@ -2063,6 +2097,8 @@ Question.propTypes = {
   showProductionChatTab: PropTypes.bool,
   showReviewerChatTab: PropTypes.bool,
   showAssignReviewers: PropTypes.bool,
+
+  hasDeletedAuthor: PropTypes.bool,
 }
 
 Question.defaultProps = {
@@ -2158,6 +2194,8 @@ Question.defaultProps = {
   showProductionChatTab: false,
   showReviewerChatTab: false,
   showAssignReviewers: false,
+
+  hasDeletedAuthor: false,
 }
 
 export default Question

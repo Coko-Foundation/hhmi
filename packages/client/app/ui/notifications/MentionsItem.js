@@ -228,10 +228,16 @@ const MentionsItem = ({ item, markAs }) => {
               </p>
             </span>
             <ActionsWrapper>
-              <Link to={itemLink}>Go to Item</Link>
-              <Link onClick={() => markAs(true, [id])} to={chatLink}>
-                Go to Chat
-              </Link>
+              {itemLink ? (
+                <>
+                  <Link to={itemLink}>Go to Item</Link>
+                  <Link onClick={() => markAs(true, [id])} to={chatLink}>
+                    Go to Chat
+                  </Link>
+                </>
+              ) : (
+                <span>Item has been deleted</span>
+              )}
               <button onClick={() => markAs(unread, [id])} type="button">
                 Mark as {unread ? 'read' : 'unread'}
               </button>
@@ -244,7 +250,7 @@ const MentionsItem = ({ item, markAs }) => {
             <span>
               <UserIcon alt={`user-${from}`} src={userIcon} />
               <MessageSender data-testid="sender-name">
-                <small>from:</small>@{from}
+                <small>from:</small>@{from || 'unknown user'}
               </MessageSender>
             </span>
             <ListItemContentDate>

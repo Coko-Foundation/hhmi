@@ -1,4 +1,4 @@
-const { pubsubManager } = require('@coko/server')
+const { pubsubManager, logger } = require('@coko/server')
 const { actions } = require('../../controllers/constants')
 
 const { getPubsub } = pubsubManager
@@ -31,7 +31,17 @@ const markAsResolver = async (_, { read, notificationIds }) => {
 
 const notificationSenderResolver = async notification => {
   const senderId = notification.content.from
-  if (senderId) return User.findById(senderId)
+
+  if (senderId) {
+    try {
+      const user = await User.findById(senderId)
+      return user || null
+    } catch (e) {
+      logger.error(e)
+      return null
+    }
+  }
+
   return null
 }
 
@@ -47,8 +57,8 @@ const notificationContentResolver = async notification => {
 
       return JSON.stringify({
         ...content,
-        questionId: data.questionId,
-        chatType: data.chatType,
+        questionId: data.questionId || null,
+        chatType: data.chatType || null,
       })
 
     default:

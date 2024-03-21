@@ -1,9 +1,12 @@
 const { logger } = require('@coko/server')
+const config = require('config')
 const TeamModel = require('@coko/server/src/models/team/team.model')
 const { applyListQueryOptions } = require('../helpers')
 
 const User = require('../user/user.model')
 const TeamMember = require('../teamMember/teamMember.model')
+
+const AUTHOR_TEAM = config.teams.nonGlobal.author
 
 class Team extends TeamModel {
   static async searchForNonTeamMemberUsers(teamId, query, options = {}) {
@@ -38,12 +41,40 @@ class Team extends TeamModel {
         role: 'author',
       })
 
-      // patch team_members.user_id
-      const affecetedRows = await TeamMember.query(options.trx)
-        .patch({ userId })
-        .where({ teamId: team.id })
+      let affecetedRows
 
-      return affecetedRows === 1
+      if (team) {
+        const teamMember = await TeamMember.findOne({ teamId: team.id })
+
+        // if existing team member
+        if (teamMember) {
+          // patch team_members.user_id
+          affecetedRows = await TeamMember.query(options.trx)
+            .patch({ userId })
+            .where({ teamId: team.id })
+        } else {
+          // create new team member
+          affecetedRows = await Team.addMember(team.id, userId, {
+            trx: options.trx,
+          })
+        }
+      } else {
+        const newTeam = await Team.insert(
+          {
+            objectId,
+            objectType: 'question',
+            role: AUTHOR_TEAM.role,
+            displayName: AUTHOR_TEAM.displayName,
+          },
+          { trx: options.trx },
+        )
+
+        affecetedRows = await Team.addMember(newTeam.id, userId, {
+          trx: options.trx,
+        })
+      }
+
+      return !!affecetedRows
     } catch (e) {
       throw new Error(e)
     }

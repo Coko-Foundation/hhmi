@@ -1,6 +1,6 @@
 const {
   BaseModel,
-  modelTypes: { boolean },
+  modelTypes: { boolean, stringNullable },
 } = require('@coko/server')
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -31,6 +31,7 @@ class Question extends BaseModel {
       properties: {
         agreedTc: boolean,
         rejected: boolean,
+        deletedAuthorName: stringNullable,
       },
     }
   }
@@ -689,7 +690,11 @@ class Question extends BaseModel {
         return user
       }
 
-      return null
+      // if no user was found then the author was deleted, so read the deleted_author_name field from question record
+      const question = await Question.findById(questionId)
+      return {
+        displayName: question.deletedAuthorName,
+      }
     } catch (e) {
       console.error('Question model: getAuthor failed', e)
       // throw new Error(e)

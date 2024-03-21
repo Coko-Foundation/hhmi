@@ -30,12 +30,12 @@ const mentionsShape = arr => {
 
     return {
       id: item.id,
-      from: item.from.displayName,
+      from: item.from?.displayName,
       date,
       content,
       links: [
-        `/question/${questionId}#${chatType}`,
-        `/question/${questionId}#editor`,
+        questionId ? `/question/${questionId}#${chatType}` : null,
+        questionId ? `/question/${questionId}#editor` : null,
       ],
       unread: !item.read,
     }

@@ -3,9 +3,17 @@ const axios = require('axios').default
 const crypto = require('node:crypto')
 const qs = require('node:querystring')
 
+const { ChatThread, ChatMessage } = require('@coko/server/src/models')
 const { roles } = require('../constants')
 
-const { Team, User, Identity } = require('../models')
+const {
+  Team,
+  User,
+  Identity,
+  Question,
+  QuestionVersion,
+  Review,
+} = require('../models')
 
 const submitQuestionnaire = async (userId, profileData) => {
   const data = {
@@ -244,10 +252,106 @@ const bioInteractiveLogin = async (authCode, options = {}) => {
   }
 }
 
+const deleteUsersRelatedItems = async (ids, options = {}) => {
+  try {
+    return useTransaction(
+      async trx => {
+        // fetch user items
+        const questionsByUser = await Promise.all(
+          ids.map(async id => {
+            const questions = await Question.findByRole(id, 'author')
+            return {
+              userId: id,
+              questions: questions.result,
+            }
+          }),
+        )
+
+        // for all published items set `deletedAuthorName` field to the author's display name
+        await Promise.all(
+          questionsByUser.map(async user => {
+            const userData = await User.findById(user.userId)
+            const authorDisplayName = await User.getDisplayName(userData)
+
+            await Promise.all(
+              user.questions.map(async question => {
+                // const publishedQuestions = []
+                let isPublished = false
+                const versions = await Question.getVersions(question.id)
+                const versionsIds = versions.result.map(version => version.id)
+
+                versions.result.every(version => {
+                  if (version.published) {
+                    isPublished = true
+                    return false
+                  }
+
+                  return true
+                })
+
+                if (isPublished) {
+                  await Question.updateAndFetchById(question.id, {
+                    deletedAuthorName: authorDisplayName,
+                  })
+                } else {
+                  // delete all reviews related to question versions
+                  await Review.query(trx)
+                    .delete()
+                    .whereIn('question_version_id', versionsIds)
+
+                  // delete all versions
+                  await QuestionVersion.query(trx).delete().where({
+                    questionId: question.id,
+                  })
+
+                  // get all chat threads for questions
+                  const chatThreads = await ChatThread.find({
+                    relatedObjectId: question.id,
+                  })
+
+                  const chatThreadsIds = chatThreads.result.map(
+                    chatThread => chatThread.id,
+                  )
+
+                  // delete all chat messages in those threads
+                  await ChatMessage.query(trx)
+                    .delete()
+                    .whereIn('chatThreadId', chatThreadsIds)
+
+                  // delete the chat threads
+                  await ChatThread.query(trx).delete().where({
+                    relatedObjectId: question.id,
+                  })
+
+                  // delete question
+                  await Question.deleteById(question.id)
+                }
+              }),
+            )
+          }),
+        )
+
+        // additionally, delete all chat messages from these users in other chats
+        await ChatMessage.query(trx).delete().whereIn('userId', ids)
+
+        // delete any reviews from these users
+        await Review.query(trx).delete().whereIn('reviewerId', ids)
+
+        return true
+      },
+      { trx: options.trx, passedTrxOnly: true },
+    )
+  } catch (e) {
+    logger.error(`error deleteUsersRelatedItems: ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   submitQuestionnaire,
   updateUserProfile,
   filterUsers,
   getDisplayName,
   bioInteractiveLogin,
+  deleteUsersRelatedItems,
 }
