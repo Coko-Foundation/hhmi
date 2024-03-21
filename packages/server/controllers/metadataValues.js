@@ -15762,6 +15762,10 @@ const metadata = {
           value: 'trueFalse',
           label: 'Multiple True / False',
         },
+        {
+          value: 'numerical',
+          label: 'Numerical Answer',
+        },
       ],
     },
     {
@@ -15774,15 +15778,11 @@ const metadata = {
 
         {
           value: 'fillInTheBlank',
-          label: 'Fill in the blank',
+          label: 'Fill-in-the-blank',
         },
         {
           value: 'multipleDropdowns',
-          label: 'Multiple dropdowns',
-        },
-        {
-          value: 'numerical',
-          label: 'Numerical answer',
+          label: 'Multiple Dropdowns',
         },
       ],
     },
