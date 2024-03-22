@@ -76,7 +76,7 @@ const ComplexItemSetList = props => {
   return (
     <Wrapper>
       <StyledHeading>
-        <h1>Complex item sets</h1>
+        <h1>Context-dependent item sets</h1>
         <Button onClick={handleCreateNewSetClick} type="primary">
           Create Set
         </Button>

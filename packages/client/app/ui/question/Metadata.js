@@ -291,7 +291,7 @@ const Metadata = React.forwardRef((props, ref) => {
         >
           <Form.Item name="belongsToComplexItemSet" valuePropName="checked">
             <Checkbox data-testid="belongs-to-set-checkbox" disabled={readOnly}>
-              This item belongs to a Complex Item Set{' '}
+              This item belongs to a Context-Dependent Item Set{' '}
             </Checkbox>
           </Form.Item>
 
@@ -300,12 +300,12 @@ const Metadata = React.forwardRef((props, ref) => {
               if (getFieldValue('belongsToComplexItemSet')) {
                 return (
                   <Form.Item
-                    label="Select Complex Item Set"
+                    label="Select Context-Dependent Item Set"
                     name="complexItemSetId"
                     rules={[
                       {
                         required: true,
-                        message: 'Complex item set is required',
+                        message: 'Context-dependent item set is required',
                       },
                     ]}
                   >

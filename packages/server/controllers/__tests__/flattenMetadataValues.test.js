@@ -111,7 +111,7 @@ describe('Flatten metadata values', () => {
 
     // question types
     expect(flattened.trueFalse).toBe('Multiple True / False')
-    expect(flattened.fillInTheBlank).toBe('Fill in the blank')
-    expect(flattened.multipleDropdowns).toBe('Multiple dropdowns')
+    expect(flattened.fillInTheBlank).toBe('Fill-in-the-blank')
+    expect(flattened.multipleDropdowns).toBe('Multiple Dropdowns')
   })
 })

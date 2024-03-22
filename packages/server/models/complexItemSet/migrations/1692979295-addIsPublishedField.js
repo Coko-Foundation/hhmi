@@ -20,7 +20,7 @@ exports.up = async knex => {
 
     return newField
   } catch (e) {
-    logger.error('Complex Item Set: add column isPublished failed!')
+    logger.error('Context-Dependent Item Set: add column isPublished failed!')
     throw new Error(e)
   }
 }

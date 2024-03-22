@@ -154,7 +154,10 @@ const Sidebar = props => {
                   options={metadata.blooms.cognitive}
                 />
               </Form.Item>
-              <Form.Item label="Complex Item Set" name="complexItemSet">
+              <Form.Item
+                label="Context-Dependent Item Set"
+                name="complexItemSet"
+              >
                 <Select
                   data-testid="complex-item-set-select"
                   mode="multiple"

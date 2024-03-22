@@ -75,6 +75,13 @@ extend input UsersQueryParams {
   search: String
 }
 
+type UsersQuestionsResult {
+  userId: ID
+  publishedQuestions: [ID]!
+  questionsInEditorialFlow: [ID]!
+  rejectedQuestions: [ID]!
+}
+
 extend type Query {
   filterUsers(params: UsersQueryParams, options: PageInput): Users!
 }
@@ -83,4 +90,5 @@ extend type Mutation {
   submitQuestionnaire(input: UserProfileInput!): User!
   updateUserProfile(input: UserProfileInput!): User!
   bioInteractiveLogin(authCode: String!): LoginResult!
+  deleteUsersRelatedItems(ids: [ID!]!): Boolean!
 }

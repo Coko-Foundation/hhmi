@@ -17,7 +17,7 @@ import {
 
 const disableScripts = false
 
-describe('Complex item set', () => {
+describe('Context-dependent item set', () => {
   before(() => {
     cy.resetDB(disableScripts)
 
@@ -49,22 +49,24 @@ describe('Complex item set', () => {
       .contains("[data-testid='author-value']", user2.username)
   })
 
-  it('create complex item set', () => {
+  it('create context-dependent item set', () => {
     // [segment]: creating a complex item set
-    cy.log('creating a complex item set...')
+    cy.log('creating a context-dependent item set...')
     cy.get(anchorTags.sets).click({ force: true })
     cy.contains('button', 'Create Set').click()
-    cy.contains('label', 'Complex Item Set Title')
+    cy.contains('label', 'Context-Dependent Item Set Title')
     cy.get('input[id="title"]').type(complexItemSet2.title)
     cy.get(ProseMirror).type(complexItemSet2.leadingContent)
     cy.contains('button[type="submit"]', 'Save').click()
     cy.wait('@GQLReq')
-    cy.contains('Complex item set wax created successfully!')
+    cy.contains('Context-dependent item set was created successfully!')
     cy.get(anchorTags.sets).click({ force: true })
     cy.reload()
     cy.wait('@GQLReq')
     // [segment]: checking if correct complex item set info is displayed
-    cy.log('checking if correct complex item set info is displayed...')
+    cy.log(
+      'checking if correct context-dependent item set info is displayed...',
+    )
     cy.get(listItemWrapper).eq(1).contains('h2', complexItemSet2.title).click()
     cy.wait('@GQLReq')
     cy.contains('h2[data-testid="set-title"]', complexItemSet2.title)
@@ -74,7 +76,7 @@ describe('Complex item set', () => {
     )
   })
 
-  it('edit complex item set', () => {
+  it('edit context-dependent item set', () => {
     cy.get(anchorTags.sets).click({ force: true })
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
     cy.contains(antTabs, 'Edit').click()
@@ -87,7 +89,7 @@ describe('Complex item set', () => {
     cy.get(ProseMirror).last().type(`{selectall}{del} edited set description`)
     cy.contains('button[type="submit"]', 'Update').click()
     cy.wait('@GQLReq')
-    cy.contains('div', 'Complex item set updated successfully')
+    cy.contains('div', 'Context-dependent item set updated successfully')
   })
 
   context('add item to list', () => {

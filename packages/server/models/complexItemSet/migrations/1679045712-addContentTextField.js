@@ -6,7 +6,7 @@ exports.up = knex => {
       table.text('contentText').nullable()
     })
   } catch (e) {
-    logger.error('Complex Item Set: add column contentText failed!')
+    logger.error('Context-Dependent Item Set: add column contentText failed!')
     throw new Error(e)
   }
 }

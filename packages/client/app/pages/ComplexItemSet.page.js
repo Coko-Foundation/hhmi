@@ -78,7 +78,7 @@ const ComplexItemSetPage = () => {
     }
 
     if (data?.complexItemSet?.title) {
-      const pageTitle = `${data?.complexItemSet?.title} - Complex Item Set`
+      const pageTitle = `${data?.complexItemSet?.title} - Context-Dependent Item Set`
       document.getElementById('page-announcement').innerHTML = pageTitle
       document.title = `${pageTitle} - HHMI Assessment Builder`
     }
@@ -87,7 +87,9 @@ const ComplexItemSetPage = () => {
   useEffect(() => {
     if (state?.created) {
       setSubmissionStatus('success')
-      setSubmissionMessage('Complex item set wax created successfully!')
+      setSubmissionMessage(
+        'Context-dependent item set was created successfully!',
+      )
 
       setTimeout(() => {
         setSubmissionStatus(null)
@@ -110,7 +112,9 @@ const ComplexItemSetPage = () => {
       })
         .then(() => {
           setSubmissionStatus('success')
-          setSubmissionMessage('Complex item set updated successfully')
+          setSubmissionMessage(
+            'Context-dependent item set updated successfully',
+          )
 
           setTimeout(() => {
             setSubmissionStatus(null)
@@ -132,7 +136,7 @@ const ComplexItemSetPage = () => {
         variables: { title, leadingContent: JSON.stringify(leadingContent) },
       })
         .then(result => {
-          // redirect to complex item set page: /set/:id, id is in the result
+          // redirect to context-dependent item set page: /set/:id, id is in the result
           history.push({
             pathname: `/set/${result.data.createComplexItemSet.id}`,
             state: { created: true },

@@ -153,7 +153,7 @@ const ComplexItemSet = props => {
                   locale={{
                     emptyText: (
                       <Empty
-                        description="No Questions found for this complex item set. You can start creating one by clicking the button on the top right"
+                        description="No Questions found for this context-dependent item set. You can start creating one by clicking the button on the top right"
                         image={Empty.PRESENTED_IMAGE_SIMPLE}
                         role="status"
                       />
@@ -170,7 +170,7 @@ const ComplexItemSet = props => {
           },
         ]
       : []),
-    // show Edit tab if user can edit a complex item set or can create new ones
+    // show Edit tab if user can edit a context-dependent item set or can create new ones
     ...(canEdit || (!id && canCreate)
       ? [
           {

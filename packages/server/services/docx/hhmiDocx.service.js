@@ -33,7 +33,7 @@ const flattenedMetadata = flattenLabels()
 const labels = {
   ...flattenedMetadata,
 
-  complexItemSet: 'Complex Item Set',
+  complexItemSet: 'Context-Dependent Item Set',
   questionType: 'Question type',
 
   topics: 'Topics',

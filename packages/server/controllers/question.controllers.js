@@ -671,10 +671,15 @@ const unpublishQuestionVersion = async (questionVersionId, options = {}) => {
     { trx: options.trx },
   )
 
-  const notifier = new CokoNotifier()
-  notifier.notify('hhmi.questionUnpublished', {
-    questionId: modifiedVersion.questionId,
-  })
+  const author = await Question.getAuthor(modifiedVersion.questionId)
+
+  // only try to warn author about the unpublishing their question if they exist (they have an id)
+  if (author.id) {
+    const notifier = new CokoNotifier()
+    notifier.notify('hhmi.questionUnpublished', {
+      questionId: modifiedVersion.questionId,
+    })
+  }
 
   return modifiedVersion
 }
@@ -686,9 +691,13 @@ const assignAuthorship = async (questionId, userId, options = {}) => {
   )
 
   try {
-    // await Question.assignAuthorship(questionId, userId)
     return useTransaction(
       async trx => {
+        // unset deleted_author_name for the question
+        await Question.query(trx)
+          .update({ deletedAuthorName: null })
+          .where({ id: questionId })
+
         return Team.assignQuestionAuthor(questionId, userId, {
           trx,
         })

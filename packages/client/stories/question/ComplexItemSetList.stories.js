@@ -13,7 +13,7 @@ export const Base = () => {
       <ComplexItemSetList
         data={[
           {
-            title: 'First complex item set',
+            title: 'First context-dependent item set',
             leadingContent: {
               type: 'doc',
               content: [
@@ -24,7 +24,7 @@ export const Base = () => {
                   },
                   content: [
                     {
-                      text: 'Content for First complex item set',
+                      text: 'Content for First context-dependent item set',
                       type: 'text',
                     },
                   ],
@@ -50,7 +50,7 @@ export const Base = () => {
             ],
           },
           {
-            title: 'Second complex item set',
+            title: 'Second context-dependent item set',
             leadingContent: {
               type: 'doc',
               content: [
@@ -61,7 +61,7 @@ export const Base = () => {
                   },
                   content: [
                     {
-                      text: 'Content for Second complex item set',
+                      text: 'Content for Second context-dependent item set',
                       type: 'text',
                     },
                   ],

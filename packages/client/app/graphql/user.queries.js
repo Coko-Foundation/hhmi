@@ -162,3 +162,9 @@ export const UPDATE_PASSWORD = gql`
     updatePassword(input: $input)
   }
 `
+
+export const DELETE_RELATED_ITEMS = gql`
+  mutation DeleteUserRelatedItems($ids: [ID!]!) {
+    deleteUsersRelatedItems(ids: $ids)
+  }
+`

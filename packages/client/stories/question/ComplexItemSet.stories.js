@@ -81,7 +81,7 @@ export const Base = args => {
         questions={makeData(5)}
         submissionMessage={submissionMessage}
         submissionStatus={submissionStatus}
-        title="Complex item set 1"
+        title="Context-dependent item set 1"
         {...args}
       />
     </Wrapper>

@@ -74,39 +74,43 @@ const regexPaths = [
   // },
   {
     path: /^\/discover$/,
-    name: 'Browse Questions page',
+    name: 'Browse Questions',
   },
   {
     path: /^\/dashboard$/,
-    name: 'Dashboard page',
+    name: 'Dashboard',
+  },
+  {
+    path: /^\/sets$/,
+    name: 'Context-Dependent Item Sets',
   },
   {
     path: /^\/lists$/,
-    name: 'Lists page',
+    name: 'Lists',
   },
   {
     path: /^\/manage-users$/,
-    name: 'User Manager page',
+    name: 'User Manager',
   },
   {
     path: /^\/manage-teams$/,
-    name: 'Team Manager page',
+    name: 'Team Manager',
   },
   {
     path: /^\/notifications$/,
-    name: 'Notifications page',
+    name: 'Notifications',
   },
   {
     path: /^\/profile$/,
-    name: 'User Profile page',
+    name: 'User Profile',
   },
   {
     path: /^\/login+/,
-    name: 'Login page',
+    name: 'Login',
   },
   {
     path: /^\/signup$/,
-    name: 'Signup page',
+    name: 'Signup',
   },
   {
     path: /^\/signup-profile$/,
@@ -118,15 +122,15 @@ const regexPaths = [
   },
   {
     path: /^\/request-password-reset$/,
-    name: 'Request Password Reset page',
+    name: 'Request Password Reset',
   },
   {
     path: /^\/password-reset\/[A-Za-z0-9-]+$/,
-    name: 'Reset Password page',
+    name: 'Reset Password',
   },
   {
     path: /^\/ensure-verified-login$/,
-    name: 'Email Not Verified page',
+    name: 'Email Not Verified',
   },
   {
     path: /^\/biointeractive-oauth+/,
@@ -134,7 +138,7 @@ const regexPaths = [
   },
   {
     path: /^\/$/,
-    name: 'Home page',
+    name: 'Homepage',
   },
   {
     path: /^\/about$/,
@@ -367,7 +371,15 @@ const routes = (
                   )}
                 />
 
-                <Route component={Discover} exact path="/discover" />
+                <Route
+                  exact
+                  path="/discover"
+                  render={() => (
+                    <Authenticated>
+                      <Discover />
+                    </Authenticated>
+                  )}
+                />
 
                 <Route
                   exact
@@ -392,7 +404,11 @@ const routes = (
                 <Route
                   exact
                   path="/question/:id/test"
-                  render={() => <Question testMode />}
+                  render={() => (
+                    <Authenticated>
+                      <Question testMode />
+                    </Authenticated>
+                  )}
                 />
 
                 <Route

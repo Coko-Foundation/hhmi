@@ -479,6 +479,7 @@ export const QUESTION = gql`
       productionChatThreadId
       reviewerChatThreadId
       heAssigned
+      deletedAuthorName
     }
   }
 `

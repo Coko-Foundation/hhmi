@@ -66,7 +66,7 @@ const MetadataInfo = props => {
       <VisuallyHiddenElement as="h2">Question Metadata</VisuallyHiddenElement>
       {complexItemSet && (
         <>
-          <MetadataHeading>Complex item set</MetadataHeading>
+          <MetadataHeading>Context-dependent item set</MetadataHeading>
           <p>
             <Link to={`/set/${complexItemSet.value}`}>
               <LinkOutlined /> {complexItemSet.label}

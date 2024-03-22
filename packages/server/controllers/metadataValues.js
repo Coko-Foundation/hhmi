@@ -13199,7 +13199,7 @@ const metadata = {
                 },
                 {
                   label:
-                    'Predict the consequences of checkpoint dysfunction on cell fate',
+                    'Predict the consequences of errors that affect the cell cycle.',
                   value: 'ibm-u2-t2-lo5',
                 },
                 {
@@ -13874,7 +13874,7 @@ const metadata = {
               learningObjectives: [
                 {
                   label:
-                    'Compare and contrast the five major mass extinction events, and evaluate the claim that a mass extinction event is currently underway.',
+                    'Using evidence from the five major mass extinction events, evaluate the claim that a mass extinction event is currently underway.',
                   value: 'ibm-u4-t5-lo1',
                 },
                 {
@@ -15762,6 +15762,10 @@ const metadata = {
           value: 'trueFalse',
           label: 'Multiple True / False',
         },
+        {
+          value: 'numerical',
+          label: 'Numerical Answer',
+        },
       ],
     },
     {
@@ -15774,15 +15778,11 @@ const metadata = {
 
         {
           value: 'fillInTheBlank',
-          label: 'Fill in the blank',
+          label: 'Fill-in-the-blank',
         },
         {
           value: 'multipleDropdowns',
-          label: 'Multiple dropdowns',
-        },
-        {
-          value: 'numerical',
-          label: 'Numerical answer',
+          label: 'Multiple Dropdowns',
         },
       ],
     },

@@ -21,7 +21,7 @@ const complexItemLeadingContent = {
       content: [
         {
           type: 'text',
-          text: 'Leading content for the complex item set. Here is given the context for the following items',
+          text: 'Leading content for the context-dependent item set. Here is given the context for the following items',
         },
       ],
     },

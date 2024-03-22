@@ -36,7 +36,7 @@ const LeadingContentLayout = ({ editor, className }) => {
         tabIndex={0}
       >
         <VisuallyHiddenElement as="h2">
-          Complex item set leading content
+          Context-dependent item set leading content
         </VisuallyHiddenElement>
         {editor}
       </Wrapper>

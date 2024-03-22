@@ -1,6 +1,6 @@
 export default [
   {
-    label: 'Complex item set 1',
+    label: 'Context-dependent item set 1',
     value: 'cis1',
   },
   {

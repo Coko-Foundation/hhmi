@@ -40,19 +40,6 @@ const isAdmin = rule()(async (_, __, ctx) => {
   return user.isActive && user.hasGlobalRole('admin')
 })
 
-const isAdminAndAuthor = rule()(async (_, { questionId }, ctx) => {
-  if (!ctx.user) return false
-
-  const UserModel = ctx.connectors.User.model
-  const user = await UserModel.query().findById(ctx.user)
-  const userIsAdmin = await user.hasGlobalRole('admin')
-  return (
-    user.isActive &&
-    userIsAdmin &&
-    isQuestionAuthor(ctx.connectors.Team.model, ctx.user, questionId)
-  )
-})
-
 const isAuthor = rule()(async (_, { questionId }, ctx) => {
   if (!ctx.user) return false
 
@@ -215,6 +202,37 @@ const canUnpublishQuestion = rule()(async (_, __, ctx) => {
   )
 })
 
+const canAssignAuthor = rule()(async (_, { questionId }, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+  const userIsAdmin = await user.hasGlobalRole('admin')
+
+  const QuestionModel = ctx.connectors.Question.model
+  const question = await QuestionModel.query().findById(questionId)
+
+  const adminAndAuthor =
+    userIsAdmin &&
+    (await isQuestionAuthor(ctx.connectors.Team.model, ctx.user, questionId))
+
+  const adminOrEditorAndDeletedAuthor =
+    !!question.deletedAuthorName &&
+    (userIsAdmin || (await user.hasGlobalRole('editor')))
+
+  return user.isActive && (adminAndAuthor || adminOrEditorAndDeletedAuthor)
+})
+
+const isAdminOrEditor = rule()(async (_, { questionId }, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+  const userIsAdmin = await user.hasGlobalRole('admin')
+
+  return userIsAdmin || user.hasGlobalRole('editor')
+})
+
 const permissions = {
   Mutation: {
     // Authentication
@@ -257,11 +275,11 @@ const permissions = {
     publishQuestionVersion: canPublish,
     unpublishQuestionVersion: canUnpublishQuestion,
     createNewQuestionVersion: canCreateNewVersion,
-    assignAuthorship: isAdminAndAuthor,
+    assignAuthorship: canAssignAuthor,
   },
   Query: {
     // Users
-    filterUsers: isAdmin,
+    filterUsers: isAdminOrEditor,
     // Teams
     getGlobalTeams: isAdmin,
     getNonTeamMemberUsers: isAdmin,

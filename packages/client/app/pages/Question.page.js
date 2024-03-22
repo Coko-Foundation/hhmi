@@ -580,7 +580,9 @@ const QuestionPage = props => {
     },
   })
 
-  const [assignAuthorship] = useMutation(ASSIGN_QUESTION_AUTHOR)
+  const [assignAuthorship] = useMutation(ASSIGN_QUESTION_AUTHOR, {
+    refetchQueries: [{ query: QUESTION, variables: { id } }],
+  })
 
   // need to refetch user after assigning author, but also show confirmation modal to the user
   // refetchQuery won't work, because it would delete the AssignAuthor component
@@ -1356,6 +1358,7 @@ const QuestionPage = props => {
         }
         facultyView={testMode || (isReviewer && isUnderReview)}
         handlingEditors={handlingEditors?.result || []}
+        hasDeletedAuthor={!!question?.deletedAuthorName}
         initialMetadataValues={metadataApiToUi(
           version,
           testMode || (isReviewer && isUnderReview),

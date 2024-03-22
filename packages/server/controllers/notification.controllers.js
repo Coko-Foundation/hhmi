@@ -70,7 +70,7 @@ const getNotificationRelatedQuestion = async notification => {
     .select('questions.id as questionId', 'chat_threads.chat_type')
     .where('chat_messages.id', notification.objectId)
 
-  return data[0]
+  return data[0] || {}
 }
 
 module.exports = {

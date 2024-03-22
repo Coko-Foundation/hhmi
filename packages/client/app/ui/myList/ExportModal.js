@@ -79,7 +79,7 @@ const ExportListToWordButton = props => {
           <p>
             {customOrder
               ? text
-              : 'Questions belonging to one complex item set will be grouped together in the exported word doc. Otherwise, the order will be same as currently specified'}
+              : 'Questions belonging to one context-dependent item set will be grouped together in the exported word doc. Otherwise, the order will be same as currently specified'}
           </p>
           <Checkbox
             checked={showFeedback}

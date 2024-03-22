@@ -136,6 +136,9 @@ describe('Testing apps responsiveness', () => {
     })
 
     it('discover page', () => {
+      cy.login(editorRole)
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(200)
       cy.visit(discoverPage)
       cy.wait('@GQLReq')
       cy.get('[data-testid="filter-collapse"]').should('exist')
@@ -171,6 +174,7 @@ describe('Testing apps responsiveness', () => {
     })
 
     it('discover page', () => {
+      cy.login(editorRole)
       cy.visit(discoverPage)
       cy.wait('@GQLReq')
       cy.get('[data-testid="filter-collapse"]').should('not.exist')
@@ -182,7 +186,7 @@ describe('Search filter', () => {
   const { contact: user1Creds } = user1
   before(() => {
     cy.resetDB(disableScripts)
-    cy.seedUser(disableScripts, { ...user1Creds })
+        cy.seedUser(disableScripts, { ...user1Creds })
     cy.seedUser(disableScripts, { ...user2 })
     cy.seedUser(disableScripts, { ...editorRole })
     cy.seedUser(disableScripts, { ...handlingEditor1 })
@@ -267,7 +271,6 @@ describe('Search filter', () => {
 
   it('filter by question that editors are assigned to', () => {
     cy.login(editorRole)
-    cy.contains(antTabs, 'Editor Items').click()
     cy.seedQuestion(
       disableScripts,
       user2.username,
@@ -277,6 +280,7 @@ describe('Search filter', () => {
       handlingEditor1.username,
     )
     cy.reload()
+    cy.contains(antTabs, 'Editor Items').click()
     cy.get('[data-testid="search-filtered"]')
       .last()
       .click()

@@ -300,8 +300,9 @@ describe('ChatThreads', () => {
         .eq(0)
         .contains(ProseMirror, 'What substance')
         .click()
-      cy.contains(antTabs, 'Production chat').click()
+      
       cy.reload()
+      cy.contains(antTabs, 'Production chat').click()
 
       cy.get('[placeholder="Write a message"]').type('@')
       cy.contains('[role="listbox"]', handlingEditor1.username)

@@ -330,7 +330,7 @@ const ListContent = ({
       const errorDialog = error()
       errorDialog.update({
         title: 'Error during reorder',
-        content: `Make sure to not separate questions that belong to one complex item set from one another. You can change their position, but they must always be grouped together.`,
+        content: `Make sure to not separate questions that belong to one context-dependent item set from one another. You can change their position, but they must always be grouped together.`,
         footer: [
           <ModalFooter key="footer">
             <Button autoFocus key="ok" onClick={() => errorDialog.destroy()}>

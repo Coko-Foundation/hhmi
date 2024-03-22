@@ -52,7 +52,9 @@ const addQuestionToSet = async (title, questionId) => {
     const complexItemSet = await ComplexItemSet.findOne({ title })
 
     if (!complexItemSet) {
-      throw new Error("Complex item set with the given title doesn't exist!")
+      throw new Error(
+        "Context-dependent item set with the given title doesn't exist!",
+      )
     }
 
     const res = await QuestionVersion.query()

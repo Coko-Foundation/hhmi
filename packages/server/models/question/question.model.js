@@ -1,6 +1,6 @@
 const {
   BaseModel,
-  modelTypes: { boolean },
+  modelTypes: { boolean, stringNullable },
 } = require('@coko/server')
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -31,6 +31,7 @@ class Question extends BaseModel {
       properties: {
         agreedTc: boolean,
         rejected: boolean,
+        deletedAuthorName: stringNullable,
       },
     }
   }
@@ -289,9 +290,9 @@ class Question extends BaseModel {
           'question_versions.complex_item_set_id',
         )
         .distinctOn('questions.id')
-        // .where({
-        //   published: true,
-        // })
+        .where({
+          published: true,
+        })
         .orderBy([
           'questions.id',
           { column: 'question_versions.created', order: 'desc' },
@@ -453,6 +454,16 @@ class Question extends BaseModel {
         'questions.id',
         'question_versions.question_id',
       )
+
+      // add author to selection
+      query
+        .leftJoin('teams as t1', builder => {
+          builder
+            .on('t1.object_id', '=', 'questions.id')
+            .andOn('t1.role', '=', db.raw('?', ['author']))
+        })
+        .leftJoin('team_members as tm1', 'tm1.team_id', 't1.id')
+        .leftJoin('users as u1', 'u1.id', 'tm1.user_id')
     }
 
     query
@@ -479,6 +490,9 @@ class Question extends BaseModel {
         'question_versions.in_production',
         'question_versions.published',
         'question_versions.unpublished',
+        'u1.displayName',
+        'u1.givenNames',
+        'u1.surname',
       )
     }
 
@@ -493,11 +507,19 @@ class Question extends BaseModel {
     }
 
     if (searchQuery) {
-      query.where('content_text', 'ilike', `%${searchQuery}%`)
+      query.where(builder => {
+        builder
+          .orWhere('content_text', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.givenNames', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.surname', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.displayName', 'ilike', `%${searchQuery}%`)
 
-      const queryStrings = searchQuery.split(' ')
-      queryStrings.forEach(queryString => {
-        query.orWhereJsonSupersetOf('keywords', [queryString])
+        const queryStrings = searchQuery.split(' ')
+        queryStrings.forEach(queryString => {
+          builder.orWhereJsonSupersetOf('keywords', [queryString])
+        })
+
+        return builder
       })
     }
 
@@ -508,7 +530,7 @@ class Question extends BaseModel {
   static async findByExcludingRole(userId, role, options = {}) {
     const { submittedOnly, filters = {} } = options
 
-    const { status, searchQuery, heAssigned, author } = filters
+    const { status, searchQuery, heAssigned /* author */ } = filters
 
     const query = Question.query(options.trx).leftJoin(
       'question_versions',
@@ -538,7 +560,8 @@ class Question extends BaseModel {
     }
 
     // if author, we'll need the question's author displayName, surname and first name
-    if (author) {
+    // if (author) { temporarily use search query as author filter
+    if (searchQuery) {
       query
         .leftJoin('teams', builder => {
           builder
@@ -595,18 +618,26 @@ class Question extends BaseModel {
     }
 
     // author filter
-    if (author) {
-      parentQuery.where(builder => {
-        return builder
-          .where('givenNames', 'ilike', `%${author}%`)
-          .orWhere('surname', 'ilike', `%${author}%`)
-          .orWhere('displayName', 'ilike', `%${author}%`)
-      })
-    }
+    // if (author) {
+    //   parentQuery.where(builder => {
+    //     return builder
+    //       .where('givenNames', 'ilike', `%${author}%`)
+    //       .orWhere('surname', 'ilike', `%${author}%`)
+    //       .orWhere('displayName', 'ilike', `%${author}%`)
+    //   })
+    // }
 
     // search query filter
     if (searchQuery) {
       parentQuery.where('content_text', 'ilike', `%${searchQuery}%`)
+
+      // filter authors by searchQuery
+      parentQuery.orWhere(builder => {
+        return builder
+          .where('givenNames', 'ilike', `%${searchQuery}%`)
+          .orWhere('surname', 'ilike', `%${searchQuery}%`)
+          .orWhere('displayName', 'ilike', `%${searchQuery}%`)
+      })
 
       const queryStrings = searchQuery.split(' ')
       queryStrings.forEach(queryString => {
@@ -659,7 +690,11 @@ class Question extends BaseModel {
         return user
       }
 
-      return null
+      // if no user was found then the author was deleted, so read the deleted_author_name field from question record
+      const question = await Question.findById(questionId)
+      return {
+        displayName: question.deletedAuthorName,
+      }
     } catch (e) {
       console.error('Question model: getAuthor failed', e)
       // throw new Error(e)

@@ -13,7 +13,7 @@ const title = 'Test set 1'
 const editorText =
   'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto.'
 
-const titlePlaceholder = 'Enter title for Complex item set'
+const titlePlaceholder = 'Enter title for Context-dependent item set'
 
 describe('ComplexItemSetForm', () => {
   it('matches snapshot', () => {

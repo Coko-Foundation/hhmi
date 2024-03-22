@@ -127,7 +127,9 @@ const NavWrapper = styled.div`
 
   @media screen and (min-width: ${th('mediaQueries.large')}) {
     > ul:nth-of-type(1) {
-      border-left: 1px solid #ffffff34;
+      &:has(*) {
+        border-left: 1px solid #ffffff34;
+      }
       padding-left: 2rem;
     }
     display: contents;
@@ -654,6 +656,7 @@ const createHeaderLinksObject = ({
       {
         link: links.questions,
         text: 'Browse Items',
+        renderIf: loggedin,
         onClick,
       },
       {

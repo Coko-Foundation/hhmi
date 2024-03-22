@@ -14,7 +14,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
       onSubmit={[Function]}
     >
       <h2>
-        Create new Complex Item Set
+        Create new Context-Dependent Item Set
       </h2>
       <div
         className="ant-form-item css-dev-only-do-not-override-12jzuas"
@@ -31,9 +31,9 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
             <label
               className="ant-form-item-required"
               htmlFor="title"
-              title="Complex Item Set Title"
+              title="Context-Dependent Item Set Title"
             >
-              Complex Item Set Title
+              Context-Dependent Item Set Title
             </label>
           </div>
           <div
@@ -58,7 +58,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
                     onChange={[Function]}
                     onFocus={[Function]}
                     onKeyDown={[Function]}
-                    placeholder="Enter title for Complex item set"
+                    placeholder="Enter title for Context-dependent item set"
                     style={{}}
                     type="text"
                     value=""
@@ -71,7 +71,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
       </div>
       <h3>
         Create
-         the content for the Complex Item Set leading text in the editor below
+         the content for the Context-Dependent Item Set leading text in the editor below
       </h3>
       <div
         className="sc-czddym MoAxx"

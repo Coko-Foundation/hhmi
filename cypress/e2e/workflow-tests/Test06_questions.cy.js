@@ -177,6 +177,8 @@ describe('Question Workflows', () => {
           'published',
         )
         cy.login(editor)
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500)
         cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
         cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
         cy.contains(basicButton, 'Unpublish').should('not.exist')
@@ -374,6 +376,8 @@ describe('Question Workflows', () => {
           'published',
         )
         cy.login(handlingEditor1)
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(500)
         cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
         cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
         cy.contains(basicButton, 'Unpublish').should('not.exist')
@@ -493,6 +497,8 @@ describe('Question Workflows', () => {
         'published',
       )
       cy.login(admin)
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(500)
       cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
       cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
       cy.contains(basicButton, 'Unpublish').should('not.exist')

@@ -115,24 +115,26 @@ const ComplexItemSetForm = props => {
           submissionStatus={submissionStatus}
         >
           <h2>
-            {id ? 'Edit Complex Item Set' : 'Create new Complex Item Set'}
+            {id
+              ? 'Edit Context-Dependent Item Set'
+              : 'Create new Context-Dependent Item Set'}
           </h2>
           <Form.Item
-            label="Complex Item Set Title"
+            label="Context-Dependent Item Set Title"
             name="title"
             rules={[
               {
                 required: true,
-                message: 'Complex item set must have a title',
+                message: 'Context-dependent item set must have a title',
               },
             ]}
           >
-            <Input placeholder="Enter title for Complex item set" />
+            <Input placeholder="Enter title for Context-dependent item set" />
           </Form.Item>
 
           <h3>
-            {id ? `Edit` : 'Create'} the content for the Complex Item Set
-            leading text in the editor below
+            {id ? `Edit` : 'Create'} the content for the Context-Dependent Item
+            Set leading text in the editor below
           </h3>
           <WaxWrapper>
             <Wax

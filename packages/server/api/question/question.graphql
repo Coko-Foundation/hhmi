@@ -10,6 +10,7 @@ type Question {
   productionChatThreadId: ID
   reviewerChatThreadId: ID
   heAssigned: Boolean
+  deletedAuthorName: String
 }
 
 type QuestionVersion {
