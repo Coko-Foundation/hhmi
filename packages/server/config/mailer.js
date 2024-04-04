@@ -1,10 +1,17 @@
-const { MAILER_HOSTNAME, MAILER_USER, MAILER_PASSWORD } = process.env
+const { MAILER_HOSTNAME, MAILER_PORT, MAILER_USER, MAILER_PASSWORD } =
+  process.env
+
 module.exports = {
   transport: {
     host: MAILER_HOSTNAME,
-    auth: {
-      user: MAILER_USER,
-      pass: MAILER_PASSWORD,
-    },
+    port: MAILER_PORT,
+    ...(MAILER_USER &&
+      MAILER_PASSWORD && {
+        auth: {
+          user: MAILER_USER,
+          pass: MAILER_PASSWORD,
+        },
+      }),
   },
 }
+
