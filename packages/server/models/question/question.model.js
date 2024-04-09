@@ -4,7 +4,7 @@ const {
 } = require('@coko/server')
 
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { db } = require('@pubsweet/db-manager')
+const { db } = require('@coko/server')
 
 const { ChatThread } = require('@coko/server/src/models')
 const config = require('config')

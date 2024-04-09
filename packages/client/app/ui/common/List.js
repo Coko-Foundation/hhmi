@@ -299,7 +299,8 @@ const List = props => {
     if (!isEqual(selectedItems, controlledSelectedItems)) {
       setSelectedItems(controlledSelectedItems)
     }
-  }, [JSON.stringify(dataSource), controlledSelectedItems])
+    // eslint-disable-next-line react/prop-types
+  }, [JSON.stringify(dataSource.map(d => d.id)), controlledSelectedItems])
 
   const handleSelect = useFunction(id => {
     setSelectedItems([...selectedItems, id])

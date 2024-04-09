@@ -60,6 +60,7 @@ class WaxToDocxConverter {
       orderedlist: this.orderedListHandler,
       paragraph: this.paragraphHandler,
       table: this.tableHandler,
+      table_body: this.tableBodyHandler,
       table_cell: this.tableCellHandler,
       table_header: this.tableCellHandler,
       table_row: this.tableRowHandler,
@@ -319,10 +320,8 @@ class WaxToDocxConverter {
 
   // #region tables
   tableHandler = table => {
-    const tableBody = table.content[0]
-
     return new Table({
-      rows: this.contentParser(tableBody.content),
+      rows: this.contentParser(table.content),
       width: {
         size: 100,
         type: WidthType.PERCENTAGE,
@@ -330,12 +329,16 @@ class WaxToDocxConverter {
     })
   }
 
+  tableBodyHandler = tableBody => {
+    return [...this.contentParser(tableBody.content)]
+  }
+
   tableRowHandler = row => {
     const isTableHeader = row.content[0].type === 'table_header'
 
     return new TableRow({
       children: this.contentParser(row.content, { isTableHeader }),
-      tableHeader: row.content[0].type === 'table_header',
+      tableHeader: isTableHeader,
     })
   }
 

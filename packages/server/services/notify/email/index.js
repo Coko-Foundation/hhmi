@@ -3,13 +3,14 @@ const moment = require('moment')
 
 const config = require('config')
 // eslint-disable-next-line import/no-extraneous-dependencies
-const mailer = require('@pubsweet/component-send-email')
+// const mailer = require('@pubsweet/component-send-email')
+const { sendEmail } = require('@coko/server')
 
 const { ChatThread } = require('@coko/server/src/models')
 const { Question, Identity, User, QuestionVersion } = require('../../../models')
 const flatten = require('../../../controllers/flattenMetadataValues')
 
-const sendEmail = data => {
+const send = data => {
   const { attachments, content, subject, text, to } = data
 
   const emailData = {
@@ -21,7 +22,7 @@ const sendEmail = data => {
     attachments: attachments || [],
   }
 
-  mailer.send(emailData)
+  sendEmail(emailData)
   logger.info(`Email sent to ${to} with subject "${subject}"`)
 }
 
@@ -455,7 +456,7 @@ const sendReviewCopyToReviewer = async ({ attachments, review, to }) => {
 }
 
 module.exports = {
-  sendEmail,
+  sendEmail: send,
   handlers: {
     'hhmi.chatMention': chatMention,
     'hhmi.questionRejected': questionRejected,
