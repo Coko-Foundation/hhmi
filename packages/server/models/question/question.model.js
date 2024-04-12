@@ -130,6 +130,7 @@ class Question extends BaseModel {
         psychomotorLevel,
         readingLevel,
         questionType,
+        contentText,
       } = previousVersions.result[0]
 
       return QuestionVersion.insert(
@@ -147,6 +148,7 @@ class Question extends BaseModel {
           psychomotorLevel,
           readingLevel,
           questionType,
+          contentText,
           inProduction: true,
           unpublished: false,
         },
