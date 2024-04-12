@@ -255,6 +255,8 @@ class Question extends BaseModel {
       query
         .where('content_text', 'ilike', `%${searchQuery}%`)
         .orWhere('author', 'ilike', `%${searchQuery}%`)
+        .orWhere('author_name', 'ilike', `%${searchQuery}%`)
+        .orWhere('author_surname', 'ilike', `%${searchQuery}%`)
 
       const queryStrings = searchQuery.split(' ')
       queryStrings.forEach(queryString => {
@@ -287,6 +289,8 @@ class Question extends BaseModel {
           'question_versions.question_type',
           'question_versions.cognitive_level',
           'users.display_name as author',
+          'users.given_names as author_name',
+          'users.surname as author_surname',
           'question_versions.complex_item_set_id',
         )
         .distinctOn('questions.id')
