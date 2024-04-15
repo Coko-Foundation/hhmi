@@ -260,10 +260,14 @@ class Question extends BaseModel {
         .orWhere('author_name', 'ilike', `%${searchQuery}%`)
         .orWhere('author_surname', 'ilike', `%${searchQuery}%`)
 
-      const queryStrings = searchQuery.split(' ')
-      queryStrings.forEach(queryString => {
-        query.orWhereJsonSupersetOf('keywords', [queryString])
-      })
+      query.orWhereRaw('??::text ilike ?::text', [
+        'keywords',
+        `%${JSON.stringify(searchQuery)}%`,
+      ])
+      // const queryStrings = searchQuery.split(' ')
+      // queryStrings.forEach(queryString => {
+      //   query.orWhereJsonSupersetOf('keywords', [queryString])
+      // })
     }
 
     // return query
@@ -520,10 +524,15 @@ class Question extends BaseModel {
           .orWhere('u1.surname', 'ilike', `%${searchQuery}%`)
           .orWhere('u1.displayName', 'ilike', `%${searchQuery}%`)
 
-        const queryStrings = searchQuery.split(' ')
-        queryStrings.forEach(queryString => {
-          builder.orWhereJsonSupersetOf('keywords', [queryString])
-        })
+        builder.orWhereRaw('??::text ilike ?::text', [
+          'keywords',
+          `%${JSON.stringify(searchQuery)}%`,
+        ])
+
+        // const queryStrings = searchQuery.split(' ')
+        // queryStrings.forEach(queryString => {
+        //   builder.orWhereJsonSupersetOf('keywords', [queryString])
+        // })
 
         return builder
       })
@@ -639,16 +648,23 @@ class Question extends BaseModel {
 
       // filter authors by searchQuery
       parentQuery.orWhere(builder => {
-        return builder
-          .where('givenNames', 'ilike', `%${searchQuery}%`)
+        builder
+          .orWhere('givenNames', 'ilike', `%${searchQuery}%`)
           .orWhere('surname', 'ilike', `%${searchQuery}%`)
           .orWhere('displayName', 'ilike', `%${searchQuery}%`)
+
+        builder.orWhereRaw('??::text ilike ?::text', [
+          'keywords',
+          `%${JSON.stringify(searchQuery)}%`,
+        ])
+
+        return builder
       })
 
-      const queryStrings = searchQuery.split(' ')
-      queryStrings.forEach(queryString => {
-        parentQuery.orWhereJsonSupersetOf('keywords', [queryString])
-      })
+      // const queryStrings = searchQuery.split(' ')
+      // queryStrings.forEach(queryString => {
+      //   parentQuery.orWhereJsonSupersetOf('keywords', [queryString])
+      // })
     }
 
     return applyListQueryOptions(parentQuery, options)
