@@ -254,20 +254,20 @@ class Question extends BaseModel {
     }
 
     if (searchQuery) {
-      query
-        .where('content_text', 'ilike', `%${searchQuery}%`)
-        .orWhere('author', 'ilike', `%${searchQuery}%`)
-        .orWhere('author_name', 'ilike', `%${searchQuery}%`)
-        .orWhere('author_surname', 'ilike', `%${searchQuery}%`)
+      query.where(builder => {
+        builder
+          .orWhere('content_text', 'ilike', `%${searchQuery}%`)
+          .orWhere('author', 'ilike', `%${searchQuery}%`)
+          .orWhere('author_name', 'ilike', `%${searchQuery}%`)
+          .orWhere('author_surname', 'ilike', `%${searchQuery}%`)
 
-      query.orWhereRaw('??::text ilike ?::text', [
-        'keywords',
-        `%${JSON.stringify(searchQuery)}%`,
-      ])
-      // const queryStrings = searchQuery.split(' ')
-      // queryStrings.forEach(queryString => {
-      //   query.orWhereJsonSupersetOf('keywords', [queryString])
-      // })
+        builder.orWhereRaw('??::text ilike ?::text', [
+          'keywords',
+          `%${JSON.stringify(searchQuery)}%`,
+        ])
+
+        return builder
+      })
     }
 
     // return query
