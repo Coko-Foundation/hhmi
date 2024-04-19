@@ -307,6 +307,7 @@ class Question extends BaseModel {
           'questions.id',
           { column: 'question_versions.created', order: 'desc' },
         ])
+        .first()
 
       query.as('q1')
 
