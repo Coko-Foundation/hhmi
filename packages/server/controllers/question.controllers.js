@@ -491,6 +491,7 @@ const updateQuestion = async (
     options,
     CONTROLLER_MESSAGE,
   )
+
   return getQuestion(questionId)
 }
 

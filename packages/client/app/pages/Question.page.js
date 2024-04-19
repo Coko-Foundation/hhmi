@@ -750,7 +750,27 @@ const QuestionPage = props => {
       },
     }
 
-    updateQuestionMutation(mutationData).then(() => resolve())
+    updateQuestionMutation(mutationData).then(
+      ({ data: { updateQuestion } = {} }) => {
+        let update = false
+
+        const inputFigureCount = (
+          JSON.stringify(content).match(/figure/g) || []
+        ).length
+
+        if (inputFigureCount > 0) {
+          const updatedFigureCount = (
+            updateQuestion.versions[0].content.match(/figure/g) || []
+          ).length
+
+          if (updatedFigureCount !== inputFigureCount) {
+            update = true
+          }
+        }
+
+        resolve({ update })
+      },
+    )
   }, AUTOSAVE_DELAY)
 
   const handleEditorContentAutoSave = (content, updateMetadata = true) => {
