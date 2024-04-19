@@ -71,11 +71,27 @@ class QuestionVersion extends BaseModel {
               const clonedItem = cloneDeep(item)
               const { src } = clonedItem.content[0].attrs
 
-              // make sure non-url existing images are not deleted
-              if (src.startsWith('data:image')) return item
+              if (src) {
+                // make sure non-url existing images are not deleted
+                if (src.startsWith('data:image')) return item
 
-              clonedItem.content[0].attrs.src = null
-              return clonedItem
+                clonedItem.content[0].attrs.src = null
+                return clonedItem
+              }
+
+              // if image is missing a src replace it with empty paragraph
+              return {
+                type: 'paragraph',
+                attrs: {
+                  class: 'paragraph',
+                },
+                content: [
+                  {
+                    text: ' ',
+                    type: 'text',
+                  },
+                ],
+              }
             }
 
             return cleanUpUrls(item)

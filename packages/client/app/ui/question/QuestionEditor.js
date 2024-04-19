@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext } from 'react'
+import React, { useEffect, useState, createContext, useRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
@@ -68,10 +68,12 @@ const QuestionEditor = props => {
     complexSetEditLink,
     complexItemSetId,
     selectedQuestionType,
+    refreshEditorContent,
   } = props
 
   const [showFeedBack, setShowFeedBack] = useState(false)
   const [editorContent, setEditorContent] = useState(content)
+  const updateKey = useRef(0)
 
   const [testMode, setTestMode] = useState(
     published && !showFeedBack && !withFeedback,
@@ -85,6 +87,12 @@ const QuestionEditor = props => {
   useEffect(() => {
     setEditorContent(content)
   }, [content])
+
+  useEffect(() => {
+    if (refreshEditorContent) {
+      updateKey.current += 1
+    }
+  }, [refreshEditorContent])
 
   useEffect(() => {
     if (withFeedback) {
@@ -147,7 +155,7 @@ const QuestionEditor = props => {
             content={preserveLocalState ? editorContent : content}
             customValues={customValues}
             innerRef={innerRef}
-            key={selectedQuestionType?.waxValue}
+            key={`${selectedQuestionType?.waxValue}-${updateKey.current}-${readOnly}`}
             layout={layout}
             onContentChange={!testMode ? onContentChange : () => {}}
             onImageUpload={onImageUpload}
@@ -201,6 +209,7 @@ QuestionEditor.propTypes = {
   complexSetEditLink: PropTypes.string,
   complexItemSetId: PropTypes.string,
   selectedQuestionType: PropTypes.shape(),
+  refreshEditorContent: PropTypes.bool,
 }
 
 QuestionEditor.defaultProps = {
@@ -214,6 +223,7 @@ QuestionEditor.defaultProps = {
   complexSetEditLink: null,
   complexItemSetId: null,
   selectedQuestionType: null,
+  refreshEditorContent: false,
 }
 
 export default QuestionEditor

@@ -485,6 +485,7 @@ const Question = props => {
 
   const [activeKey, setActiveKey] = useState(defaultActiveKey)
   const [preview, setPreview] = useState(facultyView)
+  const [refreshEditorContent, setRefreshEditorContent] = useState(false)
 
   const readOnly =
     (editorView && !isInProduction && isSubmitted) ||
@@ -499,7 +500,8 @@ const Question = props => {
   // #region handlers
   const handleQuestionContentChange = content => {
     setAutoSaving(true)
-    onEditorContentAutoSave(content).then(() => {
+    onEditorContentAutoSave(content).then(({ update }) => {
+      setRefreshEditorContent(update)
       setAutoSaving(false)
     })
   }
@@ -1595,6 +1597,7 @@ const Question = props => {
                           readOnly={
                             readOnly || preview || !selectedQuestionType //
                           }
+                          refreshEditorContent={refreshEditorContent}
                           selectedQuestionType={selectedQuestionType}
                           withFeedback={
                             !(preview || reviewerView) ||
