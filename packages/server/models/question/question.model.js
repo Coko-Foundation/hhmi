@@ -130,6 +130,7 @@ class Question extends BaseModel {
         psychomotorLevel,
         readingLevel,
         questionType,
+        contentText,
       } = previousVersions.result[0]
 
       return QuestionVersion.insert(
@@ -147,6 +148,7 @@ class Question extends BaseModel {
           psychomotorLevel,
           readingLevel,
           questionType,
+          contentText,
           inProduction: true,
           unpublished: false,
         },
@@ -252,13 +254,20 @@ class Question extends BaseModel {
     }
 
     if (searchQuery) {
-      query
-        .where('content_text', 'ilike', `%${searchQuery}%`)
-        .orWhere('author', 'ilike', `%${searchQuery}%`)
+      query.where(builder => {
+        builder
+          .orWhere('content_text', 'ilike', `%${searchQuery}%`)
+          .orWhere('author', 'ilike', `%${searchQuery}%`)
+          .orWhere('author_name', 'ilike', `%${searchQuery}%`)
+          .orWhere('author_surname', 'ilike', `%${searchQuery}%`)
+          .orWhere('deleted_author_name', 'ilike', `%${searchQuery}%`)
 
-      const queryStrings = searchQuery.split(' ')
-      queryStrings.forEach(queryString => {
-        query.orWhereJsonSupersetOf('keywords', [queryString])
+        builder.orWhereRaw('??::text ilike ?::text', [
+          'keywords',
+          `%${JSON.stringify(searchQuery)}%`,
+        ])
+
+        return builder
       })
     }
 
@@ -287,16 +296,19 @@ class Question extends BaseModel {
           'question_versions.question_type',
           'question_versions.cognitive_level',
           'users.display_name as author',
+          'users.given_names as author_name',
+          'users.surname as author_surname',
           'question_versions.complex_item_set_id',
         )
         .distinctOn('questions.id')
         .where({
-          published: true,
+          'teams.role': 'author',
         })
         .orderBy([
           'questions.id',
           { column: 'question_versions.created', order: 'desc' },
         ])
+        .first()
 
       query.as('q1')
 
@@ -513,11 +525,17 @@ class Question extends BaseModel {
           .orWhere('u1.givenNames', 'ilike', `%${searchQuery}%`)
           .orWhere('u1.surname', 'ilike', `%${searchQuery}%`)
           .orWhere('u1.displayName', 'ilike', `%${searchQuery}%`)
+          .orWhere('questions.deleted_author_name', 'ilike', `%${searchQuery}%`)
 
-        const queryStrings = searchQuery.split(' ')
-        queryStrings.forEach(queryString => {
-          builder.orWhereJsonSupersetOf('keywords', [queryString])
-        })
+        builder.orWhereRaw('??::text ilike ?::text', [
+          'keywords',
+          `%${JSON.stringify(searchQuery)}%`,
+        ])
+
+        // const queryStrings = searchQuery.split(' ')
+        // queryStrings.forEach(queryString => {
+        //   builder.orWhereJsonSupersetOf('keywords', [queryString])
+        // })
 
         return builder
       })
@@ -633,16 +651,24 @@ class Question extends BaseModel {
 
       // filter authors by searchQuery
       parentQuery.orWhere(builder => {
-        return builder
-          .where('givenNames', 'ilike', `%${searchQuery}%`)
+        builder
+          .orWhere('givenNames', 'ilike', `%${searchQuery}%`)
           .orWhere('surname', 'ilike', `%${searchQuery}%`)
           .orWhere('displayName', 'ilike', `%${searchQuery}%`)
+          .orWhere('deleted_author_name', 'ilike', `%${searchQuery}%`)
+
+        builder.orWhereRaw('??::text ilike ?::text', [
+          'keywords',
+          `%${JSON.stringify(searchQuery)}%`,
+        ])
+
+        return builder
       })
 
-      const queryStrings = searchQuery.split(' ')
-      queryStrings.forEach(queryString => {
-        parentQuery.orWhereJsonSupersetOf('keywords', [queryString])
-      })
+      // const queryStrings = searchQuery.split(' ')
+      // queryStrings.forEach(queryString => {
+      //   parentQuery.orWhereJsonSupersetOf('keywords', [queryString])
+      // })
     }
 
     return applyListQueryOptions(parentQuery, options)

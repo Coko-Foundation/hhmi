@@ -306,10 +306,11 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
     // wax might or might not insert an empty paragraph at the bottom of the widget
     const isLastItemEmptyParagraph =
-      lastItem.type === 'paragraph' &&
-      lastItem.content.length === 1 &&
-      lastItem.content[0].type === 'text' &&
-      !lastItem.content[0].text.trim()
+      (lastItem.type === 'paragraph' &&
+        lastItem.content?.length === 1 &&
+        lastItem.content[0].type === 'text' &&
+        !lastItem.content[0].text.trim()) ||
+      (lastItem.type === 'paragraph' && !lastItem.content)
 
     const contentToParse = isLastItemEmptyParagraph
       ? multipleChoice.content.slice(0, multipleChoice.content.length - 1)

@@ -120,70 +120,74 @@ const ListContent = ({
   }
 
   const handleExportQTI = () => {
-    // if exporting more than one question (list export) exclude numerical answer types
-    if (selectedQuestions.length > 1) {
-      const nonNumericalQuestionIds = selectedQuestions.filter(
-        qid => questions.find(q => q.id === qid)?.type !== 'numerical',
-      )
+    const nonNumericalQuestionIds = selectedQuestions.filter(
+      qid => questions.find(q => q.id === qid)?.type !== 'numerical',
+    )
 
-      if (nonNumericalQuestionIds.length < selectedQuestions.length) {
-        const warningModal = warning()
+    let warningModal
 
-        if (nonNumericalQuestionIds.length === 0) {
-          warningModal.update({
-            title: <ModalHeader>List contains numerical answers</ModalHeader>,
-            content: (
-              <p>
-                The list you're about to export contains only "numerical answer"
-                items. These items cannot be exported within a list. You can
-                export numerical answer items individually.
-              </p>
-            ),
-            footer: [
-              <ModalFooter key="footer">
-                <Button
-                  autoFocus
-                  key="ok-error"
-                  onClick={() => {
-                    warningModal.destroy()
-                  }}
-                >
-                  Ok
-                </Button>
-              </ModalFooter>,
-            ],
-          })
-        } else {
-          warningModal.update({
-            title: <ModalHeader>List contains numerical answers</ModalHeader>,
-            content: (
-              <p>
-                The list you're about to export contains at least one "numerical
-                answer" item. These items cannot be exported within a list and
-                will be excluded from the export. You can export numerical
-                answer items individually.
-              </p>
-            ),
-            footer: [
-              <ModalFooter key="footer">
-                <Button
-                  autoFocus
-                  key="continue"
-                  onClick={() => {
-                    exportToQTI(nonNumericalQuestionIds)
-                    warningModal.destroy()
-                  }}
-                  type="primary"
-                >
-                  Continue
-                </Button>
-              </ModalFooter>,
-            ],
-          })
-        }
-      }
-    } else {
-      onExportQTI(selectedQuestions)
+    switch (true) {
+      // when trying to export a list with only 'numerical answer' type items
+      case selectedQuestions.length > 1 && nonNumericalQuestionIds.length === 0:
+        warningModal = warning()
+        warningModal.update({
+          title: <ModalHeader>List contains numerical answers</ModalHeader>,
+          content: (
+            <p>
+              The list you're about to export contains only "numerical answer"
+              items. These items cannot be exported within a list. You can
+              export numerical answer items individually.
+            </p>
+          ),
+          footer: [
+            <ModalFooter key="footer">
+              <Button
+                autoFocus
+                key="ok-error"
+                onClick={() => {
+                  warningModal.destroy()
+                }}
+              >
+                Ok
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+        break
+      // when trying to export a list with some 'numerical answer' type items
+      case selectedQuestions.length > 1 &&
+        nonNumericalQuestionIds.length < selectedQuestions.length:
+        warningModal = warning()
+        warningModal.update({
+          title: <ModalHeader>List contains numerical answers</ModalHeader>,
+          content: (
+            <p>
+              The list you're about to export contains at least one "numerical
+              answer" item. These items cannot be exported within a list and
+              will be excluded from the export. You can export numerical answer
+              items individually.
+            </p>
+          ),
+          footer: [
+            <ModalFooter key="footer">
+              <Button
+                autoFocus
+                key="continue"
+                onClick={() => {
+                  exportToQTI(nonNumericalQuestionIds)
+                  warningModal.destroy()
+                }}
+                type="primary"
+              >
+                Continue
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+        break
+      default:
+        onExportQTI(selectedQuestions)
+        break
     }
   }
 

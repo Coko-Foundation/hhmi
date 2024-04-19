@@ -62,6 +62,13 @@ describe('Question model', () => {
     const questionOne = await Question.insert({})
     await Question.insert({}) // question two
 
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: questionOne.id,
+      objectType: 'question',
+    })
+
     const questionOneVersionOne = await QuestionVersion.findOne({
       questionId: questionOne.id,
     })
@@ -77,6 +84,13 @@ describe('Question model', () => {
 
   test('finds only one result for published questions with multiple versions', async () => {
     const question = await Question.insert({})
+
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
 
     const questionVersionOne = await QuestionVersion.findOne({
       questionId: question.id,
@@ -270,9 +284,25 @@ describe('Question model', () => {
 
   test('filter questions by topic', async () => {
     const question = await Question.insert({})
+
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
+
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
+
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -289,9 +319,21 @@ describe('Question model', () => {
 
   test('filter questions by subtopic', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -313,9 +355,21 @@ describe('Question model', () => {
 
   test('filter questions by course', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -332,9 +386,21 @@ describe('Question model', () => {
 
   test('filter questions by unit', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -351,9 +417,21 @@ describe('Question model', () => {
 
   test('filter questions by course topic', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -370,9 +448,21 @@ describe('Question model', () => {
 
   test('filter questions by learning objective', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -389,9 +479,21 @@ describe('Question model', () => {
 
   test('filter questions by essential knowledge', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -408,9 +510,21 @@ describe('Question model', () => {
 
   test('filter questions by application', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -427,9 +541,21 @@ describe('Question model', () => {
 
   test('filter questions by skill', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -446,9 +572,21 @@ describe('Question model', () => {
 
   test('filter questions by understanding', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -465,9 +603,21 @@ describe('Question model', () => {
 
   test('filter questions by cognitive level', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -484,9 +634,21 @@ describe('Question model', () => {
 
   test('filter questions by question type', async () => {
     const question = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     await question2.createNewVersion()
 
     await questionOneVersionOne.patch({
@@ -503,9 +665,21 @@ describe('Question model', () => {
 
   test('filter questions and order by publication date', async () => {
     const question1 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question1.id,
+      objectType: 'question',
+    })
     const questionOneVersionOne = await question1.createNewVersion()
 
     const question2 = await Question.insert({})
+    await Team.insert({
+      role: 'author',
+      displayName: 'Author',
+      objectId: question2.id,
+      objectType: 'question',
+    })
     const questionTwoVersionOne = await question2.createNewVersion()
 
     await questionOneVersionOne.patch({

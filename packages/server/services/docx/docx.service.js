@@ -412,7 +412,7 @@ class WaxToDocxConverter {
 
   /* eslint-disable-next-line class-methods-use-this */
   captionHandler = caption => {
-    if (!caption || !caption.content || !caption.content.length > 0) return
+    if (!caption || !caption?.content || !caption?.content?.length > 0) return
 
     const { text } = caption.content[0]
 
