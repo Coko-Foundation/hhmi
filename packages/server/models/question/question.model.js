@@ -260,6 +260,7 @@ class Question extends BaseModel {
           .orWhere('author', 'ilike', `%${searchQuery}%`)
           .orWhere('author_name', 'ilike', `%${searchQuery}%`)
           .orWhere('author_surname', 'ilike', `%${searchQuery}%`)
+          .orWhere('deleted_author_name', 'ilike', `%${searchQuery}%`)
 
         builder.orWhereRaw('??::text ilike ?::text', [
           'keywords',
@@ -523,6 +524,7 @@ class Question extends BaseModel {
           .orWhere('u1.givenNames', 'ilike', `%${searchQuery}%`)
           .orWhere('u1.surname', 'ilike', `%${searchQuery}%`)
           .orWhere('u1.displayName', 'ilike', `%${searchQuery}%`)
+          .orWhere('questions.deleted_author_name', 'ilike', `%${searchQuery}%`)
 
         builder.orWhereRaw('??::text ilike ?::text', [
           'keywords',
@@ -652,6 +654,7 @@ class Question extends BaseModel {
           .orWhere('givenNames', 'ilike', `%${searchQuery}%`)
           .orWhere('surname', 'ilike', `%${searchQuery}%`)
           .orWhere('displayName', 'ilike', `%${searchQuery}%`)
+          .orWhere('deleted_author_name', 'ilike', `%${searchQuery}%`)
 
         builder.orWhereRaw('??::text ilike ?::text', [
           'keywords',
