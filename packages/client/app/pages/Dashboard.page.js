@@ -20,6 +20,7 @@ import {
   FILTER_GLOBAL_TEAM_MEMBERS,
   GET_PRODUCTION_DASHBOARD,
   DASHBOARD_SUBSCRIPTION,
+  CHANGE_ARCHIVE_STATUS_FOR_ITEMS,
 } from '../graphql'
 import {
   hasGlobalRole,
@@ -36,6 +37,7 @@ const defaultSearchOptions = {
   orderBy: 'created',
   ascending: false,
   pageSize: 10,
+  archived: false,
 }
 
 const DashboardPage = () => {
@@ -44,6 +46,7 @@ const DashboardPage = () => {
   const initialTabKey = localStorage.getItem('dashboardLastUsedTab') || 'author'
   const [currentTabKey, setCurrentTabKey] = useState(initialTabKey)
   const [currentPage, setCurrentPage] = useState(1)
+  const [currentShowArchived, setCurrentShowArchived] = useState(false)
   const [currentSearchQuery, setCurrentSearchQuery] = useState(null)
 
   const [heFilterOptions, setHeFilterOptions] = useState(
@@ -198,6 +201,7 @@ const DashboardPage = () => {
           showStatus: true,
           showStatusLabel: true,
           userId,
+          isArchived: currentShowArchived,
         })
       : []
 
@@ -209,6 +213,7 @@ const DashboardPage = () => {
           complexItemSetOptions,
           showStatus: true,
           userId,
+          isArchived: currentShowArchived,
         })
       : []
 
@@ -222,6 +227,7 @@ const DashboardPage = () => {
           showAuthor: true,
           showStatusLabel: true,
           userId,
+          isArchived: currentShowArchived,
         })
       : []
 
@@ -252,7 +258,13 @@ const DashboardPage = () => {
     if (currentUserResponse) {
       runQuery(currentSearchQuery)
     }
-  }, [currentTabKey, currentPage, currentSearchQuery, currentUserResponse])
+  }, [
+    currentTabKey,
+    currentPage,
+    currentShowArchived,
+    currentSearchQuery,
+    currentUserResponse,
+  ])
 
   useEffect(() => {
     !handlingEditors &&
@@ -281,6 +293,7 @@ const DashboardPage = () => {
         ...defaultSearchOptions,
         page: currentPage - 1,
         filters: query || {},
+        archived: currentShowArchived,
       },
     }
 
@@ -292,6 +305,15 @@ const DashboardPage = () => {
   })
 
   const [assingHandlingEditors] = useMutation(ASSING_HANDLING_EDITORS)
+
+  const [changeArchiveStatusForItems] = useMutation(
+    CHANGE_ARCHIVE_STATUS_FOR_ITEMS,
+    {
+      onCompleted: () => {
+        runQuery(currentSearchQuery)
+      },
+    },
+  )
   // #endregion hooks
 
   // #region handlers
@@ -305,10 +327,11 @@ const DashboardPage = () => {
   }
 
   const handleSearch = options => {
-    const { page, role, query } = options
+    const { page, role, query, archived } = options
 
     setCurrentTabKey(role)
     setCurrentPage(page)
+    setCurrentShowArchived(archived)
     setCurrentSearchQuery(
       typeof query === 'object' ? query : { searchQuery: query },
     )
@@ -338,6 +361,18 @@ const DashboardPage = () => {
     }
 
     return assingHandlingEditors(mutationData)
+  }
+
+  const handleChangeArchiveStatus = async (questionIds, isArchiving, role) => {
+    const mutationData = {
+      variables: {
+        questionIds,
+        isArchiving,
+        role,
+      },
+    }
+
+    return changeArchiveStatusForItems(mutationData)
   }
 
   // #endregion handlers
@@ -380,8 +415,9 @@ const DashboardPage = () => {
       value: 'author',
       questions: mappedDataAuthor,
       totalCount: authorData?.totalCount,
-      showBulkActions: false,
+      showBulkActions: true,
       loading: authorLoading,
+      filters: statusFilters,
     },
     isEditor && {
       label: 'Editor Items',
@@ -397,7 +433,7 @@ const DashboardPage = () => {
       value: 'handlingEditor',
       questions: mappedDataHE,
       totalCount: handlingEditorData?.totalCount,
-      showBulkActions: false,
+      showBulkActions: true,
       loading: heLoading,
       filters: statusFilters,
     },
@@ -430,13 +466,16 @@ const DashboardPage = () => {
         loading={loading}
         loadingSearchHEs={loadingSearchHEs}
         onAssignHE={handleAssignHE}
+        onChangeArchiveStatus={handleChangeArchiveStatus}
         onClickCreate={handleCreateQuestion}
         onSearch={handleSearch}
         onSearchHE={handleSearchHE}
         // showSort
         // sortOptions
         tabsContent={tabs}
-        withFilters={['editor', 'handlingEditor'].includes(currentTabKey)}
+        withFilters={['editor', 'handlingEditor', 'author'].includes(
+          currentTabKey,
+        )}
       />
       <VisuallyHiddenElement
         aria-live="polite"

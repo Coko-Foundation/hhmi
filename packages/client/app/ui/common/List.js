@@ -255,11 +255,15 @@ const List = props => {
     /* eslint-enable react/prop-types */
     renderItemsOutsideLabel, // to decide if we should render the items outside the Checkbox in SelectableItem component
     itemSelection,
+    isArchivedItems,
+    listKey,
     loading,
+    onArchiveChange,
     onSearch,
     onSortOptionChange,
     searchLoading,
     searchPlaceholder,
+    showArchiveOption,
     showPagination,
     showSearch,
     showSort,
@@ -559,13 +563,21 @@ const List = props => {
               CustomRender={{ CheckBox: customComponents.CheckBox }}
               dataSource={dataSource}
               items={selectedItems}
+              listKey={listKey}
               setItems={setSelectedItems}
             />
           )}
+
           {showTotalCount && (
             <TotalCount>
               <span>{totalCount} results</span>
             </TotalCount>
+          )}
+
+          {showArchiveOption && (
+            <CheckBox checked={isArchivedItems} onChange={onArchiveChange}>
+              Show archived
+            </CheckBox>
           )}
 
           {showSort && (
@@ -585,6 +597,7 @@ const List = props => {
               </label>
             </SortWrapper>
           )}
+
           {subHeaderItems && subHeaderItems}
         </customComponents.Header>
       )}
@@ -613,6 +626,7 @@ const List = props => {
 List.propTypes = {
   autoFocusSearch: PropTypes.bool,
   footerContent: PropTypes.element,
+  isArchivedItems: PropTypes.bool,
   itemSelection: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
   }),
@@ -620,10 +634,13 @@ List.propTypes = {
   renderItemsOutsideLabel: PropTypes.bool,
   CustomComponents: PropTypes.shape({}),
   loading: PropTypes.bool,
+  listKey: PropTypes.string,
+  onArchiveChange: PropTypes.func,
   onSearch: PropTypes.func,
   onSortOptionChange: PropTypes.func,
   searchLoading: PropTypes.bool,
   searchPlaceholder: PropTypes.string,
+  showArchiveOption: PropTypes.bool,
   showPagination: PropTypes.bool,
   showSearch: PropTypes.bool,
   showSort: PropTypes.bool,
@@ -653,13 +670,17 @@ List.defaultProps = {
   autoFocusSearch: false,
   CustomComponents: defaultComponents,
   footerContent: null,
+  isArchivedItems: false,
   itemSelection: null,
+  listKey: null,
   loading: false,
+  onArchiveChange: null,
   onSearch: null,
   onSortOptionChange: null,
   subHeaderItems: null,
   renderItemsOutsideLabel: false,
   searchLoading: false,
+  showArchiveOption: false,
   showPagination: true,
   searchPlaceholder: null,
   showSearch: false,

@@ -223,6 +223,28 @@ const canAssignAuthor = rule()(async (_, { questionId }, ctx) => {
   return user.isActive && (adminAndAuthor || adminOrEditorAndDeletedAuthor)
 })
 
+const canArchiveQuestions = rule()(async (_, { questionIds }, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+
+  if (
+    user.isActive &&
+    (user.hasGlobalRole('editor') || user.hasGlobalRole('handlingEditor'))
+  ) {
+    return true
+  }
+
+  const result = await Promise.all(
+    questionIds.map(qId =>
+      isQuestionAuthor(ctx.connectors.Team.model, ctx.user, qId),
+    ),
+  )
+
+  return result.every(r => r)
+})
+
 const isAdminOrEditor = rule()(async (_, { questionId }, ctx) => {
   if (!ctx.user) return false
 
@@ -276,6 +298,7 @@ const permissions = {
     unpublishQuestionVersion: canUnpublishQuestion,
     createNewQuestionVersion: canCreateNewVersion,
     assignAuthorship: canAssignAuthor,
+    changeArchiveStatusForItems: canArchiveQuestions,
   },
   Query: {
     // Users

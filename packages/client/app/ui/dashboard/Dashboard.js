@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { th } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { PlusOutlined } from '@ant-design/icons'
 import {
   QuestionList,
@@ -11,7 +11,7 @@ import {
   Spin,
   Empty,
 } from '../common'
-import { AssignHEButton } from '../question'
+import { ArchiveItemsButton, AssignHEButton } from '../question'
 import useBreakpoint from '../_helpers/useBreakpoint'
 
 const Wrapper = styled.div`
@@ -48,6 +48,11 @@ const StyledTabs = styled(Tabs)`
 
 const StyledCreateQuestionButton = styled(Button)``
 
+const BulkActionWrapper = styled.div`
+  display: flex;
+  gap: ${grid(2)};
+`
+
 // QUESTION how to handle search, filter and pagination with multiple sections
 const Dashboard = props => {
   const {
@@ -58,6 +63,7 @@ const Dashboard = props => {
     loadingSearchHEs,
     locale,
     onAssignHE,
+    onChangeArchiveStatus,
     onClickCreate,
     onSearch,
     showSort,
@@ -74,9 +80,14 @@ const Dashboard = props => {
     page: 1,
     sortBy: 'date',
     role: initialTabKey,
+    archived: false,
   })
 
   const [selectedQuestions, setSelectedQuestions] = useState([])
+
+  useEffect(() => {
+    onSearch(searchParams)
+  }, [searchParams])
 
   const setSearchPage = page => {
     setSearchParams({ ...searchParams, page })
@@ -95,7 +106,23 @@ const Dashboard = props => {
   }
 
   const setRole = role => {
-    setSearchParams({ query: '', sortBy: 'date', page: 1, role })
+    setSearchParams({
+      query: '',
+      sortBy: 'date',
+      page: 1,
+      archived: false,
+      role,
+    })
+  }
+
+  const setArchived = () => {
+    setSelectedQuestions([])
+    setSearchParams({ ...searchParams, archived: !searchParams.archived })
+  }
+
+  const handleTabChange = role => {
+    setSelectedQuestions([])
+    setRole(role)
   }
 
   const handleAssingHE = users => {
@@ -115,9 +142,30 @@ const Dashboard = props => {
     )
   }
 
-  useEffect(() => {
-    onSearch(searchParams)
-  }, [searchParams])
+  const handleArchiveSelectedItems = async status => {
+    return onChangeArchiveStatus(
+      selectedQuestions,
+      status,
+      searchParams.role,
+    ).then(() => {
+      setSelectedQuestions([])
+    })
+  }
+
+  const getBulkAction = value => {
+    if (selectedQuestions.length === 0) return null
+
+    switch (value) {
+      case 'editor':
+        return EditorBulkAction
+      case 'handlingEditor':
+        return HandlingEditorBulkAction
+      case 'author':
+        return AuthorBulkAction
+      default:
+        return null
+    }
+  }
 
   const CreateQuestionButton = isMobile ? (
     <StyledCreateQuestionButton
@@ -143,20 +191,76 @@ const Dashboard = props => {
 
   // if there are selectedQuestions and none of them is published
 
-  const BulkAction = selectedQuestions.length > 0 &&
-    !tabsContent
-      .find(tab => tab.value === 'editor')
-      ?.questions.filter(q => selectedQuestions.indexOf(q.id) !== -1)
-      .some(q => q.status === 'Published') && (
-      <AssignHEButton
-        expanded
-        handlingEditors={handlingEditors}
-        loading={loadingSearchHEs}
-        onAssign={handleAssingHE}
-        onSearchHE={onSearchHE}
-        updateSelectedQuestions={updateSelectedQuestions}
-      />
-    )
+  const EditorBulkAction = (
+    <BulkActionWrapper>
+      {!tabsContent
+        .find(tab => tab.value === 'editor')
+        ?.questions.filter(q => selectedQuestions.indexOf(q.id) !== -1)
+        .some(q => q.status === 'Published') && (
+        <AssignHEButton
+          expanded
+          handlingEditors={handlingEditors}
+          loading={loadingSearchHEs}
+          onAssign={handleAssingHE}
+          onSearchHE={onSearchHE}
+          updateSelectedQuestions={updateSelectedQuestions}
+        />
+      )}
+      {tabsContent
+        .find(tab => tab.value === 'editor')
+        ?.questions.filter(q => selectedQuestions.indexOf(q.id) !== -1)
+        .every(
+          q =>
+            q.status === 'Unpublished' ||
+            q.status === 'Published' ||
+            q.status === 'Rejected',
+        ) && (
+        <ArchiveItemsButton
+          isArchived={searchParams.archived}
+          onChangeArchiveStatus={handleArchiveSelectedItems}
+        />
+      )}
+    </BulkActionWrapper>
+  )
+
+  const HandlingEditorBulkAction = (
+    <BulkActionWrapper>
+      {tabsContent
+        .find(tab => tab.value === 'handlingEditor')
+        ?.questions.filter(q => selectedQuestions.indexOf(q.id) !== -1)
+        .every(
+          q =>
+            q.status === 'Unpublished' ||
+            q.status === 'Published' ||
+            q.status === 'Rejected',
+        ) && (
+        <ArchiveItemsButton
+          isArchived={searchParams.archived}
+          onChangeArchiveStatus={handleArchiveSelectedItems}
+        />
+      )}
+    </BulkActionWrapper>
+  )
+
+  const AuthorBulkAction = (
+    <BulkActionWrapper>
+      {tabsContent
+        .find(tab => tab.value === 'author')
+        ?.questions.filter(q => selectedQuestions.indexOf(q.id) !== -1)
+        .every(
+          q =>
+            q.status === 'Submitted' ||
+            q.status === 'Published' ||
+            q.status === 'Rejected' ||
+            q.status === 'Unpublished',
+        ) && (
+        <ArchiveItemsButton
+          isArchived={searchParams.archived}
+          onChangeArchiveStatus={handleArchiveSelectedItems}
+        />
+      )}
+    </BulkActionWrapper>
+  )
 
   const isLoading = tabsContent.some(tab => tab.loading)
 
@@ -192,18 +296,26 @@ const Dashboard = props => {
               key: value,
               children: (
                 <QuestionList
-                  bulkAction={(showBulkActions && BulkAction) || null}
+                  bulkAction={getBulkAction(value)}
                   currentPage={searchParams.page}
                   filters={filters}
+                  isArchivedItems={searchParams.archived}
                   key={searchParams.role}
+                  listKey={value}
                   loading={tabLoading}
                   locale={mergedLocale}
+                  onArchiveChange={setArchived}
                   onPageChange={setSearchPage}
                   onQuestionSelected={setSelectedQuestions}
                   onSearch={setSearchQuery}
                   onSortOptionChange={setSortOption}
                   questions={questions}
                   selectedQuestions={selectedQuestions}
+                  showArchiveOption={[
+                    'author',
+                    'editor',
+                    'handlingEditor',
+                  ].includes(value)}
                   showRowCheckboxes={!!showBulkActions}
                   showSort={showSort}
                   sortOptions={sortOptions}
@@ -213,7 +325,7 @@ const Dashboard = props => {
               ),
             }),
           )}
-          onChange={setRole}
+          onChange={handleTabChange}
           tabBarExtraContent={CreateQuestionButton}
         />
       </Spin>
@@ -232,6 +344,7 @@ Dashboard.propTypes = {
   loading: PropTypes.bool.isRequired,
   loadingSearchHEs: PropTypes.bool,
   locale: PropTypes.shape(),
+  onChangeArchiveStatus: PropTypes.func,
   /** create new question */
   onClickCreate: PropTypes.func.isRequired,
   onAssignHE: PropTypes.func,
@@ -288,6 +401,7 @@ Dashboard.defaultProps = {
   locale: null,
   loadingSearchHEs: false,
   onAssignHE: () => {},
+  onChangeArchiveStatus: () => {},
   onSearchHE: () => {},
   showSort: false,
   sortOptions: [],

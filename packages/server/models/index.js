@@ -10,6 +10,7 @@ const ListMember = require('./listMember/listMember.model')
 const ComplexItemSet = require('./complexItemSet/complexItemSet.model')
 const Review = require('./review/review.model')
 const Notification = require('./notification/notification.model')
+const ArchivedItem = require('./archivedItem/archivedItem.model')
 
 module.exports = {
   Question,
@@ -23,4 +24,5 @@ module.exports = {
   ComplexItemSet,
   Review,
   Notification,
+  ArchivedItem,
 }

@@ -697,6 +697,8 @@ const QuestionPage = props => {
   const isInProduction = version?.inProduction
   const isPublished = version?.published
 
+  const isArchived = question?.isArchived
+
   const reviewerInviteStatus = isReviewer ? version?.reviewerStatus : null
 
   let initialTabKey = localStorage.getItem(id) || 'editor'
@@ -1383,6 +1385,7 @@ const QuestionPage = props => {
           version,
           testMode || (isReviewer && isUnderReview),
         )}
+        isArchived={isArchived}
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
         // unless the question has already been published
         isInProduction={

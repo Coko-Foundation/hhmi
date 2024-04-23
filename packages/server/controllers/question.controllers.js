@@ -16,6 +16,7 @@ const {
   TeamMember,
   ComplexItemSet,
   Review,
+  ArchivedItem,
 } = require('../models')
 
 const CokoNotifier = require('../services/notify')
@@ -151,7 +152,7 @@ const getAuthor = async questionId => {
 }
 
 const getAuthorDashboard = async (userId, options = {}) => {
-  const { orderBy, ascending, page, pageSize, filters, trx } = options
+  const { orderBy, ascending, page, pageSize, filters, archived, trx } = options
 
   return Question.findByRole(userId, 'author', {
     orderBy,
@@ -159,6 +160,7 @@ const getAuthorDashboard = async (userId, options = {}) => {
     page,
     pageSize,
     filters,
+    archived,
     trx,
   })
 }
@@ -180,7 +182,7 @@ const getReviewerDashboard = async (userId, options = {}) => {
 }
 
 const getManagingEditorDashboard = async (userId, options = {}) => {
-  const { orderBy, ascending, page, pageSize, filters, trx } = options
+  const { orderBy, ascending, page, pageSize, filters, archived, trx } = options
 
   // managing editor gets all questions apart from the ones they authored themselves
   return Question.findByExcludingRole(userId, 'author', {
@@ -190,12 +192,13 @@ const getManagingEditorDashboard = async (userId, options = {}) => {
     pageSize,
     submittedOnly: true,
     filters,
+    archived,
     trx,
   })
 }
 
 const getHandlingEditorDashboard = async (userId, options = {}) => {
-  const { orderBy, ascending, page, pageSize, filters, trx } = options
+  const { orderBy, ascending, page, pageSize, filters, archived, trx } = options
 
   return Question.findByRole(userId, 'handlingEditor', {
     orderBy,
@@ -203,6 +206,7 @@ const getHandlingEditorDashboard = async (userId, options = {}) => {
     page,
     pageSize,
     filters,
+    archived,
     trx,
   })
 }
@@ -1269,6 +1273,47 @@ const reviewerPool = async questionVersion => {
   return pool.filter(r => !!r)
 }
 
+const changeArchiveStatusForItems = async (
+  questionIds,
+  isArchiving,
+  role,
+  userId,
+) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} changeArchiveStatusForItems:`
+
+  logger.info(
+    `${CONTROLLER_MESSAGE} ${
+      !isArchiving ? 'un' : ''
+    }archiving selected questions for user ${userId} with role ${role}`,
+  )
+
+  try {
+    return useTransaction(async trx => {
+      if (isArchiving) {
+        const archiveResults = await ArchivedItem.archiveQuestions(
+          questionIds,
+          userId,
+          role,
+          { trx },
+        )
+
+        return !!archiveResults
+      }
+
+      return ArchivedItem.unarchiveQuestions(questionIds, userId, role, { trx })
+    })
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e}`)
+    throw new Error(e)
+  }
+}
+
+const isItemArchivedForUser = async (questionId, userId) => {
+  const { totalCount } = await ArchivedItem.find({ questionId, userId })
+
+  return !!totalCount
+}
+
 module.exports = {
   getQuestion,
   getQuestionVersions,
@@ -1320,4 +1365,7 @@ module.exports = {
   reviewerStatus,
   questionVersionReviews,
   reviewerPool,
+
+  changeArchiveStatusForItems,
+  isItemArchivedForUser,
 }

@@ -11,6 +11,7 @@ type Question {
   reviewerChatThreadId: ID
   heAssigned: Boolean
   deletedAuthorName: String
+  isArchived: Boolean
 }
 
 type QuestionVersion {
@@ -224,6 +225,7 @@ extend type Query {
     page: Int
     pageSize: Int
     filters: DashboardFilters
+    archived: Boolean
   ): QuestionsResponse!
 
   getReviewerDashboard(
@@ -240,6 +242,7 @@ extend type Query {
     page: Int
     pageSize: Int
     filters: DashboardFilters
+    archived: Boolean
   ): QuestionsResponse!
 
   getHandlingEditorDashboard(
@@ -248,6 +251,7 @@ extend type Query {
     page: Int
     pageSize: Int
     filters: DashboardFilters
+    archived: Boolean
   ): QuestionsResponse!
 
   getInProductionDashboard(
@@ -317,6 +321,12 @@ extend type Mutation {
     questionVersionId: ID!
     value: Boolean!
   ): QuestionVersion!
+
+  changeArchiveStatusForItems(
+    questionIds: [ID!]!
+    isArchiving: Boolean!
+    role: String!
+  ): Boolean
 }
 
 extend type Subscription {

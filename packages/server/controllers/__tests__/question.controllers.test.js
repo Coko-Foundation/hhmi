@@ -21,6 +21,8 @@ const {
   reviewerStatus,
   getReviewerChatParticipants,
   getReviewerDashboard,
+  createQuestion,
+  changeArchiveStatusForItems,
 } = require('../question.controllers')
 
 const {
@@ -1004,5 +1006,143 @@ describe('Question Controller', () => {
     await Team.addMember(q2Team.id, user.id)
     const { result } = await getReviewerDashboard(user.id, { filters: {} })
     expect(result.some(res => res.id === question2.id)).toBe(false)
+  })
+
+  test('changeArchiveStatusForItems adds and removes selected items to archive list for user', async () => {
+    const author = await createUser()
+    const handlingEditor = await createUser()
+    const { user: editor } = await createGlobalEditorTeamWithUsers()
+
+    const question1 = await createQuestion(author.id)
+    const question2 = await createQuestion(author.id)
+    const question3 = await createQuestion(author.id)
+
+    const questionVersion1 = await QuestionVersion.findOne({
+      questionId: question1.id,
+    })
+
+    const questionVersion2 = await QuestionVersion.findOne({
+      questionId: question2.id,
+    })
+
+    const questionVersion3 = await QuestionVersion.findOne({
+      questionId: question3.id,
+    })
+
+    await updateQuestion(question1.id, questionVersion1.id, { submitted: true })
+    await updateQuestion(question2.id, questionVersion2.id, {
+      submitted: true,
+      published: true,
+    })
+    await updateQuestion(question3.id, questionVersion3.id, {
+      submitted: true,
+      unpublished: true,
+    })
+
+    await assignHandlingEditors(
+      [question1.id, question3.id],
+      [handlingEditor.id],
+    )
+
+    const authorDashboard1 = await getAuthorDashboard(author.id, {
+      archived: false,
+    })
+
+    expect(authorDashboard1.totalCount).toBe(3)
+
+    await changeArchiveStatusForItems(
+      [question1.id, question2.id],
+      true,
+      'author',
+      author.id,
+    )
+
+    const authorDashboard2 = await getAuthorDashboard(author.id, {
+      archived: false,
+    })
+
+    expect(authorDashboard2.totalCount).toBe(1)
+    expect(authorDashboard2.result[0].id).toBe(question3.id)
+
+    const authorDashboard3 = await getAuthorDashboard(author.id, {
+      archived: true,
+    })
+
+    expect(authorDashboard3.totalCount).toBe(2)
+    expect(authorDashboard3.result.map(a3 => a3.id)).toContain(question1.id)
+    expect(authorDashboard3.result.map(a3 => a3.id)).toContain(question2.id)
+
+    await changeArchiveStatusForItems(
+      [question2.id],
+      false,
+      'author',
+      author.id,
+    )
+
+    const authorDashboard4 = await getAuthorDashboard(author.id, {
+      archived: false,
+    })
+
+    const authorDashboard5 = await getAuthorDashboard(author.id, {
+      archived: true,
+    })
+
+    expect(authorDashboard4.totalCount).toBe(2)
+    expect(authorDashboard4.result.map(a3 => a3.id)).toContain(question2.id)
+    expect(authorDashboard4.result.map(a3 => a3.id)).toContain(question3.id)
+
+    expect(authorDashboard5.totalCount).toBe(1)
+    expect(authorDashboard5.result[0].id).toBe(question1.id)
+
+    await changeArchiveStatusForItems([question3.id], true, 'editor', editor.id)
+
+    const editorDashboard1 = await getManagingEditorDashboard(editor.id, {
+      archived: false,
+    })
+
+    const editorDashboard2 = await getManagingEditorDashboard(editor.id, {
+      archived: true,
+    })
+
+    expect(editorDashboard1.totalCount).toBe(2)
+    expect(editorDashboard1.result.map(a3 => a3.id)).toContain(question1.id)
+    expect(editorDashboard1.result.map(a3 => a3.id)).toContain(question2.id)
+
+    expect(editorDashboard2.totalCount).toBe(1)
+    expect(editorDashboard2.result[0].id).toBe(question3.id)
+
+    const handlingEditorDashboard1 = await getHandlingEditorDashboard(
+      handlingEditor.id,
+      { archived: false },
+    )
+
+    expect(handlingEditorDashboard1.totalCount).toBe(2)
+
+    await changeArchiveStatusForItems(
+      [question1.id, question3.id],
+      true,
+      'handlingEditor',
+      handlingEditor.id,
+    )
+
+    const handlingEditorDashboard2 = await getHandlingEditorDashboard(
+      handlingEditor.id,
+      { archived: false },
+    )
+
+    const handlingEditorDashboard3 = await getHandlingEditorDashboard(
+      handlingEditor.id,
+      { archived: true },
+    )
+
+    expect(handlingEditorDashboard2.totalCount).toBe(0)
+    expect(handlingEditorDashboard3.totalCount).toBe(2)
+
+    expect(handlingEditorDashboard3.result.map(a3 => a3.id)).toContain(
+      question1.id,
+    )
+    expect(handlingEditorDashboard3.result.map(a3 => a3.id)).toContain(
+      question3.id,
+    )
   })
 })

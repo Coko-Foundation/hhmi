@@ -1362,6 +1362,7 @@ const dashboardDataMapper = ({
   showStatusLabel,
   includeType,
   userId,
+  isArchived,
 }) => {
   if (!questions) return null
 
@@ -1462,9 +1463,10 @@ const dashboardDataMapper = ({
       ],
       content: parsedContent,
       status: renderStatus({ ...latestVersion, rejected }),
-      statusLabel:
-        showStatusLabel &&
-        renderStatusLabel({ heAssigned, reviewerStatus, reviewSubmitted }),
+      statusLabel: isArchived
+        ? 'Archived'
+        : showStatusLabel &&
+          renderStatusLabel({ heAssigned, reviewerStatus, reviewSubmitted }),
       href:
         testMode && latestVersion.published
           ? `/question/${id}/test`
