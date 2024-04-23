@@ -397,6 +397,7 @@ const Question = props => {
     onFetchMoreMessages,
     onClickExportToQti,
     initialMetadataValues,
+    isArchived,
     isUserLoggedIn,
     isPublished,
     isRejected,
@@ -1575,6 +1576,11 @@ const Question = props => {
                         You have rejected the invitation to review this item.
                       </Ribbon>
                     )}
+                    {isArchived && (
+                      <Ribbon status="error">
+                        This item has been archived.
+                      </Ribbon>
+                    )}
                     <PanelWrapper
                       condition={false}
                       editor={
@@ -1780,6 +1786,7 @@ Question.propTypes = {
   editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool,
   submitting: PropTypes.bool,
+  isArchived: PropTypes.bool,
   isPublished: PropTypes.bool,
   isRejected: PropTypes.bool,
   isSubmitted: PropTypes.bool,
@@ -2148,6 +2155,7 @@ Question.defaultProps = {
   onSubmitReview: () => {},
   loadAuthors: () => {},
   submitting: false,
+  isArchived: false,
   isPublished: false,
   isRejected: false,
   isSubmitted: false,

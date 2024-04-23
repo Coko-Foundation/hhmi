@@ -8,6 +8,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
     $page: Int
     $pageSize: Int
     $filters: DashboardFilters
+    $archived: Boolean
   ) {
     getAuthorDashboard(
       orderBy: $orderBy
@@ -15,6 +16,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
       page: $page
       pageSize: $pageSize
       filters: $filters
+      archived: $archived
     ) {
       result {
         id
@@ -66,6 +68,7 @@ export const GET_EDITOR_DASHBOARD = gql`
     $page: Int
     $pageSize: Int
     $filters: DashboardFilters
+    $archived: Boolean
   ) {
     getManagingEditorDashboard(
       orderBy: $orderBy
@@ -73,6 +76,7 @@ export const GET_EDITOR_DASHBOARD = gql`
       page: $page
       pageSize: $pageSize
       filters: $filters
+      archived: $archived
     ) {
       result {
         id
@@ -128,6 +132,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
     $page: Int
     $pageSize: Int
     $filters: DashboardFilters
+    $archived: Boolean
   ) {
     getHandlingEditorDashboard(
       orderBy: $orderBy
@@ -135,6 +140,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
       page: $page
       pageSize: $pageSize
       filters: $filters
+      archived: $archived
     ) {
       result {
         id
@@ -480,6 +486,7 @@ export const QUESTION = gql`
       reviewerChatThreadId
       heAssigned
       deletedAuthorName
+      isArchived
     }
   }
 `
@@ -790,5 +797,19 @@ export const CHANGE_REVIEWER_AUTOMATION_STATUS = gql`
       id
       isReviewerAutomationOn
     }
+  }
+`
+
+export const CHANGE_ARCHIVE_STATUS_FOR_ITEMS = gql`
+  mutation ChangeArchiveStatusForItems(
+    $questionIds: [ID!]!
+    $isArchiving: Boolean!
+    $role: String!
+  ) {
+    changeArchiveStatusForItems(
+      questionIds: $questionIds
+      isArchiving: $isArchiving
+      role: $role
+    )
   }
 `

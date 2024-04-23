@@ -38,6 +38,7 @@ export const SelectAllCheckbox = ({
   dataSource,
   items,
   label,
+  listKey,
   onChange,
   ...rest
 }) => {
@@ -56,7 +57,7 @@ export const SelectAllCheckbox = ({
     <CustomRender.CheckBox
       aria-checked={isChecked()}
       checked={datalgth > 0 && itemslgth === datalgth}
-      data-testid="select-all-checkbox"
+      data-testid={`${listKey ?? ''}select-all-checkbox`}
       indeterminate={isChecked() === 'mixed'}
       onChange={toggle}
       {...rest}
@@ -73,6 +74,7 @@ SelectAllCheckbox.propTypes = {
   dataSource: PropTypes.oneOfType([PropTypes.array]).isRequired,
   items: PropTypes.oneOfType([PropTypes.array]).isRequired,
   label: PropTypes.string,
+  listKey: PropTypes.string,
 }
 
 SelectAllCheckbox.defaultProps = {
@@ -80,6 +82,7 @@ SelectAllCheckbox.defaultProps = {
     CheckBox: Checkbox,
   },
   label: 'Select All',
+  listKey: null,
   setItems: () => null,
   onChange: () => null,
 }

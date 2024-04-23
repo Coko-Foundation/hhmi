@@ -70,12 +70,16 @@ const QuestionList = props => {
     bulkAction,
     currentPage,
     className,
+    isArchivedItems,
+    listKey,
     loading,
     locale,
     questions,
     onSearch,
     onPageChange,
+    showArchiveOption,
     showRowCheckboxes,
+    onArchiveChange,
     onSortOptionChange,
     questionsPerPage,
     sortOptions,
@@ -120,9 +124,12 @@ const QuestionList = props => {
       draggable={draggable}
       filters={filters}
       footerContent={bulkAction}
+      isArchivedItems={isArchivedItems}
       itemSelection={itemSelection}
+      listKey={listKey}
       loading={loading}
       locale={locale}
+      onArchiveChange={onArchiveChange}
       onDragEnd={onDragEnd}
       onSearch={onSearch}
       onSortOptionChange={onSortOptionChange}
@@ -130,6 +137,7 @@ const QuestionList = props => {
       renderItem={item => <RenderItem item={item} onClickRow={onClickRow} />}
       searchPlaceholder="Search..."
       selectedItems={selectedQuestions}
+      showArchiveOption={showArchiveOption}
       showSearch={showSearch}
       showSort={showSort}
       showTotalCount={showTotalCount}
@@ -143,6 +151,7 @@ const QuestionList = props => {
 QuestionList.propTypes = {
   autoFocusSearch: PropTypes.bool,
   bulkAction: PropTypes.element,
+  listKey: PropTypes.string,
   loading: PropTypes.bool,
   locale: PropTypes.shape(),
   questions: PropTypes.arrayOf(
@@ -175,6 +184,8 @@ QuestionList.propTypes = {
     }),
   ),
   currentPage: PropTypes.number,
+  isArchivedItems: PropTypes.bool,
+  onArchiveChange: PropTypes.func,
   onPageChange: PropTypes.func,
   onSearch: PropTypes.func,
   onSortOptionChange: PropTypes.func,
@@ -187,6 +198,7 @@ QuestionList.propTypes = {
       value: PropTypes.string,
     }),
   ),
+  showArchiveOption: PropTypes.bool,
   showRowCheckboxes: PropTypes.bool,
   showSearch: PropTypes.bool,
   showSort: PropTypes.bool,
@@ -204,9 +216,12 @@ QuestionList.propTypes = {
 QuestionList.defaultProps = {
   autoFocusSearch: false,
   bulkAction: null,
+  listKey: null,
   loading: false,
   locale: {},
   currentPage: 1,
+  isArchivedItems: false,
+  onArchiveChange: null,
   onPageChange: () => {},
   onSearch: () => {},
   onSortOptionChange: () => {},
@@ -215,6 +230,7 @@ QuestionList.defaultProps = {
   sortOptions: [],
   onQuestionSelected: () => {},
   onClickRow: () => {},
+  showArchiveOption: false,
   showRowCheckboxes: false,
   showSearch: true,
   showSort: true,

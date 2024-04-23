@@ -18,6 +18,7 @@ module.exports = [
   './models/complexItemSet',
   './models/notification',
   './models/review',
+  './models/archivedItem',
 
   // local api
   './api', // graphql

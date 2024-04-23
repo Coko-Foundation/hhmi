@@ -46,6 +46,8 @@ const {
   reviewerStatus,
   questionVersionReviews,
   reviewerPool,
+  changeArchiveStatusForItems,
+  isItemArchivedForUser,
 } = require('../../controllers/question.controllers')
 
 const { getPubsub } = pubsubManager
@@ -220,6 +222,10 @@ const heAssignedResolver = async question => {
   return assignedHEs.length > 0
 }
 
+const isArchivedResolver = async (question, _, ctx) => {
+  return isItemArchivedForUser(question.id, ctx.user)
+}
+
 const getAuthorChatParticipantsResolver = async (_, { id }) => {
   return getAuthorChatParticipants(id)
 }
@@ -269,6 +275,14 @@ const reviewerPoolResolver = async questionVersion => {
   return reviewerPool(questionVersion)
 }
 
+const changeArchiveStatusForItemsResolver = async (
+  _,
+  { questionIds, isArchiving, role },
+  ctx,
+) => {
+  return changeArchiveStatusForItems(questionIds, isArchiving, role, ctx.user)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -305,6 +319,7 @@ module.exports = {
     updateReviewerPool: updateReviewerPoolResolver,
     changeAmountOfReviewers: changeAmountOfReviewersResolver,
     changeReviewerAutomationStatus: changeReviewerAutomationStatusResolver,
+    changeArchiveStatusForItems: changeArchiveStatusForItemsResolver,
   },
   Subscription: {
     dashboardUpdate: {
@@ -325,6 +340,7 @@ module.exports = {
     productionChatThreadId: productionChatThreadResolver,
     reviewerChatThreadId: reviewerChatThreadIdResolver,
     heAssigned: heAssignedResolver,
+    isArchived: isArchivedResolver,
   },
   QuestionVersion: {
     question: versionQuestionResolver,

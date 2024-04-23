@@ -270,7 +270,8 @@ describe('Question Workflows', () => {
           //
         })
         it('Assign HE bulk action', () => {
-          cy.get('[data-testid="select-all-checkbox"]')
+          cy.get('[data-testid="editorselect-all-checkbox"]')
+            // .next() //
             .should('be.enabled')
             .check()
             .check()
@@ -299,7 +300,7 @@ describe('Question Workflows', () => {
 
           // [segment]: checking if question with conflict remains checked...
           cy.log('checking if question with conflict remains checked...')
-          cy.get('[class="ant-checkbox-input"]').eq(1).should('be.checked')
+          cy.get('[class="ant-checkbox-input"]').eq(4).should('be.checked')
         })
 
         it('unassign HE', () => {

@@ -34,7 +34,19 @@ const generateCoursesForQuestion = () => {
   return courses
 }
 
-const makeData = (n, role = null) =>
+const getStatusLabelForRole = role => {
+  if (role === 'reviewer') {
+    return getRandomStatusLabel()
+  }
+
+  if (role === 'editor' || role === 'handlingEditor') {
+    return 'Assigned'
+  }
+
+  return null
+}
+
+const makeData = (n, role = null, archived = false) =>
   createData(n, i => ({
     id: uuid(),
     title: lorem.words(6),
@@ -55,10 +67,7 @@ const makeData = (n, role = null) =>
     metadata: generateMetadata(),
     courses: generateCoursesForQuestion(),
     status: role === 'reviewer' ? 'Under Review' : getRandomStatus(),
-    statusLabel:
-      role === 'reviewer'
-        ? getRandomStatusLabel()
-        : (role === 'editor' || role === 'handlingEditor') && 'Assigned',
+    statusLabel: archived ? 'Archived' : getStatusLabelForRole(role),
     href: '#',
   }))
 
@@ -89,6 +98,7 @@ const searchFunction = params => {
       ? 10
       : totalResults - 10 * (params.page - 1),
     params.role,
+    params.archived,
   )
 
   return data
@@ -122,13 +132,38 @@ export const AuthorDashboard = args => {
     }, 500)
   }
 
+  const handleChangeArchiveStatus = async (
+    selectedQuestionIds,
+    isArchiving,
+    role,
+  ) => {
+    console.log('isArchiving', isArchiving)
+    console.log('archive questions', selectedQuestionIds)
+    console.log('archive for role', role)
+
+    return new Promise(resolve => {
+      setTimeout(() => {
+        const filteredQuestions = author.questions.filter(
+          q => !selectedQuestionIds.includes(q.id),
+        )
+
+        setAuthorQuestions({
+          questions: filteredQuestions,
+          totalCount: filteredQuestions.length,
+        })
+        resolve()
+      }, 1000)
+    })
+  }
+
   const handleClickCreate = () => console.log('create')
 
   const tabs = [
     {
-      label: 'Authored Questions',
+      label: 'Authored Items',
       value: 'author',
       questions: author.questions,
+      showBulkActions: true,
       totalCount: author.totalCount,
       loading: author.loading,
     },
@@ -139,6 +174,7 @@ export const AuthorDashboard = args => {
       <Dashboard
         initialTabKey="author"
         loading={loading}
+        onChangeArchiveStatus={handleChangeArchiveStatus}
         onClickCreate={handleClickCreate}
         onSearch={handleSearch}
         tabsContent={tabs}
@@ -199,6 +235,42 @@ export const EditorDashboard = args => {
     }, 500)
   }
 
+  const handleChangeArchiveStatus = async (
+    selectedQuestionIds,
+    isArchiving,
+    role,
+  ) => {
+    console.log('isArchiving', isArchiving)
+    console.log('archive questions', selectedQuestionIds)
+    console.log('archive for role', role)
+
+    return new Promise(resolve => {
+      setTimeout(() => {
+        if (initialTabKey === 'author') {
+          const filteredQuestions = author.questions.filter(
+            q => !selectedQuestionIds.includes(q.id),
+          )
+
+          setAuthorQuestions({
+            questions: filteredQuestions,
+            totalCount: filteredQuestions.length,
+          })
+        } else {
+          const filteredQuestions = editor.questions.filter(
+            q => !selectedQuestionIds.includes(q.id),
+          )
+
+          setEditorQuestions({
+            questions: filteredQuestions,
+            totalCount: filteredQuestions.length,
+          })
+        }
+
+        resolve()
+      }, 1000)
+    })
+  }
+
   const handleBulkAction = () => console.log(selectedQuestions)
   const handleClickCreate = () => console.log('create')
 
@@ -214,14 +286,15 @@ export const EditorDashboard = args => {
 
   const tabs = [
     {
-      label: 'Authored Questions',
+      label: 'Authored Items',
       value: 'author',
       questions: author.questions,
+      showBulkActions: true,
       totalCount: author.totalCount,
       loading: author.loading,
     },
     {
-      label: 'Editor Questions',
+      label: 'Editor Items',
       value: 'editor',
       questions: editor.questions,
       totalCount: editor.totalCount,
@@ -236,6 +309,7 @@ export const EditorDashboard = args => {
         bulkActions={BulkAction}
         initialTabKey={initialTabKey}
         loading={loading}
+        onChangeArchiveStatus={handleChangeArchiveStatus}
         onClickCreate={handleClickCreate}
         onQuestionSelected={setSelectedQuestions}
         onSearch={handleSearch}
@@ -295,15 +369,40 @@ export const ReviewerDashboard = args => {
     }, 500)
   }
 
+  const handleChangeArchiveStatus = async (
+    selectedQuestionIds,
+    isArchiving,
+    role,
+  ) => {
+    console.log('isArchiving', isArchiving)
+    console.log('archive questions', selectedQuestionIds)
+    console.log('archive for role', role)
+
+    return new Promise(resolve => {
+      setTimeout(() => {
+        const filteredQuestions = author.questions.filter(
+          q => !selectedQuestionIds.includes(q.id),
+        )
+
+        setAuthorQuestions({
+          questions: filteredQuestions,
+          totalCount: filteredQuestions.length,
+        })
+        resolve()
+      }, 1000)
+    })
+  }
+
   const handleClickCreate = () => console.log('create')
 
   const tabs = [
     {
-      label: 'Authored Questions',
+      label: 'Authored Items',
       value: 'author',
       questions: author.questions,
       totalCount: author.totalCount,
       loading: author.loading,
+      showBulkActions: true,
     },
     {
       label: 'Reviewer Items',
@@ -319,6 +418,7 @@ export const ReviewerDashboard = args => {
       <Dashboard
         initialTabKey={initialTabKey}
         loading={loading}
+        onChangeArchiveStatus={handleChangeArchiveStatus}
         onClickCreate={handleClickCreate}
         onSearch={handleSearch}
         tabsContent={tabs}

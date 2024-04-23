@@ -452,7 +452,7 @@ class Question extends BaseModel {
 
   // eg. find all questions this user is an author of
   static async findByRole(userId, role, options = {}) {
-    const { filters = {} } = options
+    const { filters = {}, archived = false } = options
 
     const { status, searchQuery } = filters
 
@@ -516,6 +516,13 @@ class Question extends BaseModel {
       this.applyStatusFilter(status, query, role)
     }
 
+    query[archived ? 'whereIn' : 'whereNotIn']('questions.id', builder =>
+      builder
+        .select('archived_items.question_id as id')
+        .from('archived_items')
+        .where({ role, userId }),
+    )
+
     if (searchQuery) {
       query.where(builder => {
         builder
@@ -543,7 +550,7 @@ class Question extends BaseModel {
 
   // eg. find all questions apart from the ones this user is an author of
   static async findByExcludingRole(userId, role, options = {}) {
-    const { submittedOnly, filters = {} } = options
+    const { submittedOnly, archived = false, filters = {} } = options
 
     const { status, searchQuery, heAssigned /* author */ } = filters
 
@@ -615,6 +622,13 @@ class Question extends BaseModel {
             userId,
           })
       })
+
+    query[archived ? 'whereIn' : 'whereNotIn']('questions.id', builder =>
+      builder
+        .select('archived_items.question_id as id')
+        .from('archived_items')
+        .where({ role: 'editor', userId }),
+    )
 
     query.as('q1')
 

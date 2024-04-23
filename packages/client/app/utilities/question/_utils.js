@@ -226,7 +226,8 @@ const getRandomStatus = () =>
     'In Production',
     'Rejected',
     'Published',
-  ][Math.floor(Math.random() * 4)]
+    'Unpublished',
+  ][Math.floor(Math.random() * 6)]
 
 const getRandomStatusLabel = () =>
   ['Invitation', 'In Progress', 'Review Submitted'][
