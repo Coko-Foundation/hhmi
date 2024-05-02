@@ -133,6 +133,7 @@ describe('User API authorization', () => {
       query: SUBMIT_QUESTIONNAIRE,
       variables: {
         input: {
+          id: user.id,
           givenNames: 'givenNames',
           surname: 'surname',
           displayName: 'displayName',
@@ -180,6 +181,7 @@ describe('User API authorization', () => {
       query: SUBMIT_QUESTIONNAIRE,
       variables: {
         input: {
+          id: user.id,
           givenNames: 'givenNames',
           surname: 'surname',
           displayName: 'displayName',
@@ -218,6 +220,7 @@ describe('User API authorization', () => {
       query: UPDATE_PROFILE,
       variables: {
         input: {
+          id: user.id,
           givenNames: 'givenNames',
           surname: 'surname',
           displayName: 'displayName',
@@ -265,6 +268,7 @@ describe('User API authorization', () => {
       query: UPDATE_PROFILE,
       variables: {
         input: {
+          id: user.id,
           givenNames: 'givenNames',
           surname: 'surname',
           displayName: 'displayName',

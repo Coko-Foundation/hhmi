@@ -138,7 +138,10 @@ const UserProfile = props => {
   const handleProfileSubmit = async formData => {
     const mutationData = {
       variables: {
-        input: profileUiToApi(formData),
+        input: {
+          ...profileUiToApi(formData),
+          id: currentUser.id,
+        },
       },
     }
 

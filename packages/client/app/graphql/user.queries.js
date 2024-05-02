@@ -84,24 +84,6 @@ export const UPDATE_PROFILE = gql`
   ${USER_FIELDS}
 `
 
-export const GET_USERS = gql`
-  query GetUsers($queryParams: UsersQueryParams, $options: PageInput) {
-    users(queryParams: $queryParams, options: $options) {
-      result {
-        id
-        displayName
-        defaultIdentity {
-          email
-        }
-        coursesTeaching
-        created
-        isActive
-      }
-      totalCount
-    }
-  }
-`
-
 export const FILTER_USERS = gql`
   query FilterUsers($params: UsersQueryParams, $options: PageInput) {
     filterUsers(params: $params, options: $options) {

@@ -10,6 +10,7 @@ const createUser = async => {
     return User.insert({
       givenNames: name.firstName(),
       surname: name.lastName(),
+      isActive: true,
     })
   } catch (e) {
     throw new Error(e)

@@ -1,4 +1,9 @@
-const { rule, isAuthenticated } = require('@coko/server/authorization')
+const {
+  rule,
+  isAuthenticated,
+  deny,
+  allow,
+} = require('@coko/server/authorization')
 
 const isActive = rule()(async (_, __, ctx) => {
   if (!ctx.user) return false
@@ -30,6 +35,14 @@ const isHandlingEditor = rule()(async (_, __, ctx) => {
   const UserModel = ctx.connectors.User.model
   const user = await UserModel.query().findById(ctx.user)
   return user.isActive && user.hasGlobalRole('handlingEditor')
+})
+
+const isReviewer = rule()(async (_, __, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+  return user.isActive && user.hasGlobalRole('reviewer')
 })
 
 const isAdmin = rule()(async (_, __, ctx) => {
@@ -90,6 +103,7 @@ const canUpdateQuestion = rule()(
         'question_versions.under_review',
         'question_versions.in_production',
         'question_versions.published',
+        'question_versions.unpublished',
       )
       .findOne({
         'questions.id': questionId,
@@ -107,9 +121,10 @@ const canUpdateQuestion = rule()(
     if (question.inProduction) {
       // only editors, handling editors, production team members or admins can edit
       const isUserEditor = await user.hasGlobalRole('editor')
+      const isUserHE = await user.hasGlobalRole('handlingEditor')
       const isUserAdmin = await user.hasGlobalRole('admin')
       const isFromProductionTeam = await user.hasGlobalRole('production')
-      return isUserEditor || isUserAdmin || isFromProductionTeam
+      return isUserEditor || isUserAdmin || isFromProductionTeam || isUserHE
     }
 
     // if just submitted, under review or published
@@ -245,7 +260,7 @@ const canArchiveQuestions = rule()(async (_, { questionIds }, ctx) => {
   return result.every(r => r)
 })
 
-const isAdminOrEditor = rule()(async (_, { questionId }, ctx) => {
+const isAdminOrEditor = rule()(async (_, __, ctx) => {
   if (!ctx.user) return false
 
   const UserModel = ctx.connectors.User.model
@@ -255,32 +270,57 @@ const isAdminOrEditor = rule()(async (_, { questionId }, ctx) => {
   return userIsAdmin || user.hasGlobalRole('editor')
 })
 
+const isAdminOrEditorOrHE = rule()(async (_, __, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+  const userIsAdmin = await user.hasGlobalRole('admin')
+  const userIsEditor = await user.hasGlobalRole('editor')
+  const userIsHE = await user.hasGlobalRole('handlingEditor')
+
+  return userIsAdmin || userIsEditor || userIsHE
+})
+
+const canUpdateProfile = rule()(async (_, { input: { id } }, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+
+  return user.isActive && id === ctx.user
+})
+
+const canDeleteOrDeactivateUsers = rule()(async (_, { ids }, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+  return (
+    user.isActive && user.hasGlobalRole('admin') && ids.indexOf(ctx.user) === -1
+  )
+})
+
 const permissions = {
   Mutation: {
+    '*': deny,
     // Authentication
+    bioInteractiveLogin: allow,
+    login: allow,
+    signUp: allow,
+    verifyEmail: allow,
+    resendVerificationEmail: allow,
+    resendVerificationEmailFromLogin: allow,
     resendVerificationEmailAfterLogin: isAuthenticated,
     // Users
-    submitQuestionnaire: isActive,
-    updateUserProfile: isActive,
-    updatePassword:
-      isActive &&
-      rule()(async (_, { input: { id } }, { user }) => {
-        // only if id from arguments is same as current user's id
-        return id === user
-      }),
-    deleteUsers:
-      isAdmin &&
-      rule()(async (_, args, ctx) => {
-        // allow only if current user is not in the list of ids to delete
-        return args.ids.indexOf(ctx.user) === -1
-      }),
-    deactivateUsers:
-      isAdmin &&
-      rule()(async (_, args, ctx) => {
-        // allow only if current user is not in the list of ids to deactivate
-        return args.ids.indexOf(ctx.user) === -1
-      }),
+    submitQuestionnaire: canUpdateProfile,
+    updateUserProfile: canUpdateProfile,
+    updatePassword: canUpdateProfile,
+    deleteUsers: canDeleteOrDeactivateUsers,
+    deactivateUsers: canDeleteOrDeactivateUsers,
+    deleteUsersRelatedItems: canDeleteOrDeactivateUsers,
     activateUsers: isAdmin,
+    sendPasswordResetEmail: allow,
 
     // Teams
     addTeamMember: isActive,
@@ -299,18 +339,87 @@ const permissions = {
     createNewQuestionVersion: canCreateNewVersion,
     assignAuthorship: canAssignAuthor,
     changeArchiveStatusForItems: canArchiveQuestions,
+    assignHandlingEditors: isAdminOrEditor,
+    unassignHandlingEditor: isAdminOrEditor,
+    updateReviewerPool: canMoveToReview,
+    changeAmountOfReviewers: canMoveToReview,
+    changeReviewerAutomationStatus: canMoveToReview,
+    duplicateQuestion: isActive,
+
+    createChatThread: isActive,
+    cancelEmailNotification: isActive,
+
+    generateWordFile: isActive,
+    generateQtiZip: isActive,
+
+    // lists
+    createList: isActive,
+    editList: isActive,
+    deleteLists: isActive,
+    addToList: isActive,
+    deleteFromList: isActive,
+    exportQuestions: isActive,
+    exportList: isActive,
+    exportQuestionsQTI: isActive,
+    exportListQTI: isActive,
+    reorderList: isActive,
+    // Sets
+    createComplexItemSet: isActive,
+    editComplexItemSet: isActive,
+    deleteComplexItemSet: isActive,
+    // Notifications
+    markAs: isActive,
+    // Reviews
+    inviteReviewer: canMoveToReview, // editors and handling editors
+    revokeInvitation: canMoveToReview, // editors and handling editors
+    acceptOrRejectInvitation: isReviewer,
+    submitReview: isReviewer,
+    // Chats
+    sendMessage: isActive,
+    editMessage: isActive,
+    deleteMessage: isActive,
   },
   Query: {
+    '*': deny,
+    getLoginConfig: allow,
+    getMetadata: isActive,
+    getResources: isActive,
+    // Lists
+    myLists: isActive,
+    list: isActive,
     // Users
+    currentUser: isActive,
     filterUsers: isAdminOrEditor,
     // Teams
     getGlobalTeams: isAdmin,
     getNonTeamMemberUsers: isAdmin,
+    filterGlobalTeamMembers: isActive,
+    searchForReviewers: isAdminOrEditorOrHE,
     // Questions:
+    question: isActive,
     getAuthorDashboard: isActive,
     getManagingEditorDashboard: isEditor,
     getHandlingEditorDashboard: isHandlingEditor,
+    getReviewerDashboard: isReviewer,
     getInProductionDashboard: isProduction,
+    getPublishedQuestions: isActive,
+    getPublishedQuestionsIds: isActive,
+    getQuestionsHandlingEditors: isAdminOrEditor,
+    // chats
+    chatThread: isActive,
+    chatThreads: isActive,
+    getAuthorChatParticipants: isActive,
+    getProductionChatParticipants: isActive,
+    getReviewerChatParticipants: isActive,
+    // Sets
+    complexItemSets: isActive,
+    complexItemSet: isActive,
+    getAvailableSets: isActive,
+    // Files
+    file: isActive,
+    // Notifications
+    getUnreadNotificationsCount: isActive,
+    userNotifications: isActive,
   },
 }
 

@@ -235,6 +235,17 @@ describe('Team API authorization', () => {
       handlingEditor2.id,
     ])
 
+    const reviewerTeam = await Team.insert({
+      role: 'reviewer',
+      global: true,
+      displayName: 'Reviewer',
+    })
+
+    await Team.updateMembershipByTeamId(reviewerTeam.id, [
+      reviewer1.id,
+      reviewer2.id,
+    ])
+
     await updateReviewerPool(questionVersion.id, [reviewer1.id, reviewer2.id])
 
     const testServer = await createGraphQLServer(user.id)

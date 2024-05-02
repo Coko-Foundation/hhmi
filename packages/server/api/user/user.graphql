@@ -36,6 +36,7 @@ extend type User {
 }
 
 input UserProfileInput {
+  id: ID!
   givenNames: String!
   surname: String!
   displayName: String!
