@@ -1,4 +1,4 @@
-FROM node:16.19.0-buster-slim as server-build
+FROM node:18.20.2-bullseye-slim as server-build
 
 RUN apt-get update \
     && apt-get upgrade -y \
