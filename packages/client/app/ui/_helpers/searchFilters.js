@@ -23,29 +23,33 @@ export const createHeAssignedFilters = (handlingEditors = []) => {
   }
 }
 
-export const statusFilters = [
+const filterStatusKey = { label: 'Status', value: 'status' }
+
+const filterStatusValues = [
+  { label: 'Submitted', value: 'submitted', badgeBg: theme.colorText },
   {
-    key: { label: 'Status', value: 'status' },
-    values: [
-      { label: 'Submitted', value: 'submitted', badgeBg: theme.colorText },
-      {
-        label: 'Under Review',
-        value: 'underReview',
-        badgeBg: theme.colorWarning,
-      },
-      {
-        label: 'In Production',
-        value: 'inProduction',
-        badgeBg: theme.colorPrimary,
-      },
-      { label: 'Published', value: 'published', badgeBg: theme.colorSuccess },
-      { label: 'Rejected', value: 'rejected', badgeBg: theme.colorError },
-      {
-        label: 'Unpublished',
-        value: 'unpublished',
-        badgeBg: theme.colorErrorAlt,
-      },
-    ],
+    label: 'Under Review',
+    value: 'underReview',
+    badgeBg: theme.colorWarning,
+  },
+  {
+    label: 'In Production',
+    value: 'inProduction',
+    badgeBg: theme.colorPrimary,
+  },
+  { label: 'Published', value: 'published', badgeBg: theme.colorSuccess },
+  { label: 'Rejected', value: 'rejected', badgeBg: theme.colorError },
+  {
+    label: 'Unpublished',
+    value: 'unpublished',
+    badgeBg: theme.colorErrorAlt,
+  },
+]
+
+export const editorStatusFilters = [
+  {
+    key: filterStatusKey,
+    values: filterStatusValues,
   },
   // {
   //   key: { label: 'Assigned to HE', value: 'heAssigned' },
@@ -70,6 +74,20 @@ export const statusFilters = [
   //     },
   //   ],
   // },
+]
+
+export const authorStatusFilters = [
+  {
+    key: filterStatusKey,
+    values: [
+      {
+        label: 'Not Submitted',
+        value: 'notSubmitted',
+        badgeBg: theme.colorBorder,
+      },
+      ...filterStatusValues,
+    ],
+  },
 ]
 
 export const notificationMessageFilters = [

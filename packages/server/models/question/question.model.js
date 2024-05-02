@@ -393,8 +393,13 @@ class Question extends BaseModel {
       case undefined:
         return query
 
+      case 'notSubmitted':
+        query.where({ submitted: false })
+        return query
+
       case 'submitted':
         query.where({
+          submitted: true,
           under_review: false,
           in_production: false,
           published: false,

@@ -29,8 +29,9 @@ import {
   callOn,
 } from '../utilities'
 import {
-  statusFilters,
+  editorStatusFilters,
   createHeAssignedFilters,
+  authorStatusFilters,
 } from '../ui/_helpers/searchFilters'
 
 const defaultSearchOptions = {
@@ -417,7 +418,7 @@ const DashboardPage = () => {
       totalCount: authorData?.totalCount,
       showBulkActions: true,
       loading: authorLoading,
-      filters: statusFilters,
+      filters: authorStatusFilters,
     },
     isEditor && {
       label: 'Editor Items',
@@ -426,7 +427,7 @@ const DashboardPage = () => {
       totalCount: editorData?.totalCount,
       showBulkActions: true,
       loading: editorLoading,
-      filters: [...statusFilters, heFilterOptions],
+      filters: [...editorStatusFilters, heFilterOptions],
     },
     isHandlingEditor && {
       label: 'Handling Editor Items',
@@ -435,7 +436,7 @@ const DashboardPage = () => {
       totalCount: handlingEditorData?.totalCount,
       showBulkActions: true,
       loading: heLoading,
-      filters: statusFilters,
+      filters: editorStatusFilters,
     },
     isProduction && {
       label: 'Production Items',
