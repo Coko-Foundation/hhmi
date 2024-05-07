@@ -83,6 +83,7 @@ export const Author = args => {
   const [submitted, setSubmitted] = useState(false)
   const [editorContent, setEditorContent] = useState(initialContent)
   const [lastUpdated, setLastUpdated] = useState(new Date().toISOString())
+  const [selectedQuestionType, setSelectedQuestionType] = useState(null)
 
   const [authors, setAuthors] = useState([
     {
@@ -145,6 +146,7 @@ export const Author = args => {
   const handleMetadataAutosave = data => {
     // save content
     console.log(data)
+    setSelectedQuestionType(data.questionType)
     return new Promise((resolve, _reject) => {
       setTimeout(() => {
         setLastUpdated(new Date().toISOString())
@@ -165,10 +167,18 @@ export const Author = args => {
     )
   }
 
+  const handleSubmitReport = report =>
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        console.log('reporter submitted report:', report)
+        error ? reject() : resolve()
+      }, 1000)
+    })
+
   return (
     <Wrapper>
       <Checkbox onChange={e => setError(e.target.checked)}>
-        Will have error on submit
+        Will have error on submit/report
       </Checkbox>
       <Question
         authors={authors}
@@ -187,8 +197,11 @@ export const Author = args => {
         onMetadataAutoSave={handleMetadataAutosave}
         onQuestionSubmit={onSubmit}
         onSearchAuthor={handleSearch}
+        onSubmitReport={handleSubmitReport}
         questionAgreedTc={false}
         resources={resources}
+        selectedQuestionType={selectedQuestionType}
+        showPreviewButton
         submitting={false}
         updated={lastUpdated}
         {...args}
@@ -507,12 +520,20 @@ export const EditorView = () => {
       }, 1000)
     })
 
+  const handleSubmitReport = report =>
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        console.log('reporter submitted report:', report)
+        error ? reject() : resolve()
+      }, 1000)
+    })
+
   console.log('reviewerPool', reviewerPool)
 
   return (
     <Wrapper>
       <Checkbox onChange={e => setError(e.target.checked)}>
-        Will have error on move to review/publish/reject
+        Will have error on move to review/publish/reject/report
       </Checkbox>
       <Button onClick={mockAuthorMessage}>Recieve author message</Button>
 
@@ -556,10 +577,12 @@ export const EditorView = () => {
         onRevokeReviewerInvitation={handleClickRevokeInvitation}
         onSearchHE={handleSearchHE}
         onSendMessage={handleSendMessage}
+        onSubmitReport={handleSubmitReport}
         questionAgreedTc={false}
         resources={resources}
         reviewerPool={reviewerPool}
         searchHELoading={searchHELoading}
+        selectedQuestionType={initialMetadataValues.questionType}
         showAssignHEButton
         showAssignReviewers
         submitting={false}
@@ -580,6 +603,14 @@ export const TestMode = () => {
     }, 1000)
   }
 
+  const handleSubmitReport = report =>
+    new Promise(resolve => {
+      setTimeout(() => {
+        console.log('reporter submitted report:', report)
+        resolve()
+      }, 1000)
+    })
+
   return (
     <Wrapper>
       <Question
@@ -596,8 +627,10 @@ export const TestMode = () => {
         onClickBackButton={() => console.log('go back to dashboard')}
         onClickExportToWord={handleClickExportToWord}
         onQuestionSubmit={data => console.log(data)}
+        onSubmitReport={handleSubmitReport}
         readOnly
         resources={resources}
+        selectedQuestionType={initialMetadataValues.questionType}
         submitting={false}
         wordFileLoading={wordFileLoading}
       />
@@ -648,6 +681,14 @@ export const ReviewerView = () => {
     setMessages([...messages, msg])
   }
 
+  const handleSubmitReport = report =>
+    new Promise(resolve => {
+      setTimeout(() => {
+        console.log('reporter submitted report:', report)
+        resolve()
+      }, 1000)
+    })
+
   return (
     <Wrapper>
       <Question
@@ -655,7 +696,6 @@ export const ReviewerView = () => {
         editorContent={editorInitialContent}
         // facultyView
         initialMetadataValues={initialMetadataValues}
-        isPublished
         isRejected={false}
         isSubmitted
         isUnderReview
@@ -666,6 +706,7 @@ export const ReviewerView = () => {
         onReviewerAcceptInvite={handleAccept}
         onReviewerRejectInvite={handleReject}
         onSendReviewerChatMessage={handleSendMessage}
+        onSubmitReport={handleSubmitReport}
         onSubmitReview={handleSubmit}
         readOnly
         resources={resources}
@@ -673,6 +714,7 @@ export const ReviewerView = () => {
         reviewerView
         reviewInviteStatus={inviteStatus}
         reviewSubmitted={reviewSubmitted}
+        selectedQuestionType={initialMetadataValues.questionType}
         showReviewerChatTab={inviteStatus === REVIEWER_STATUSES.accepted}
         submitting={false}
       />

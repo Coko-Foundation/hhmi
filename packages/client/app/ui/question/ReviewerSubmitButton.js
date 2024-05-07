@@ -1,19 +1,56 @@
+/* stylelint-disable declaration-no-important */
+/* stylelint-disable string-quotes */
 import React, { useState } from 'react'
-
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { th } from '@coko/client'
 
 import { Button, Form, Link, TextArea, Modal, Upload } from '../common'
 
-const StyledUpload = styled(Upload)`
-  /* stylelint-disable-next-line string-quotes */
-  [role='button'] {
-    display: inline-flex;
-    height: 16px;
+const StyledForm = styled(Form)`
+  .ant-form-item-required::before {
+    content: '' !important;
+  }
+`
 
-    &:focus {
+const StyledFormItem = styled(Form.Item)`
+  bottom: 40px;
+  margin-bottom: -30px;
+  position: relative;
+`
+
+const StyledUpload = styled(Upload)`
+  align-items: end;
+  color: ${th('colorPrimary')};
+  display: flex;
+  flex-direction: column;
+  inset-block-end: 15px;
+  padding-inline: 10px;
+  position: relative;
+
+  .ant-upload {
+    /* inset-block-end: 15px; */
+    position: relative;
+
+    [role='button']:focus {
       outline: 4px solid #71ada9;
       outline-offset: 2px;
+    }
+  }
+
+  .ant-upload-list.ant-upload-list-text {
+    direction: rtl;
+    display: grid;
+    position: relative;
+    top: 5px;
+
+    button[title='Remove file'] {
+      opacity: 1 !important;
+    }
+
+    > * {
+      direction: ltr;
+      max-inline-size: 200px;
     }
   }
 `
@@ -100,7 +137,7 @@ const ReviewerSubmitButton = props => {
         open={showModal}
         title={<ModalHeader>Submit Review</ModalHeader>}
       >
-        <Form
+        <StyledForm
           form={reviewForm}
           layout="vertical"
           onFinish={handleSubmitReview}
@@ -124,7 +161,7 @@ const ReviewerSubmitButton = props => {
             rules={[
               {
                 required: true,
-                message: 'Please provide a review of the item',
+                message: 'Please provide a review',
               },
               {
                 validator(_, value) {
@@ -144,7 +181,7 @@ const ReviewerSubmitButton = props => {
               placeholder="Enter review here..."
             />
           </Form.Item>
-          <Form.Item name="attachments">
+          <StyledFormItem name="attachments">
             <StyledUpload
               accept="image/*,.pdf,.docx,.odt"
               aria-label="Upload attachments"
@@ -153,8 +190,8 @@ const ReviewerSubmitButton = props => {
               onChange={handleAttachmentChange}
               onRemove={handleRemoveAttachment}
             />
-          </Form.Item>
-        </Form>
+          </StyledFormItem>
+        </StyledForm>
       </Modal>
     </ModalContext.Provider>
   )

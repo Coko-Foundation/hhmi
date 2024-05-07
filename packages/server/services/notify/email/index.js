@@ -455,6 +455,43 @@ const sendReviewCopyToReviewer = async ({ attachments, review, to }) => {
   }
 }
 
+const submitReport = async ({
+  reporterDisplayName,
+  reporterEmail,
+  reportContent,
+  attachments,
+  questionId,
+  to,
+}) => {
+  try {
+    const link = `${clientUrl}/question/${questionId}`
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: Reported issue with published item'
+
+    const content = `
+		<p>${reporterDisplayName} with email address <a href="mailto:${reporterEmail}">${reporterEmail}</a> has reported an issue with an item.</p>
+		<pre>${reportContent}</pre>
+		<p>
+		Click on <a href="${link}">this link</a> to view the item.
+		If you cannot see the link, copy and paste the following link into your browser.
+		<br/>
+		${link}
+	</p>
+		`
+
+    const text = `${reporterDisplayName} (${reporterEmail}) has reported an issue with a published item.
+		\nCopy and paste the following link into your browser to view the item.
+		\n${link}
+		`
+
+    return { attachments, content, subject, text, to }
+  } catch (e) {
+    logger.error(`Failed to create email for submit report: ${e}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   sendEmail: send,
   handlers: {
@@ -470,5 +507,6 @@ module.exports = {
     'hhmi.moveQuestionVersionToReview': moveQuestionVersionToReview,
     'hhmi.submitReview': submitReview,
     'hhmi.sendReviewCopyToReviewer': sendReviewCopyToReviewer,
+    'hhmi.submitReport': submitReport,
   },
 }

@@ -48,6 +48,9 @@ const StyledMentionsInput = styled(MentionsInput)`
 `
 
 const StyledUpload = styled(Upload)`
+  color: ${th('colorPrimary')};
+  display: flex;
+  flex-direction: row-reverse;
   position: absolute;
   right: 70px;
   top: 10px;
@@ -61,6 +64,25 @@ const StyledUpload = styled(Upload)`
       outline: 4px solid #71ada9;
       outline-offset: 2px;
     }
+  }
+
+  .ant-upload-list {
+    background-color: ${th('colorBackground')};
+    border: none;
+    bottom: calc(100% + 20px);
+    box-shadow: ${th('boxShadow')};
+    inset-inline-end: ${grid(-3)};
+    max-inline-size: 250px;
+    position: absolute;
+
+    &:has(.ant-upload-list-item) {
+      border: 1px solid ${th('colorBorder')};
+    }
+  }
+
+  &&& .ant-upload-list-item {
+    margin-block: ${grid(1)};
+    padding: ${grid(2)};
   }
 `
 

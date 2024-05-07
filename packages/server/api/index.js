@@ -12,6 +12,7 @@ const complexItemSet = require('./complexItemSet')
 const chat = require('./chat')
 const notification = require('./notification')
 const review = require('./review')
+const report = require('./report')
 
 module.exports = {
   typeDefs: [
@@ -27,6 +28,7 @@ module.exports = {
     chat.typeDefs,
     notification.typeDefs,
     review.typeDefs,
+    report.typeDefs,
   ].join(' '),
   resolvers: merge(
     {},
@@ -42,5 +44,6 @@ module.exports = {
     chat.resolvers,
     notification.resolvers,
     review.resolvers,
+    report.resolvers,
   ),
 }

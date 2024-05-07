@@ -4,6 +4,7 @@ module.exports = {
     LIST_CONTROLLERS: 'list controllers',
     SETS_CONTROLLERS: 'Context-dependent item set controllers',
     NOTIFICATION_CONTROLLERS: 'Notification controllers',
+    REPORT_CONTROLLERS: 'Report controllers',
   },
   actions: {
     MESSAGE_CREATED: 'MESSAGE_CREATED',

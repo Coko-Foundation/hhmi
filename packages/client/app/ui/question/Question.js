@@ -396,6 +396,7 @@ const Question = props => {
     onClickExportToWord,
     onFetchMoreMessages,
     onClickExportToQti,
+    onSubmitReport,
     initialMetadataValues,
     isArchived,
     isUserLoggedIn,
@@ -1599,12 +1600,14 @@ const Question = props => {
                           leadingContent={leadingContent}
                           onContentChange={handleQuestionContentChange}
                           onImageUpload={onImageUpload}
-                          published={preview || isPublished || reviewerView}
+                          onSubmitReport={onSubmitReport}
+                          published={isPublished}
                           readOnly={
                             readOnly || preview || !selectedQuestionType //
                           }
                           refreshEditorContent={refreshEditorContent}
                           selectedQuestionType={selectedQuestionType}
+                          showDialog={showDialog}
                           withFeedback={
                             !(preview || reviewerView) ||
                             (showMetadata && facultyView)
@@ -1780,6 +1783,7 @@ Question.propTypes = {
   onSendAuthorChatMessage: PropTypes.func,
   onSendProductionChatMessage: PropTypes.func,
   onSendReviewerChatMessage: PropTypes.func,
+  onSubmitReport: PropTypes.func,
   onSubmitReview: PropTypes.func,
   onClickAssignHE: PropTypes.func,
   onClickExportToQti: PropTypes.func,
@@ -2141,6 +2145,7 @@ Question.defaultProps = {
   onSendAuthorChatMessage: () => {},
   onSendProductionChatMessage: () => {},
   onSendReviewerChatMessage: () => {},
+  onSubmitReport: () => {},
   onClickAssignHE: () => {},
   editorContent: {},
   leadingContent: null,
