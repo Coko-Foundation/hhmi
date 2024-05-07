@@ -249,7 +249,17 @@ const StyledSpin = styled(Spin)`
   place-content: center;
 `
 
-const Loader = props => <StyledSpin {...props} renderBackground={false} />
+const Loader = props => {
+  const { pathname } = useLocation()
+
+  return (
+    <StyledSpin
+      {...props}
+      // render background to avoid rendering biointeractive login component twice
+      renderBackground={pathname === '/biointeractive-oauth'}
+    />
+  )
+}
 
 const SiteHeader = () => {
   const headerLinks = {
@@ -471,7 +481,6 @@ const routes = (
                   exact
                   path="/ensure-verified-login"
                 />
-                <Route component={DeactivatedUser} path="/deactivated-user" />
                 <Route
                   component={BioInteractiveOauth}
                   exact
