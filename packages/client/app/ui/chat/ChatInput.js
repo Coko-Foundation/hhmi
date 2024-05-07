@@ -48,6 +48,9 @@ const StyledMentionsInput = styled(MentionsInput)`
 `
 
 const StyledUpload = styled(Upload)`
+  color: ${th('colorPrimary')};
+  display: flex;
+  flex-direction: row-reverse;
   position: absolute;
   right: 70px;
   top: 10px;
@@ -61,6 +64,25 @@ const StyledUpload = styled(Upload)`
       outline: 4px solid #71ada9;
       outline-offset: 2px;
     }
+  }
+
+  .ant-upload-list {
+    background-color: ${th('colorBackground')};
+    border: none;
+    bottom: calc(100% + 20px);
+    box-shadow: ${th('boxShadow')};
+    inset-inline-end: ${grid(-3)};
+    max-inline-size: 250px;
+    position: absolute;
+
+    &:has(.ant-upload-list-item) {
+      border: 1px solid ${th('colorBorder')};
+    }
+  }
+
+  &&& .ant-upload-list-item {
+    margin-block: ${grid(1)};
+    padding: ${grid(2)};
   }
 `
 
@@ -146,15 +168,23 @@ const ChatInput = props => {
       >
         <Mention
           appendSpaceOnAdd
-          data={participants.filter(p => p.id !== currentUser.id)}
+          data={[...new Set(participants.filter(p => p.id !== currentUser.id))]}
           displayTransform={(_, display) => `@${display}`}
           renderSuggestion={entry => {
             if (entry.role === 'author') {
               return <span>{`${entry.display} (Author)`}</span>
             }
 
+            if (entry.role === 'editor') {
+              return <span>{`${entry.display} (ME)`}</span>
+            }
+
             if (entry.role === 'handlingEditor') {
               return <span>{`${entry.display} (HE)`}</span>
+            }
+
+            if (entry.role === 'production') {
+              return <span>{`${entry.display} (Production)`}</span>
             }
 
             if (entry.role === 'reviewer') {

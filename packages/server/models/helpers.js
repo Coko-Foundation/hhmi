@@ -17,6 +17,7 @@ const applyListQueryOptions = async (query, options = {}) => {
     customOrder,
     customOrderFieldType = 'uuid',
     customOrderBy = 'id',
+    includeFullListOfIds = false,
   } = options
 
   if (orderBy === 'custom' && customOrder) {
@@ -34,6 +35,15 @@ const applyListQueryOptions = async (query, options = {}) => {
     if (ascending === true) ascendingValue = 'asc'
     if (ascending === false) ascendingValue = 'desc'
     if (orderBy) q = q.orderBy(orderBy, ascendingValue)
+  }
+
+  let fullListOfIds = null
+
+  if (includeFullListOfIds) {
+    const idQuery = cloneDeep(q)
+
+    fullListOfIds = await idQuery
+    fullListOfIds = fullListOfIds.map(f => f.id)
   }
 
   if (
@@ -73,6 +83,7 @@ const applyListQueryOptions = async (query, options = {}) => {
   return {
     result: page !== undefined ? results : result,
     totalCount: total !== undefined ? total : result.length,
+    ...(includeFullListOfIds ? { fullListOfIds } : {}),
   }
 }
 

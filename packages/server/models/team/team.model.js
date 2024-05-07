@@ -22,6 +22,7 @@ class Team extends TeamModel {
             .leftJoin('teams', 'team_members.team_id', 'teams.id')
             .where({ teamId })
         })
+        .where('users.profile_submitted', true)
         .where(builder => {
           return builder
             .where('users.givenNames', 'ilike', `%${query}%`)

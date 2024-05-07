@@ -325,14 +325,41 @@ describe('Team Controller', () => {
 
   it('getNonTeamMemberUsers returns a non-empty array when getting a simple searchValue', async () => {
     const { team } = await createGlobalEditorTeamWithUsers()
+    let userPool
+    const userPromises = []
 
-    await createUser()
-    await createUser()
-    await createUser()
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < 20; ++i) {
+      userPromises.push(createUser())
+    }
 
-    const result = await getNonTeamMemberUsers(team.id, 'e')
+    await Promise.all(userPromises).then(users => {
+      userPool = users
+    })
 
+    let result = await getNonTeamMemberUsers(team.id, 'e')
+    expect(result.length).toBe(0)
+
+    await Promise.all(
+      userPool.map(u =>
+        User.patchAndFetchById(u.id, { profileSubmitted: true }),
+      ),
+    )
+
+    result = await getNonTeamMemberUsers(team.id, 'e')
     expect(result.length).toBeGreaterThan(0)
+
+    await User.insert({
+      givenNames: 'HiddenUser',
+      surname: 'DoNotShow',
+      isActive: true,
+    })
+
+    result = await getNonTeamMemberUsers(team.id, 'Hidden')
+    expect(result).toHaveLength(0)
+
+    result = await getNonTeamMemberUsers(team.id, 'NotShow')
+    expect(result).toHaveLength(0)
   })
 
   it('addExternalReviewer creates a non-global reviewer team if one does not exist', async () => {

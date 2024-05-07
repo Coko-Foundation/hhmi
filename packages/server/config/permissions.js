@@ -345,6 +345,8 @@ const permissions = {
     changeAmountOfReviewers: canMoveToReview,
     changeReviewerAutomationStatus: canMoveToReview,
     duplicateQuestion: isActive,
+    reportIssue: isActive,
+    uploadFiles: isActive,
 
     createChatThread: isActive,
     cancelEmailNotification: isActive,

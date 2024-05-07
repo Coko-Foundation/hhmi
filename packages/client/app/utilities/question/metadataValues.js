@@ -12934,7 +12934,7 @@ const metadata = {
                 },
                 {
                   label:
-                    'Given the atomic number and electronegativity for a few elements, determine a potential compound that could be formed. Label the types of bonds that would form between each element in the compound, and whether partial or full charges would be present.',
+                    "Given a list of elements' atomic numbers and electronegativity, draw the structure of a compound that could be formed, including the bond type and charges.",
                   value: 'ibm-u1-t1-lo5',
                 },
                 {
@@ -12965,13 +12965,18 @@ const metadata = {
                 },
                 {
                   label:
-                    'Analyze how the structure of biological molecules (carbohydrates, lipids, nucleic acids, proteins) impacts their function. Predict or evaluate how a change in the subunit may lead to changes in the function of the macromolecule.',
+                    'Analyze how the structure of biological molecules (carbohydrates, lipids, nucleic acids, proteins) impacts their function.',
                   value: 'ibm-u1-t2-lo4',
                 },
                 {
                   label:
                     'Describe the functions of each of the major biological macromolecules',
                   value: 'ibm-u1-t2-lo5',
+                },
+                {
+                  label:
+                    'Evaluate how a change in the subunit may lead to changes in the function of the macromolecule.',
+                  value: 'ibm-u1-t2-lo6',
                 },
               ],
             },
@@ -13002,7 +13007,7 @@ const metadata = {
               learningObjectives: [
                 {
                   label:
-                    'Recognize the four components of an amino acid and explain how the R-group will determine its unique characteristics',
+                    "Explain how the R-group determines an amino acid's unique characteristics.",
                   value: 'ibm-u1-t4-lo1',
                 },
                 {
@@ -13058,8 +13063,7 @@ const metadata = {
               value: 'ibm-u1-t6',
               learningObjectives: [
                 {
-                  label:
-                    'Explain the concept of PCR and compare it to the process of DNA replication.',
+                  label: 'Compare and contrast PCR and DNA replication.',
                   value: 'ibm-u1-t6-lo1',
                 },
                 {
@@ -13069,7 +13073,7 @@ const metadata = {
                 },
                 {
                   label:
-                    'Given data, predict the relative size of protein or DNA samples and interpret the presence or absence of a known protein or region of DNA (such as a PCR product).',
+                    'Given a scenario, predict the length of a DNA fragment that will be formed by conducting a particular molecular technique.',
                   value: 'ibm-u1-t6-lo3',
                 },
                 {
@@ -13095,6 +13099,11 @@ const metadata = {
                   label:
                     'Describe molecular techniques used for the analysis or manipulation of DNA.',
                   value: 'ibm-u1-t6-lo8',
+                },
+                {
+                  label:
+                    'Given data, analyze the presence or absence, or relative size, of a protein or DNA fragment.',
+                  value: 'ibm-u1-t6-lo9',
                 },
               ],
             },
@@ -13416,7 +13425,7 @@ const metadata = {
                 },
                 {
                   label:
-                    'Given solute concentrations on either side of a membrane, characterize the tonicity of the solutions and determine the direction of net flow of the solute and/or water.',
+                    'Determine the direction of net flow of a solute and/or water based on the tonicity of solutions on either side of a membrane.',
                   value: 'ibm-u2-t9-lo4',
                 },
                 {
@@ -13522,7 +13531,7 @@ const metadata = {
                 },
                 {
                   label:
-                    'Given a specific type of DNA mutation or damage, predict which DNA repair pathway would respond, and predict the consequences of successful and unsuccessful repair.',
+                    'Given a specific type of DNA mutation or damage, predict which DNA repair pathway would respond and indicators of a successful repair.',
                   value: 'ibm-u3-t2-lo7',
                 },
               ],
@@ -14056,7 +14065,7 @@ const metadata = {
               ],
             },
             {
-              label: 'Cimate Change',
+              label: 'Climate Change',
               value: 'ibm-u5-t6',
               learningObjectives: [
                 {
@@ -14418,7 +14427,7 @@ const metadata = {
                 },
                 {
                   label:
-                    'Predict how a specified change in a sensor, signal transduction pathway, or hormonal signal will affect how a plant responds to the environment.',
+                    'Predict how a specified change in a sensor, signal transduction pathway, or hormonal signal will affect how an organism responds to the environment.',
                   value: 'ibm-u7-t2-lo6',
                 },
                 {

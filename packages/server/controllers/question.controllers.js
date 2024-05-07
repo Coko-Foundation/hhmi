@@ -213,7 +213,13 @@ const getHandlingEditorDashboard = async (userId, options = {}) => {
 
 const getAuthorChatParticipants = async questionId => {
   const participants = await User.query()
-    .select('users.displayName', 'users.id', 'teams.role')
+    .select(
+      'users.displayName',
+      'users.givenNames',
+      'users.surname',
+      'users.id',
+      'teams.role',
+    )
     .leftJoin('team_members', 'users.id', 'team_members.user_id')
     .leftJoin('teams', 'teams.id', 'team_members.team_id')
     .whereIn('teams.role', [EDITOR_TEAM.role])
@@ -233,7 +239,7 @@ const getAuthorChatParticipants = async questionId => {
   const author = participants.find(p => p.role === 'author')
 
   return participants.filter(
-    p => p.id !== author.id || (p.id === author.id && p.role === 'author'),
+    p => p.id !== author?.id || (p.id === author?.id && p.role === 'author'),
   )
 }
 
@@ -255,7 +261,13 @@ const getInProductionDashboard = async (userId, options = {}) => {
 
 const getProductionChatParticipants = async questionId => {
   const participants = await User.query()
-    .select('users.displayName', 'users.id', 'teams.role')
+    .select(
+      'users.displayName',
+      'users.givenNames',
+      'users.surname',
+      'users.id',
+      'teams.role',
+    )
     .leftJoin('team_members', 'users.id', 'team_members.user_id')
     .leftJoin('teams', 'teams.id', 'team_members.team_id')
     .whereIn('teams.role', [PRODUCTION_TEAM.role, EDITOR_TEAM.role])
@@ -274,14 +286,20 @@ const getProductionChatParticipants = async questionId => {
 
   const author = participants.find(p => p.role === 'author')
 
-  return participants.filter(p => p.id !== author.id)
+  return participants.filter(p => p.id !== author?.id)
 }
 
 const getReviewerChatParticipants = async questionId => {
   const questionVersion = await QuestionVersion.findOne({ questionId })
 
   const query = User.query()
-    .select('users.displayName', 'users.id', 'teams.role')
+    .select(
+      'users.displayName',
+      'users.givenNames',
+      'users.surname',
+      'users.id',
+      'teams.role',
+    )
     .leftJoin('team_members', 'users.id', 'team_members.user_id')
     .leftJoin('teams', 'teams.id', 'team_members.team_id')
     .where('teams.role', EDITOR_TEAM.role)
@@ -314,7 +332,7 @@ const getReviewerChatParticipants = async questionId => {
 
   const author = participants.find(p => p.role === 'author')
 
-  return participants.filter(p => p.id !== author.id)
+  return participants.filter(p => p.id !== author?.id)
 }
 
 /**

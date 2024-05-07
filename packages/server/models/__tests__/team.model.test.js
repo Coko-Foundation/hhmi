@@ -39,8 +39,18 @@ describe('Team Model', () => {
 
     await Team.addMember(team.id, userOne.id)
 
-    const resultOne = await Team.searchForNonTeamMemberUsers(team.id, '')
+    let resultOne = await Team.searchForNonTeamMemberUsers(team.id, '')
     expect(resultOne).toEqual([])
+
+    resultOne = await Team.searchForNonTeamMemberUsers(team.id, 'bark')
+    expect(resultOne).toEqual([])
+
+    resultOne = await Team.searchForNonTeamMemberUsers(team.id, 'alic')
+    expect(resultOne).toEqual([])
+
+    await User.patchAndFetchById(userTwo.id, { profileSubmitted: true })
+    await User.patchAndFetchById(userThree.id, { profileSubmitted: true })
+    await User.patchAndFetchById(userFour.id, { profileSubmitted: true })
 
     const resultTwo = await Team.searchForNonTeamMemberUsers(team.id, 'bark')
     expect(resultTwo).toHaveLength(1)

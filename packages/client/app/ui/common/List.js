@@ -277,6 +277,7 @@ const List = props => {
     CustomComponents,
     subHeaderItems,
     filters,
+    fullListOfIds,
     infiniteScroll,
     ...rest
   } = props
@@ -561,7 +562,7 @@ const List = props => {
           {itemSelection && (
             <SelectAllCheckbox
               CustomRender={{ CheckBox: customComponents.CheckBox }}
-              dataSource={dataSource}
+              dataSource={fullListOfIds ?? dataSource}
               items={selectedItems}
               listKey={listKey}
               setItems={setSelectedItems}
@@ -626,6 +627,9 @@ const List = props => {
 List.propTypes = {
   autoFocusSearch: PropTypes.bool,
   footerContent: PropTypes.element,
+  fullListOfIds: PropTypes.arrayOf(
+    PropTypes.shape({ id: PropTypes.string.isRequired }),
+  ),
   isArchivedItems: PropTypes.bool,
   itemSelection: PropTypes.shape({
     onChange: PropTypes.func.isRequired,
@@ -670,6 +674,7 @@ List.defaultProps = {
   autoFocusSearch: false,
   CustomComponents: defaultComponents,
   footerContent: null,
+  fullListOfIds: null,
   isArchivedItems: false,
   itemSelection: null,
   listKey: null,

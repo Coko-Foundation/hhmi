@@ -2,6 +2,7 @@ import React, { useEffect, useState, createContext, useRef } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
+import ReportIssueButton from './ReportIssueButton'
 
 import Button from '../common/Button'
 import Wax from '../wax/Wax'
@@ -28,7 +29,8 @@ const SubmitTestBar = styled.div`
   background-color: ${th('colorBackground')};
   border-top: 1px solid ${th('colorBorder')};
   display: flex;
-  justify-content: end;
+  justify-content: ${({ withFeedback }) =>
+    withFeedback ? 'start' : 'space-between'};
   margin: auto;
   /* max-width: 100ch; */
   padding: ${grid(2)} ${grid(2)};
@@ -69,6 +71,8 @@ const QuestionEditor = props => {
     complexItemSetId,
     selectedQuestionType,
     refreshEditorContent,
+    showDialog,
+    onSubmitReport,
   } = props
 
   const [showFeedBack, setShowFeedBack] = useState(false)
@@ -164,9 +168,13 @@ const QuestionEditor = props => {
         </ComplexItemSetContext.Provider>
       </EditorScrollContainer>
 
-      {!withFeedback && (
-        <SubmitTestBar>
-          {showFeedBack ? (
+      <SubmitTestBar withFeedback={withFeedback}>
+        <ReportIssueButton
+          onSubmitReport={onSubmitReport}
+          showDialog={showDialog}
+        />
+        {!withFeedback &&
+          (showFeedBack ? (
             <Button onClick={resetTest} type="primary">
               Reset
             </Button>
@@ -174,9 +182,8 @@ const QuestionEditor = props => {
             <Button onClick={submitTest} type="primary">
               Submit
             </Button>
-          )}
-        </SubmitTestBar>
-      )}
+          ))}
+      </SubmitTestBar>
 
       {!selectedQuestionType && (
         <MissingQuestionTypeAlert data-testid="missing-question-text">
@@ -210,6 +217,8 @@ QuestionEditor.propTypes = {
   complexItemSetId: PropTypes.string,
   selectedQuestionType: PropTypes.shape(),
   refreshEditorContent: PropTypes.bool,
+  onSubmitReport: PropTypes.func,
+  showDialog: PropTypes.func,
 }
 
 QuestionEditor.defaultProps = {
@@ -224,6 +233,8 @@ QuestionEditor.defaultProps = {
   complexItemSetId: null,
   selectedQuestionType: null,
   refreshEditorContent: false,
+  onSubmitReport: () => {},
+  showDialog: () => {},
 }
 
 export default QuestionEditor

@@ -2,35 +2,35 @@
 
 exports[`MultipleQuestion matches snapshot 1`] = `
 <div
-  className="sc-lmepTk dvVtPN"
+  className="sc-czddym bLkBuT"
 >
   <div
-    className="sc-grAEJb hUHRGI"
+    className="sc-huZuEJ enElXs"
   >
     <span
-      className="sc-czddym"
+      className="sc-dCBTtU"
     >
       Answer 
       3
     </span>
   </div>
   <div
-    className="sc-huZuEJ bFQCzK"
+    className="sc-jXtRIH jaacjC"
   >
     <div
-      className="sc-dCBTtU kNPtec"
+      className="sc-geWqxS iLLDnj"
     >
       <div
-        className="sc-geWqxS jVTKIS"
+        className="sc-bqrtrY jcbVsT"
       >
         <div
-          className="sc-CxMgy eamUCL"
+          className="sc-hELUyY gxLmbv"
         />
         <span
-          className="sc-dHTlsg sc-dPghFd ebjrdH"
+          className="sc-fIOiVY sc-grAEJb fDBpZb"
         >
           <span
-            className="sc-jFyCeV hKhCWQ"
+            className="sc-cRQaBJ gGYars"
           >
             Correct?
           </span>
@@ -63,15 +63,15 @@ exports[`MultipleQuestion matches snapshot 1`] = `
         </span>
       </div>
       <div
-        className="sc-fiOUCN ldGQnk"
+        className="sc-OROEG cFfAGg"
       >
         <span
-          className="sc-bqrtrY jytbQj"
+          className="sc-jnppJn bJTvzB"
         >
           Feedback
         </span>
         <input
-          className="sc-OROEG jLUjqp"
+          className="sc-LZSCk cxVqbo"
           onChange={[Function]}
           placeholder="Insert feedback"
           type="text"
@@ -80,10 +80,10 @@ exports[`MultipleQuestion matches snapshot 1`] = `
       </div>
     </div>
     <div
-      className="sc-jXtRIH ZnATN"
+      className="sc-fiOUCN hGvzRA"
     >
       <button
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-ALVnD eEbGUF"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-hQlIKd cDlNPX"
         data-testid="add-option"
         disabled={false}
         onClick={[Function]}
@@ -123,7 +123,7 @@ exports[`MultipleQuestion matches snapshot 1`] = `
         </span>
       </button>
       <button
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-ALVnD eEbGUF"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-hQlIKd cDlNPX"
         data-testid="remove-option"
         disabled={false}
         onClick={[Function]}

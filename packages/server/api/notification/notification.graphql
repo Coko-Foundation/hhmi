@@ -12,6 +12,7 @@ type Notification {
 type NotificationResponse {
   result: [Notification!]!
   totalCount: Int
+  fullListOfIds: [ID!]
 }
 
 type UnreadNotificationsResponse {
@@ -25,6 +26,7 @@ input NotificationFilterOptions {
   read: Boolean
   orderBy: String
   ascending: Boolean
+  includeFullListOfIds: Boolean
 }
 
 extend type Query {

@@ -660,14 +660,14 @@ const createHeaderLinksObject = ({
         onClick,
       },
       {
-        link: links.dashboard,
-        text: 'Dashboard',
+        link: links.sets,
+        text: 'Sets',
         renderIf: loggedin,
         onClick,
       },
       {
-        link: links.sets,
-        text: 'My Sets',
+        link: links.dashboard,
+        text: 'Dashboard',
         renderIf: loggedin,
         onClick,
       },

@@ -19,6 +19,7 @@ module.exports = [
   './models/notification',
   './models/review',
   './models/archivedItem',
+  './models/report',
 
   // local api
   './api', // graphql

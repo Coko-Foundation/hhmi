@@ -201,15 +201,7 @@ const IntroToBioCourseMetadata = props => {
 
       <Form.Item dependencies={[unitField, topicField]} noStyle>
         {() => (
-          <Form.Item
-            label="Learning Objective"
-            name={learningObjectiveName}
-            rules={[
-              isRequired
-                ? { required: true, message: 'Learning objective is required' }
-                : {},
-            ]}
-          >
+          <Form.Item label="Learning Objective" name={learningObjectiveName}>
             <Select
               allowClear={filterMode}
               data-testid="learning-objective-select"

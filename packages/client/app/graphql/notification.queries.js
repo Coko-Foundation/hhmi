@@ -24,6 +24,7 @@ export const GET_USER_NOTIFICATIONS = gql`
         }
       }
       totalCount
+      fullListOfIds
     }
   }
 `

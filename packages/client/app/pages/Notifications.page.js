@@ -69,6 +69,7 @@ const NotificationPage = () => {
       read: boolOrNull(readState), // 'cause onSearch returns an empty sstring instead of null
       orderBy: 'created',
       ascending: false,
+      includeFullListOfIds: true,
     },
   })
 
@@ -84,6 +85,7 @@ const NotificationPage = () => {
         read: readState,
         orderBy: 'created',
         ascending: false,
+        includeFullListOfIds: true,
       },
     },
     onCompleted: ({ userNotifications: { result } }) =>
@@ -164,6 +166,9 @@ const NotificationPage = () => {
       <VisuallyHiddenElement as="h1">Notifications page</VisuallyHiddenElement>
 
       <NotificationsUI
+        fullListOfIds={userMentions?.userNotifications?.fullListOfIds?.map(
+          f => ({ id: f }),
+        )}
         handleScrollNext={handleScrollNext}
         infiniteScrollMessage={
           isBoolean(readState)

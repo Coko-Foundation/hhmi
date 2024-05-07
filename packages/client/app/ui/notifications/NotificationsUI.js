@@ -33,6 +33,7 @@ const EndMessage = styled.div`
 export const NotificationsUI = ({
   tabKey,
   setTabKey,
+  fullListOfIds,
   handleScrollNext,
   mentionsError,
   markMentionsAs,
@@ -50,6 +51,7 @@ export const NotificationsUI = ({
         <p>There was a problem trying to fetch your messages</p>
       ) : (
         <MentionsList
+          fullListOfIds={fullListOfIds}
           infiniteScroll={{
             enabled: true,
             props: {

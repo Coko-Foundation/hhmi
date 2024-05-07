@@ -290,6 +290,7 @@ export const MentionsList = ({
   // withPreview,
   totalCount,
   mentions,
+  fullListOfIds,
   infiniteScroll,
   locale,
   loading,
@@ -344,6 +345,7 @@ export const MentionsList = ({
           </MarkAsRead>
         </span>
       }
+      fullListOfIds={fullListOfIds}
       id="mentions-list"
       infiniteScroll={infiniteScroll}
       itemSelection={{
@@ -381,6 +383,9 @@ MentionsList.propTypes = {
   totalCount: PropTypes.number,
   loading: PropTypes.bool,
   // withPreview: PropTypes.bool,
+  fullListOfIds: PropTypes.arrayOf(
+    PropTypes.shape({ id: PropTypes.string.isRequired }),
+  ),
   infiniteScroll: PropTypes.shape({}),
   locale: PropTypes.shape({}),
   markMentionsAs: PropTypes.func,
@@ -392,6 +397,7 @@ MentionsList.defaultProps = {
   markMentionsAs: () => {},
   userMentions: {},
   // withPreview: false,
+  fullListOfIds: null,
   loading: false,
   infiniteScroll: {},
   locale: {},

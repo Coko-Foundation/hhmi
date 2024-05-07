@@ -2,7 +2,7 @@
 
 exports[`AuthenticationForm matches snapshot 1`] = `
 <div
-  className="sc-kAfTll"
+  className="sc-lmepTk"
 >
   <div
     className="sc-fmSAUk jvdyCW"
@@ -40,7 +40,7 @@ exports[`AuthenticationForm matches snapshot 1`] = `
         />
       </div>
       <button
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB leliJo sc-dPghFd irAMiD"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB leliJo sc-grAEJb jojbsL"
         disabled={false}
         onClick={[Function]}
         status={null}
@@ -54,10 +54,10 @@ exports[`AuthenticationForm matches snapshot 1`] = `
     </form>
   </div>
   <div
-    className="sc-lmepTk cmPQGB"
+    className="sc-czddym kVHkvz"
   >
     <div
-      className="sc-czddym htnocE"
+      className="sc-dCBTtU hsyoIt"
     >
       <a
         className="sc-hyBYnz eDtHdv"

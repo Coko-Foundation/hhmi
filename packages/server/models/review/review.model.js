@@ -1,6 +1,7 @@
 const {
   BaseModel,
   modelTypes: { id, object, stringNullable },
+  logger,
 } = require('@coko/server')
 
 const QuestionVersion = require('../questionVersion/questionVersion.model')
@@ -76,7 +77,7 @@ class Review extends BaseModel {
         { trx },
       )
     } catch (e) {
-      console.error(e)
+      logger.error(e)
       throw new Error(e)
     }
   }
