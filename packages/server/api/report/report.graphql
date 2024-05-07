@@ -1,0 +1,3 @@
+extend type Mutation {
+  reportIssue(questionId: ID!, content: String!, attachments: [Upload!]): ID!
+}

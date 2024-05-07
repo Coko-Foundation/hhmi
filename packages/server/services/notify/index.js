@@ -83,6 +83,9 @@ class CokoNotifier {
     'hhmi.sendReviewCopyToReviewer': {
       notifyBy: ['email'],
     },
+    'hhmi.submitReport': {
+      notifyBy: ['email'],
+    },
     // ...
   }
 

@@ -31,4 +31,8 @@ export default createGlobalStyle`
       background: ${th('colorBackground')};
     }
   }
+
+  .ant-tooltip .ant-tooltip-arrow::before {
+    clip-path: polygon(0 100%, 50% 0%, 100% 100%) !important;
+  }
 `

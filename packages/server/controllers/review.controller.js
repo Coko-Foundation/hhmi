@@ -22,7 +22,6 @@ const submitReview = async (
   content,
   userId,
   attachments = [],
-  options = {},
 ) => {
   const CONTROLLER_MESSAGE = `${baseMessage} submitReview:`
 
@@ -139,6 +138,7 @@ const submitReview = async (
       return review.id
     })
   } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
     throw new Error(e)
   }
 }

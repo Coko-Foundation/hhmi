@@ -53,6 +53,7 @@ import {
   SEARCH_FOR_REVIEWERS,
   CHANGE_AMOUNT_OF_REVIEWERS,
   CHANGE_REVIEWER_AUTOMATION_STATUS,
+  SUBMIT_REPORT,
 } from '../graphql'
 import {
   useMetadata,
@@ -682,6 +683,8 @@ const QuestionPage = props => {
       refetchQueries: refetchQuestionVariables,
     },
   )
+
+  const [submitReport] = useMutation(SUBMIT_REPORT)
   // #endregion hooks
 
   // #region user roles
@@ -1201,6 +1204,21 @@ const QuestionPage = props => {
     return submitReview(mutationData)
   }
 
+  const handleSubmitReport = async ({ attachments, reportContent }) => {
+    const fileObjects =
+      attachments?.map(attachment => attachment.originFileObj) || []
+
+    const mutationData = {
+      variables: {
+        questionId: id,
+        attachments: fileObjects,
+        content: reportContent,
+      },
+    }
+
+    return submitReport(mutationData)
+  }
+
   const handleInviteReviewer = async reviewerId => {
     const mutationData = {
       variables: {
@@ -1446,6 +1464,7 @@ const QuestionPage = props => {
         onSendAuthorChatMessage={onSendAuthorChatMessage}
         onSendProductionChatMessage={onSendProductionChatMessage}
         onSendReviewerChatMessage={onSendReviewerChatMessage}
+        onSubmitReport={handleSubmitReport}
         onSubmitReview={handleSubmitReview}
         onUnassignHandlingEditor={handleUnassignHE}
         onUnpublish={handleUnpublish}

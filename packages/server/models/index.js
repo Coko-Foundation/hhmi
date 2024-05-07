@@ -11,6 +11,7 @@ const ComplexItemSet = require('./complexItemSet/complexItemSet.model')
 const Review = require('./review/review.model')
 const Notification = require('./notification/notification.model')
 const ArchivedItem = require('./archivedItem/archivedItem.model')
+const Report = require('./report/report.model')
 
 module.exports = {
   Question,
@@ -25,4 +26,5 @@ module.exports = {
   Review,
   Notification,
   ArchivedItem,
+  Report,
 }
