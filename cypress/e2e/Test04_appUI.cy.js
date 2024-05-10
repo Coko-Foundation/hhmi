@@ -205,17 +205,14 @@ describe('Search filter', () => {
     cy.viewport(laptop.preset)
   })
 
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('filter by author', () => {
+  it('filter by author', () => {
     cy.login(editorRole)
     cy.contains(antTabs, 'Editor Items').click()
     cy.get('[data-testid="search-filtered"]')
       .last()
       .click()
       .then($search => {
-        cy.get('ul[id="filterList"] li[id="Author"]').last().click()
         cy.get($search).last().type(`${user2.username}`)
-        cy.get('[id="%"]').click({ force: true })
         cy.get($search).type('{enter}')
       })
 
@@ -279,7 +276,9 @@ describe('Search filter', () => {
       'submitted',
       handlingEditor1.username,
     )
+    cy.contains(antTabs, 'Editor Items').click()
     cy.reload()
+    cy.contains(antTabs, 'Authored Items').click()
     cy.contains(antTabs, 'Editor Items').click()
     cy.get('[data-testid="search-filtered"]')
       .last()
