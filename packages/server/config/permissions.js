@@ -312,6 +312,7 @@ const permissions = {
     resendVerificationEmail: allow,
     resendVerificationEmailFromLogin: allow,
     resendVerificationEmailAfterLogin: isAuthenticated,
+    resetPassword: allow,
     // Users
     submitQuestionnaire: canUpdateProfile,
     updateUserProfile: canUpdateProfile,
