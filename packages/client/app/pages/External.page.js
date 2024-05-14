@@ -42,13 +42,22 @@ const External = props => {
       .forEach(node => {
         const href = node.getAttribute('href')
 
-        // find all anchor tags that link to pages inside the website
-        if (href && !href.toLowerCase().startsWith('http') /* || contains  */) {
-          // make them post message to the parent window and handle it from our app
-          // eslint-disable-next-line no-param-reassign
-          node.onclick = e => {
-            e.preventDefault()
-            postMessage(href)
+        if (href) {
+          // find all anchor tags that link to pages inside the website
+          if (!href.toLowerCase().startsWith('http')) {
+            // make them post message to the parent window and handle it from our app
+            // eslint-disable-next-line no-param-reassign
+            node.onclick = e => {
+              e.preventDefault()
+              postMessage(href)
+            }
+          } else {
+            // if it is an external link, navigate to that url
+            // eslint-disable-next-line no-param-reassign
+            node.onclick = e => {
+              e.preventDefault()
+              window.location.href = href
+            }
           }
         }
       })
