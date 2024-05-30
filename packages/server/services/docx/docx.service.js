@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 const fs = require('fs')
 const imageSize = require('image-size')
 const cloneDeep = require('lodash/cloneDeep')
@@ -60,6 +61,7 @@ class WaxToDocxConverter {
       orderedlist: this.orderedListHandler,
       paragraph: this.paragraphHandler,
       table: this.tableHandler,
+      table_caption: this.tableCaptionHandler,
       table_body: this.tableBodyHandler,
       table_cell: this.tableCellHandler,
       table_header: this.tableCellHandler,
@@ -320,6 +322,21 @@ class WaxToDocxConverter {
 
   // #region tables
   tableHandler = table => {
+    const tableCaption = table.content.find(t => t.type === 'table_caption')
+
+    if (tableCaption) {
+      return [
+        ...this.contentParser([tableCaption]),
+        new Table({
+          rows: this.contentParser([table.content[1]]),
+          width: {
+            size: 100,
+            type: WidthType.PERCENTAGE,
+          },
+        }),
+      ]
+    }
+
     return new Table({
       rows: this.contentParser(table.content),
       width: {
@@ -327,6 +344,10 @@ class WaxToDocxConverter {
         type: WidthType.PERCENTAGE,
       },
     })
+  }
+
+  tableCaptionHandler = tableCaption => {
+    return this.contentParser(tableCaption.content)
   }
 
   tableBodyHandler = tableBody => {
@@ -468,25 +489,31 @@ class WaxToDocxConverter {
   contentParser = (content, options = {}) => {
     let children = []
 
-    if (content) {
-      if (!Array.isArray(content))
-        throw new Error('Content needs to be an array')
-      else
-        content.forEach(item => {
-          const { type } = item
-          const handler = this.#findHandler(type)
+    try {
+      if (content) {
+        if (!Array.isArray(content))
+          throw new Error('Content needs to be an array')
+        else
+          content.forEach(item => {
+            const { type } = item
+            const handler = this.#findHandler(type)
 
-          if (!handler) throw new Error(`Unknown content type "${type}"`)
+            if (!handler) throw new Error(`Unknown content type "${type}"`)
 
-          const childrenToAdd = handler(item, options)
-          // handlers could return a single item or an array of items
-          children = children.concat(childrenToAdd)
-        })
-    } else if (options.renderEmpty) {
-      return this.paragraphHandler({}, options)
+            const childrenToAdd = handler(item, options)
+            // handlers could return a single item or an array of items
+            children = children.concat(childrenToAdd)
+          })
+      } else if (options.renderEmpty) {
+        return this.paragraphHandler({}, options)
+      }
+
+      return children
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.log(e)
+      throw new Error(e)
     }
-
-    return children
   }
 
   buildDocx = () => {
