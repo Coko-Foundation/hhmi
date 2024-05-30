@@ -700,7 +700,7 @@ const QuestionPage = props => {
   const isInProduction = version?.inProduction
   const isPublished = version?.published
 
-  const isArchived = question?.isArchived
+  const isArchived = question?.isArchived && !testMode
 
   const reviewerInviteStatus = isReviewer ? version?.reviewerStatus : null
 
