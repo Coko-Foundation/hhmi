@@ -464,49 +464,37 @@ class Question extends BaseModel {
     const { status, searchQuery } = filters
 
     const query = Question.query(options.trx)
-
-    if (status || searchQuery) {
-      query.leftJoin(
+      .leftJoin(
         'question_versions',
         'questions.id',
         'question_versions.question_id',
       )
-
-      // add author to selection
-      query
-        .leftJoin('teams as t1', builder => {
-          builder
-            .on('t1.object_id', '=', 'questions.id')
-            .andOn('t1.role', '=', db.raw('?', ['author']))
-        })
-        .leftJoin('team_members as tm1', 'tm1.team_id', 't1.id')
-        .leftJoin('users as u1', 'u1.id', 'tm1.user_id')
-    }
+      .leftJoin('teams as t1', builder => {
+        builder
+          .on('t1.object_id', '=', 'questions.id')
+          .andOn('t1.role', '=', db.raw('?', ['author']))
+      })
+      .leftJoin('team_members as tm1', 'tm1.team_id', 't1.id')
+      .leftJoin('users as u1', 'u1.id', 'tm1.user_id')
 
     query
-      .leftJoin(
-        'teams',
-        role === REVIEWER_TEAM.role ? 'question_versions.id' : 'questions.id',
-        'teams.object_id',
-      )
-      .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+      .distinctOn('questions.id')
+      .orderBy([
+        'questions.id',
+        { column: 'question_versions.created', order: 'desc' },
+      ])
 
-    const selectFields = ['questions.*', 'teams.role', 'team_members.user_id']
+    const selectFields = ['questions.*', 't1.role', 'tm1.user_id']
 
     if (status || searchQuery) {
-      query
-        .distinctOn('questions.id')
-        .orderBy([
-          'questions.id',
-          { column: 'question_versions.created', order: 'desc' },
-        ])
-
       selectFields.push(
         'question_versions.submitted',
         'question_versions.under_review',
         'question_versions.in_production',
         'question_versions.published',
         'question_versions.unpublished',
+        'question_versions.content_text',
+        'keywords',
         'u1.displayName',
         'u1.givenNames',
         'u1.surname',
@@ -516,12 +504,7 @@ class Question extends BaseModel {
     query.select(selectFields)
 
     // user filter
-    query.where({ 'teams.role': role, 'team_members.user_id': userId })
-
-    // status filter
-    if (status) {
-      this.applyStatusFilter(status, query, role)
-    }
+    query.where({ 't1.role': role, 'tm1.user_id': userId })
 
     query[archived ? 'whereIn' : 'whereNotIn']('questions.id', builder =>
       builder
@@ -530,30 +513,29 @@ class Question extends BaseModel {
         .where({ role, userId }),
     )
 
-    if (searchQuery) {
-      query.where(builder => {
-        builder
-          .orWhere('content_text', 'ilike', `%${searchQuery}%`)
-          .orWhere('u1.givenNames', 'ilike', `%${searchQuery}%`)
-          .orWhere('u1.surname', 'ilike', `%${searchQuery}%`)
-          .orWhere('u1.displayName', 'ilike', `%${searchQuery}%`)
-          .orWhere('questions.deleted_author_name', 'ilike', `%${searchQuery}%`)
+    query.as('q1')
 
+    // get unique question versions per question
+    const parentQuery = Question.query(options.trx).select('*').from(query)
+
+    // status filter
+    if (status) {
+      this.applyStatusFilter(status, parentQuery, role)
+    }
+
+    if (searchQuery) {
+      parentQuery.where(builder => {
+        builder.orWhere('content_text', 'ilike', `%${searchQuery}%`)
         builder.orWhereRaw('??::text ilike ?::text', [
           'keywords',
           `%${JSON.stringify(searchQuery)}%`,
         ])
 
-        // const queryStrings = searchQuery.split(' ')
-        // queryStrings.forEach(queryString => {
-        //   builder.orWhereJsonSupersetOf('keywords', [queryString])
-        // })
-
         return builder
       })
     }
 
-    return applyListQueryOptions(query, options)
+    return applyListQueryOptions(parentQuery, options)
   }
 
   // eg. find all questions apart from the ones this user is an author of
@@ -691,6 +673,189 @@ class Question extends BaseModel {
     }
 
     return applyListQueryOptions(parentQuery, options)
+  }
+
+  static async getHandlingEditorDashboard(userId, role, options = {}) {
+    const { filters = {}, archived = false } = options
+
+    const { status, searchQuery } = filters
+
+    const query = Question.query(options.trx)
+
+    if (status || searchQuery) {
+      query.leftJoin(
+        'question_versions',
+        'questions.id',
+        'question_versions.question_id',
+      )
+
+      // add author to selection
+      query
+        .leftJoin('teams as t1', builder => {
+          builder
+            .on('t1.object_id', '=', 'questions.id')
+            .andOn('t1.role', '=', db.raw('?', ['author']))
+        })
+        .leftJoin('team_members as tm1', 'tm1.team_id', 't1.id')
+        .leftJoin('users as u1', 'u1.id', 'tm1.user_id')
+    }
+
+    query
+      .leftJoin('teams', 'questions.id', 'teams.object_id')
+      .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+
+    const selectFields = ['questions.*', 'teams.role', 'team_members.user_id']
+
+    if (status || searchQuery) {
+      query
+        .distinctOn('questions.id')
+        .orderBy([
+          'questions.id',
+          { column: 'question_versions.created', order: 'desc' },
+        ])
+
+      selectFields.push(
+        'question_versions.submitted',
+        'question_versions.under_review',
+        'question_versions.in_production',
+        'question_versions.published',
+        'question_versions.unpublished',
+        'u1.displayName',
+        'u1.givenNames',
+        'u1.surname',
+      )
+    }
+
+    query.select(selectFields)
+
+    // user filter
+    query.where({ 'teams.role': role, 'team_members.user_id': userId })
+
+    // status filter
+    if (status) {
+      this.applyStatusFilter(status, query, role)
+    }
+
+    query[archived ? 'whereIn' : 'whereNotIn']('questions.id', builder =>
+      builder
+        .select('archived_items.question_id as id')
+        .from('archived_items')
+        .where({ role, userId }),
+    )
+
+    if (searchQuery) {
+      query.where(builder => {
+        builder
+          .orWhere('content_text', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.givenNames', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.surname', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.displayName', 'ilike', `%${searchQuery}%`)
+          .orWhere('questions.deleted_author_name', 'ilike', `%${searchQuery}%`)
+
+        builder.orWhereRaw('??::text ilike ?::text', [
+          'keywords',
+          `%${JSON.stringify(searchQuery)}%`,
+        ])
+
+        // const queryStrings = searchQuery.split(' ')
+        // queryStrings.forEach(queryString => {
+        //   builder.orWhereJsonSupersetOf('keywords', [queryString])
+        // })
+
+        return builder
+      })
+    }
+
+    return applyListQueryOptions(query, options)
+  }
+
+  static async getReviewerDashboard(userId, role, options = {}) {
+    const { filters = {}, archived = false } = options
+
+    const { status, searchQuery } = filters
+
+    const query = Question.query(options.trx)
+
+    if (status || searchQuery) {
+      query.leftJoin(
+        'question_versions',
+        'questions.id',
+        'question_versions.question_id',
+      )
+
+      // add author to selection
+      query
+        .leftJoin('teams as t1', builder => {
+          builder
+            .on('t1.object_id', '=', 'questions.id')
+            .andOn('t1.role', '=', db.raw('?', ['author']))
+        })
+        .leftJoin('team_members as tm1', 'tm1.team_id', 't1.id')
+        .leftJoin('users as u1', 'u1.id', 'tm1.user_id')
+    }
+
+    query
+      .leftJoin('teams', 'question_versions.id', 'teams.object_id')
+      .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+
+    const selectFields = ['questions.*', 'teams.role', 'team_members.user_id']
+
+    if (status || searchQuery) {
+      query
+        .distinctOn('questions.id')
+        .orderBy([
+          'questions.id',
+          { column: 'question_versions.created', order: 'desc' },
+        ])
+
+      selectFields.push(
+        'question_versions.submitted',
+        'question_versions.under_review',
+        'question_versions.in_production',
+        'question_versions.published',
+        'question_versions.unpublished',
+        'u1.displayName',
+        'u1.givenNames',
+        'u1.surname',
+      )
+    }
+
+    query.select(selectFields)
+
+    // user filter
+    query.where({ 'teams.role': role, 'team_members.user_id': userId })
+
+    // status filter
+    if (status) {
+      this.applyStatusFilter(status, query, role)
+    }
+
+    query[archived ? 'whereIn' : 'whereNotIn']('questions.id', builder =>
+      builder
+        .select('archived_items.question_id as id')
+        .from('archived_items')
+        .where({ role, userId }),
+    )
+
+    if (searchQuery) {
+      query.where(builder => {
+        builder
+          .orWhere('content_text', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.givenNames', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.surname', 'ilike', `%${searchQuery}%`)
+          .orWhere('u1.displayName', 'ilike', `%${searchQuery}%`)
+          .orWhere('questions.deleted_author_name', 'ilike', `%${searchQuery}%`)
+
+        builder.orWhereRaw('??::text ilike ?::text', [
+          'keywords',
+          `%${JSON.stringify(searchQuery)}%`,
+        ])
+
+        return builder
+      })
+    }
+
+    return applyListQueryOptions(query, options)
   }
 
   static async findAny(options = {}) {

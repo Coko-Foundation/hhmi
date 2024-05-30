@@ -170,7 +170,7 @@ const getReviewerDashboard = async (userId, options = {}) => {
 
   const { searchQuery } = filters
 
-  return Question.findByRole(userId, 'reviewer', {
+  return Question.getReviewerDashboard(userId, 'reviewer', {
     orderBy,
     ascending,
     page,
@@ -200,7 +200,7 @@ const getManagingEditorDashboard = async (userId, options = {}) => {
 const getHandlingEditorDashboard = async (userId, options = {}) => {
   const { orderBy, ascending, page, pageSize, filters, archived, trx } = options
 
-  return Question.findByRole(userId, 'handlingEditor', {
+  return Question.getHandlingEditorDashboard(userId, 'handlingEditor', {
     orderBy,
     ascending,
     page,

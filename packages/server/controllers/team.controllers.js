@@ -393,7 +393,10 @@ const searchForReviewers = async (searchTerm, questionVersionId) => {
             .whereIn('users.id', userIds)
             .pluck('id'),
         )
-        .whereNot({ id: author.id })
+
+      if (author?.id) {
+        searchQuery.whereNot({ id: author.id })
+      }
 
       const results = await searchQuery
 
