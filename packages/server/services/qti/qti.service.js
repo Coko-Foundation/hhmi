@@ -101,20 +101,45 @@ class WaxToQTIConverter {
   }
 
   #imageHandler = content => {
-    const { id, alt } = content.attrs
+    const {
+      id,
+      alt,
+      'aria-description': ariaDescription,
+      'aria-describedby': ariaDescribedBy,
+    } = content.attrs
 
     const fileLocationIndex = this.#imageData[id].indexOf('/resources')
 
-    return {
-      img: [
-        {
-          _attr: {
-            alt,
-            src: `..${this.#imageData[id].substr(fileLocationIndex)}`,
+    return [
+      {
+        img: [
+          {
+            _attr: {
+              alt,
+              src: `..${this.#imageData[id].substr(fileLocationIndex)}`,
+              ...(ariaDescribedBy
+                ? { 'aria-describedby': ariaDescribedBy }
+                : {}),
+            },
           },
-        },
+        ],
+      },
+      ...[
+        ariaDescription
+          ? {
+              div: [
+                {
+                  _attr: {
+                    id: ariaDescribedBy,
+                    style: 'display:none',
+                  },
+                },
+                { p: ariaDescription },
+              ],
+            }
+          : {},
       ],
-    }
+    ]
   }
 
   #listItemHandler = content => {

@@ -7,7 +7,9 @@ module.exports = {
     '^.+\\.css$': '<rootDir>/test/mockFileExtensions.js',
   },
   setupFiles: ['./test/defaultSetup'],
-  transformIgnorePatterns: ['node_modules/(?!@pubsweet/ui|y-protocols|lib0)'],
+  transformIgnorePatterns: [
+    'node_modules/(?!@pubsweet/ui|y-protocols|lib0|wax-prosemirror-core|wax-prosemirror-services|wax-questions-service|wax-table-service)',
+  ],
   transform: {
     '\\.[jt]sx?$': '<rootDir>/test/transformer.js',
     '^.+\\.(css|svg)$': '<rootDir>/test/mockFileExtensions.js',

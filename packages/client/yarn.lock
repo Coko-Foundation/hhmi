@@ -15589,10 +15589,10 @@ watchpack@^2.2.0, watchpack@^2.4.0:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
 
-wax-prosemirror-core@^0.9.29:
-  version "0.9.29"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-core/-/wax-prosemirror-core-0.9.29.tgz#327fc16ca60a6ca1eaaf8610dbf9428e85841b94"
-  integrity sha512-oJIr0wIrklFlEnDsnLxgaNO+gnhs6z4Lg+s+weF8QuKzkSjC01CWAQXn90zclcrH0bdBFuqTMRJfXYLXODJdzQ==
+wax-prosemirror-core@^0.9.30:
+  version "0.9.30"
+  resolved "https://registry.yarnpkg.com/wax-prosemirror-core/-/wax-prosemirror-core-0.9.30.tgz#0ff3a35d8a437172ccd7b9e59205d1eef5857c8b"
+  integrity sha512-XZbPAR46bcsBC7j1+Sp7GTZyoXMN8NaasaEg1d9Rw8KGNun7cF9v874BUMk1jr/iRSpad+6REmMmytSNoOJuvg==
   dependencies:
     "@pubsweet/ui-toolkit" "^2.3.1"
     deepmerge "^4.2.2"
@@ -15616,10 +15616,10 @@ wax-prosemirror-core@^0.9.29:
     reflect-metadata "^0.1.13"
     uuid "^7.0.3"
 
-wax-prosemirror-services@^0.9.29:
-  version "0.9.29"
-  resolved "https://registry.yarnpkg.com/wax-prosemirror-services/-/wax-prosemirror-services-0.9.29.tgz#4695323cc01ce3fbaac830a1037c7f7f645dd819"
-  integrity sha512-UlqQb6Cgr0jtM+04XCLFU5e4AE/KIgDG7RZyImhtx95LJXSRrlgpJhkpgnhaRduVD41whAjxxvsAA5jwAYk31g==
+wax-prosemirror-services@^0.9.30:
+  version "0.9.30"
+  resolved "https://registry.yarnpkg.com/wax-prosemirror-services/-/wax-prosemirror-services-0.9.30.tgz#600a91fcaec12f35c4c6e93094d4484e34c5a5c3"
+  integrity sha512-te6mG9UxjDPsffXmVh55UnJTjRjP5JykcUrhQ6ayGGJENkPLeIK6pmgiDJB57XdyPHIvh+tJZw1A1CiPJVXbsA==
   dependencies:
     "@pubsweet/ui-toolkit" "^2.3.1"
     highlight.js "^10.1.1"
@@ -15643,17 +15643,17 @@ wax-prosemirror-services@^0.9.29:
     react-i18next "^13.3.1"
     use-deep-compare-effect "^1.3.1"
     uuid "^7.0.3"
-    wax-prosemirror-core "^0.9.29"
+    wax-prosemirror-core "^0.9.30"
     y-prosemirror "1.2.0"
     y-protocols "1.0.5"
     y-webrtc "10.2.0"
     y-websocket "1.4.5"
     yjs "13.5.38"
 
-wax-questions-service@^0.9.29:
-  version "0.9.29"
-  resolved "https://registry.yarnpkg.com/wax-questions-service/-/wax-questions-service-0.9.29.tgz#571650ea3914b5ffc70ac9de83ebe155d4f751af"
-  integrity sha512-lRGMhRC5kZGGdndqzdST2E6VpNOqYPOdPCUfRof7pYtjIhok4yfllQU+TW4Jy8mKsShzHyHJuy5Ey2DkDImEQw==
+wax-questions-service@^0.9.30:
+  version "0.9.30"
+  resolved "https://registry.yarnpkg.com/wax-questions-service/-/wax-questions-service-0.9.30.tgz#0c6ae04106a6cc543fe08ed1b2e34d8f2d714f8f"
+  integrity sha512-Bd8KWMPTzx7pGYvs/2qHfW5+eArEtdR4GFI/LOj9Dsc/smvlxMr4X1VM80jqbOXkBzf2lg3decY5WFlTUDpr1w==
   dependencies:
     "@pubsweet/ui-toolkit" "^2.3.1"
     inversify "^5.0.1"
@@ -15673,12 +15673,12 @@ wax-questions-service@^0.9.29:
     react-i18next "^13.3.1"
     use-dynamic-refs "^1.0.0"
     uuid "^7.0.3"
-    wax-prosemirror-core "^0.9.29"
+    wax-prosemirror-core "^0.9.30"
 
-wax-table-service@^0.9.29:
-  version "0.9.29"
-  resolved "https://registry.yarnpkg.com/wax-table-service/-/wax-table-service-0.9.29.tgz#6f39895722d407b83e396458b88390dca35dfcf0"
-  integrity sha512-HKgQ00c2KdksB0MtYak84ktI0fN+PoCDD+teG477z+MmuVXBsoB3nVBztMrJsEbnh7NJ9+W8ekm2Mcb8f/Adxw==
+wax-table-service@^0.9.30:
+  version "0.9.30"
+  resolved "https://registry.yarnpkg.com/wax-table-service/-/wax-table-service-0.9.30.tgz#cb9c868fbb13cabe4982b790ef6bb8f8a1cbd131"
+  integrity sha512-yvq+M7EJSwDEiTGv2s9W3j/YaXqAm5Tk7ZobUyAsTb3SBqOhl9XYAMKC4KYIJwpluL3K3njFJt5MPllNWpYekQ==
   dependencies:
     "@pubsweet/ui-toolkit" "^2.3.1"
     inversify "^5.0.1"
@@ -15689,7 +15689,7 @@ wax-table-service@^0.9.29:
     prosemirror-view "1.30.2"
     react-i18next "^13.3.1"
     uuid "^7.0.3"
-    wax-prosemirror-core "^0.9.29"
+    wax-prosemirror-core "^0.9.30"
 
 wbuf@^1.1.0, wbuf@^1.7.3:
   version "1.7.3"

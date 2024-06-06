@@ -1445,7 +1445,7 @@ const QuestionPage = props => {
         onClickNextButton={() => handleGetQuestionButton('NEXT')}
         onClickPreviousButton={() => handleGetQuestionButton('PREV')}
         onCreateNewVersion={handleCreateNewVersion}
-        onEditorContentAutoSave={handleEditorContentAutoSave}
+        onEditorContentAutoSave={!testMode ? handleEditorContentAutoSave : null}
         onImageUpload={handleImageUpload}
         onInviteReviewer={handleInviteReviewer}
         onMetadataAutoSave={handleMetadataAutoSave}
