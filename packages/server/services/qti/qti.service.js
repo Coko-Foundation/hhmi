@@ -1307,7 +1307,10 @@ class WaxToQTIConverter {
                                   respident: numericalSolutionKeys[0],
                                 },
                               },
-                              exactAnswer - (exactAnswer * marginError) / 100,
+                              Number(exactAnswer) -
+                                Number(
+                                  (Math.abs(exactAnswer) * marginError) / 100,
+                                ),
                             ],
                           },
                           {
@@ -1318,7 +1321,9 @@ class WaxToQTIConverter {
                                 },
                               },
                               Number(exactAnswer) +
-                                Number((exactAnswer * marginError) / 100),
+                                Number(
+                                  (Math.abs(exactAnswer) * marginError) / 100,
+                                ),
                             ],
                           },
                         ],
