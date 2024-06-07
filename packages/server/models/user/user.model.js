@@ -78,7 +78,9 @@ class User extends UserModel {
               .where(builder =>
                 builder
                   .where('defaultIdentity.email', 'ilike', `%${search}%`)
-                  .orWhere('displayName', 'ilike', `%${search}%`),
+                  .orWhere('displayName', 'ilike', `%${search}%`)
+                  .orWhere('givenNames', 'ilike', `%${search}%`)
+                  .orWhere('surname', 'ilike', `%${search}%`),
               )
           }
 
