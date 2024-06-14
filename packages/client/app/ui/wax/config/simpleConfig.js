@@ -35,7 +35,7 @@ export default {
   SchemaService: DefaultSchema,
   PmPlugins: [tableEditing()],
 
-  ImageService: { showAlt: true },
+  ImageService: { showAlt: true, showLongDesc: true },
 
   services: [
     new ListsService(),
