@@ -128,76 +128,67 @@ const ComplexItemSet = props => {
 
   const tabItems = [
     // show Content tab with list of questions if complex item set exists
-    ...(id
-      ? [
-          {
-            label: 'Content',
-            key: 'content',
-            children: (
-              <Wrapper>
-                <InfoWrapper>
-                  <SetTitle data-testid="set-title">{title}</SetTitle>
-                  <Wax
-                    autoFocus={false}
-                    config={simpleConfig}
-                    content={leadingContent}
-                    id="complexItemSetEditor"
-                    layout={StyledWaxLayout}
-                    readOnly
-                    // onContentChange={onContentChange}
-                  />
-                </InfoWrapper>
-                <StyledQuestionList
-                  currentPage={currentQuestionsPage}
-                  loading={loadingData}
-                  locale={{
-                    emptyText: (
-                      <Empty
-                        description="No Questions found for this context-dependent item set. You can start creating one by clicking the button on the top right"
-                        image={Empty.PRESENTED_IMAGE_SIMPLE}
-                        role="status"
-                      />
-                    ),
-                  }}
-                  onPageChange={onQuestionsPageChange}
-                  questions={questions}
-                  showSearch={false}
-                  showSort={false}
-                  totalCount={totalQuestions} // not paginated for now, so total === question.length
+    id && {
+      label: 'Content',
+      key: 'content',
+      children: (
+        <Wrapper>
+          <InfoWrapper>
+            <SetTitle data-testid="set-title">{title}</SetTitle>
+            <Wax
+              config={simpleConfig}
+              content={leadingContent}
+              layout={StyledWaxLayout}
+              readOnly
+            />
+          </InfoWrapper>
+          <StyledQuestionList
+            currentPage={currentQuestionsPage}
+            loading={loadingData}
+            locale={{
+              emptyText: (
+                <Empty
+                  description="No Questions found for this context-dependent item set. You can start creating one by clicking the button on the top right"
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  role="status"
                 />
-              </Wrapper>
-            ),
-          },
-        ]
-      : []),
+              ),
+            }}
+            onPageChange={onQuestionsPageChange}
+            questions={questions}
+            showSearch={false}
+            showSort={false}
+            totalCount={totalQuestions} // not paginated for now, so total === question.length
+          />
+        </Wrapper>
+      ),
+    },
     // show Edit tab if user can edit a context-dependent item set or can create new ones
-    ...(canEdit || (!id && canCreate)
-      ? [
-          {
-            label: id ? 'Edit' : 'Create',
-            key: 'edit',
-            children: (
-              <ComplexItemSetForm
-                content={leadingContent}
-                id={id}
-                loadingData={loadingData}
-                loadingSave={loadingSave}
-                onImageUpload={onImageUpload}
-                onSave={onSave}
-                submissionMessage={submissionMessage}
-                submissionStatus={submissionStatus}
-                title={title}
-                warning={editWarning}
-              />
-            ),
-          },
-        ]
-      : []),
+    (canEdit || (!id && canCreate)) && {
+      label: id ? 'Edit' : 'Create',
+      key: 'edit',
+      forceRender: true,
+      children: (
+        <ComplexItemSetForm
+          content={leadingContent}
+          id={id}
+          loadingData={loadingData}
+          loadingSave={loadingSave}
+          onImageUpload={onImageUpload}
+          onSave={onSave}
+          submissionMessage={submissionMessage}
+          submissionStatus={submissionStatus}
+          title={title}
+          warning={editWarning}
+        />
+      ),
+    },
   ]
 
   return (
     <StyledTabs
       activeKey={activeKey}
+      destroyInactiveTabPane
       items={tabItems}
       onChange={setActiveKey}
       tabBarExtraContent={

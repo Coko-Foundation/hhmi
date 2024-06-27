@@ -138,15 +138,11 @@ const ComplexItemSetForm = props => {
           </h3>
           <WaxWrapper>
             <Wax
-              autoFocus={false}
               config={simpleConfig}
               content={content}
-              id="complexItemSetEditor"
               innerRef={waxRef}
               layout={HhmiLayout}
               onImageUpload={onImageUpload}
-              readOnly={false}
-              // onContentChange={onContentChange}
             />
           </WaxWrapper>
           <FormFooter>
