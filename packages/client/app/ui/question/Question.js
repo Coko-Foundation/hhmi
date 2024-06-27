@@ -32,6 +32,7 @@ import {
   Select,
   Spin,
   TabsStyled as Tabs,
+  VisuallyHiddenElement,
 } from '../common'
 import { REVIEWER_STATUSES, extractDocumentText } from '../../utilities'
 import AssignAuthorButton from './AssignAuthorButton'
@@ -489,6 +490,8 @@ const Question = props => {
   const [preview, setPreview] = useState(facultyView)
   const [refreshEditorContent, setRefreshEditorContent] = useState(false)
 
+  const [imageLongDescs, setImageLongDescs] = useState([])
+
   const readOnly =
     (editorView && !isInProduction && isSubmitted) ||
     (!editorView && isSubmitted) ||
@@ -499,13 +502,33 @@ const Question = props => {
     setShowMetadata(isUserLoggedIn && !reviewerView)
   }, [isUserLoggedIn, reviewerView])
 
+  useEffect(() => {
+    setTimeout(() => {
+      const images = [...document.querySelectorAll('.ProseMirror img')]
+      const parsedImages = []
+
+      images.forEach(image => {
+        const describedBy = image.getAttribute('aria-describedby')
+        const { ariaDescription } = image
+
+        if (describedBy && ariaDescription) {
+          parsedImages.push({ id: describedBy, content: ariaDescription })
+        }
+      })
+
+      setImageLongDescs(parsedImages)
+    }, 500)
+  }, [editorContent])
+
   // #region handlers
   const handleQuestionContentChange = content => {
-    setAutoSaving(true)
-    onEditorContentAutoSave(content).then(({ update }) => {
-      setRefreshEditorContent(update)
-      setAutoSaving(false)
-    })
+    if (onEditorContentAutoSave) {
+      setAutoSaving(true)
+      onEditorContentAutoSave(content).then(({ update }) => {
+        setRefreshEditorContent(update)
+        setAutoSaving(false)
+      })
+    }
   }
 
   const handleMetadataAutoSave = data => {
@@ -1647,6 +1670,11 @@ const Question = props => {
                       }
                       showMetadata={showMetadata && (!preview || facultyView)}
                     />
+                    <VisuallyHiddenElement as="div">
+                      {imageLongDescs.map(longDesc => (
+                        <p id={longDesc.id}>{longDesc.content}</p>
+                      ))}
+                    </VisuallyHiddenElement>
                   </>
                 ),
               },

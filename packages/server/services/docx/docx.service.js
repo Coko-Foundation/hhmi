@@ -400,7 +400,7 @@ class WaxToDocxConverter {
   }
 
   imageHandler = image => {
-    const { id: dataId, alt } = image.attrs
+    const { id: dataId, alt, 'aria-description': ariaDescription } = image.attrs
 
     if (!dataId || !this.imageData || !this.imageData[dataId]) {
       throw new Error('Missing image data')
@@ -421,7 +421,7 @@ class WaxToDocxConverter {
       data: fs.readFileSync(imagePath),
       altText: {
         title: alt,
-        description: '',
+        description: ariaDescription ?? '',
         name: '',
       },
       transformation: {
