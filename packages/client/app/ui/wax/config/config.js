@@ -53,7 +53,7 @@ export default {
   SchemaService: DefaultSchema,
   PmPlugins: [tableEditing()],
 
-  ImageService: { showAlt: true, showLongDesc: true },
+  ImageService: { showAlt: true },
 
   services: [
     new QuestionsService(),
