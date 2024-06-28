@@ -2,13 +2,13 @@
 
 exports[`ComplexItemSetForm matches snapshot 1`] = `
 <div
-  className="sc-jnppJn bTdXXe"
+  className="sc-hTQyD fVqEiy"
 >
   <div
-    className="sc-jbISuK eVHdzN"
+    className="sc-icLIcW gMWpfi"
   >
     <form
-      className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas sc-LZSCk hqDpyr"
+      className="ant-form ant-form-vertical css-dev-only-do-not-override-12jzuas sc-cWacQw ggnBke"
       data-testid="form-content"
       onReset={[Function]}
       onSubmit={[Function]}
@@ -47,11 +47,11 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
                 className="ant-form-item-control-input-content"
               >
                 <div
-                  className="sc-jOdwRd"
+                  className="sc-ceBarN"
                 >
                   <input
                     aria-required="true"
-                    className="ant-input css-dev-only-do-not-override-12jzuas sc-cvlVIG rtIPZ"
+                    className="ant-input css-dev-only-do-not-override-12jzuas sc-jbvGK jqmGIm"
                     disabled={false}
                     id="title"
                     onBlur={[Function]}
@@ -74,34 +74,34 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
          the content for the Context-Dependent Item Set leading text in the editor below
       </h3>
       <div
-        className="sc-hTQyD hmttHA"
+        className="sc-kGYcGX jmTKNB"
       >
         <div
-          className="sc-dDGttY hwCWcN"
+          className="sc-hjzGtE dBqHcN"
         >
           <div
             aria-controls="wax-editor"
             aria-label="Editor toolbar"
-            className="sc-MIkZJ kHPZRq"
+            className="sc-esBxZp fDlnSf"
             role="toolbar"
           >
             <h2
-              className="sc-gohhfD hZpVbS"
+              className="sc-fDetwT iZhtLw"
             >
               Question editor toolbar
             </h2>
           </div>
           <div
-            className="sc-hjzGtE ctkFpd"
+            className="sc-eXpgrI jXqzvm"
             tabIndex={0}
           >
             <h2
-              className="sc-gohhfD hZpVbS"
+              className="sc-fDetwT iZhtLw"
             >
               Question editor
             </h2>
             <div
-              className="sc-esBxZp kNwbaG"
+              className="sc-cgqXXt hulBvd"
               id="wax-editor"
             >
               <div
@@ -120,10 +120,10 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="sc-jkxtGR lczlol"
+        className="sc-fbUwh bosKLb"
       >
         <button
-          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-jJTKaY cpBsNO"
+          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-iYQWso heaPND"
           disabled={false}
           onClick={[Function]}
           status={null}
