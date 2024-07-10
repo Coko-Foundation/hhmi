@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useContext } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
-import { WaxContext } from 'wax-prosemirror-core'
+import { WaxContext, WaxView } from 'wax-prosemirror-core'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
@@ -114,7 +114,7 @@ const EditorArea = styled.div`
 `
 
 // eslint-disable-next-line react/prop-types
-const TestModeLayout = ({ editor }) => {
+const TestModeLayout = props => {
   const { options } = useContext(WaxContext)
   const { fullScreen } = options
   const { leadingContent } = useContext(ComplexItemSetContext)
@@ -138,7 +138,9 @@ const TestModeLayout = ({ editor }) => {
           <VisuallyHiddenElement as="h2">
             Question content
           </VisuallyHiddenElement>
-          <EditorArea>{editor}</EditorArea>
+          <EditorArea>
+            <WaxView {...props} />
+          </EditorArea>
         </EditorWrapper>
       </Wrapper>
     </ThemeProvider>

@@ -24,7 +24,7 @@ export default {
           name: 'Annotations',
           exclude: ['linkTool', 'SmallCaps'],
         },
-        'Lists',
+        { name: 'Lists', exclude: ['BlockQuote'] },
         'Images',
         'Tables',
         'FullScreen',

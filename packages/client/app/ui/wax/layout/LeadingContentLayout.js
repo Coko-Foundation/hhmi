@@ -2,6 +2,7 @@
 import React from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { grid, th } from '@coko/client'
+import { WaxView } from 'wax-prosemirror-core'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
 import VisuallyHiddenElement from '../../common/VisuallyHiddenElement'
@@ -27,7 +28,8 @@ const Wrapper = styled.div`
 `
 
 // eslint-disable-next-line react/prop-types
-const LeadingContentLayout = ({ editor, className }) => {
+const LeadingContentLayout = props => {
+  const { className } = props
   return (
     <ThemeProvider theme={theme}>
       <Wrapper
@@ -38,7 +40,7 @@ const LeadingContentLayout = ({ editor, className }) => {
         <VisuallyHiddenElement as="h2">
           Context-dependent item set leading content
         </VisuallyHiddenElement>
-        {editor}
+        <WaxView {...props} />
       </Wrapper>
     </ThemeProvider>
   )

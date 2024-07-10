@@ -33,7 +33,7 @@ export default {
           //   'StrikeThrough',
           // ],
         },
-        'Lists',
+        { name: 'Lists', exclude: ['BlockQuote'] },
         'Images',
         'Tables',
         // 'QuestionsDropDown',
