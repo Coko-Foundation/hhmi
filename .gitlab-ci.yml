@@ -21,7 +21,7 @@ stages:
 
 # BUILD DEVELOPMENT
 
-client build development:
+.client build development:
   stage: Build development
   image: docker:23
   services:
@@ -33,7 +33,7 @@ client build development:
     - docker build --tag $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA ./packages/client -f packages/client/Dockerfile-development
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
 
-server build development:
+.server build development:
   stage: Build development
   image: docker:23
   services:
@@ -47,7 +47,7 @@ server build development:
 
 # LINT & UNIT TEST
 
-client lint:
+.client lint:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -58,7 +58,7 @@ client lint:
     - yarn prettier --check .
     - yarn stylelint "**/*.js"
 
-client unit test:
+.client unit test:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -67,7 +67,7 @@ client unit test:
     - cd $WORKDIR_CLIENT
     - yarn jest
 
-server lint:
+.server lint:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -77,7 +77,7 @@ server lint:
     - yarn eslint .
     - yarn prettier --check .
 
-server unit test:
+.server unit test:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -99,7 +99,7 @@ server unit test:
 
 # BUILD PRODUCTION
 
-build server:
+.build server:
   stage: Build production
   image: docker:23
   services:
@@ -114,7 +114,7 @@ build server:
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:latest
 
-build client:
+.build client:
   stage: Build production
   image: docker:23
   services:
@@ -131,7 +131,7 @@ build client:
 
 # END TO END TEST
 
-end to end tests:
+.end to end tests:
   stage: End to end test
   image: cokoapps/hhmi-dnn
   needs:
@@ -147,7 +147,7 @@ end to end tests:
     - wait-on --timeout 30000 http://localhost:3000/healthcheck && yarn cypress run --record --env CLIENT_SHOW_EMAIL_LOGIN_OPTION=true
 
 # PUBLISH PRODUCTION
-publish client:
+.publish client:
   stage: Publish production
   image: docker:23
   services:
@@ -164,7 +164,7 @@ publish client:
   only:
     - staging
 
-publish server:
+.publish server:
   stage: Publish production
   image: docker:23
   services:
@@ -181,7 +181,7 @@ publish server:
   only:
     - staging
 
-build & publish storybook:
+.build & publish storybook:
   stage: Publish production
   image: docker:23
   services:
@@ -201,29 +201,46 @@ build & publish storybook:
 # DEPLOY PRODUCTION
 
 deploy production:
-  image: debian:bullseye-slim
+  # image: debian:bullseye-slim
+  image: $CI_REGISTRY/cokoinfra/ansible-deployer
+  services:
+    - docker:23-dind
   stage: Deploy production
   needs:
     - publish server
     - publish client
-  before_script:
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-    - chmod 700 ~/.ssh
-    - ssh-keyscan -p $SSH_PORT $SSH_URL >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
+  # before_script:
+  #   - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+  #   - eval $(ssh-agent -s)
+  #   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+  #   - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+  #   - chmod 700 ~/.ssh
+  #   - ssh-keyscan -p $SSH_PORT $SSH_URL >> ~/.ssh/known_hosts
+  #   - chmod 644 ~/.ssh/known_hosts
+  variables:
+    ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true
+    ANSCOMPOSE_CLIENT_SHOW_EMAIL_LOGIN_OPTION: true
+    COMPOSE_SERVICES: client,server
+    COMPOSE_SERVICES_SERVER_URL: hhmi-server-staging.coko.app
+    COMPOSE_SERVICES_SERVER_IMAGE: $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest
+    COMPOSE_SERVICES_CLIENT_URL: hhmi-staging.coko.app
+    COMPOSE_SERVICES_CLIENT_IMAGE: $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest
+  # script:
+  #   - |
+  #     ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} \
+  #     "docker pull $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest && \
+  #     docker pull $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest && \
+  #     sudo systemctl restart hhmi.service"
   script:
-    - |
-      ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} \
-      "docker pull $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest && \
-      docker pull $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest && \
-      sudo systemctl restart hhmi.service"
+    - kubectl config get-contexts
+    - kubectl config use-context <group>/agent:agent-1
+    - cp $DEPLOY_COMPOSE_FILE /ansible
+    - cd /ansible
+    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
   only:
     - staging
 
-deploy storybook:
+.deploy storybook:
   image: debian:bullseye-slim
   stage: Deploy production
   needs:
