@@ -2,13 +2,13 @@
 
 exports[`MyList Matches snapshot 1`] = `
 <section
-  className="sc-hTQyD YDfOU"
+  className="sc-LZSCk deHXuJ"
 >
   <div
     className="sc-fmSAUk jvdyCW"
   >
     <form
-      className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-fbUwh elLraA"
+      className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-cYRYSS gbKZPr"
       data-testid="form-content"
       onReset={[Function]}
       onSubmit={[Function]}
@@ -71,10 +71,10 @@ exports[`MyList Matches snapshot 1`] = `
     </form>
   </div>
   <div
-    className="sc-bbpQIs fGweFR"
+    className="sc-eWFnVD hSoKbq"
   >
     <div
-      className="sc-cKuNTH fKSFCe"
+      className="sc-behMKO cQtBUf"
     >
       <span
         className="ant-input-group-wrapper ant-input-search sc-cPlDXj jMGold css-dev-only-do-not-override-12jzuas"
@@ -201,7 +201,7 @@ exports[`MyList Matches snapshot 1`] = `
                             style={{}}
                           >
                             <label
-                              className="ant-checkbox-wrapper sc-irTswW kIOznH sc-ciABCq ishzqd css-dev-only-do-not-override-12jzuas"
+                              className="ant-checkbox-wrapper sc-irTswW kIOznH sc-hTQyD fnMNm css-dev-only-do-not-override-12jzuas"
                             >
                               <span
                                 className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -501,7 +501,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 aria-expanded={false}
                                 aria-haspopup="dialog"
                                 aria-label="Rename list soluta"
-                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-hJtubf isyYrW"
+                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-fbUwh ddkGyn"
                                 disabled={false}
                                 onClick={[Function]}
                                 status={null}
@@ -534,7 +534,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 </span>
                               </button>
                               <div
-                                className="sc-fYdXmn jvAwxh sc-dQVSQq kduyzf"
+                                className="sc-fYdXmn jvAwxh sc-ciABCq cQGgFg"
                                 id="soluta-rename-popup"
                                 onBlur={[Function]}
                                 onKeyDown={[Function]}
@@ -544,7 +544,7 @@ exports[`MyList Matches snapshot 1`] = `
                                   className="sc-fmSAUk jvdyCW"
                                 >
                                   <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-hGBxYJ iyDypb"
+                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-kGYcGX WJYcA"
                                     data-testid="form-content"
                                     onReset={[Function]}
                                     onSubmit={[Function]}
@@ -714,7 +714,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 aria-expanded={false}
                                 aria-haspopup="dialog"
                                 aria-label="Rename list quidem"
-                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-hJtubf isyYrW"
+                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-fbUwh ddkGyn"
                                 disabled={false}
                                 onClick={[Function]}
                                 status={null}
@@ -747,7 +747,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 </span>
                               </button>
                               <div
-                                className="sc-fYdXmn jvAwxh sc-dQVSQq kduyzf"
+                                className="sc-fYdXmn jvAwxh sc-ciABCq cQGgFg"
                                 id="quidem-rename-popup"
                                 onBlur={[Function]}
                                 onKeyDown={[Function]}
@@ -757,7 +757,7 @@ exports[`MyList Matches snapshot 1`] = `
                                   className="sc-fmSAUk jvdyCW"
                                 >
                                   <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-hGBxYJ iyDypb"
+                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-kGYcGX WJYcA"
                                     data-testid="form-content"
                                     onReset={[Function]}
                                     onSubmit={[Function]}
@@ -927,7 +927,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 aria-expanded={false}
                                 aria-haspopup="dialog"
                                 aria-label="Rename list dolore"
-                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-hJtubf isyYrW"
+                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-fbUwh ddkGyn"
                                 disabled={false}
                                 onClick={[Function]}
                                 status={null}
@@ -960,7 +960,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 </span>
                               </button>
                               <div
-                                className="sc-fYdXmn jvAwxh sc-dQVSQq kduyzf"
+                                className="sc-fYdXmn jvAwxh sc-ciABCq cQGgFg"
                                 id="dolore-rename-popup"
                                 onBlur={[Function]}
                                 onKeyDown={[Function]}
@@ -970,7 +970,7 @@ exports[`MyList Matches snapshot 1`] = `
                                   className="sc-fmSAUk jvdyCW"
                                 >
                                   <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-hGBxYJ iyDypb"
+                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-kGYcGX WJYcA"
                                     data-testid="form-content"
                                     onReset={[Function]}
                                     onSubmit={[Function]}
@@ -1140,7 +1140,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 aria-expanded={false}
                                 aria-haspopup="dialog"
                                 aria-label="Rename list labore"
-                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-hJtubf isyYrW"
+                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-fbUwh ddkGyn"
                                 disabled={false}
                                 onClick={[Function]}
                                 status={null}
@@ -1173,7 +1173,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 </span>
                               </button>
                               <div
-                                className="sc-fYdXmn jvAwxh sc-dQVSQq kduyzf"
+                                className="sc-fYdXmn jvAwxh sc-ciABCq cQGgFg"
                                 id="labore-rename-popup"
                                 onBlur={[Function]}
                                 onKeyDown={[Function]}
@@ -1183,7 +1183,7 @@ exports[`MyList Matches snapshot 1`] = `
                                   className="sc-fmSAUk jvdyCW"
                                 >
                                   <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-hGBxYJ iyDypb"
+                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-kGYcGX WJYcA"
                                     data-testid="form-content"
                                     onReset={[Function]}
                                     onSubmit={[Function]}
@@ -1353,7 +1353,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 aria-expanded={false}
                                 aria-haspopup="dialog"
                                 aria-label="Rename list cumque"
-                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-hJtubf isyYrW"
+                                className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-circle ant-btn-default ant-btn-icon-only sc-qRumB egCkMh sc-fbUwh ddkGyn"
                                 disabled={false}
                                 onClick={[Function]}
                                 status={null}
@@ -1386,7 +1386,7 @@ exports[`MyList Matches snapshot 1`] = `
                                 </span>
                               </button>
                               <div
-                                className="sc-fYdXmn jvAwxh sc-dQVSQq kduyzf"
+                                className="sc-fYdXmn jvAwxh sc-ciABCq cQGgFg"
                                 id="cumque-rename-popup"
                                 onBlur={[Function]}
                                 onKeyDown={[Function]}
@@ -1396,7 +1396,7 @@ exports[`MyList Matches snapshot 1`] = `
                                   className="sc-fmSAUk jvdyCW"
                                 >
                                   <form
-                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-hGBxYJ iyDypb"
+                                    className="ant-form ant-form-horizontal css-dev-only-do-not-override-12jzuas sc-kGYcGX WJYcA"
                                     data-testid="form-content"
                                     onReset={[Function]}
                                     onSubmit={[Function]}
@@ -1501,7 +1501,7 @@ exports[`MyList Matches snapshot 1`] = `
     </div>
     <nav
       aria-label="Pagination"
-      className="sc-jItqcz cksJKU sc-khsWhO iiDBzg"
+      className="sc-jItqcz cksJKU sc-eTNrTh dhGwYZ"
       role="navigation"
     >
       <ul
@@ -1576,7 +1576,7 @@ exports[`MyList Matches snapshot 1`] = `
     </nav>
   </div>
   <div
-    className="sc-cWacQw hRxrTj"
+    className="sc-jkxtGR bGQlzX"
   >
     <div
       className="sc-dxroEu cIwVHs"
@@ -1606,7 +1606,7 @@ exports[`MyList Matches snapshot 1`] = `
         tabIndex="0"
       >
         <div
-          className="sc-dOdWNU dBowYI"
+          className="sc-hJtubf dmTGAg"
         >
           <button
             className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB lbFdVm"

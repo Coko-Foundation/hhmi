@@ -7,6 +7,7 @@ import {
   LinkService,
   ListsService,
 } from 'wax-prosemirror-services'
+import { BasicLayout } from '../wax/layout'
 
 const waxConfig = () => ({
   SchemaService: DefaultSchema,
@@ -67,6 +68,7 @@ const PmEditor = props => {
     <EditorWrapper>
       <Wax
         config={waxConfig()}
+        layout={BasicLayout}
         placeholder="Type your answer"
         readonly={readonly}
         value={content}

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useContext } from 'react'
 import styled, { css, ThemeProvider } from 'styled-components'
-import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
+import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
 import { LinkOutlined } from '@ant-design/icons'
 import { grid, th } from '@coko/client'
 import theme from '../../../theme'
@@ -175,7 +175,7 @@ const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
 // const WaxOverlays = ComponentPlugin('waxOverlays')
 
 /* eslint-disable-next-line react/prop-types */
-const HhmiLayout = ({ editor }) => {
+const HhmiLayout = props => {
   const { options } = useContext(WaxContext)
   const { fullScreen } = options
 
@@ -229,7 +229,9 @@ const HhmiLayout = ({ editor }) => {
           )}
 
           <VisuallyHiddenElement as="h2">Question editor</VisuallyHiddenElement>
-          <EditorArea id="wax-editor">{editor}</EditorArea>
+          <EditorArea id="wax-editor">
+            <WaxView {...props} />
+          </EditorArea>
         </EditorWrapper>
 
         {/* <WaxOverlays /> */}
