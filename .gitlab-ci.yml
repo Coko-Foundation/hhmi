@@ -225,6 +225,7 @@ deploy production:
     COMPOSE_SERVICES_SERVER_IMAGE: $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest
     COMPOSE_SERVICES_CLIENT_URL: hhmi-staging.coko.app
     COMPOSE_SERVICES_CLIENT_IMAGE: $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest
+    DEPLOY_COMPOSE_FILE: docker-compose.deploy.yml
   # script:
   #   - |
   #     ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} \
