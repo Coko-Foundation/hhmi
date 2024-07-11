@@ -21,7 +21,7 @@ stages:
 
 # BUILD DEVELOPMENT
 
-.client build development:
+client build development:
   stage: Build development
   image: docker:23
   services:
@@ -33,7 +33,7 @@ stages:
     - docker build --tag $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA ./packages/client -f packages/client/Dockerfile-development
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
 
-.server build development:
+server build development:
   stage: Build development
   image: docker:23
   services:
@@ -47,7 +47,7 @@ stages:
 
 # LINT & UNIT TEST
 
-.client lint:
+client lint:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -58,7 +58,7 @@ stages:
     - yarn prettier --check .
     - yarn stylelint "**/*.js"
 
-.client unit test:
+client unit test:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -67,7 +67,7 @@ stages:
     - cd $WORKDIR_CLIENT
     - yarn jest
 
-.server lint:
+server lint:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -77,7 +77,7 @@ stages:
     - yarn eslint .
     - yarn prettier --check .
 
-.server unit test:
+server unit test:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -99,7 +99,7 @@ stages:
 
 # BUILD PRODUCTION
 
-.build server:
+build server:
   stage: Build production
   image: docker:23
   services:
@@ -114,7 +114,7 @@ stages:
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:latest
 
-.build client:
+build client:
   stage: Build production
   image: docker:23
   services:
@@ -131,7 +131,7 @@ stages:
 
 # END TO END TEST
 
-.end to end tests:
+end to end tests:
   stage: End to end test
   image: cokoapps/hhmi-dnn
   needs:
