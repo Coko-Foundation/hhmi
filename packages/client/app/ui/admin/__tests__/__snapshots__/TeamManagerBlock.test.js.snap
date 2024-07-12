@@ -61,7 +61,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                   className="sc-bZPPFW"
                 >
                   <div
-                    className="ant-select ant-select-in-form-item sc-kMrHXl uYsNe css-dev-only-do-not-override-12jzuas ant-select-multiple ant-select-show-arrow ant-select-show-search"
+                    className="ant-select ant-select-in-form-item sc-kMrHXl kinPEo css-dev-only-do-not-override-12jzuas ant-select-multiple ant-select-show-arrow ant-select-show-search"
                     data-testid="select-editor"
                     onBlur={[Function]}
                     onFocus={[Function]}

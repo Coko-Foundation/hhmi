@@ -401,7 +401,6 @@ const Metadata = React.forwardRef((props, ref) => {
                         ]}
                       >
                         <Select
-                          allowClear
                           data-testid="course-select"
                           disabled={readOnly}
                           onChange={value =>
