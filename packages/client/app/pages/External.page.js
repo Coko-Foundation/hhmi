@@ -41,6 +41,7 @@ const External = props => {
       .querySelectorAll('main a')
       .forEach(node => {
         const href = node.getAttribute('href')
+        const target = node.getAttribute('target')
 
         if (href) {
           // find all anchor tags that link to pages inside the website
@@ -49,14 +50,24 @@ const External = props => {
             // eslint-disable-next-line no-param-reassign
             node.onclick = e => {
               e.preventDefault()
-              postMessage(href)
+
+              if (target === '_blank') {
+                window.open(`${window.location.origin}${href}`)
+              } else {
+                postMessage(href)
+              }
             }
           } else {
             // if it is an external link, navigate to that url
             // eslint-disable-next-line no-param-reassign
             node.onclick = e => {
               e.preventDefault()
-              window.location.href = href
+
+              if (target === '_blank') {
+                window.open(href)
+              } else {
+                window.location.href = href
+              }
             }
           }
         }
