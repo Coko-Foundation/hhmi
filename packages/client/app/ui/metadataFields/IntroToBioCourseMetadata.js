@@ -203,7 +203,7 @@ const IntroToBioCourseMetadata = props => {
         {() => (
           <Form.Item label="Learning Objective" name={learningObjectiveName}>
             <Select
-              allowClear={filterMode}
+              allowClear
               data-testid="learning-objective-select"
               disabled={readOnly || (!filterMode && !getFieldValue(topicField))}
               //   onChange={handleFrameworkLearningObjectiveChange}

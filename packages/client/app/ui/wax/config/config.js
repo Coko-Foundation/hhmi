@@ -33,7 +33,7 @@ export default {
           //   'StrikeThrough',
           // ],
         },
-        'Lists',
+        { name: 'Lists', exclude: ['BlockQuote'] },
         'Images',
         'Tables',
         // 'QuestionsDropDown',
@@ -53,7 +53,7 @@ export default {
   SchemaService: DefaultSchema,
   PmPlugins: [tableEditing()],
 
-  ImageService: { showAlt: true },
+  ImageService: { showAlt: true, showLongDesc: true },
 
   services: [
     new QuestionsService(),

@@ -2,7 +2,7 @@
 
 import React, { useContext } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
-import { WaxContext, ComponentPlugin } from 'wax-prosemirror-core'
+import { WaxContext, ComponentPlugin, WaxView } from 'wax-prosemirror-core'
 import { grid } from '@coko/client'
 import theme from '../../../theme'
 import EditorElements from './DashboardEditorElements'
@@ -81,7 +81,7 @@ const EditorContainer = styled.div`
 // const MainMenuToolBar = ComponentPlugin('mainMenuToolBar')
 const WaxOverlays = ComponentPlugin('waxOverlays')
 
-const DashboardLayout = ({ editor }) => {
+const DashboardLayout = props => {
   const { options } = useContext(WaxContext)
 
   let fullScreenStyles = {}
@@ -106,7 +106,9 @@ const DashboardLayout = ({ editor }) => {
         <Main>
           <EditorArea>
             <WaxSurfaceScroll>
-              <EditorContainer>{editor}</EditorContainer>
+              <EditorContainer>
+                <WaxView {...props} />
+              </EditorContainer>
             </WaxSurfaceScroll>
           </EditorArea>
         </Main>

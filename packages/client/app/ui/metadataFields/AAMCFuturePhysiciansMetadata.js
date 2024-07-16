@@ -89,7 +89,7 @@ const AAMCFuturePhysiciansMetadata = props => {
         ]}
       >
         <Select
-          allowClear={filterMode}
+          allowClear
           disabled={readOnly}
           onChange={handleConceptChange}
           optionFilterProp="label"
@@ -110,7 +110,7 @@ const AAMCFuturePhysiciansMetadata = props => {
             ]}
           >
             <Select
-              allowClear={filterMode}
+              allowClear
               disabled={
                 readOnly || (!filterMode && !getFieldValue(conceptField))
               }

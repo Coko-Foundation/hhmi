@@ -272,7 +272,7 @@ const VisionAndChangeMetadata = props => {
         ]}
       >
         <Select
-          allowClear={filterMode}
+          allowClear
           disabled={readOnly}
           onChange={handleCoreConceptChange}
           optionFilterProp="label"
@@ -306,7 +306,7 @@ const VisionAndChangeMetadata = props => {
               ]}
             >
               <Select
-                allowClear={filterMode}
+                allowClear
                 disabled={
                   readOnly || (!filterMode && !getFieldValue(coreConceptField))
                 }
@@ -335,7 +335,7 @@ const VisionAndChangeMetadata = props => {
             ]}
           >
             <Select
-              allowClear={filterMode}
+              allowClear
               disabled={
                 readOnly || (!filterMode && !getFieldValue(subdisciplineField))
               }
@@ -360,7 +360,7 @@ const VisionAndChangeMetadata = props => {
         ]}
       >
         <Select
-          allowClear={filterMode}
+          allowClear
           disabled={readOnly}
           onChange={handleCoreCompetenceChange}
           optionFilterProp="label"
@@ -384,7 +384,7 @@ const VisionAndChangeMetadata = props => {
             ]}
           >
             <Select
-              allowClear={filterMode}
+              allowClear
               disabled={
                 readOnly || (!filterMode && !getFieldValue(coreCompetenceField))
               }
@@ -419,7 +419,7 @@ const VisionAndChangeMetadata = props => {
               ]}
             >
               <Select
-                allowClear={filterMode}
+                allowClear
                 disabled={
                   readOnly ||
                   (!filterMode && !getFieldValue(subcompetenceField))

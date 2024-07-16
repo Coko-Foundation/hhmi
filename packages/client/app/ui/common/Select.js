@@ -34,6 +34,14 @@ const StyledSelect = styled(AntSelect)`
     background-color: ${th('colorBackgroundHue')};
     color: ${props => `${props.theme.colorText}cc`};
   }
+
+  &:focus-within .ant-select-clear {
+    opacity: 1;
+  }
+
+  .ant-select-clear > [role='button']:focus-visible {
+    outline: 2px solid ${th('colorPrimary')};
+  }
 `
 
 const StyledDropdown = styled.div`
@@ -127,6 +135,26 @@ const Select = props => {
       cleanUpInvalidAttrs()
     }, 500)
   }, [])
+
+  useEffect(() => {
+    // look for a clear button, and if found apply actual button semantics and interaction
+    const clearButton = selectRef.current.querySelector(
+      '.ant-select-clear > span',
+    )
+
+    if (rest.allowClear && clearButton) {
+      clearButton.setAttribute('role', 'button')
+      clearButton.setAttribute('tabIndex', '0')
+      clearButton.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          rest.value = undefined
+          rest.onChange()
+          selectRef.current.querySelector('input')?.focus()
+        }
+      })
+    }
+  }, [rest.value])
 
   useEffect(() => {
     if (open && !!ariaAttributes) {

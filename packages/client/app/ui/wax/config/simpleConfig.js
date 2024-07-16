@@ -24,7 +24,7 @@ export default {
           name: 'Annotations',
           exclude: ['linkTool', 'SmallCaps'],
         },
-        'Lists',
+        { name: 'Lists', exclude: ['BlockQuote'] },
         'Images',
         'Tables',
         'FullScreen',
@@ -35,7 +35,7 @@ export default {
   SchemaService: DefaultSchema,
   PmPlugins: [tableEditing()],
 
-  ImageService: { showAlt: true },
+  ImageService: { showAlt: true, showLongDesc: true },
 
   services: [
     new ListsService(),

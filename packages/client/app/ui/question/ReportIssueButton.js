@@ -106,7 +106,7 @@ const ReportIssueButton = props => {
   }
 
   return (
-    <ModalContext.Provider>
+    <ModalContext.Provider value={null}>
       <StyledReportButton
         icon={<ExclamationCircleOutlined />}
         id="report-issue"
