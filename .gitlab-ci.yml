@@ -220,8 +220,7 @@ deploy production:
     - kubectl config use-context coko-org/products/hhmi/agent:agent-1
     - cp $DEPLOY_COMPOSE_FILE /ansible
     - cd /ansible
-    - echo $CI_PROJECT_NAME
-    - echo $CI_COMMIT_REF_SLUG
+    - kubectl get -n default secrets digitalocean-spaces-credentials
     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
   only:
     - staging
