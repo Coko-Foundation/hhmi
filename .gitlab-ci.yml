@@ -202,6 +202,7 @@ build & publish storybook:
 # DEPLOY PRODUCTION
 
 deploy production:
+  stage: Deploy production
   image: $CI_REGISTRY/cokoinfra/ansible-deployer
   services:
     - docker:26-dind
