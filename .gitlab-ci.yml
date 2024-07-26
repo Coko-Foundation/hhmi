@@ -244,7 +244,7 @@ deploy storybook:
     - kubectl config use-context coko-org/products/hhmi/agent:agent-1
     - cp $DEPLOY_COMPOSE_FILE /ansible
     - cd /ansible
-    - ANSIBLE_FORCE_COLOR=true --skip-tags database,bucket ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
+    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE" --skip-tags "database,bucket"
   only:
     - staging
 
