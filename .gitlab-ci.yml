@@ -23,9 +23,9 @@ stages:
 
 .client build development:
   stage: Build development
-  image: docker:23
+  image: docker:26
   services:
-    - docker:23-dind
+    - docker:26-dind
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
@@ -35,9 +35,9 @@ stages:
 
 .server build development:
   stage: Build development
-  image: docker:23
+  image: docker:26
   services:
-    - docker:23-dind
+    - docker:26-dind
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
@@ -101,9 +101,9 @@ stages:
 
 .build server:
   stage: Build production
-  image: docker:23
+  image: docker:26
   services:
-    - docker:23-dind
+    - docker:26-dind
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
@@ -116,9 +116,9 @@ stages:
 
 .build client:
   stage: Build production
-  image: docker:23
+  image: docker:26
   services:
-    - docker:23-dind
+    - docker:26-dind
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
@@ -150,9 +150,9 @@ stages:
 
 .publish client:
   stage: Publish production
-  image: docker:23
+  image: docker:26
   services:
-    - docker:23-dind
+    - docker:26-dind
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
@@ -167,9 +167,9 @@ stages:
 
 .publish server:
   stage: Publish production
-  image: docker:23
+  image: docker:26
   services:
-    - docker:23-dind
+    - docker:26-dind
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
@@ -184,28 +184,31 @@ stages:
 
 .build & publish storybook:
   stage: Publish production
-  image: docker:23
+  image: docker:26
   services:
-    - docker:23-dind
+    - docker:26-dind
   before_script:
     - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
   script:
     - if [ -z "$DOCKERHUB_USERNAME" ] || [ -z "$DOCKERHUB_PASSWORD" ]; then echo "Not pushing" && exit 0; fi
     - cd ./packages/client
     - docker pull $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest || true
-    - docker build --cache-from $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest --tag $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:$CI_COMMIT_SHA --tag $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest . -f Dockerfile-storybook-deploy
+    - docker build --cache-from $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest --tag $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:$CI_COMMIT_SHA --tag $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest . -f Dockerfile-storybook-production
     - docker push $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
   only:
-    - master
+    - staging
 
 # DEPLOY PRODUCTION
 
-deploy production:
+.deploy production:
   stage: Deploy production
   image: $CI_REGISTRY/cokoinfra/ansible-deployer
   services:
     - docker:26-dind
+  needs:
+    - publish server
+    - publish client
   variables:
     ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true
     ANSCOMPOSE_CLIENT_SHOW_EMAIL_LOGIN_OPTION: true
@@ -224,30 +227,26 @@ deploy production:
   only:
     - staging
 
-
-
-# deploy production:
-#   image: debian:bullseye-slim
-#   stage: Deploy production
-#   needs:
-#     - publish server
-#     - publish client
-#   before_script:
-#     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-#     - eval $(ssh-agent -s)
-#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-#     - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-#     - chmod 700 ~/.ssh
-#     - ssh-keyscan -p $SSH_PORT $SSH_URL >> ~/.ssh/known_hosts
-#     - chmod 644 ~/.ssh/known_hosts
-#   script:
-#     - |
-#       ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} \
-#       "docker pull $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest && \
-#       docker pull $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest && \
-#       sudo systemctl restart hhmi.service"
-#   only:
-#     - staging
+deploy storybook:
+  stage: Deploy production
+  image: $CI_REGISTRY/cokoinfra/ansible-deployer
+  services:
+    - docker:26-dind
+  needs:
+    - build & publish storybook
+  variables:
+    COMPOSE_SERVICES: storybook-static
+    COMPOSE_SERVICES_STORYBOOK_STATIC_URL: hhmi-storybook.coko.app
+    COMPOSE_SERVICES_STORYBOOK_STATIC_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
+    DEPLOY_COMPOSE_FILE: docker-compose.storybook-deploy.yml
+  script:
+    - kubectl config get-contexts
+    - kubectl config use-context coko-org/products/hhmi/agent:agent-1
+    - cp $DEPLOY_COMPOSE_FILE /ansible
+    - cd /ansible
+    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE" --skip-tags database,bucket
+  only:
+    - staging
 
 # deploy storybook:
 #   image: debian:bullseye-slim
