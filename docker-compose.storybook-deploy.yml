@@ -2,6 +2,6 @@ version: '3'
 
 services:
   storybook-static:
-    image: cokoapps/hhmi-storybook:latest
+    image: cokoapps/hhmi-storybook
     ports:
       - ${STORYBOOK_PORT:-5000}:80
