@@ -236,8 +236,8 @@ deploy storybook:
   #   - build & publish storybook
   variables:
     COMPOSE_SERVICES: storybook-static
-    COMPOSE_SERVICES_STORYBOOK_STATIC_URL: hhmi-storybook.coko.app
-    COMPOSE_SERVICES_STORYBOOK_STATIC_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
+    COMPOSE_SERVICES_STORYBOOK_URL: hhmi-storybook.coko.app
+    COMPOSE_SERVICES_STORYBOOK_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
     DEPLOY_COMPOSE_FILE: docker-compose.storybook-deploy.yml
   script:
     - kubectl config get-contexts
