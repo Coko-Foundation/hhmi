@@ -118,7 +118,7 @@ const Footer = props => {
     ...rest
   } = props
 
-  const { version } = packageData
+  const { version: abVersionNumber } = packageData
 
   return (
     <StyledFooter role="contentinfo" {...rest}>
@@ -136,7 +136,7 @@ const Footer = props => {
         </li>
       </FooterList>
 
-      <VersionWrapper>v {version}</VersionWrapper>
+      <VersionWrapper>v {abVersionNumber}</VersionWrapper>
 
       {/* <SiteLogo rel="Home" title="Home" to={homepage}>
         <h1>Assesment Builder</h1>
