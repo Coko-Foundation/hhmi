@@ -27,5 +27,11 @@ exports[`Footer matches snapshot 1`] = `
       </a>
     </li>
   </ul>
+  <span
+    className="sc-jsMahE bHhcWw"
+  >
+    v 
+    0.0.0
+  </span>
 </footer>
 `;

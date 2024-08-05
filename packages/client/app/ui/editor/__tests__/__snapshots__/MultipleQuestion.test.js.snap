@@ -2,32 +2,32 @@
 
 exports[`MultipleQuestion matches snapshot 1`] = `
 <div
-  className="sc-cYRYSS iRJTeX"
+  className="sc-hTQyD ePKgNe"
 >
   <div
-    className="sc-hTQyD lLzcd"
+    className="sc-cWacQw byDVJV"
   >
     <span
-      className="sc-cWacQw"
+      className="sc-fbUwh"
     >
       Answer 
       3
     </span>
   </div>
   <div
-    className="sc-fbUwh hCVmDN"
+    className="sc-ciABCq duYhRs"
   >
     <div
-      className="sc-ciABCq dezhpT"
+      className="sc-kGYcGX hslgzN"
     >
       <div
-        className="sc-hJtubf cWfHPy"
+        className="sc-dQVSQq gMdOkd"
       >
         <div
           className="sc-hbNdxD ldutf"
         />
         <span
-          className="sc-iKSnhI sc-jkxtGR hPPqNG"
+          className="sc-iKSnhI sc-cYRYSS cGDyoT"
         >
           <span
             className="sc-eWFnVD jHlVMF"
@@ -63,15 +63,15 @@ exports[`MultipleQuestion matches snapshot 1`] = `
         </span>
       </div>
       <div
-        className="sc-dQVSQq jQuUbs"
+        className="sc-hGBxYJ kSoHCW"
       >
         <span
-          className="sc-hGBxYJ fIxQvv"
+          className="sc-dOdWNU dFDAYu"
         >
           Feedback
         </span>
         <input
-          className="sc-dOdWNU ipmPBG"
+          className="sc-jTtEpr gTkhDo"
           onChange={[Function]}
           placeholder="Insert feedback"
           type="text"
@@ -80,7 +80,7 @@ exports[`MultipleQuestion matches snapshot 1`] = `
       </div>
     </div>
     <div
-      className="sc-kGYcGX cuSvTd"
+      className="sc-hJtubf klOyIr"
     >
       <button
         className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default ant-btn-icon-only sc-jWWeWF dWVxqi"
