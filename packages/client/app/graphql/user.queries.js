@@ -150,3 +150,12 @@ export const DELETE_RELATED_ITEMS = gql`
     deleteUsersRelatedItems(ids: $ids)
   }
 `
+
+export const GET_USER_DATA = gql`
+  query UserData($id: ID!) {
+    user(id: $id) {
+      ...UserFields
+    }
+  }
+  ${USER_FIELDS}
+`

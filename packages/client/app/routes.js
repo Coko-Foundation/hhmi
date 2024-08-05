@@ -458,6 +458,15 @@ const routes = (
                     </Authenticated>
                   )}
                 />
+                <Route
+                  exact
+                  path="/profile/:id"
+                  render={() => (
+                    <Authenticated>
+                      <UserProfile />
+                    </Authenticated>
+                  )}
+                />
 
                 <Route component={Login} exact path="/login" />
                 <Route component={Signup} exact path="/signup" />

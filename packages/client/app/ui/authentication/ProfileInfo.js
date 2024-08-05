@@ -52,6 +52,7 @@ const ProfileInfo = props => {
 
     countries,
     states,
+    userId,
     ...rest
   } = props
 
@@ -80,6 +81,7 @@ const ProfileInfo = props => {
         showSecondaryButton={showSecondaryButton}
         submissionStatus={submissionStatus}
         submitButtonLabel={submitButtonLabel}
+        userId={userId}
         {...rest}
       >
         <FormSection label="Contact Information">
@@ -598,6 +600,7 @@ ProfileInfo.propTypes = {
   countries: PropTypes.arrayOf(PropTypes.shape()),
   states: PropTypes.arrayOf(PropTypes.shape()),
   onCountryChange: PropTypes.func.isRequired,
+  userId: PropTypes.string,
 }
 
 ProfileInfo.defaultProps = {
@@ -619,6 +622,7 @@ ProfileInfo.defaultProps = {
   topics: [],
   countries: [],
   states: [],
+  userId: null,
 }
 
 export default ProfileInfo

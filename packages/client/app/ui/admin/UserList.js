@@ -14,6 +14,7 @@ import {
   Modal,
   Empty,
   VisuallyHiddenElement,
+  Link,
 } from '../common'
 import {
   conditionalWord,
@@ -157,7 +158,14 @@ const UserList = ({
 
   // TABLE
   const columns = [
-    { title: 'Name', dataIndex: 'displayName', key: 'displayName' },
+    {
+      title: 'Name',
+      dataIndex: 'displayName',
+      key: 'displayName',
+      render: (displayName, user) => (
+        <Link to={`/profile/${user.key}`}>{displayName}</Link>
+      ),
+    },
     { title: 'Email', dataIndex: 'email', key: 'email' },
     {
       title: 'Expertise',

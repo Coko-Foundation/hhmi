@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { useCurrentUser } from '@coko/client'
 
 import { Profile, SignupQuestionnaire, VisuallyHiddenElement } from 'ui'
@@ -15,6 +15,7 @@ import {
   SUBMIT_QUESTIONNAIRE,
   UPDATE_PROFILE,
   UPDATE_PASSWORD,
+  GET_USER_DATA,
 } from '../graphql'
 
 const profileApiToUi = (user, signup) => {
@@ -93,8 +94,20 @@ const UserProfile = props => {
   const [submitted, setSubmitted] = useState(false)
 
   const history = useHistory()
+  const { id: userId } = useParams()
 
   const { currentUser, setCurrentUser } = useCurrentUser()
+
+  if (currentUser.id === userId) {
+    window.history.replaceState({}, '', '/profile')
+  }
+
+  const { data: userData, loading: userLoading } = useQuery(GET_USER_DATA, {
+    skip: !userId,
+    variables: {
+      id: userId,
+    },
+  })
 
   const [updateProfileMutation, { loading: updateProfileLoading }] =
     useMutation(UPDATE_PROFILE, {
@@ -206,7 +219,9 @@ const UserProfile = props => {
 
   if (!(countryOptions && statesOptions)) return null
 
-  const initialValues = profileApiToUi(currentUser, signup)
+  const initialValues = userId
+    ? profileApiToUi(userData?.user)
+    : profileApiToUi(currentUser, signup)
 
   if (signup) {
     return (
@@ -231,6 +246,8 @@ const UserProfile = props => {
     )
   }
 
+  if (userId && userLoading) return null
+
   return (
     <>
       <VisuallyHiddenElement as="h1">User Profile</VisuallyHiddenElement>
@@ -249,6 +266,7 @@ const UserProfile = props => {
         states={statesOptions}
         submissionStatus={submissionStatus}
         topics={profileOptions.topics}
+        userId={userId !== currentUser.id ? userId : null}
       />
     </>
   )

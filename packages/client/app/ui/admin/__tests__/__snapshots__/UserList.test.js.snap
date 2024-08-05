@@ -266,7 +266,13 @@ exports[`UserList matches snapshot 1`] = `
                               rowSpan={null}
                               style={{}}
                             >
-                              user1
+                              <a
+                                className="sc-hyBYnz eDtHdv"
+                                href="/profile/6e2655a0-9650-4add-89f6-d1f35c892afe"
+                                onClick={[Function]}
+                              >
+                                user1
+                              </a>
                             </td>
                             <td
                               className="ant-table-cell"
@@ -309,7 +315,7 @@ exports[`UserList matches snapshot 1`] = `
                           </tr>
                           <tr
                             className="ant-table-row ant-table-row-level-0"
-                            data-row-key="6e2655a0-9650-4add-89f6-d1f35c812afe"
+                            data-row-key="6e2655a0-9650-4add-89f6-d1f35c812aff"
                             onClick={[Function]}
                             style={{}}
                           >
@@ -328,7 +334,7 @@ exports[`UserList matches snapshot 1`] = `
                                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
                                 >
                                   <input
-                                    aria-label="Select user user1"
+                                    aria-label="Select user user2"
                                     checked={false}
                                     className="ant-checkbox-input"
                                     disabled={false}
@@ -350,7 +356,13 @@ exports[`UserList matches snapshot 1`] = `
                               rowSpan={null}
                               style={{}}
                             >
-                              user1
+                              <a
+                                className="sc-hyBYnz eDtHdv"
+                                href="/profile/6e2655a0-9650-4add-89f6-d1f35c812aff"
+                                onClick={[Function]}
+                              >
+                                user2
+                              </a>
                             </td>
                             <td
                               className="ant-table-cell"
@@ -393,7 +405,7 @@ exports[`UserList matches snapshot 1`] = `
                           </tr>
                           <tr
                             className="ant-table-row ant-table-row-level-0"
-                            data-row-key="6e2655a0-9650-4add-89f6-d1f35c894afe"
+                            data-row-key="6e2655a0-9650-4add-89f6-d1f35c894afg"
                             onClick={[Function]}
                             style={{}}
                           >
@@ -434,7 +446,13 @@ exports[`UserList matches snapshot 1`] = `
                               rowSpan={null}
                               style={{}}
                             >
-                              deactivedUser
+                              <a
+                                className="sc-hyBYnz eDtHdv"
+                                href="/profile/6e2655a0-9650-4add-89f6-d1f35c894afg"
+                                onClick={[Function]}
+                              >
+                                deactivedUser
+                              </a>
                             </td>
                             <td
                               className="ant-table-cell"
