@@ -459,6 +459,7 @@ const submitReport = async ({
   reporterDisplayName,
   reporterEmail,
   reportContent,
+  abVersionNumber,
   attachments,
   questionId,
   to,
@@ -472,6 +473,7 @@ const submitReport = async ({
     const content = `
 		<p>${reporterDisplayName} with email address <a href="mailto:${reporterEmail}">${reporterEmail}</a> has reported an issue with an item.</p>
 		<pre>${reportContent}</pre>
+		<p>AB Version: ${abVersionNumber}</p>
 		<p>
 		Click on <a href="${link}">this link</a> to view the item.
 		If you cannot see the link, copy and paste the following link into your browser.
