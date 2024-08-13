@@ -995,7 +995,12 @@ class Question extends BaseModel {
 
     query.debug()
 
-    return applyListQueryOptions(query, options)
+    const response = await applyListQueryOptions(query, options)
+
+    return {
+      ...response,
+      relatedQuestionsIds: response.result.map(q => q.id),
+    }
   }
 
   static async hasRole(userId, manuscriptVersionId, role) {
