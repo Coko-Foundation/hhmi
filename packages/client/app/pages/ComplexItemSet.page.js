@@ -244,11 +244,8 @@ const ComplexItemSetPage = () => {
               complexItemSetOptions: complexItemSetOptions?.complexItemSets,
               showStatus: !!currentUser,
               showAuthor: true,
-              relatedQuestionIds: {
-                filters: { complexItemSet: [id] },
-                ascending: true,
-                orderBy: 'publication_date',
-              },
+              relatedQuestionIds:
+                data?.complexItemSet.questions.relatedQuestionsIds,
               testMode: true,
             })
           : []

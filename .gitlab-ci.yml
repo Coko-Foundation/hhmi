@@ -21,7 +21,7 @@ stages:
 
 # BUILD DEVELOPMENT
 
-.client build development:
+client build development:
   stage: Build development
   image: docker:26
   services:
@@ -33,7 +33,7 @@ stages:
     - docker build --tag $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA ./packages/client -f packages/client/Dockerfile-development
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
 
-.server build development:
+server build development:
   stage: Build development
   image: docker:26
   services:
@@ -47,7 +47,7 @@ stages:
 
 # LINT & UNIT TEST
 
-.client lint:
+client lint:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -58,7 +58,7 @@ stages:
     - yarn prettier --check .
     - yarn stylelint "**/*.js"
 
-.client unit test:
+client unit test:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -67,7 +67,7 @@ stages:
     - cd $WORKDIR_CLIENT
     - yarn jest
 
-.server lint:
+server lint:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -77,7 +77,7 @@ stages:
     - yarn eslint .
     - yarn prettier --check .
 
-.server unit test:
+server unit test:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -131,7 +131,7 @@ build client:
 
 # END TO END TEST
 
-.end to end tests:
+end to end tests:
   stage: End to end test
   image: cokoapps/hhmi-dnn
   needs:
@@ -224,7 +224,7 @@ deploy production:
   only:
     - staging
 
-# .deploy production:
+# deploy production:
 #   stage: Deploy production
 #   image: $CI_REGISTRY/cokoinfra/ansible-deployer
 #   services:
@@ -235,12 +235,15 @@ deploy production:
 #   variables:
 #     ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true
 #     ANSCOMPOSE_CLIENT_SHOW_EMAIL_LOGIN_OPTION: true
-#     COMPOSE_SERVICES: client,server
+#     ANSCOMPOSE_STORYBOOK_PORT: 5000
+#     COMPOSE_SERVICES: client,server,storybook
 #     COMPOSE_SERVICES_CLIENT_URL: hhmi.coko.app
 #     COMPOSE_SERVICES_CLIENT_IMAGE: $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest
 #     COMPOSE_SERVICES_SERVER_URL: hhmi-server.coko.app
 #     COMPOSE_SERVICES_SERVER_IMAGE: $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest
-#     DEPLOY_COMPOSE_FILE: docker-compose.deploy.yml
+#     COMPOSE_SERVICES_STORYBOOK_URL: hhmi-storybook.coko.app
+#     COMPOSE_SERVICES_STORYBOOK_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
+#     DEPLOY_COMPOSE_FILE: docker-compose.cluster.yml
 #   script:
 #     - kubectl config get-contexts
 #     - kubectl config use-context coko-org/products/hhmi/agent:agent-1
@@ -250,26 +253,26 @@ deploy production:
 #   only:
 #     - staging
 
-deploy storybook:
-  stage: Deploy production
-  image: $CI_REGISTRY/cokoinfra/ansible-deployer
-  services:
-    - docker:26-dind
-  # needs:
-  #   - build & publish storybook
-  variables:
-    COMPOSE_SERVICES: storybook
-    COMPOSE_SERVICES_STORYBOOK_URL: hhmi-storybook.coko.app
-    COMPOSE_SERVICES_STORYBOOK_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
-    DEPLOY_COMPOSE_FILE: docker-compose.storybook-deploy.yml
-  script:
-    - kubectl config get-contexts
-    - kubectl config use-context coko-org/products/hhmi/agent:agent-1
-    - cp $DEPLOY_COMPOSE_FILE /ansible
-    - cd /ansible
-    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE" --skip-tags "database,bucket"
-  only:
-    - staging
+# deploy storybook:
+#   stage: Deploy production
+#   image: $CI_REGISTRY/cokoinfra/ansible-deployer
+#   services:
+#     - docker:26-dind
+#   # needs:
+#   #   - build & publish storybook
+#   variables:
+#     COMPOSE_SERVICES: storybook
+#     COMPOSE_SERVICES_STORYBOOK_URL: hhmi-storybook.coko.app
+#     COMPOSE_SERVICES_STORYBOOK_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
+#     DEPLOY_COMPOSE_FILE: docker-compose.storybook-deploy.yml
+#   script:
+#     - kubectl config get-contexts
+#     - kubectl config use-context coko-org/products/hhmi/agent:agent-1
+#     - cp $DEPLOY_COMPOSE_FILE /ansible
+#     - cd /ansible
+#     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE" --skip-tags "database,bucket"
+#   only:
+#     - staging
 
 # deploy storybook:
 #   image: debian:bullseye-slim
