@@ -1,13 +1,12 @@
 /* stylelint-disable no-eol-whitespace */
-/* stylelint-disable declaration-no-important */
 import { createGlobalStyle } from 'styled-components'
 import { th, grid } from '@coko/client'
 
 export default createGlobalStyle`
 
-  ::selection {
-    background-color: ${th('colorSelection')} !important;
-    color: ${th('colorBody')} !important;
+  #root ::selection {
+    background-color: ${th('colorSelection')};
+    color: ${th('colorBody')};
     text-shadow: none;
   }
 
@@ -32,7 +31,15 @@ export default createGlobalStyle`
     }
   }
 
-  .ant-tooltip .ant-tooltip-arrow::before {
-    clip-path: polygon(0 100%, 50% 0%, 100% 100%) !important;
+  #root .ant-tooltip .ant-tooltip-arrow::before {
+    clip-path: polygon(0 100%, 50% 0%, 100% 100%);
+  }
+
+  #root .ant-input[disabled] {
+    color: rgba(63 63 63 / 80%);
+  }
+
+  #root .ant-radio-wrapper-disabled {
+    color: rgba(63 63 63 / 80%);
   }
 `

@@ -118,12 +118,12 @@ const SubmitButton = styled(StyledButton)`
 `
 
 const StyledPrevNextButton = styled(StyledButton)`
-  > span:not([role='img']) {
+  > span:not(.ant-btn-icon) {
     display: none;
   }
 
   @media (min-width: ${th('mediaQueries.small')}) {
-    > span:not([role='img']) {
+    > span:not(.ant-btn-icon) {
       display: inline-block;
     }
   }

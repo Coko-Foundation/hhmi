@@ -1,5 +1,6 @@
 import React from 'react'
 import { uuid } from '@coko/client'
+import { BrowserRouter } from 'react-router-dom'
 
 import { axe, fireEvent, render, renderer, screen } from '../../../testUtils'
 
@@ -16,8 +17,8 @@ let data = [
     signUpDate: '2022-12-12T10:53:42.215Z',
   },
   {
-    id: '6e2655a0-9650-4add-89f6-d1f35c812afe',
-    displayName: 'user1',
+    id: '6e2655a0-9650-4add-89f6-d1f35c812aff',
+    displayName: 'user2',
     email: 'user2@gmail.com',
     expertise: [],
     isReviewer: false,
@@ -25,7 +26,7 @@ let data = [
     signUpDate: '2022-12-12T10:53:42.215Z',
   },
   {
-    id: '6e2655a0-9650-4add-89f6-d1f35c894afe',
+    id: '6e2655a0-9650-4add-89f6-d1f35c894afg',
     displayName: 'deactivedUser',
     email: 'deactivedUser@gmail.com',
     expertise: [],
@@ -37,23 +38,25 @@ let data = [
 
 const MockUserList = props => {
   return (
-    <UserList
-      currentPage={1}
-      currentUserId={uuid()}
-      data={data}
-      onBulkActivate={jest.fn()}
-      onBulkDeactivate={jest.fn()}
-      onBulkDelete={jest.fn()}
-      onClickShowDeactivated={jest.fn()}
-      onPageChange={jest.fn()}
-      onSearch={jest.fn()}
-      pageSize={10}
-      selectedRows={[]}
-      setSelectedRows={jest.fn()}
-      showDeactivated={false}
-      totalUserCount={10}
-      {...props}
-    />
+    <BrowserRouter>
+      <UserList
+        currentPage={1}
+        currentUserId={uuid()}
+        data={data}
+        onBulkActivate={jest.fn()}
+        onBulkDeactivate={jest.fn()}
+        onBulkDelete={jest.fn()}
+        onClickShowDeactivated={jest.fn()}
+        onPageChange={jest.fn()}
+        onSearch={jest.fn()}
+        pageSize={10}
+        selectedRows={[]}
+        setSelectedRows={jest.fn()}
+        showDeactivated={false}
+        totalUserCount={10}
+        {...props}
+      />
+    </BrowserRouter>
   )
 }
 
@@ -121,12 +124,14 @@ describe('UserList', () => {
 
   it('renders with no accessibility errors with data', async () => {
     const { container } = render(<MockUserList />)
+
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   })
 
   it('renders with no accessibility errors with empty data array', async () => {
     const { container } = render(<MockUserList data={[]} />)
+
     const results = await axe(container)
     expect(results).toHaveNoViolations()
   }, 15000)

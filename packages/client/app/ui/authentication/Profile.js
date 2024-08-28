@@ -34,6 +34,7 @@ const Profile = props => {
     states,
     topics,
     onCountryChange,
+    userId,
   } = props
 
   const [unsavedChanges, setUnsavedChanges] = useState(false)
@@ -96,10 +97,14 @@ const Profile = props => {
           submissionStatus={submissionStatus}
           submitButtonLabel="Save"
           topics={topics}
+          userId={userId}
         />
       ),
     },
-    {
+  ]
+
+  if (!userId)
+    items.push({
       label: 'Password',
       key: 'changePassword',
       children: (
@@ -111,8 +116,7 @@ const Profile = props => {
           submissionStatus={submissionStatus}
         />
       ),
-    },
-  ]
+    })
 
   return (
     <Wrapper className={className}>
@@ -142,6 +146,7 @@ Profile.propTypes = {
   states: PropTypes.arrayOf(PropTypes.shape()),
   topics: PropTypes.arrayOf(PropTypes.shape()),
   onCountryChange: PropTypes.func.isRequired,
+  userId: PropTypes.string,
 }
 
 Profile.defaultProps = {
@@ -156,6 +161,7 @@ Profile.defaultProps = {
   institutionalSetting: [],
   states: [],
   topics: [],
+  userId: null,
 }
 
 export default Profile

@@ -27,12 +27,14 @@ const ProfileForm = props => {
     secondaryButtonLabel,
     submitButtonLabel,
     submissionStatus,
+    userId,
     ...rest
   } = props
 
   return (
     <Wrapper className={className}>
       <Form
+        disabled={!!userId}
         form={form}
         layout="vertical"
         onFinish={onSubmit}
@@ -82,6 +84,7 @@ ProfileForm.propTypes = {
   secondaryButtonLabel: PropTypes.string,
   submitButtonLabel: PropTypes.string,
   submissionStatus: PropTypes.oneOf(['success', 'error', 'danger']),
+  userId: PropTypes.string,
 }
 
 ProfileForm.defaultProps = {
@@ -93,6 +96,7 @@ ProfileForm.defaultProps = {
   secondaryButtonLabel: 'Cancel',
   submitButtonLabel: 'Save',
   submissionStatus: null,
+  userId: null,
 }
 
 export default ProfileForm

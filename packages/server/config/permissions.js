@@ -393,6 +393,7 @@ const permissions = {
     // Users
     currentUser: isActive,
     filterUsers: isAdminOrEditor,
+    user: isAdmin,
     // Teams
     getGlobalTeams: isAdmin,
     getNonTeamMemberUsers: isAdmin,
