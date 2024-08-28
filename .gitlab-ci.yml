@@ -229,9 +229,9 @@ deploy production:
   image: $CI_REGISTRY/cokoinfra/ansible-deployer
   services:
     - docker:26-dind
-  needs:
-    - publish server
-    - publish client
+  # needs:
+  #   - publish server
+  #   - publish client
   variables:
     ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true
     ANSCOMPOSE_CLIENT_SHOW_EMAIL_LOGIN_OPTION: true
