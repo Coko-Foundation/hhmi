@@ -695,6 +695,14 @@ const QuestionPage = props => {
   const isAdmin = hasGlobalRole(currentUser, 'admin')
   const isReviewer = hasRole(currentUser, 'reviewer', version?.id)
 
+  const canViewUnpublished =
+    isEditor ||
+    isHandlingEditor ||
+    isProductionMember ||
+    isAuthor ||
+    isReviewer ||
+    isAdmin
+
   const isSubmitted = version?.submitted || (isAdmin && isAuthor)
   const isUnderReview = version?.underReview
   const isInProduction = version?.inProduction
@@ -1351,7 +1359,11 @@ const QuestionPage = props => {
   }
 
   // when no published version was found
-  if (testMode && question && question.versions[0].published === false) {
+  if (
+    (testMode || !canViewUnpublished) &&
+    question &&
+    question.versions[0].published === false
+  ) {
     return (
       <Result
         // replace link with a Button with to="/dashboard" after MR is merged
