@@ -227,7 +227,7 @@ const ProfileInfo = props => {
               {showStates && (
                 <Form.Item
                   dependencies={['country']}
-                  label="State / Province"
+                  label="State/Province"
                   name="state"
                   rules={[
                     {
