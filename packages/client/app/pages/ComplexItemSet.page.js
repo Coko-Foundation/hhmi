@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, useHistory, useLocation } from 'react-router-dom'
+import { Link, useParams, useHistory, useLocation } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
 
-import { ComplexItemSet } from 'ui'
+import { ComplexItemSet, Result, Spin } from 'ui'
 import {
   dashboardDataMapper,
   useMetadata,
@@ -33,7 +33,8 @@ const ComplexItemSetPage = () => {
     GET_COMPLEX_ITEM_SETS_OPTIONS,
   )
 
-  const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
+  const { data: { currentUser } = {}, loading: loadingCurrentUser } =
+    useQuery(CURRENT_USER)
 
   const [updateComplexItemSet, { loading: loadingUpdate }] = useMutation(
     UPDATE_COMPLEX_ITEM_SET,
@@ -41,6 +42,9 @@ const ComplexItemSetPage = () => {
 
   const [createComplexItemSet, { loading: loadingCreate }] = useMutation(
     CREATE_COMPLEX_ITEM_SET,
+    {
+      refetchQueries: [{ query: CURRENT_USER }],
+    },
   )
 
   const [upload] = useMutation(UPLOAD_FILES)
@@ -204,6 +208,7 @@ const ComplexItemSetPage = () => {
 
   const isEditor = hasGlobalRole(currentUser, 'editor')
   const isAuthor = hasRole(currentUser, 'author', id)
+  const isHandlingEditor = hasGlobalRole(currentUser, 'handlingEditor')
 
   const hasPublishedQuestions = data?.complexItemSet.questions.result.some(
     q => {
@@ -214,7 +219,24 @@ const ComplexItemSetPage = () => {
     },
   )
 
-  // test pipeline
+  if (loadingCurrentUser) {
+    return <Result icon={<Spin size={18} spinning />} />
+  }
+
+  if (
+    id &&
+    !(isAuthor || isEditor || isHandlingEditor) &&
+    !hasPublishedQuestions
+  ) {
+    return (
+      <Result
+        extra={<Link to="/sets">Visit the Sets page</Link>}
+        status="404"
+        subTitle="Sorry, this set hasn't been published yet."
+        title="Set Not Ready"
+      />
+    )
+  }
 
   return (
     <ComplexItemSet
@@ -246,11 +268,8 @@ const ComplexItemSetPage = () => {
               complexItemSetOptions: complexItemSetOptions?.complexItemSets,
               showStatus: !!currentUser,
               showAuthor: true,
-              relatedQuestionIds: {
-                filters: { complexItemSet: [id] },
-                ascending: true,
-                orderBy: 'publication_date',
-              },
+              relatedQuestionIds:
+                data?.complexItemSet.questions.relatedQuestionsIds,
               testMode: true,
             })
           : []
