@@ -230,6 +230,7 @@ const ComplexItemSetPage = () => {
   ) {
     return (
       <Result
+        // replace link with a Button with to="/dashboard" after MR is merged
         extra={<Link to="/sets">Visit the Sets page</Link>}
         status="404"
         subTitle="Sorry, this set hasn't been published yet."
