@@ -347,6 +347,16 @@ const deleteUsersRelatedItems = async (ids, options = {}) => {
   }
 }
 
+const getUserTeams = user => {
+  try {
+    const { id } = user
+    return User.getTeams(id)
+  } catch (e) {
+    logger.error(`error getUserTeams: ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   submitQuestionnaire,
   updateUserProfile,
@@ -354,4 +364,5 @@ module.exports = {
   getDisplayName,
   bioInteractiveLogin,
   deleteUsersRelatedItems,
+  getUserTeams,
 }

@@ -7,6 +7,7 @@ const {
   getDisplayName,
   bioInteractiveLogin,
   deleteUsersRelatedItems,
+  getUserTeams,
 } = require('../../controllers/user.controllers')
 
 const updateUserProfileResolver = async (_, { input }, ctx) => {
@@ -43,6 +44,10 @@ const deleteUsersRelatedItemsResolver = async (_, { ids }) => {
   return deleteUsersRelatedItems(ids)
 }
 
+const teamsResolver = async user => {
+  return getUserTeams(user)
+}
+
 module.exports = {
   Mutation: {
     updateUserProfile: updateUserProfileResolver,
@@ -55,5 +60,6 @@ module.exports = {
   },
   User: {
     displayName: displayNameResolver,
+    teams: teamsResolver,
   },
 }
