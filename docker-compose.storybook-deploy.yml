@@ -1,12 +1,9 @@
 version: '3'
 
 services:
-<<<<<<< HEAD
   storybook:
     image: cokoapps/hhmi-storybook
-=======
   storybook-static:
     image: cokoapps/hhmi-storybook:latest
->>>>>>> 0830c78b92292526db31878874be7d5cea7b3afb
     ports:
       - ${STORYBOOK_PORT:-5000}:80
