@@ -24,7 +24,8 @@ const BioInteractiveLoginPage = props => {
   if (currentUser) return <Redirect to="/dashboard" />
 
   if (state !== localStorage.getItem('oauthState')) {
-    return <Redirect to="/" />
+    // after logging in redirect to the Browse Items page
+    return <Redirect to="/discover" />
   }
 
   const login = () => {

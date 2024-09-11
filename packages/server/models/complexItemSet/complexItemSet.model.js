@@ -121,10 +121,12 @@ class ComplexItemSet extends BaseModel {
     // otherwise, filter sets according to role
     const userTeams = await User.getTeams(userId)
 
-    const isEditor = userTeams.some(
+    const isEditorOrAdmin = userTeams.some(
       team =>
         team.global &&
-        (team.role === 'editor' || team.role === 'handlingEditor'),
+        (team.role === 'editor' ||
+          team.role === 'handlingEditor' ||
+          team.role === 'admin'),
     )
 
     const authoredSets = userTeams
@@ -135,11 +137,24 @@ class ComplexItemSet extends BaseModel {
 
     const query = ComplexItemSet.query()
 
-    if (isEditor) {
-      query.select('*')
+    const selectFields = ['complex_item_sets.*']
+
+    if (searchQuery) {
+      query
+        .leftJoin('teams', 'teams.objectId', 'complex_item_sets.id')
+        .leftJoin('team_members', 'team_members.team_id', 'teams.id')
+        .leftJoin('users', 'users.id', 'team_members.user_id')
+
+      selectFields.push(
+        ...['users.display_name', 'users.given_names', 'users.surname'],
+      )
+    }
+
+    if (isEditorOrAdmin) {
+      query.select(selectFields)
     } else {
       query
-        .select('*')
+        .select(selectFields)
         .where(builder =>
           builder.where('isPublished', true).orWhereIn('id', authoredSets),
         )
@@ -149,7 +164,10 @@ class ComplexItemSet extends BaseModel {
       query.andWhere(builder =>
         builder
           .where('title', 'ilike', `%${searchQuery}%`)
-          .orWhere('content_text', 'ilike', `%${searchQuery}%`),
+          .orWhere('content_text', 'ilike', `%${searchQuery}%`)
+          .orWhere('users.display_name', 'ilike', `%${searchQuery}%`)
+          .orWhere('users.given_names', 'ilike', `%${searchQuery}%`)
+          .orWhere('users.surname', 'ilike', `%${searchQuery}%`),
       )
     }
 

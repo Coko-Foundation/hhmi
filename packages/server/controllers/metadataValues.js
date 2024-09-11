@@ -14165,7 +14165,7 @@ const metadata = {
               learningObjectives: [
                 {
                   label:
-                    'Describe the fundamental  traits shared by all viruses',
+                    'Given a taxonomic group, describe the shared fundamental traits which provide evidence of common ancestry.',
                   value: 'ibm-u6-t1-lo1',
                 },
                 {
@@ -14194,17 +14194,12 @@ const metadata = {
               learningObjectives: [
                 {
                   label:
-                    'Describe the fundamental traits shared across all domains of life, which provide evidence of common ancestry.',
-                  value: 'ibm-u6-t2-lo1',
-                },
-                {
-                  label:
-                    'Describe the fundamental  traits shared by organisms within each domain of life.',
+                    'Given a taxonomic group, describe the shared fundamental traits which provide evidence of common ancestry.',
                   value: 'ibm-u6-t2-lo2',
                 },
                 {
                   label:
-                    'Describe the fundamental traits shared by organisms within the following groups - protist, plant, fungus or animal.',
+                    'Given characteristics, classify an organism in the correct taxonomic group.',
                   value: 'ibm-u6-t2-lo3',
                 },
               ],
