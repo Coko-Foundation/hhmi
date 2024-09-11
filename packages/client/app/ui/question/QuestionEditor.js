@@ -86,7 +86,7 @@ const QuestionEditor = props => {
   const [customValues, setCustomValues] = useState({ showFeedBack, testMode })
 
   // only for users taking the test in student view
-  const preserveLocalState = published && !withFeedback
+  const preserveLocalState = !withFeedback
 
   useEffect(() => {
     setEditorContent(content)
