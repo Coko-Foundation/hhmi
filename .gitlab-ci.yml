@@ -201,77 +201,57 @@ publish server:
 
 # DEPLOY PRODUCTION
 
-deploy production:
-  image: debian:bullseye-slim
-  stage: Deploy production
-  needs:
-    - publish server
-    - publish client
-  before_script:
-    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-    - chmod 700 ~/.ssh
-    - ssh-keyscan -p $SSH_PORT $SSH_URL >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-  script:
-    - |
-      ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} \
-      "docker pull $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest && \
-      docker pull $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest && \
-      sudo systemctl restart hhmi.service"
-  only:
-    - staging
 # deploy production:
+#   image: debian:bullseye-slim
 #   stage: Deploy production
-#   image: $CI_REGISTRY/cokoinfra/ansible-deployer
-#   services:
-#     - docker:26-dind
-#   # needs:
-#   #   - publish server
-#   #   - publish client
-#   variables:
-#     ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true
-#     ANSCOMPOSE_CLIENT_SHOW_EMAIL_LOGIN_OPTION: true
-#     ANSCOMPOSE_STORYBOOK_PORT: 5000
-#     COMPOSE_SERVICES: client,server,storybook
-#     COMPOSE_SERVICES_CLIENT_URL: hhmi.coko.app
-#     COMPOSE_SERVICES_CLIENT_IMAGE: $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest
-#     COMPOSE_SERVICES_SERVER_URL: hhmi-server.coko.app
-#     COMPOSE_SERVICES_SERVER_IMAGE: $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest
-#     COMPOSE_SERVICES_STORYBOOK_URL: hhmi-storybook.coko.app
-#     COMPOSE_SERVICES_STORYBOOK_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
-#     DEPLOY_COMPOSE_FILE: docker-compose.cluster.yml
+#   needs:
+#     - publish server
+#     - publish client
+#   before_script:
+#     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+#     - eval $(ssh-agent -s)
+#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#     - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
+#     - chmod 700 ~/.ssh
+#     - ssh-keyscan -p $SSH_PORT $SSH_URL >> ~/.ssh/known_hosts
+#     - chmod 644 ~/.ssh/known_hosts
 #   script:
-#     - kubectl config get-contexts
-#     - kubectl config use-context coko-org/products/hhmi/agent:agent-1
-#     - cp $DEPLOY_COMPOSE_FILE /ansible
-#     - cd /ansible
-#     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
+#     - |
+#       ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} \
+#       "docker pull $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest && \
+#       docker pull $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest && \
+#       sudo systemctl restart hhmi.service"
 #   only:
 #     - staging
 
-# deploy storybook:
-#   stage: Deploy production
-#   image: $CI_REGISTRY/cokoinfra/ansible-deployer
-#   services:
-#     - docker:26-dind
-#   # needs:
-#   #   - build & publish storybook
-#   variables:
-#     COMPOSE_SERVICES: storybook
-#     COMPOSE_SERVICES_STORYBOOK_URL: hhmi-storybook.coko.app
-#     COMPOSE_SERVICES_STORYBOOK_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
-#     DEPLOY_COMPOSE_FILE: docker-compose.storybook-deploy.yml
-#   script:
-#     - kubectl config get-contexts
-#     - kubectl config use-context coko-org/products/hhmi/agent:agent-1
-#     - cp $DEPLOY_COMPOSE_FILE /ansible
-#     - cd /ansible
-#     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE" --skip-tags "database,bucket"
-#   only:
-#     - staging
+deploy production:
+  stage: Deploy production
+  image: $CI_REGISTRY/cokoinfra/ansible-deployer
+  services:
+    - docker:26-dind
+  needs:
+    - publish server
+    - publish client
+  variables:
+    ANSCOMPOSE_POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES: true
+    ANSCOMPOSE_CLIENT_SHOW_EMAIL_LOGIN_OPTION: true
+    ANSCOMPOSE_STORYBOOK_PORT: 5000
+    COMPOSE_SERVICES: client,server,storybook
+    COMPOSE_SERVICES_CLIENT_URL: hhmi.coko.app
+    COMPOSE_SERVICES_CLIENT_IMAGE: $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest
+    COMPOSE_SERVICES_SERVER_URL: hhmi-server.coko.app
+    COMPOSE_SERVICES_SERVER_IMAGE: $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest
+    COMPOSE_SERVICES_STORYBOOK_URL: hhmi-storybook.coko.app
+    COMPOSE_SERVICES_STORYBOOK_IMAGE: $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest
+    DEPLOY_COMPOSE_FILE: docker-compose.cluster.yml
+  script:
+    - kubectl config get-contexts
+    - kubectl config use-context coko-org/products/hhmi/agent:agent-1
+    - cp $DEPLOY_COMPOSE_FILE /ansible
+    - cd /ansible
+    - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
+  only:
+    - staging
 
 # deploy storybook:
 #   image: debian:bullseye-slim
