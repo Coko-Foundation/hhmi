@@ -17,11 +17,15 @@ describe('Footer', () => {
     expect(FooterComponent).toMatchSnapshot()
   })
   it('renders correct link', () => {
-    const items = ['Terms of Use', 'Privacy Policy']
+    const items = [
+      'Terms of Use',
+      'Privacy Policy',
+      'A project of HHMI Biointeractive',
+    ]
 
     render(<MockFooter />)
     const links = screen.getAllByRole('link')
-    expect(links.length).toBe(2)
+    expect(links.length).toBe(3)
     links.forEach((link, i) => {
       expect(link.textContent).toBe(items[i])
     })

@@ -1,18 +1,16 @@
-/* stylelint-disable string-quotes */
+/* eslint-disable react/no-invalid-html-attribute */
 import React from 'react'
-// import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-// import logo from '../../../static/hhmi-ab-logo-sm.svg'
-// import logoSmall from '../../../static/hhmi-logo-white-sm.svg'
+import biointeractiveLogo from '../../../static/biointeractive.svg'
 
 const StyledFooter = styled.footer`
   background-color: ${th('colorBody')};
   color: ${th('colorTextReverse')};
   display: flex;
   flex-direction: column;
-  height: 40px;
+  height: 50px;
   justify-content: space-between;
   padding: ${grid(1)} 0;
 
@@ -21,75 +19,58 @@ const StyledFooter = styled.footer`
   }
 `
 
-// const SiteLogo = styled(Link)`
-//   display: none;
+const SiteLogo = styled.a`
+  align-self: center;
+  background-image: ${`url(${biointeractiveLogo})`};
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 160px 35px;
+  display: block;
+  height: 35px;
+  margin-inline-end: ${grid(5)};
+  overflow: hidden;
+  width: 160px;
 
-//   h1 {
-//     height: 0;
-//     overflow: hidden;
-//     width: 0;
-//   }
+  &:hover,
+  &:focus-visible {
+    filter: drop-shadow(0 0 5px #0ffb);
+  }
 
-//   @media screen and (min-width: ${th('mediaQueries.small')}) {
-//     background-image: ${`url(${logoSmall})`};
-//     background-position: center center;
-//     background-repeat: no-repeat;
-//     background-size: 65px 32px;
-//     display: block;
-//     height: 32px;
-//     margin: 0 calc(4px * 3);
-//     overflow: hidden;
-//     width: 65px;
-//   }
-
-//   @media screen and (min-width: ${th('mediaQueries.medium')}) {
-//     background-image: ${`url(${logo})`};
-//     background-position: center center;
-//     background-repeat: no-repeat;
-//     background-size: 250px 32px;
-//     width: 250px;
-//   }
-
-//   /* @media screen and (min-width: ${th('mediaQueries.small')}) {
-//     background-size: 400px 52px;
-//     height: 52px;
-//     width: 400px;
-//   } */
-
-//   /* @media (min-width: ${props => props.theme.mediaQueries.large}) {
-//     background-size: 501px 67px;
-//     height: 67px;
-//     width: 501px;
-//   } */
-// `
+  h2 {
+    height: 0;
+    overflow: hidden;
+    width: 0;
+  }
+`
 
 const FooterList = styled.ul`
   display: flex;
-  justify-content: center;
+  gap: ${grid(3)};
   margin: 0;
-  padding: 0;
+  padding-inline-start: ${grid(2)};
 
   @media screen and (min-width: ${th('mediaQueries.medium')}) {
     justify-content: right;
   }
 
   li {
-    font-size: ${th('fontSizeBaseSmall')};
+    align-items: center;
+    display: inline-flex;
+    font-size: clamp(
+      ${th('fontSizeBaseSmaller')},
+      0.7065rem + 0.2174vw,
+      ${th('fontSizeBaseSmall')}
+    );
     list-style: none;
-    margin: 0 ${grid(2)};
     ${({ social }) => social && `display: inline-block;`}
-
-    @media screen and (min-width: ${th('mediaQueries.medium')}) {
-      display: inline-flex;
-      margin: 0 ${grid(3)};
-    }
 
     a {
       color: ${th('colorTextReverse')};
       text-decoration: underline;
       text-decoration-color: ${th('colorTertiary')};
 
-      &:hover {
+      &:hover,
+      &:focus-visible {
         color: ${th('colorTertiary')};
       }
     }
@@ -98,11 +79,7 @@ const FooterList = styled.ul`
 
 const Footer = props => {
   const {
-    links: {
-      // homepage,
-      termsOfUse,
-      privacyPolicy,
-    },
+    links: { termsOfUse, privacyPolicy },
     ...rest
   } = props
 
@@ -110,32 +87,27 @@ const Footer = props => {
     <StyledFooter role="contentinfo" {...rest}>
       <FooterList>
         <li>
-          <a href={termsOfUse} rel="noreferrer" target="_blank">
+          <a href={termsOfUse} rel="terms-of-service external">
             Terms of Use
           </a>
         </li>
 
         <li>
-          <a href={privacyPolicy} rel="noreferrer" target="_blank">
+          <a href={privacyPolicy} rel="privacy-policy external">
             Privacy Policy
           </a>
         </li>
       </FooterList>
 
-      {/* <SiteLogo rel="Home" title="Home" to={homepage}>
-        <h1>Assesment Builder</h1>
-      </SiteLogo> */}
+      <SiteLogo href="https://www.biointeractive.org/" rel="external">
+        <h2>A project of HHMI Biointeractive</h2>
+      </SiteLogo>
     </StyledFooter>
   )
 }
 
 Footer.propTypes = {
   links: PropTypes.shape({
-    homepage: PropTypes.string,
-    twitterUrl: PropTypes.string,
-    facebookUrl: PropTypes.string,
-    youtubeUrl: PropTypes.string,
-    instagramUrl: PropTypes.string,
     termsOfUse: PropTypes.string,
     privacyPolicy: PropTypes.string,
   }),
@@ -143,11 +115,6 @@ Footer.propTypes = {
 
 Footer.defaultProps = {
   links: {
-    homepage: '#',
-    twitterUrl: '#',
-    facebookUrl: '#',
-    youtubeUrl: '#',
-    instagramUrl: '#',
     termsOfUse: '#',
     privacyPolicy: '#',
   },

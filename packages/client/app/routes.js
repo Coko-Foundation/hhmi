@@ -240,7 +240,7 @@ const Wrapper = props => {
 }
 
 const StyledPage = styled(Page)`
-  height: calc(100% - 64px - 40px);
+  height: calc(100% - 60px - 50px);
 `
 
 const StyledSpin = styled(Spin)`

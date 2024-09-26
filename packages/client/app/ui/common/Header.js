@@ -46,7 +46,7 @@ const Branding = styled(Link)`
   display: block;
   filter: drop-shadow(0 0 12px #ff00);
   height: ${th('mobileLogoHeight')};
-  margin: 0 1.5rem 0.3rem 0;
+  margin-inline-end: 1.5rem;
   overflow: hidden;
   transition: filter 0.3s ease-in;
   width: 95px;
@@ -64,8 +64,8 @@ const Branding = styled(Link)`
   }
 
   &:hover,
-  &:focus {
-    filter: drop-shadow(0 0 5px #0ff8);
+  &:focus-visible {
+    filter: drop-shadow(0 0 5px #0ffb);
   }
 `
 
@@ -847,7 +847,7 @@ const Header = props => {
       >
         Skip to main content
       </SkipLink>
-      <Branding to={links.homepage}>
+      <Branding rel="home" to={links.homepage}>
         <h1>HHMI BioInterctive Assessment Builder</h1>
       </Branding>
       <Navigation aria-label="Site navigation" role="navigation">

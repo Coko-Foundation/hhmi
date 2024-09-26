@@ -2,17 +2,16 @@
 
 exports[`Footer matches snapshot 1`] = `
 <footer
-  className="sc-fsQiph fFkwZv"
+  className="sc-fsQiph iAItSW"
   role="contentinfo"
 >
   <ul
-    className="sc-qRumB cRvfbw"
+    className="sc-jsMahE jumjKv"
   >
     <li>
       <a
         href="#"
-        rel="noreferrer"
-        target="_blank"
+        rel="terms-of-service external"
       >
         Terms of Use
       </a>
@@ -20,12 +19,20 @@ exports[`Footer matches snapshot 1`] = `
     <li>
       <a
         href="#"
-        rel="noreferrer"
-        target="_blank"
+        rel="privacy-policy external"
       >
         Privacy Policy
       </a>
     </li>
   </ul>
+  <a
+    className="sc-qRumB fQObPW"
+    href="https://www.biointeractive.org/"
+    rel="external"
+  >
+    <h2>
+      A project of HHMI Biointeractive
+    </h2>
+  </a>
 </footer>
 `;

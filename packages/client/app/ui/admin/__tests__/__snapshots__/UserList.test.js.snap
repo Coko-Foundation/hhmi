@@ -2,13 +2,13 @@
 
 exports[`UserList matches snapshot 1`] = `
 <div
-  className="sc-LZSCk gYCfmq"
+  className="sc-jkxtGR bfiizX"
 >
   <section
-    className="sc-cYRYSS cGA-dRx"
+    className="sc-hTQyD kCHpLU"
   >
     <h1
-      className="ant-typography sc-jkxtGR jdVBGa css-dev-only-do-not-override-12jzuas"
+      className="ant-typography sc-cYRYSS fvLRCz css-dev-only-do-not-override-12jzuas"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,7 +18,7 @@ exports[`UserList matches snapshot 1`] = `
       User Manager
     </h1>
     <div
-      className="sc-eWFnVD hSoKbq sc-hTQyD iJNKLa"
+      className="sc-eWFnVD hSoKbq sc-cWacQw fRdZgC"
     >
       <div
         className="sc-behMKO cQtBUf"
@@ -141,7 +141,7 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper sc-irTswW kIOznH sc-cWacQw fuUYQW css-dev-only-do-not-override-12jzuas"
+                                className="ant-checkbox-wrapper sc-irTswW kIOznH sc-fbUwh fmhuzY css-dev-only-do-not-override-12jzuas"
                               >
                                 <span
                                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -565,7 +565,7 @@ exports[`UserList matches snapshot 1`] = `
       </nav>
     </div>
     <div
-      className="sc-fbUwh coeXSR"
+      className="sc-ciABCq bMrlVI"
     >
       <label
         className="ant-checkbox-wrapper sc-irTswW kIOznH css-dev-only-do-not-override-12jzuas"
