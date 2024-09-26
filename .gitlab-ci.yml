@@ -182,7 +182,7 @@ publish server:
   only:
     - staging
 
-.build & publish storybook:
+build & publish storybook:
   stage: Publish production
   image: docker:26
   services:
@@ -200,29 +200,6 @@ publish server:
     - staging
 
 # DEPLOY PRODUCTION
-
-# deploy production:
-#   image: debian:bullseye-slim
-#   stage: Deploy production
-#   needs:
-#     - publish server
-#     - publish client
-#   before_script:
-#     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-#     - eval $(ssh-agent -s)
-#     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-#     - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-#     - chmod 700 ~/.ssh
-#     - ssh-keyscan -p $SSH_PORT $SSH_URL >> ~/.ssh/known_hosts
-#     - chmod 644 ~/.ssh/known_hosts
-#   script:
-#     - |
-#       ssh ${SSH_USER}@${SSH_URL} -p ${SSH_PORT} \
-#       "docker pull $IMAGE_ORG/$IMAGE_NAME_SERVER_PRODUCTION:latest && \
-#       docker pull $IMAGE_ORG/$IMAGE_NAME_CLIENT_PRODUCTION:latest && \
-#       sudo systemctl restart hhmi.service"
-#   only:
-#     - staging
 
 deploy production:
   stage: Deploy production
@@ -252,26 +229,3 @@ deploy production:
     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
   only:
     - staging
-
-# deploy storybook:
-#   image: debian:bullseye-slim
-#   stage: Deploy production
-#   needs:
-#     - build & publish storybook
-#   before_script:
-#     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
-#     - eval $(ssh-agent -s)
-#     - echo "$STORYBOOK_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-#     - mkdir -p ~/.ssh && touch ~/.ssh/known_hosts
-#     - chmod 700 ~/.ssh
-#     - ssh-keyscan -p $STORYBOOK_SSH_PORT $STORYBOOK_SSH_URL >> ~/.ssh/known_hosts
-#     - chmod 644 ~/.ssh/known_hosts
-#   script:
-#     - |
-#       ssh ${STORYBOOK_SSH_USER}@${STORYBOOK_SSH_URL} -p ${STORYBOOK_SSH_PORT} \
-#       "docker pull $IMAGE_ORG/$IMAGE_NAME_STORYBOOK:latest && \
-#       docker stop $IMAGE_NAME_STORYBOOK && \
-#       docker rm $IMAGE_NAME_STORYBOOK && \
-#       docker run -d -p 5410:80 --name $IMAGE_NAME_STORYBOOK $IMAGE_ORG/$IMAGE_NAME_STORYBOOK"
-#   only:
-#     - master
