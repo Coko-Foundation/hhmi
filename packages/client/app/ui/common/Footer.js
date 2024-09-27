@@ -9,14 +9,10 @@ const StyledFooter = styled.footer`
   background-color: ${th('colorBody')};
   color: ${th('colorTextReverse')};
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   height: 50px;
   justify-content: space-between;
   padding: ${grid(1)} 0;
-
-  @media screen and (min-width: ${th('mediaQueries.small')}) {
-    flex-direction: row;
-  }
 `
 
 const SiteLogo = styled.a`

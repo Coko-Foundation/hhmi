@@ -48,7 +48,6 @@ const Branding = styled(Link)`
   height: ${th('mobileLogoHeight')};
   margin-inline-end: 1.5rem;
   overflow: hidden;
-  transition: filter 0.3s ease-in;
   width: 95px;
 
   @media screen and (min-width: ${th('mediaQueries.small')}) {
