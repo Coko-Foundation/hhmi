@@ -7,6 +7,7 @@ import {
   handlingEditor1,
   handlingEditor2,
   productionMember1,
+  reviewer,
 } from '../../support/credentials'
 import { workflowData, question } from '../../support/appData'
 import { laptop } from '../../support/viewport'
@@ -31,6 +32,8 @@ import {
 } from '../../support/routes'
 
 const disableScripts = false
+
+let itemUrl
 
 /**
  *
@@ -91,7 +94,7 @@ describe('Question Workflows', () => {
     cy.viewport(laptop.preset)
   })
 
-  describe('Editor worflow', () => {
+  describe('Editor workflow', () => {
     before(() => {
       cy.seedQuestion(
         disableScripts,
@@ -417,7 +420,7 @@ describe('Question Workflows', () => {
     })
   })
 
-  describe('Admin worflow', () => {
+  describe('Admin workflow', () => {
     it('Publishing the question', () => {
       cy.login({ ...admin })
       cy.get(createQuestionButton).click()
@@ -509,7 +512,7 @@ describe('Question Workflows', () => {
     })
   })
 
-  describe('Production team worflow', () => {
+  describe('Production team workflow', () => {
     before(() => {
       cy.seedUser(disableScripts, productionMember1)
       cy.seedQuestion(
@@ -549,4 +552,120 @@ describe('Question Workflows', () => {
       cy.get(listItemWrapper).should('have.length', 0)
     })
   })
+
+  describe('Checking unpublished item/question access', () => {
+    before(() => {
+      cy.seedUser(disableScripts, { ...reviewer })
+      cy.seedQuestion(
+        disableScripts,
+        user2.username,
+        -3,
+        'population',
+        'submitted',
+        handlingEditor1.username,
+      )
+    })
+
+    it('Checking who can access unpublished item by opening given url', () => {
+      cy.login({ ...user2 })
+      cy.wait('@GQLReq')
+      cy.get(listItemWrapper).eq(0).contains(ProseMirror, 'By 2040').click()
+      cy.wait('@GQLReq')
+      cy.contains(antTabs, 'Author chat').should('be.visible')
+      cy.url().then(url => {
+        itemUrl = url
+      })
+      cy.logout()
+
+      cy.log('Global admin can access unpublished item by opening given URL')
+      cy.then(() => {
+        cy.canAcessUrl(admin, itemUrl, true)
+      })
+
+      cy.log('Global editor can access unpublished item by opening given URL')
+      cy.then(() => {
+        cy.canAcessUrl(editor, itemUrl, true)
+      })
+
+      cy.log(
+        'Global production member can access unpublished item by opening given URL',
+      )
+      cy.then(() => {
+        cy.canAcessUrl(productionMember1, itemUrl, true)
+      })
+
+      cy.log(
+        'Global handling editor can access unpublished item by opening given URL',
+      )
+      cy.then(() => {
+        cy.canAcessUrl(handlingEditor1, itemUrl, true)
+      })
+
+      cy.log(
+        'Another author cannot access unpublished item by opening given URL',
+      )
+      cy.then(() => {
+        cy.canAcessUrl(reviewer, itemUrl, false)
+      })
+
+      cy.login({ ...handlingEditor1 })
+      cy.contains(antTabs, 'Editor Items').click()
+      cy.wait('@GQLReq')
+      checkStage(0, 'review')
+      cy.get(listItemWrapper).eq(0).contains(ProseMirror, 'By 2040').click()
+      cy.wait('@GQLReq')
+      cy.contains(antTabs, 'Invite reviewers').should('be.visible').click()
+      cy.get('.ant-select-selection-overflow:nth(2)').type(reviewer.username)
+      cy.get('.ant-select-item-option-content').click()
+      cy.contains('Add User').click()
+
+      cy.contains('button', 'Invite').click()
+      cy.logout()
+
+      cy.log('Reviewer can access unpublished item by opening given URL')
+      // Reviewer accepts invitation
+      cy.login({ ...reviewer })
+
+      cy.then(() => {
+        cy.canAcessUrl(reviewer, itemUrl, true)
+      })
+    })
+  })
+})
+
+Cypress.Commands.add('canAcessUrl', (user, itemId, status) => {
+  cy.login({ ...user })
+  cy.wait('@GQLReq')
+  cy.contains('Browse Items').should('exist')
+  cy.then(() => {
+    cy.visit(itemId)
+  })
+
+  if (user === reviewer && status === true) {
+    cy.contains('Accept Invite').click()
+    cy.contains('Invite accepted successfully').should('exist')
+    cy.contains('Ok').click()
+    cy.get('span[title="Learner"]').should('exist').click()
+    cy.contains('Educator').click()
+    cy.contains(antTabs, 'Item').click()
+  }
+
+  if (status === true) {
+    cy.contains(antTabs, 'Item').should('be.visible')
+    cy.contains('The world population will reach 9 billion').should(
+      'be.visible',
+    )
+  } else {
+    cy.contains(`[class="ant-result-title"]`, 'Question Not Ready')
+    cy.contains(
+      `[class="ant-result-subtitle"]`,
+      "Sorry, this item hasn't been published yet.",
+    )
+    cy.contains(
+      `[class="ant-result-extra"]`,
+      'Visit the Browse Items page',
+    ).click()
+  }
+
+  cy.logout()
 })

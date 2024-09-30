@@ -40,9 +40,40 @@ describe('Context-dependent item set workflows', () => {
   })
 
   // eslint-disable-next-line jest/no-disabled-tests
-  it.skip("Set shouldn't be visible to other user's without a published question", () => {
+  it("Unpublished set shouldn't be visible to other authors' with no special roles", () => {
     cy.login({ ...user2, visitUrl: setsPage })
     cy.wait('@GQLReq')
+    cy.contains(`[class="ant-empty-description"]`, 'No Data')
+  })
+
+  it.skip("Author cannot open another author's set with no published item (by opening given URL)", () => {
+    let setId
+    cy.login({ ...admin, visit: dashboardRoute })
+    cy.visit(setsPage, { method: 'GET' })
+    cy.wait('@GQLReq')
+
+    cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
+    cy.wait('@GQLReq')
+    cy.contains(antTabs, 'Content').should('be.visible')
+    cy.contains('h2', complexItemSet1.title).should('be.visible')
+    cy.get(antTabs).contains('Edit').should('exist')
+    cy.url().then(url => {
+      setId = url
+    })
+    cy.logout()
+
+    cy.login({ ...user2, visitUrl: dashboardRoute })
+    cy.wait('@GQLReq')
+    cy.contains('Browse Items').should('exist')
+    cy.then(() => {
+      cy.visit(setId)
+    })
+    cy.contains(`[class="ant-result-title"]`, 'Set Not Ready')
+    cy.contains(
+      `[class="ant-result-subtitle"]`,
+      "Sorry, this set hasn't been published yet.",
+    )
+    cy.contains(`[class="ant-result-extra"]`, 'Visit the Sets page').click()
     cy.contains(`[class="ant-empty-description"]`, 'No Data')
   })
 
