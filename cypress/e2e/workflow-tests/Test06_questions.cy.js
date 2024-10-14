@@ -425,7 +425,7 @@ describe('Question Workflows', () => {
       cy.login({ ...admin })
       cy.get(createQuestionButton).click()
       cy.get(submitQuestionButton).should('not.exist')
-      cy.fillQuestion(question)
+      cy.fillQuestion(question, { admin: true })
       cy.get('[data-testid="publish-question-btn"]').first().click()
       cy.contains(
         antModalConfirmTitle,
@@ -556,6 +556,7 @@ describe('Question Workflows', () => {
   describe('Checking unpublished item/question access', () => {
     before(() => {
       cy.seedUser(disableScripts, { ...reviewer })
+      // cy.seedUser(disableScripts, productionMember1)
       cy.seedQuestion(
         disableScripts,
         user2.username,
@@ -615,7 +616,9 @@ describe('Question Workflows', () => {
       cy.get(listItemWrapper).eq(0).contains(ProseMirror, 'By 2040').click()
       cy.wait('@GQLReq')
       cy.contains(antTabs, 'Invite reviewers').should('be.visible').click()
-      cy.get('.ant-select-selection-overflow:nth(2)').type(reviewer.username)
+      cy.get('[id*=assignReviewers] .ant-select-selection-overflow').type(
+        reviewer.username,
+      )
       cy.get('.ant-select-item-option-content').click()
       cy.contains('Add User').click()
 

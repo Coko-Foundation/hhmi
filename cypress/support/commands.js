@@ -74,33 +74,39 @@ Cypress.Commands.add('signup', ({ firstName, lastName, email, password }) => {
 
 Cypress.Commands.add(
   'fillQuestion',
-  ({
-    questionType,
-    mainTopic,
-    course,
-    keywords,
-    biointeractiveResources,
-    cognitiveLevel,
-    // affectiveLevel,
-    // psychomotorLevel,
-  }) => {
+  (
+    {
+      questionType,
+      mainTopic,
+      course,
+      keywords,
+      biointeractiveResources,
+      cognitiveLevel,
+      // affectiveLevel,
+      // psychomotorLevel,
+    },
+    options,
+  ) => {
     cy.intercept('POST', graphqlEndpoint).as('GQLReq')
-    selectData(mainTopic)
+    selectDataWithoutParent(cognitiveLevel)
     selectData(course)
     keywords.value.forEach(keyword =>
       cy.get(keywords.selector).type(`${keyword}{enter}`),
     )
-    cy.get(biointeractiveResources.selector).click()
-    biointeractiveResources.values.forEach(key => {
-      cy.get(biointeractiveResources.selector).type(key.slice(0, 10))
-      cy.contains(key, { timeout: 50000 }).click({ force: true })
-    })
-    cy.get(biointeractiveResources.selector).click()
+
+    if (options?.admin) {
+      selectData(mainTopic)
+      cy.get(biointeractiveResources.selector).click()
+      biointeractiveResources.values.forEach(key => {
+        cy.get(biointeractiveResources.selector).type(key.slice(0, 10))
+        cy.contains(key, { timeout: 50000 }).click({ force: true })
+      })
+      cy.get(biointeractiveResources.selector).click()
+    }
 
     // temporarily disabled affective level and psychomotorLevel from metadata form
     // selectDataWithoutParent(affectiveLevel)
     // selectDataWithoutParent(psychomotorLevel)
-    selectDataWithoutParent(cognitiveLevel)
 
     // [info]: selecting multiple choice at last to avoid focus miss issue
     cy.get(questionType.selector).scrollIntoView().click()

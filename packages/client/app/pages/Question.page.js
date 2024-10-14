@@ -106,11 +106,11 @@ const metadataApiToUi = (values, testMode) => {
 const metadataUiToApi = values => {
   // filter empty topics
   const topicFields = t => {
-    if (!t.topic) return null
+    if (!t?.topic) return null
     return t
   }
 
-  const topics = values.topics.map(t => topicFields(t)).filter(Boolean)
+  const topics = values.topics?.map(t => topicFields(t)).filter(Boolean)
 
   // transform courses structure
   const transformedCoursesData = []

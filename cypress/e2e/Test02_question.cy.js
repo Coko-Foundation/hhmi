@@ -30,10 +30,10 @@ describe('Testing questions', () => {
   const listItems = ['item1', 'item2', 'item3']
 
   const {
-    mainTopic,
+    // mainTopic,
     course,
     keywords,
-    biointeractiveResources,
+    // biointeractiveResources,
     cognitiveLevel,
     // affectiveLevel,
     // psychomotorLevel,
@@ -169,8 +169,8 @@ describe('Testing questions', () => {
       // [segment]: Checking  dashboardRoute
       cy.log('checking in the dashboard...')
       cy.contains('.ProseMirror p.paragraph', 'Question 1')
-      cy.contains('[data-testid="topic-value"]', mainTopic.topic.value)
-      cy.contains('[data-testid="subtopic-value"]', mainTopic.subtopic.value)
+      // cy.contains('[data-testid="topic-value"]', mainTopic.topic.value)
+      // cy.contains('[data-testid="subtopic-value"]', mainTopic.subtopic.value)
       cy.contains(`[data-testid="bloom's level-value"]`, cognitiveLevel.value)
       cy.contains('[data-testid="question-status"]', 'Submitted')
       cy.get('[data-testid="wax-container"]')
@@ -191,18 +191,18 @@ describe('Testing questions', () => {
         cy.contains(section.selector, section.value)
       }
 
-      checkData(mainTopic)
+      // checkData(mainTopic)
+      checkDataWithoutParent(cognitiveLevel)
       checkData(course)
       keywords.value.forEach(keyword =>
         cy.contains(`${keywords.selector} span`, keyword),
       )
-      biointeractiveResources.values.forEach(key => {
-        cy.contains(`${biointeractiveResources.selector} span`, key)
-      })
+      // biointeractiveResources.values.forEach(key => {
+      //   cy.contains(`${biointeractiveResources.selector} span`, key)
+      // })
       // temporarily disabled affective level and psychomotor level from metadata form
       // checkDataWithoutParent(affectiveLevel)
       // checkDataWithoutParent(psychomotorLevel)
-      checkDataWithoutParent(cognitiveLevel)
 
       cy.deleteAllQuestions(disableScripts)
     })

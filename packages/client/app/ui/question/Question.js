@@ -1654,6 +1654,9 @@ const Question = props => {
                             selectedQuestionType={
                               selectedQuestionType?.metadataValue
                             }
+                            showTopicAndSubtopicFields={
+                              isInProduction || isPublished || isUnpublished
+                            }
                           />
                           <SkipToTop
                             href="#question-actions"
