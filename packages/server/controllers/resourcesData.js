@@ -1710,7 +1710,7 @@ const resources = [
   {
     label: 'Mozambique Mounds',
     value: 'mozambiqueMounds',
-    url: 'https://www.biointeractive.org/classroom-resources/mozambique-mounds-0',
+    url: 'https://www.biointeractive.org/node/182276',
     topics: ['anatomyPhysiology', 'ecology'],
     subtopics: ['animalBehavior', 'ecosystems'],
   },
@@ -4185,55 +4185,6 @@ const resources = [
     subtopics: ['archaeaEukaryotes', 'earthHistory', 'geology'],
   },
   {
-    label: 'Smallpox and the Immune System',
-    value: 'smallpoxAndTheImmuneSystem',
-    url: 'https://www.biointeractive.org/node/191846',
-    topics: ['sciencePractices', 'anatomyPhysiology', 'cellBiology'],
-    subtopics: ['cellCommunication', 'immuneSystem', 'graphInterpretation'],
-  },
-  {
-    label: 'What Is Life?',
-    value: 'whatIsLife?',
-    url: 'https://www.biointeractive.org/node/191845',
-    topics: ['sciencePractices', 'earthScience', 'ecology'],
-    subtopics: ['matterEnergy', 'originOfLife', 'explanationsArgumentation'],
-  },
-  {
-    label: 'Trees on the Serengeti',
-    value: 'treesOnTheSerengeti',
-    url: 'https://www.biointeractive.org/node/190718',
-    topics: ['sciencePractices', 'environmentalScience', 'ecology'],
-    subtopics: [
-      'populations',
-      'communities',
-      'conservation',
-      'modelsSimulations',
-    ],
-  },
-  {
-    label: 'Digestive System Card Sort',
-    value: 'digestiveSystemCardSort',
-    url: 'https://www.biointeractive.org/node/190579',
-    topics: [
-      'anatomyPhysiology',
-      'cellBiology',
-      'biochemistryMolecularBiology',
-    ],
-    subtopics: ['macromolecules', 'cellularEnergetics', 'metabolismNutrition'],
-  },
-  {
-    label: 'Sickle Cell: Natural Selection in Humans',
-    value: 'sickleCell:NaturalSelectionInHumans',
-    url: 'https://www.biointeractive.org/node/191046',
-    topics: ['evolution', 'genetics'],
-    subtopics: [
-      'patternsOfInheritance',
-      'geneticDisease',
-      'naturalSelection',
-      'humanEvolution',
-    ],
-  },
-  {
     label: 'Mapping Migrations: The Bird Genoscape Project',
     value: 'mappingMigrations:TheBirdGenoscapeProject',
     url: 'https://www.biointeractive.org/node/190207',
@@ -4253,13 +4204,6 @@ const resources = [
     url: 'https://www.biointeractive.org/node/189203',
     topics: [],
     subtopics: [],
-  },
-  {
-    label: 'Mozambique Mounds',
-    value: 'mozambiqueMounds',
-    url: 'https://www.biointeractive.org/node/182276',
-    topics: ['ecology', 'anatomyPhysiology'],
-    subtopics: ['animalBehavior', 'ecosystems'],
   },
   {
     label: 'Walk On',
