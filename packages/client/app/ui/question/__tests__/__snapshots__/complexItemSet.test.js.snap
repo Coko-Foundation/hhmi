@@ -92,7 +92,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
             </h2>
             <div
               className="sc-csCMJt cHwma"
-              data-name="Annotations"
+              data-name="n"
             >
               <button
                 aria-pressed={false}
@@ -306,7 +306,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
             </div>
             <div
               className="sc-csCMJt cHwma"
-              data-name="Lists"
+              data-name="n"
             >
               <button
                 aria-pressed={false}
@@ -407,7 +407,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
             </div>
             <div
               className="sc-csCMJt cHwma"
-              data-name="Images"
+              data-name="n"
             >
               <div
                 className="sc-cjERFW cCHeHf"
@@ -642,7 +642,7 @@ exports[`ComplexItemSetForm matches snapshot 1`] = `
             </div>
             <div
               className="sc-csCMJt cHwma"
-              data-name="FullScreen"
+              data-name="n"
             >
               <button
                 aria-pressed={false}
