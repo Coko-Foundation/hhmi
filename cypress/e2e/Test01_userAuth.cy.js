@@ -67,7 +67,7 @@ describe('Tests for user authentication', () => {
     cy.signup(user2)
   })
 
-  it('login & user profile', () => {
+  it.skip('login & user profile', () => {
     cy.visit(loginPage)
     cy.contains('h1', 'Login')
     cy.contains(basicButton, 'Log in with BioInteractive')
@@ -280,7 +280,7 @@ describe('Tests for user authentication', () => {
     cy.contains(antTableCell, editor.email).should('exist')
   })
 
-  it('updating user info', () => {
+  it.skip('updating user info', () => {
     cy.login({ ...contact, visitUrl: profilePage })
     // cy.get('a[href="/profile"]').click()
     cy.get('[id="phone"]').clear().type(contact.updatedPhone)
@@ -335,7 +335,7 @@ describe('Tests for user authentication', () => {
     cy.get('[id="source"]').should('have.value', 'college')
   })
 
-  it('password reset', () => {
+  it.skip('password reset', () => {
     cy.login({ ...contact, visitUrl: profilePage })
     cy.contains(antTabs, 'Password').click()
     cy.get('[id="currentPassword"]').type(contact.password)

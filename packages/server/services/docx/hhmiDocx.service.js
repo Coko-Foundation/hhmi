@@ -34,7 +34,7 @@ const labels = {
   ...flattenedMetadata,
 
   complexItemSet: 'Context-Dependent Item Set',
-  questionType: 'Question type',
+  questionType: 'Item type',
 
   topics: 'Topics',
   topic: 'Topic',

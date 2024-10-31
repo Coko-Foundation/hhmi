@@ -63,7 +63,7 @@ const MetadataInfo = props => {
 
   return (
     <Wrapper tabIndex={0}>
-      <VisuallyHiddenElement as="h2">Question Metadata</VisuallyHiddenElement>
+      <VisuallyHiddenElement as="h2">Item Metadata</VisuallyHiddenElement>
       {complexItemSet && (
         <>
           <MetadataHeading>Context-dependent item set</MetadataHeading>
@@ -74,7 +74,7 @@ const MetadataInfo = props => {
           </p>
         </>
       )}
-      <MetadataHeading>Question type</MetadataHeading>
+      <MetadataHeading>Item type</MetadataHeading>
       <p>
         {
           metadata.questionTypes
