@@ -34,6 +34,34 @@ export const GET_CHAT_THREAD = gql`
   }
 `
 
+export const FILTER_CHAT_THREADS = gql`
+  query ChatThreads($where: CreateChatThreadInput) {
+    chatThreads(where: $where) {
+      result {
+        id
+        created
+        updated
+        chatType
+        relatedObjectId
+        messages {
+          id
+          content
+          created
+          user {
+            id
+            displayName
+          }
+          mentions
+          attachments {
+            name
+            url
+          }
+        }
+      }
+    }
+  }
+`
+
 export const SEND_MESSAGE = gql`
   mutation SendMessage($input: SendChatMessageInput!) {
     sendMessage(input: $input) {

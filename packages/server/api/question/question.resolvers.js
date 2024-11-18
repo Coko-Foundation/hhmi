@@ -234,8 +234,11 @@ const getProductionChatParticipantsResolver = async (_, { id }) => {
   return getProductionChatParticipants(id)
 }
 
-const getReviewerChatParticipantsResolver = async (_, { id }) => {
-  return getReviewerChatParticipants(id)
+const getReviewerChatParticipantsResolver = async (
+  _,
+  { questionId, reviewerId },
+) => {
+  return getReviewerChatParticipants(questionId, reviewerId)
 }
 
 const updateReviewerPoolResolver = async (

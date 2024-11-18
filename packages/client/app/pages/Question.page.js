@@ -10,8 +10,7 @@ import {
 import debounce from 'lodash/debounce'
 // import { questionDataTransformer, questionDataMapper } from '../utilities'
 
-import { serverUrl } from '@coko/client'
-
+import { serverUrl, uuid } from '@coko/client'
 import { Question, Result, VisuallyHiddenElement } from 'ui'
 
 import {
@@ -54,6 +53,7 @@ import {
   CHANGE_AMOUNT_OF_REVIEWERS,
   CHANGE_REVIEWER_AUTOMATION_STATUS,
   SUBMIT_REPORT,
+  FILTER_CHAT_THREADS,
 } from '../graphql'
 import {
   useMetadata,
@@ -219,6 +219,8 @@ const QuestionPage = props => {
   const { metadata } = useMetadata()
 
   const requestedTab = window.location.hash.substring(1)
+  const [selectedReviewerId, setSelectedReviewerId] = useState(uuid())
+  const [reviewerChatThread, setReviewerChatThread] = useState()
 
   const {
     data: { question } = {},
@@ -253,9 +255,10 @@ const QuestionPage = props => {
   const {
     data: { getReviewerChatParticipants: reviewerChatParticipants } = {},
   } = useQuery(GET_REVIEWER_CHAT_PARTICIPANTS, {
-    skip: !question?.versions[0]?.underReview,
+    skip: !question?.versions[0]?.underReview || !selectedReviewerId,
     variables: {
-      id,
+      questionId: id,
+      reviewerId: selectedReviewerId,
     },
   })
 
@@ -348,15 +351,19 @@ const QuestionPage = props => {
     },
   )
 
-  const {
-    data: { chatThread: reviewerChatThread } = {},
-    loading: reviewerChatLoading,
-  } = useQuery(GET_CHAT_THREAD, {
-    skip: !question?.reviewerChatThreadId,
+  useQuery(GET_CHAT_THREAD, {
+    skip: !question?.reviewerChatThreadId || question?.versions[0].underReview,
     variables: {
       id: question?.reviewerChatThreadId,
     },
+    onCompleted: ({ chatThread: reviewerChat }) => {
+      setSelectedReviewerId(currentUser.id)
+      setReviewerChatMessages(reviewerChat?.messages)
+      setReviewerChatThread(reviewerChat)
+    },
   })
+
+  const [getReviewerChatThread] = useLazyQuery(FILTER_CHAT_THREADS)
 
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
     skip: !authorChatThread?.id,
@@ -484,11 +491,11 @@ const QuestionPage = props => {
       setProductionChatMessages(productionChatThread.messages)
     }
   }, [productionChatThread])
-  useEffect(() => {
-    if (reviewerChatThread?.messages) {
-      setReviewerChatMessages(reviewerChatThread.messages)
-    }
-  }, [reviewerChatThread])
+  // useEffect(() => {
+  //   if (reviewerChatThread?.messages) {
+  //     setReviewerChatMessages(reviewerChatThread.messages)
+  //   }
+  // }, [reviewerChatThread])
 
   /* setup Prev/Next question functions */
   // read state from location to get filter values, if any
@@ -561,9 +568,9 @@ const QuestionPage = props => {
       createChat('productionChat')
     }
 
-    if (version?.underReview && !question?.reviewerChatThreadId) {
-      createChat('reviewerChat')
-    }
+    // if (version?.underReview && !question?.reviewerChatThreadId) {
+    //   createChat('reviewerChat')
+    // }
   }, [question, version])
 
   // declare lazy query to be called when no `relatedQuestionsIds` from previous state
@@ -649,8 +656,10 @@ const QuestionPage = props => {
         },
         {
           query: GET_REVIEWER_CHAT_PARTICIPANTS,
+          skip: !question?.versions[0]?.underReview || !selectedReviewerId,
           variables: {
-            id,
+            questionId: id,
+            reviewerId: selectedReviewerId,
           },
         },
       ],
@@ -1107,11 +1116,11 @@ const QuestionPage = props => {
           },
         })
         break
-      case 'reviewerChat':
-        cancelEmailNotification({
-          variables: { chatThreadId: reviewerChatThread?.id },
-        })
-        break
+      // case 'reviewerChat':
+      //   cancelEmailNotification({
+      //     variables: { chatThreadId: reviewerChatThread?.id },
+      //   })
+      //   break
       default:
         break
     }
@@ -1142,6 +1151,29 @@ const QuestionPage = props => {
     return sendMessage(mutationData)
   }
 
+  const handleSelectReviewer = async reviewerId => {
+    setSelectedReviewerId(reviewerId)
+
+    const variables = {
+      where: {
+        relatedObjectId: question?.id,
+        chatType: `reviewerChat-${reviewerId}`,
+      },
+    }
+
+    // this query doesn't work as expected, needs to be fixed in coko server
+    const threads = await getReviewerChatThread(variables)
+
+    const reviewerChat = threads?.data.chatThreads.result.find(
+      ch =>
+        ch.chatType === `reviewerChat-${reviewerId}` &&
+        ch.relatedObjectId === question?.id,
+    )
+
+    setReviewerChatMessages(reviewerChat?.messages)
+    setReviewerChatThread(reviewerChat)
+  }
+
   const onSendAuthorChatMessage = async (content, mentions, attachments) => {
     return handleSendChatMessage(
       content,
@@ -1169,7 +1201,7 @@ const QuestionPage = props => {
       content,
       mentions,
       attachments,
-      question?.reviewerChatThreadId,
+      reviewerChatThread?.id,
     )
   }
 
@@ -1340,6 +1372,17 @@ const QuestionPage = props => {
   }
   // #endregion handlers
 
+  useEffect(() => {
+    if (
+      question &&
+      (!question?.reviewerChatThreadId || isUnderReview) &&
+      isReviewer &&
+      isUnderReview
+    ) {
+      handleSelectReviewer(currentUser.id)
+    }
+  }, [isReviewer, isUnderReview, question])
+
   if (error) {
     return (
       <Result
@@ -1392,7 +1435,7 @@ const QuestionPage = props => {
         canCreateNewVersion={isAdmin || isEditor}
         canPublish={isEditor || isHandlingEditor || isAdmin}
         canUnpublish={isAdmin || isEditor}
-        chatLoading={chatLoading || reviewerChatLoading}
+        chatLoading={chatLoading}
         complexItemSetId={version?.complexItemSetId}
         complexItemSetOptions={complexItemSetOptions}
         complexSetEditLink={
@@ -1411,6 +1454,9 @@ const QuestionPage = props => {
         facultyView={testMode || (isReviewer && isUnderReview)}
         handlingEditors={handlingEditors?.result || []}
         hasDeletedAuthor={!!question?.deletedAuthorName}
+        hasGeneralReviewerChatId={
+          !!question?.reviewerChatThreadId && !isUnderReview
+        }
         initialMetadataValues={metadataApiToUi(
           version,
           testMode || (isReviewer && isUnderReview),
@@ -1473,6 +1519,7 @@ const QuestionPage = props => {
         onReviewerTableChange={handleReviewerTableChange}
         onRevokeReviewerInvitation={handleRevokeReviewerInvitation}
         onSearchHE={handleSearchHE}
+        onSelectReviewer={handleSelectReviewer}
         onSendAuthorChatMessage={onSendAuthorChatMessage}
         onSendProductionChatMessage={onSendProductionChatMessage}
         onSendReviewerChatMessage={onSendReviewerChatMessage}

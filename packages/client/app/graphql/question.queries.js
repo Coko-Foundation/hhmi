@@ -369,8 +369,11 @@ export const GET_PRODUCTION_CHAT_PARTICIPANTS = gql`
 `
 
 export const GET_REVIEWER_CHAT_PARTICIPANTS = gql`
-  query GetReviewerChatParticipants($id: ID!) {
-    getReviewerChatParticipants(id: $id) {
+  query GetReviewerChatParticipants($questionId: ID!, $reviewerId: ID!) {
+    getReviewerChatParticipants(
+      questionId: $questionId
+      reviewerId: $reviewerId
+    ) {
       id
       display: displayName
       role
