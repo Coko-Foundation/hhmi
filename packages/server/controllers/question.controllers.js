@@ -289,9 +289,7 @@ const getProductionChatParticipants = async questionId => {
   return participants.filter(p => p.id !== author?.id)
 }
 
-const getReviewerChatParticipants = async questionId => {
-  const questionVersion = await QuestionVersion.findOne({ questionId })
-
+const getReviewerChatParticipants = async (questionId, reviewerId) => {
   const query = User.query()
     .select(
       'users.displayName',
@@ -305,7 +303,7 @@ const getReviewerChatParticipants = async questionId => {
     .where('teams.role', EDITOR_TEAM.role)
     .orWhere(subquery => {
       subquery
-        .whereIn('teams.role', [AUTHOR_TEAM.role, HE_TEAM.role])
+        .whereIn('teams.role', [HE_TEAM.role])
         .whereExists(
           Team.query()
             .select(1)
@@ -314,25 +312,15 @@ const getReviewerChatParticipants = async questionId => {
             .where('questions.id', questionId),
         )
     })
-    .orWhere(reviewerSubquery => {
-      reviewerSubquery
-        .where('teams.role', REVIEWER_TEAM.role)
-        .whereExists(
-          TeamMember.query()
-            .select(1)
-            .from('teams')
-            .whereRaw('team_members.team_id=teams.id')
-            .where('teams.object_id', questionVersion.id)
-            .where('team_members.status', REVIEWER_STATUSES.accepted),
-        )
-    })
+    .orWhere('users.id', reviewerId)
     .orderByRaw("CASE WHEN teams.role = 'handlingEditor' THEN 1 ELSE 0 END")
 
   const participants = await query
 
-  const author = participants.find(p => p.role === 'author')
-
-  return participants.filter(p => p.id !== author?.id)
+  // filter out duplicated reviewer entry
+  return participants.filter(
+    (p, index, self) => index === self.findIndex(t => t.id === p.id),
+  )
 }
 
 /**

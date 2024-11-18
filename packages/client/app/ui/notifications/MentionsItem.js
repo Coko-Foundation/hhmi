@@ -231,7 +231,17 @@ const MentionsItem = ({ item, markAs }) => {
               {itemLink ? (
                 <>
                   <Link to={itemLink}>Go to Item</Link>
-                  <Link onClick={() => markAs(true, [id])} to={chatLink}>
+                  <Link
+                    onClick={() => markAs(true, [id])}
+                    to={
+                      chatLink.indexOf('#reviewerChat') > -1
+                        ? chatLink.substring(
+                            0,
+                            chatLink.indexOf('#reviewerChat') + 13,
+                          )
+                        : chatLink
+                    }
+                  >
                     Go to Chat
                   </Link>
                 </>

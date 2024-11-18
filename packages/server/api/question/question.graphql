@@ -265,7 +265,7 @@ extend type Query {
   getQuestionsHandlingEditors(questionId: ID!): [User!]!
   getAuthorChatParticipants(id: ID!): [User!]!
   getProductionChatParticipants(id: ID!): [User!]!
-  getReviewerChatParticipants(id: ID!): [User!]!
+  getReviewerChatParticipants(questionId: ID!, reviewerId: ID!): [User!]!
 }
 
 extend type Mutation {

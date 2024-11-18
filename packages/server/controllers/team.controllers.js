@@ -1,4 +1,6 @@
 const { logger, useTransaction, pubsubManager } = require('@coko/server')
+
+const { ChatThread } = require('@coko/server/src/models')
 const config = require('config')
 const { uniq } = require('lodash')
 
@@ -509,6 +511,14 @@ const acceptOrRejectInvitation = async (
             pending: true,
             submitted: false,
           },
+        },
+        { trx },
+      )
+
+      await ChatThread.insert(
+        {
+          relatedObjectId: questionVersion.questionId,
+          chatType: `reviewerChat-${userId}`,
         },
         { trx },
       )

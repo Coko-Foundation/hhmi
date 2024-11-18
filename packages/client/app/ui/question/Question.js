@@ -39,6 +39,7 @@ import AssignAuthorButton from './AssignAuthorButton'
 import ReviewerRejectButton from './ReviewerRejectButton'
 import ReviewerAcceptButton from './ReviewerAcceptButton'
 import ReviewerSubmitButton from './ReviewerSubmitButton'
+import ReviewerChats from './ReviewerChats'
 import { AssignReviewers } from '../assignReviewers'
 
 const ModalContext = React.createContext({ agree: false, setAgree: () => {} })
@@ -473,6 +474,8 @@ const Question = props => {
     showReviewerChatTab,
     showAssignReviewers,
     hasDeletedAuthor,
+    onSelectReviewer,
+    hasGeneralReviewerChatId,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -1711,16 +1714,28 @@ const Question = props => {
               showReviewerChatTab && {
                 label: ReviewerChatTab,
                 key: 'reviewerChat',
-                children: (
-                  <ChatThread
-                    hasMore={hasMoreMessages}
-                    isActive={activeKey === 'reviewerChat'}
-                    messages={reviewerChatMessages}
-                    onFetchMore={onFetchMoreMessages}
-                    onSendMessage={onSendReviewerChatMessage}
-                    participants={reviewerChatParticipants}
-                  />
-                ),
+                children:
+                  reviewerView || hasGeneralReviewerChatId ? (
+                    <ChatThread
+                      hasMore={hasMoreMessages}
+                      isActive={activeKey === 'reviewerChat'}
+                      messages={reviewerChatMessages}
+                      onFetchMore={onFetchMoreMessages}
+                      onSendMessage={onSendReviewerChatMessage}
+                      participants={reviewerChatParticipants}
+                    />
+                  ) : (
+                    <ReviewerChats
+                      hasMore={hasMoreMessages}
+                      isActive={activeKey === 'reviewerChat'}
+                      messages={reviewerChatMessages}
+                      onFetchMore={onFetchMoreMessages}
+                      onSelectReviewer={onSelectReviewer}
+                      onSendMessage={onSendReviewerChatMessage}
+                      participants={reviewerChatParticipants}
+                      reviewers={reviewerPool.filter(r => r.acceptedInvitation)}
+                    />
+                  ),
               },
               showAssignReviewers && {
                 label: AssignReviewersTab,
@@ -2145,6 +2160,8 @@ Question.propTypes = {
   showAssignReviewers: PropTypes.bool,
 
   hasDeletedAuthor: PropTypes.bool,
+  onSelectReviewer: PropTypes.func,
+  hasGeneralReviewerChatId: PropTypes.bool,
 }
 
 Question.defaultProps = {
@@ -2244,6 +2261,8 @@ Question.defaultProps = {
   showAssignReviewers: false,
 
   hasDeletedAuthor: false,
+  onSelectReviewer: null,
+  hasGeneralReviewerChatId: false,
 }
 
 export default Question

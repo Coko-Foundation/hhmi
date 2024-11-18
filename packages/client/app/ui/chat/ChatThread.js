@@ -33,6 +33,7 @@ const ChatThread = props => {
     onFetchMore,
     onSendMessage,
     infiniteScroll,
+    inputPlaceholder,
     ...rest
   } = props
 
@@ -95,7 +96,7 @@ const ChatThread = props => {
         aria-label="Write a message"
         onSend={onSendMessage}
         participants={participants}
-        placeholder="Write a message"
+        placeholder={inputPlaceholder || 'Write a message'}
         type="text"
       />
       {announcementText && (
@@ -122,6 +123,7 @@ ChatThread.propTypes = {
       role: PropTypes.string,
     }),
   ),
+  inputPlaceholder: PropTypes.string,
 }
 
 ChatThread.defaultProps = {
@@ -133,6 +135,7 @@ ChatThread.defaultProps = {
   onSendMessage: () => {},
   participants: [],
   infiniteScroll: false,
+  inputPlaceholder: null,
 }
 
 export default ChatThread
