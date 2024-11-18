@@ -958,7 +958,11 @@ describe('Question Controller', () => {
       reviewer2.id,
     ]
 
-    const participants = await getReviewerChatParticipants(question.id)
+    const participants = await getReviewerChatParticipants(
+      question.id,
+      reviewer1.id,
+    )
+
     const receivedParticipantIds = participants.map(p => p.id)
 
     expectedParticipantIds.forEach(participantId =>
