@@ -8,6 +8,7 @@ import {
 import { useHistory } from 'react-router-dom'
 
 import { Dashboard, VisuallyHiddenElement } from 'ui'
+import { useCurrentUser } from '@coko/client'
 import {
   ASSING_HANDLING_EDITORS,
   GET_AUTHOR_DASHBOARD,
@@ -44,6 +45,7 @@ const defaultSearchOptions = {
 const DashboardPage = () => {
   // #region hooks
   const history = useHistory()
+  const { setCurrentUser } = useCurrentUser()
   const initialTabKey = localStorage.getItem('dashboardLastUsedTab') || 'author'
   const [currentTabKey, setCurrentTabKey] = useState(initialTabKey)
   const [currentPage, setCurrentPage] = useState(1)
@@ -79,7 +81,8 @@ const DashboardPage = () => {
     }
   }
 
-  const { data: currentUserResponse } = useQuery(CURRENT_USER)
+  const { data: currentUserResponse } = useQuery(CURRENT_USER, {})
+  const [getUser] = useLazyQuery(CURRENT_USER)
 
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
@@ -164,8 +167,15 @@ const DashboardPage = () => {
       ...defaultSearchOptions,
       page: 0,
     },
-    onCompleted: data =>
-      updateSearchResultAnnounce(data, 'getReviewerDashboard'),
+    onCompleted: data => {
+      updateSearchResultAnnounce(data, 'getReviewerDashboard')
+
+      if (currentTabKey === 'reviewer') {
+        getUser().then(({ data: { currentUser } = {} }) => {
+          setCurrentUser(currentUser)
+        })
+      }
+    },
   })
 
   useSubscription(DASHBOARD_SUBSCRIPTION, {
