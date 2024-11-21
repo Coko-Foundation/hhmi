@@ -1117,9 +1117,10 @@ const QuestionPage = props => {
         })
         break
       case 'reviewerChat':
-        cancelEmailNotification({
-          variables: { chatThreadId: reviewerChatThread?.id },
-        })
+        reviewerChatThread?.id &&
+          cancelEmailNotification({
+            variables: { chatThreadId: reviewerChatThread?.id },
+          })
         break
       default:
         break
@@ -1162,13 +1163,9 @@ const QuestionPage = props => {
     }
 
     // this query doesn't work as expected, needs to be fixed in coko server
-    const threads = await getReviewerChatThread(variables)
+    const threads = await getReviewerChatThread({ variables })
 
-    const reviewerChat = threads?.data.chatThreads.result.find(
-      ch =>
-        ch.chatType === `reviewerChat-${reviewerId}` &&
-        ch.relatedObjectId === question?.id,
-    )
+    const reviewerChat = threads?.data.chatThreads.result[0]
 
     setReviewerChatMessages(reviewerChat?.messages)
     setReviewerChatThread(reviewerChat)

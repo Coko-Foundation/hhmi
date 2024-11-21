@@ -90,7 +90,9 @@ const ReviewerChats = props => {
           messages={messages}
           onFetchMore={onFetchMore}
           onSendMessage={onSendMessage}
-          participants={participants}
+          participants={participants.map(p =>
+            p.id === selectedReviewer?.id ? { ...p, role: 'reviewer' } : p,
+          )}
         />
       ) : (
         <NoReviewer>
