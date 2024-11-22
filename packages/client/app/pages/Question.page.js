@@ -1374,11 +1374,12 @@ const QuestionPage = props => {
       question &&
       (!question?.reviewerChatThreadId || isUnderReview) &&
       isReviewer &&
-      isUnderReview
+      isUnderReview &&
+      version?.reviewerStatus === REVIEWER_STATUSES.accepted
     ) {
       handleSelectReviewer(currentUser.id)
     }
-  }, [isReviewer, isUnderReview, question])
+  }, [isReviewer, isUnderReview, question, version?.reviewerStatus])
 
   if (error) {
     return (
