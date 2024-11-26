@@ -1,3 +1,7 @@
+# Assessment Builder 
+
+The Assessment Builder platfrom is developed by Coko for the HHMI. If you're working on this platfrom, refer to the documentation [HHMI & Coko Team shared: AB Project](https://drive.google.com/drive/folders/1D5eAt-GRYrEBN8f81kRW7VIiSZhsCol8?usp=drive_link). 
+
 ## Development
 
 To bring the application up for development, simply run `docker-compose up` and everything should be running.
@@ -48,11 +52,11 @@ After the build has finished, you should have a `_build` folder.
 You can serve that with eg. `npx serve -p 8080 --single ./_build`, or by setting up nginx, or whatever other server you prefer.  
 It's just a static bundle at this point, how it's served shouldn't make a difference.
 
-## Testing a production build locally
+### Testing a production build locally
 
 First run `docker-compose -f docker-compose.production-local.yml up`. This will bring up the db and minio server that the production compose file takes for granted. Wait until the bucket has been successfully created, and then you can follow the instructions from the "Production" section.
 
-## Deploying without docker / docker compose
+### Deploying without docker / docker compose
 
 You can simply use our server and client `Dockerfile-production` files in combination with the `docker-compose.production.yml` file as an instruction manual for how to bring the app up.
 
