@@ -1,6 +1,6 @@
 # Assessment Builder 
 
-The Assessment Builder platfrom is developed by Coko for the HHMI. If you're working on this platfrom, refer to the documentation [HHMI & Coko Team shared: AB Project](https://drive.google.com/drive/folders/1D5eAt-GRYrEBN8f81kRW7VIiSZhsCol8?usp=drive_link). 
+The Assessment Builder platform is developed by Coko for the HHMI. If you're working on this platform, refer to the documentation [HHMI & Coko Team shared: AB Project](https://drive.google.com/drive/folders/1D5eAt-GRYrEBN8f81kRW7VIiSZhsCol8?usp=drive_link). 
 
 ## Development
 
