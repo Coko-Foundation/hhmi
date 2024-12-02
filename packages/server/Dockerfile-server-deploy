@@ -16,8 +16,7 @@ COPY yarn.lock .
 RUN chown -R node:node .
 USER node
 
-RUN yarn install --frozen-lockfile --production
-COPY --chown=node:node . .
+RUN yarn install --frozen-lockfile
+RUN yarn cache clean
 
-ENTRYPOINT ["sh", "scripts/setupDevServer.sh"]
-CMD ["node", "startServer.js"]
+COPY --chown=node:node . .

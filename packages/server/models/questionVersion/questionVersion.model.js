@@ -2,7 +2,7 @@ const cloneDeep = require('lodash/cloneDeep')
 
 const {
   BaseModel,
-  modelTypes: {
+  modelJsonSchemaTypes: {
     arrayOfStrings,
     boolean,
     dateNullable,
@@ -13,6 +13,7 @@ const {
     stringNullable,
     integerPositive,
     arrayOfIds,
+    object,
   },
 } = require('@coko/server')
 
@@ -145,46 +146,51 @@ class QuestionVersion extends BaseModel {
         },
 
         courses: {
-          type: 'array',
+          type: ['array', 'null'],
           default: [],
-          items: {
-            type: 'object',
-            required: ['course', 'units'],
-            properties: {
-              course: 'string',
-              units: {
-                type: 'array',
-                default: [],
-                items: {
-                  type: 'object',
-                  required: [],
-                  additionalProperties: false,
-                  properties: {
-                    unit: stringNullable,
-                    courseTopic: stringNullable,
-                    // AP courses
-                    essentialKnowledge: stringNullable,
-                    learningObjective: stringNullable,
-                    // IB courses
-                    application: stringNullable,
-                    skill: stringNullable,
-                    understanding: stringNullable,
-                    // vision and change
-                    coreConcept: stringNullable,
-                    subdiscipline: stringNullable,
-                    subdisciplineStatement: stringNullable,
-                    coreCompetence: stringNullable,
-                    subcompetence: stringNullable,
-                    subcompetenceStatement: stringNullable,
-                    // aamc metadata
-                    concept: stringNullable,
-                    category: stringNullable,
-                  },
-                },
-              },
-            },
-          },
+          items: object,
         },
+
+        // courses: {
+        //   type: arrayOfObjectsNullable,
+        //   items: {
+        //     type: 'object',
+        //     // required: ['course', 'units'],
+        //     properties: {
+        //       course: 'string',
+        //       units: {
+        //         type: 'array',
+        //         default: [],
+        //         items: {
+        //           type: 'object',
+        //           required: [],
+        //           additionalProperties: false,
+        //           properties: {
+        //             unit: stringNullable,
+        //             courseTopic: stringNullable,
+        //             // AP courses
+        //             essentialKnowledge: stringNullable,
+        //             learningObjective: stringNullable,
+        //             // IB courses
+        //             application: stringNullable,
+        //             skill: stringNullable,
+        //             understanding: stringNullable,
+        //             // vision and change
+        //             coreConcept: stringNullable,
+        //             subdiscipline: stringNullable,
+        //             subdisciplineStatement: stringNullable,
+        //             coreCompetence: stringNullable,
+        //             subcompetence: stringNullable,
+        //             subcompetenceStatement: stringNullable,
+        //             // aamc metadata
+        //             concept: stringNullable,
+        //             category: stringNullable,
+        //           },
+        //         },
+        //       },
+        //     },
+        //   },
+        // },
 
         keywords: arrayOfStrings,
         biointeractiveResources: arrayOfStrings,

@@ -13,7 +13,6 @@ import {
   listItemWrapper,
   notificationPopupContainer,
 } from '../support/selectors'
-import { graphqlEndpoint } from '../support/routes'
 
 const disableScripts = false
 
@@ -54,7 +53,6 @@ describe('ChatThreads', () => {
     })
 
     beforeEach(() => {
-      cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
       cy.viewport(laptop.preset)
 
       cy.login(user2)
@@ -164,7 +162,6 @@ describe('ChatThreads', () => {
     })
 
     beforeEach(() => {
-      cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
       cy.viewport(laptop.preset)
     })
 
@@ -227,7 +224,6 @@ describe('ChatThreads', () => {
         cy.get('[placeholder="Write a message"]').type(
           `Nullam auctor nulla quis pellentesque. @${user2.username}{enter}{enter}`,
         )
-        cy.wait(`@GQLReq`)
 
         cy.logout()
         cy.login(user2)
@@ -255,9 +251,7 @@ describe('ChatThreads', () => {
 
         cy.contains('Select All').click()
         cy.contains('button', 'Mark as Unread').click()
-        cy.wait('@GQLReq')
         cy.contains('[data-test="counter-badge"]', 3)
-        cy.wait('@GQLReq')
         // [info]: waiting for mail to get sent o
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(4000)
@@ -279,7 +273,6 @@ describe('ChatThreads', () => {
       )
     })
     beforeEach(() => {
-      cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
       cy.viewport(laptop.preset)
     })
 
@@ -312,7 +305,6 @@ describe('ChatThreads', () => {
 
     context('Visiblity', () => {
       beforeEach(() => {
-        cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
         cy.viewport(laptop.preset)
       })
       it('only visible in production state', () => {

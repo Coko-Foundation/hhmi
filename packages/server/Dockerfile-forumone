@@ -18,5 +18,5 @@ COPY . .
 RUN chown -R node:node .
 USER node
 
-RUN yarn install --frozen-lockfile --production
+RUN yarn install --frozen-lockfile
 COPY --chown=node:node . .

@@ -43,8 +43,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  updateGlobalTeams(input: [UpdateGlobalTeamsInput!]!): [Team!]!
-
   addExternalReviewer(
     questionVersionId: ID!
     input: AddExternalReviewerInput!

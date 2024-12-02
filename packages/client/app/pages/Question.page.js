@@ -395,7 +395,7 @@ const QuestionPage = props => {
 
   const [searchForReviewers] = useLazyQuery(SEARCH_FOR_REVIEWERS)
 
-  const { data: { chatThread: authorChatThread } = {}, loading: chatLoading } =
+  const { data: { chatChannel: authorChatThread } = {}, loading: chatLoading } =
     useQuery(GET_CHAT_THREAD, {
       skip: !question?.authorChatThreadId || testMode,
       variables: {
@@ -404,7 +404,7 @@ const QuestionPage = props => {
       fetchPolicy: 'network-only',
     })
 
-  const { data: { chatThread: productionChatThread } = {} } = useQuery(
+  const { data: { chatChannel: productionChatThread } = {} } = useQuery(
     GET_CHAT_THREAD,
     {
       skip: !question?.productionChatThreadId || testMode,
@@ -1257,7 +1257,7 @@ const QuestionPage = props => {
     content,
     mentions,
     attachments,
-    chatThreadId,
+    chatChannelId,
   ) => {
     const fileObjects = attachments.map(attachment => attachment.originFileObj)
 
@@ -1265,7 +1265,7 @@ const QuestionPage = props => {
       variables: {
         input: {
           content,
-          chatThreadId,
+          chatChannelId,
           userId: currentUser.id,
           mentions,
           attachments: fileObjects,

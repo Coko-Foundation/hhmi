@@ -58,12 +58,21 @@ describe('User API authorization', () => {
       isActive: false,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: FILTER_USERS,
-      variables: { isActive: true },
-    })
+    const response = await testServer.executeOperation(
+      {
+        query: FILTER_USERS,
+        variables: { isActive: true },
+      },
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -76,12 +85,21 @@ describe('User API authorization', () => {
       isActive: true,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: FILTER_USERS,
-      variables: { isActive: true },
-    })
+    const response = await testServer.executeOperation(
+      {
+        query: FILTER_USERS,
+        variables: { isActive: true },
+      },
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isAdmin = await user.hasGlobalRole('admin')
     expect(user.isActive).toBe(true)
@@ -107,12 +125,21 @@ describe('User API authorization', () => {
       userId: user.id,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: FILTER_USERS,
-      variables: { isActive: true },
-    })
+    const response = await testServer.executeOperation(
+      {
+        query: FILTER_USERS,
+        variables: { isActive: true },
+      },
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isAdmin = await user.hasGlobalRole('admin')
 
@@ -127,34 +154,43 @@ describe('User API authorization', () => {
       isActive: false,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: SUBMIT_QUESTIONNAIRE,
-      variables: {
-        input: {
-          id: user.id,
-          givenNames: 'givenNames',
-          surname: 'surname',
-          displayName: 'displayName',
-          pronouns: 'pronouns',
-          email: 'email',
-          phone: 'phone',
-          country: 'country',
-          state: 'state',
-          city: 'city',
-          position: 'position',
-          organization: 'organization',
-          institutionalSetting: 'institutionalSetting',
-          teachingExperience: 'teachingExperience',
-          reviewerInterest: false,
-          coursesTeaching: ['course1'],
-          topicsReviewing: ['topic1'],
-          receivedTraining: true,
-          receivedInclusiveLanguageTraining: true,
+    const response = await testServer.executeOperation(
+      {
+        query: SUBMIT_QUESTIONNAIRE,
+        variables: {
+          input: {
+            id: user.id,
+            givenNames: 'givenNames',
+            surname: 'surname',
+            displayName: 'displayName',
+            pronouns: 'pronouns',
+            email: 'email',
+            phone: 'phone',
+            country: 'country',
+            state: 'state',
+            city: 'city',
+            position: 'position',
+            organization: 'organization',
+            institutionalSetting: 'institutionalSetting',
+            teachingExperience: 'teachingExperience',
+            reviewerInterest: false,
+            coursesTeaching: ['course1'],
+            topicsReviewing: ['topic1'],
+            receivedTraining: true,
+            receivedInclusiveLanguageTraining: true,
+          },
         },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -175,34 +211,43 @@ describe('User API authorization', () => {
       isDefault: true,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: SUBMIT_QUESTIONNAIRE,
-      variables: {
-        input: {
-          id: user.id,
-          givenNames: 'givenNames',
-          surname: 'surname',
-          displayName: 'displayName',
-          pronouns: 'pronouns',
-          email: 'user@coko.foundation',
-          phone: 'phone',
-          country: 'country',
-          state: 'state',
-          city: 'city',
-          position: 'position',
-          organization: 'organization',
-          institutionalSetting: 'institutionalSetting',
-          teachingExperience: 'teachingExperience',
-          reviewerInterest: false,
-          coursesTeaching: ['course1'],
-          topicsReviewing: ['topic1'],
-          receivedTraining: true,
-          receivedInclusiveLanguageTraining: true,
+    const response = await testServer.executeOperation(
+      {
+        query: SUBMIT_QUESTIONNAIRE,
+        variables: {
+          input: {
+            id: user.id,
+            givenNames: 'givenNames',
+            surname: 'surname',
+            displayName: 'displayName',
+            pronouns: 'pronouns',
+            email: 'user@coko.foundation',
+            phone: 'phone',
+            country: 'country',
+            state: 'state',
+            city: 'city',
+            position: 'position',
+            organization: 'organization',
+            institutionalSetting: 'institutionalSetting',
+            teachingExperience: 'teachingExperience',
+            reviewerInterest: false,
+            coursesTeaching: ['course1'],
+            topicsReviewing: ['topic1'],
+            receivedTraining: true,
+            receivedInclusiveLanguageTraining: true,
+          },
         },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(true)
     expect(result.errors).toBe(undefined)
@@ -214,34 +259,43 @@ describe('User API authorization', () => {
       isActive: false,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_PROFILE,
-      variables: {
-        input: {
-          id: user.id,
-          givenNames: 'givenNames',
-          surname: 'surname',
-          displayName: 'displayName',
-          pronouns: 'pronouns',
-          email: 'email',
-          phone: 'phone',
-          country: 'country',
-          state: 'state',
-          city: 'city',
-          position: 'position',
-          organization: 'organization',
-          institutionalSetting: 'institutionalSetting',
-          teachingExperience: 'teachingExperience',
-          reviewerInterest: false,
-          coursesTeaching: ['course1'],
-          topicsReviewing: ['topic1'],
-          receivedTraining: true,
-          receivedInclusiveLanguageTraining: true,
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_PROFILE,
+        variables: {
+          input: {
+            id: user.id,
+            givenNames: 'givenNames',
+            surname: 'surname',
+            displayName: 'displayName',
+            pronouns: 'pronouns',
+            email: 'email',
+            phone: 'phone',
+            country: 'country',
+            state: 'state',
+            city: 'city',
+            position: 'position',
+            organization: 'organization',
+            institutionalSetting: 'institutionalSetting',
+            teachingExperience: 'teachingExperience',
+            reviewerInterest: false,
+            coursesTeaching: ['course1'],
+            topicsReviewing: ['topic1'],
+            receivedTraining: true,
+            receivedInclusiveLanguageTraining: true,
+          },
         },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -262,34 +316,43 @@ describe('User API authorization', () => {
       isDefault: true,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_PROFILE,
-      variables: {
-        input: {
-          id: user.id,
-          givenNames: 'givenNames',
-          surname: 'surname',
-          displayName: 'displayName',
-          pronouns: 'pronouns',
-          email: 'user@coko.foundation',
-          phone: 'phone',
-          country: 'country',
-          state: 'state',
-          city: 'city',
-          position: 'position',
-          organization: 'organization',
-          institutionalSetting: 'institutionalSetting',
-          teachingExperience: 'teachingExperience',
-          reviewerInterest: false,
-          coursesTeaching: ['course1'],
-          topicsReviewing: ['topic1'],
-          receivedTraining: true,
-          receivedInclusiveLanguageTraining: true,
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_PROFILE,
+        variables: {
+          input: {
+            id: user.id,
+            givenNames: 'givenNames',
+            surname: 'surname',
+            displayName: 'displayName',
+            pronouns: 'pronouns',
+            email: 'user@coko.foundation',
+            phone: 'phone',
+            country: 'country',
+            state: 'state',
+            city: 'city',
+            position: 'position',
+            organization: 'organization',
+            institutionalSetting: 'institutionalSetting',
+            teachingExperience: 'teachingExperience',
+            reviewerInterest: false,
+            coursesTeaching: ['course1'],
+            topicsReviewing: ['topic1'],
+            receivedTraining: true,
+            receivedInclusiveLanguageTraining: true,
+          },
         },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(true)
     expect(result.errors).toBe(undefined)

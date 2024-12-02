@@ -73,7 +73,7 @@ input UserProfileInput {
   source: String
 }
 
-extend input UsersQueryParams {
+extend input UserFilter {
   search: String
   role: String
   expertise: String

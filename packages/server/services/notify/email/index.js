@@ -1,12 +1,10 @@
-const { logger, clientUrl } = require('@coko/server')
+const { logger, clientUrl, ChatChannel, sendEmail } = require('@coko/server')
 const moment = require('moment')
 
 const config = require('config')
 // eslint-disable-next-line import/no-extraneous-dependencies
 // const mailer = require('@pubsweet/component-send-email')
-const { sendEmail } = require('@coko/server')
 
-const { ChatThread } = require('@coko/server/src/models')
 const { Question, Identity, User, QuestionVersion } = require('../../../models')
 const flatten = require('../../../controllers/flattenMetadataValues')
 
@@ -28,12 +26,12 @@ const send = data => {
 
 const chatMention = async context => {
   try {
-    const { mention, newMessage: { userId, chatThreadId } = {} } = context
+    const { mention, newMessage: { userId, chatChannelId } = {} } = context
 
     const mentionedUserIdentity = await Identity.findOne({ userId: mention })
     const sender = await User.findById(userId)
     const senderDisplayName = await User.getDisplayName(sender)
-    const chatThread = await ChatThread.findById(chatThreadId)
+    const chatThread = await ChatChannel.findById(chatChannelId)
     const link = `${clientUrl}/question/${chatThread?.relatedObjectId}#${chatThread?.chatType}`
 
     const content = `

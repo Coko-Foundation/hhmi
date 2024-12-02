@@ -1,11 +1,8 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-const { db } = require('@coko/server')
-const { logger, cron } = require('@coko/server')
-const { ChatMessage } = require('@coko/server/src/models')
-const { Question, User } = require('../models')
-const CokoNotifier = require('./notify')
-
+/* eslint-disable global-require */
 const productionChatActivityNotification = async () => {
+  const { db, ChatMessage, logger } = require('@coko/server')
+  const { Question, User } = require('../models')
+  const CokoNotifier = require('./notify')
   logger.info(
     'sending daily email notifications about activity in producion chat',
   )
@@ -49,7 +46,7 @@ const productionChatActivityNotification = async () => {
         // check if there are any new messages the last 24 hours
         const newChatMessages = await ChatMessage.query()
           .select('*')
-          .where('chat_thread_id', productionChatId)
+          .where('chat_channel_id', productionChatId)
           .where(
             'created',
             '>=',
@@ -86,8 +83,4 @@ const productionChatActivityNotification = async () => {
   }
 }
 
-// run every day on 08:00 EST
-cron.schedule('0 8 * * *', productionChatActivityNotification, {
-  scheduled: true,
-  timezone: 'America/New_York',
-})
+module.exports = productionChatActivityNotification

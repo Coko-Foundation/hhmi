@@ -19,7 +19,7 @@ const { labels } = require('./constants')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const WaxToQTIConverter = require('../services/qti/qti.service')
 
-const AUTHOR_TEAM = config.teams.nonGlobal.author
+const AUTHOR_TEAM = config.teams.nonGlobal.find(t => t.role === 'author')
 const BASE_MESSAGE = `${labels.LIST_CONTROLLERS}:`
 
 const getList = async (_user, listId) => {

@@ -76,9 +76,7 @@ client lint:
   - when: always
   script:
     - cd $WORKDIR_CLIENT
-    - yarn eslint .
-    - yarn prettier --check .
-    - yarn stylelint "**/*.js"
+    - yarn coko-lint run
 
 client unit test:
   stage: Lint & Unit test
@@ -104,8 +102,7 @@ server lint:
   - when: always
   script:
     - cd $WORKDIR_SERVER
-    - yarn eslint .
-    - yarn prettier --check .
+    - yarn coko-lint run --skip-stylelint
 
 server unit test:
   stage: Lint & Unit test
@@ -175,18 +172,21 @@ build client:
 
 .end to end tests:
   stage: End to end test
-  image: cokoapps/hhmi-dnn
+  image: cokoapps/cypress:18
+  services:
+    - docker:dind
   needs:
     - build client
     - build server
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
   script:
-    - cp .env.ci .env
-    - source .env
-    - CLIENT_SHOW_EMAIL_LOGIN_OPTION=true
-    - docker compose --compatibility -f docker-compose.cypress-ci.yml up -d
-    - docker compose ps
+    - docker compose -f docker-compose.cypress-ci.yml up -d
+    - timeout 30 bash -c 'until curl -s --head --request GET "http://docker:3000/healthcheck" | grep "200 OK" > /dev/null; do sleep 5; done'
+    - timeout 30 bash -c 'until curl -s --head --request GET "http://docker:4000" | grep "200 OK" > /dev/null; do sleep 5; done'
     - yarn install --frozen-lockfile
-    - wait-on --timeout 30000 http://localhost:3000/healthcheck && yarn cypress run --record --env CLIENT_SHOW_EMAIL_LOGIN_OPTION=true
+    - cypress run --config baseUrl=http://docker:4000 --browser chrome
 
 # PUBLISH PRODUCTION
 

@@ -5,7 +5,7 @@ const reportIssueResolver = async (
   { questionId, content, attachments = [] },
   ctx,
 ) => {
-  return reportIssue(questionId, content, attachments, ctx.user)
+  return reportIssue(questionId, content, attachments, ctx.userId)
 }
 
 module.exports = {
