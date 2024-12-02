@@ -2,7 +2,7 @@
 FROM node:18-bookworm-slim
 
 # Copy the .platform directory to the root of the project
-COPY .platform /.platform
+# COPY .platform /.platform
 
 RUN apt-get update \ 
     && apt-get upgrade -y \
