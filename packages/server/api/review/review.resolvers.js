@@ -5,7 +5,7 @@ const {
 
 const submitReviewResolver = async (_, { input }, ctx) => {
   const { questionVersionId, content, attachments } = input
-  return submitReview(questionVersionId, content, ctx.user, attachments)
+  return submitReview(questionVersionId, content, ctx.userId, attachments)
 }
 
 const attachmentsResolver = async ({ id }) => {

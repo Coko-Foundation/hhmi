@@ -19,18 +19,18 @@ const listResolver = async (
   { id, questionsQuery, questionsOptions },
   ctx,
 ) => {
-  const list = await getList(ctx.user, id)
+  const list = await getList(ctx.userId, id)
   list.questionsQuery = questionsQuery
   list.questionsOptions = questionsOptions
   return list
 }
 
 const myListsResolver = async (_, args, ctx) => {
-  return getUserLists(ctx.user, args)
+  return getUserLists(ctx.userId, args)
 }
 
 const createListResolver = async (_, { title, questions }, ctx) => {
-  return createList(ctx.user, title, questions)
+  return createList(ctx.userId, title, questions)
 }
 
 const editListResolver = async (_, { id, title }, ctx) => {

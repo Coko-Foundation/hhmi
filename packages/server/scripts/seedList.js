@@ -23,7 +23,7 @@ const { createList, addToExistingList } = require('./utils/list')
       case 'create': {
         const username = process.argv[4]
 
-        const result = createList(title, username)
+        const result = await createList(title, username)
 
         if (!result) {
           throw new Error("Something wen't wrong!")
@@ -35,7 +35,7 @@ const { createList, addToExistingList } = require('./utils/list')
 
       case 'addToList': {
         const questionId = process.argv[4]
-        const result = addToExistingList(title, questionId)
+        const result = await addToExistingList(title, questionId)
 
         if (!result) throw new Error("Something wen't wrong!")
 
@@ -47,7 +47,10 @@ const { createList, addToExistingList } = require('./utils/list')
       default:
         throw new Error('Invalid operation')
     }
+
+    process.exit(0)
   } catch (err) {
     logger.error(err)
+    process.exit(1)
   }
 })()

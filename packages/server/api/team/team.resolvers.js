@@ -1,5 +1,4 @@
 const {
-  updateGlobalTeams,
   getNonTeamMemberUsers,
   filterGlobalTeamMembers,
   addExternalReviewer,
@@ -20,10 +19,6 @@ const filterGlobalTeamMembersResolver = async (
   ctx,
 ) => {
   return filterGlobalTeamMembers(role, query, options)
-}
-
-const updateGlobalTeamsResolver = async (_, { input }, ctx) => {
-  return updateGlobalTeams(input)
 }
 
 const addExternalReviewerResolver = async (
@@ -58,7 +53,12 @@ const accceptOrRejectInvitationResolver = (
   { questionVersionId, accepted, reason },
   ctx,
 ) => {
-  return acceptOrRejectInvitation(questionVersionId, accepted, reason, ctx.user)
+  return acceptOrRejectInvitation(
+    questionVersionId,
+    accepted,
+    reason,
+    ctx.userId,
+  )
 }
 
 const reviewSubmittedResolver = async teamMember => {
@@ -72,7 +72,6 @@ module.exports = {
     searchForReviewers: searchForReviewersResolver,
   },
   Mutation: {
-    updateGlobalTeams: updateGlobalTeamsResolver,
     addExternalReviewer: addExternalReviewerResolver,
     inviteReviewer: inviteReviewerResolver,
     revokeInvitation: revokeInvitationResolver,

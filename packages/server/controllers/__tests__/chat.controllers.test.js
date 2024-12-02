@@ -1,9 +1,9 @@
-const { uuid, pubsubManager } = require('@coko/server')
-const { ChatThread, ChatMessage } = require('@coko/server/src/models')
+const { uuid, ChatChannel, ChatMessage } = require('@coko/server')
+
 const clearDb = require('../../models/__tests__/_clearDb')
 
 const {
-  createChatThread,
+  createChatChannel,
   sendMessage,
   getMessage,
   getMessageAuthor,
@@ -12,8 +12,6 @@ const {
 
 const { User } = require('../../models/index')
 
-const { destroy } = pubsubManager
-
 const content = 'Duis accumsan ultrices nulla. Vivamus eu ante ullamcorper'
 
 describe('Chat controller', () => {
@@ -21,13 +19,13 @@ describe('Chat controller', () => {
 
   afterAll(async () => {
     await clearDb()
-    const knex = ChatThread.knex()
+    const knex = ChatChannel.knex()
     knex.destroy()
   })
   it('createChatThread creates chat thread with given relatedObjectId and chatType', async () => {
     const id = uuid()
 
-    const chatThread = await createChatThread({
+    const chatThread = await createChatChannel({
       relatedObjectId: id,
       chatType: 'question',
     })
@@ -39,7 +37,7 @@ describe('Chat controller', () => {
     const question = uuid()
     const user = await User.insert({})
 
-    const chatThread = await ChatThread.insert({
+    const chatThread = await ChatChannel.insert({
       relatedObjectId: question,
       chatType: 'question',
     })
@@ -53,23 +51,20 @@ describe('Chat controller', () => {
     // cancel email notification for this test
     cancelEmailNotification(participant1, chatThread.id)
 
-    const destroyPromise = destroy()
-    await destroyPromise
-
-    expect(message.chatThreadId).toBe(chatThread.id)
+    expect(message.chatChannelId).toBe(chatThread.id)
     expect(message.content).toBe(content)
     expect(message.mentions.includes(participant1)).toBe(true)
   })
   it('getMessage gets the message with the given id', async () => {
     const user = await User.insert({})
 
-    const chatThread = await ChatThread.insert({
+    const chatThread = await ChatChannel.insert({
       relatedObjectId: uuid(),
       chatType: 'question',
     })
 
     const chatMessage = await ChatMessage.insert({
-      chatThreadId: chatThread.id,
+      chatChannelId: chatThread.id,
       content,
       userId: user.id,
     })
@@ -82,13 +77,13 @@ describe('Chat controller', () => {
     const author = await User.insert({})
     const question = uuid()
 
-    const chatThread = await ChatThread.insert({
+    const chatThread = await ChatChannel.insert({
       relatedObjectId: question,
       chatType: 'question',
     })
 
     const chatMessage = await ChatMessage.insert({
-      chatThreadId: chatThread.id,
+      chatChannelId: chatThread.id,
       content,
       userId: author.id,
     })

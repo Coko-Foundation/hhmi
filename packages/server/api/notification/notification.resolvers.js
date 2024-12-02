@@ -1,7 +1,5 @@
-const { pubsubManager, logger } = require('@coko/server')
+const { subscriptionManager, logger } = require('@coko/server')
 const { actions } = require('../../controllers/constants')
-
-const { getPubsub } = pubsubManager
 
 const {
   getUserNotifications,
@@ -14,11 +12,11 @@ const {
 const { User } = require('../../models')
 
 const userNotificationsResolver = async (_, { type, options }, ctx) => {
-  return getUserNotifications(ctx.user, type, options)
+  return getUserNotifications(ctx.userId, type, options)
 }
 
 const getUnreadNotificationsCountResolver = async (_, __, ctx) => {
-  return getUnreadNotificationsCountForUser(ctx.user)
+  return getUnreadNotificationsCountForUser(ctx.userId)
 }
 
 const notificationResolver = async notificationId => {
@@ -88,9 +86,9 @@ module.exports = {
         return null
       },
       subscribe: async (_payload, _vars, ctx) => {
-        const pubsub = await getPubsub()
-
-        return pubsub.asyncIterator(`${actions.NEW_NOTIFICATION}.${ctx.user}`)
+        return subscriptionManager.asyncIterator(
+          `${actions.NEW_NOTIFICATION}.${ctx.userId}`,
+        )
       },
     },
   },

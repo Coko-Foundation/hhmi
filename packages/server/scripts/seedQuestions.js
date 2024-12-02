@@ -84,7 +84,7 @@ const checkDataType = (validData, dataType) => {
         if (!username) throw new Error('Username not provided')
 
         if (isValidType) {
-          createQuestion(
+          await createQuestion(
             username,
             date,
             metadata[validDataType[typeIndex]],
@@ -92,7 +92,7 @@ const checkDataType = (validData, dataType) => {
             HEUsername,
           )
         } else {
-          createQuestion(
+          await createQuestion(
             username,
             date,
             metadata[validDataType[0]],
@@ -154,7 +154,10 @@ const checkDataType = (validData, dataType) => {
       default:
         logger.info('Invalid operation type')
     }
+
+    process.exit(0)
   } catch (err) {
     logger.error(err)
+    process.exit(1)
   }
 })()

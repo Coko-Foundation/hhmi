@@ -333,7 +333,7 @@ const QuestionPage = props => {
 
   const [searchForReviewers] = useLazyQuery(SEARCH_FOR_REVIEWERS)
 
-  const { data: { chatThread: authorChatThread } = {}, loading: chatLoading } =
+  const { data: { chatChannel: authorChatThread } = {}, loading: chatLoading } =
     useQuery(GET_CHAT_THREAD, {
       skip: !question?.authorChatThreadId,
       variables: {
@@ -341,7 +341,7 @@ const QuestionPage = props => {
       },
     })
 
-  const { data: { chatThread: productionChatThread } = {} } = useQuery(
+  const { data: { chatChannel: productionChatThread } = {} } = useQuery(
     GET_CHAT_THREAD,
     {
       skip: !question?.productionChatThreadId,
@@ -352,7 +352,7 @@ const QuestionPage = props => {
   )
 
   useQuery(GET_CHAT_THREAD, {
-    skip: !question?.reviewerChatThreadId || question?.versions[0].underReview,
+    skip: !question?.reviewerChatThreadId || !question?.versions[0].underReview,
     variables: {
       id: question?.reviewerChatThreadId,
     },
@@ -1133,7 +1133,7 @@ const QuestionPage = props => {
     content,
     mentions,
     attachments,
-    chatThreadId,
+    chatChannelId,
   ) => {
     const fileObjects = attachments.map(attachment => attachment.originFileObj)
 
@@ -1141,7 +1141,7 @@ const QuestionPage = props => {
       variables: {
         input: {
           content,
-          chatThreadId,
+          chatChannelId,
           userId: currentUser.id,
           mentions,
           attachments: fileObjects,

@@ -15,7 +15,7 @@ const dbCleaner = async () => {
       rows.map(async row => {
         const { tablename } = row
 
-        if (tablename !== 'migrations') {
+        if (tablename !== 'migrations' && tablename !== 'coko_server_meta') {
           await db.raw(`TRUNCATE TABLE ${tablename} CASCADE`)
         }
 
@@ -24,6 +24,8 @@ const dbCleaner = async () => {
     )
     logger.info('[truncateDB]: database cleared')
   }
+
+  process.exit(0)
 }
 
 dbCleaner()

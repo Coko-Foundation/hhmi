@@ -15,7 +15,7 @@ const {
 const { createEmptyQuestion } = require('./__helpers__/questions')
 const clearDb = require('../../models/__tests__/_clearDb')
 
-const AUTHOR_TEAM = config.teams.nonGlobal.author
+const AUTHOR_TEAM = config.teams.nonGlobal.find(t => t.role === 'author')
 
 describe('list controllers', () => {
   beforeEach(() => clearDb())
@@ -79,8 +79,10 @@ describe('list controllers', () => {
     const list1 = await List.insert({ title: 'old_list' })
     const list2 = await List.insert({ title: 'new_list' })
     const deletedLists = await deleteLists([list1.id])
-    expect(deletedLists).not.toContain(list2.id)
-    expect(deletedLists).toContain(list1.id)
+    const retrievedList2 = await List.findById(list2.id)
+
+    expect(deletedLists).toEqual(1)
+    expect(retrievedList2).toBeTruthy()
   })
 
   it('deleteFromList', async () => {

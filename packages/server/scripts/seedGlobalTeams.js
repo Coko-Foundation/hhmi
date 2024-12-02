@@ -7,9 +7,9 @@ const { Team } = require('../models')
 const seedGlobalTeams = async () => {
   logger.info('Seeding global teams...')
 
-  if (!config.has('teams.global')) {
-    logger.info('No global teams declared in config')
-  }
+  // if (!config.has('teams.global')) {
+  //   logger.info('No global teams declared in config')
+  // }
 
   const configGlobalTeams = config.get('teams.global')
 
@@ -41,6 +41,8 @@ const seedGlobalTeams = async () => {
       logger.info(`[seedGlobalTeams]: Added global team "${teamData.role}"`)
     }),
   )
+
+  process.exit(0)
 }
 
 seedGlobalTeams()

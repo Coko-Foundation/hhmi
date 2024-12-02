@@ -4,7 +4,7 @@ const { ComplexItemSet, Question, Team, User } = require('../models')
 const { labels } = require('./constants')
 // const { applyListQueryOptions } = require('../models/helpers')
 
-const AUTHOR_TEAM = config.teams.nonGlobal.author
+const AUTHOR_TEAM = config.teams.nonGlobal.find(t => t.role === 'author')
 const BASE_MESSAGE = `${labels.SETS_CONTROLLERS}:`
 
 const getComplexItemSets = async (user, params = {}, options = {}) => {

@@ -1,12 +1,11 @@
 const {
   BaseModel,
-  modelTypes: { boolean, stringNullable },
+  modelJsonSchemaTypes: { boolean, stringNullable },
+  ChatChannel,
 } = require('@coko/server')
 
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { db } = require('@coko/server')
-
-const { ChatThread } = require('@coko/server/src/models')
 const config = require('config')
 
 const QuestionVersion = require('../questionVersion/questionVersion.model')
@@ -14,7 +13,7 @@ const User = require('../user/user.model')
 const { applyListQueryOptions, hasRoleHelper } = require('../helpers')
 const { REVIEWER_STATUSES } = require('../../controllers/constants')
 
-const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
+const REVIEWER_TEAM = config.teams.nonGlobal.find(t => t.role === 'reviewer')
 
 class Question extends BaseModel {
   static get tableName() {
@@ -936,7 +935,7 @@ class Question extends BaseModel {
     const { trx } = options
 
     try {
-      const chat = await ChatThread.query(trx)
+      const chat = await ChatChannel.query(trx)
         .select('id')
         .findOne({ relatedObjectId: questionId, chatType })
 

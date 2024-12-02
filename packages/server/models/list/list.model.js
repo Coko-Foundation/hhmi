@@ -1,6 +1,6 @@
 const {
   BaseModel,
-  modelTypes: { stringNullable },
+  modelJsonSchemaTypes: { stringNullable },
 } = require('@coko/server')
 
 const ListMember = require('../listMember/listMember.model')
