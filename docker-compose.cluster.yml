@@ -10,7 +10,6 @@ services:
 
   server:
     image: cokoapps/hhmi-server
-    command: ['yarn', 'coko-server', 'start']
     ports:
       - ${SERVER_PORT}:3000
     environment:
