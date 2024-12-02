@@ -13,7 +13,7 @@ extend input SendChatMessageInput {
 }
 
 extend type Mutation {
-  createChatThread(input: CreateChatThreadInput!): ChatThread!
+  createChatThread(input: ChatChannelFilter!): ChatChannel!
   cancelEmailNotification(chatThreadId: ID!): Boolean!
 }
 

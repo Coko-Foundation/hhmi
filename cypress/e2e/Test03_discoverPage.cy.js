@@ -92,7 +92,6 @@ describe('Discover page tests', () => {
   })
 
   it('search functionality', () => {
-    cy.wait('@GQLReq')
     cy.get('[placeholder="Search..."]', { timeout: 10000 }).type(
       'bacillus{enter}',
     )
@@ -144,7 +143,6 @@ describe('Discover page tests', () => {
   it('checking the question', () => {
     // cy.login({ ...user2, visitUrl: discoverPage })
     cy.visit(discoverPage)
-    cy.wait('@GQLReq')
 
     cy.get(listItemWrapper)
       .eq(2)
@@ -152,7 +150,6 @@ describe('Discover page tests', () => {
       .contains('p')
       .first()
       .click()
-    cy.wait('@GQLReq')
 
     // cy.get(
     //   '[class="Question__FacultyHeaderWrapper-sc-12z17kk-6 dnjWAN"] button.ant-switch',

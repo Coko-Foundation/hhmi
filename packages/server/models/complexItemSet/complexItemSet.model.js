@@ -1,6 +1,6 @@
 const {
   BaseModel,
-  modelTypes: { boolean, objectNullable, stringNullable },
+  modelJsonSchemaTypes: { boolean, objectNullable, stringNullable },
 } = require('@coko/server')
 
 const cloneDeep = require('lodash/cloneDeep')

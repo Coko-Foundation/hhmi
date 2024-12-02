@@ -1,7 +1,6 @@
-const { logger, useTransaction } = require('@coko/server')
-const { createFile } = require('@coko/server')
 const config = require('config')
-const { ChatThread, ChatMessage, File } = require('@coko/server/src/models')
+const { logger, useTransaction, createFile } = require('@coko/server')
+const { ChatChannel, ChatMessage, File } = require('@coko/server/src/models')
 const { User, TeamMember } = require('../models')
 const { getFileUrl } = require('./file.controllers')
 const CokoNotifier = require('../services/notify')
@@ -11,9 +10,9 @@ const BASE_MESSAGE = '[CHAT CONTROLLER]'
 
 const globalTimeouts = {}
 
-const createChatThread = async (input = {}, options = {}) => {
+const createChatChannel = async (input = {}, options = {}) => {
   const { relatedObjectId, chatType } = input
-  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} createChatThread:`
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} createChatChannel:`
   logger.info(
     `${CONTROLLER_MESSAGE} Create chat thread for question ${relatedObjectId}`,
   )
@@ -21,7 +20,7 @@ const createChatThread = async (input = {}, options = {}) => {
   try {
     return useTransaction(
       async tr => {
-        return ChatThread.insert({ relatedObjectId, chatType }, { trx: tr })
+        return ChatChannel.insert({ relatedObjectId, chatType }, { trx: tr })
       },
       { trx: options.trx, passedTrxOnly: true },
     )
@@ -32,7 +31,7 @@ const createChatThread = async (input = {}, options = {}) => {
 }
 
 const sendMessage = async (
-  chatThreadId,
+  chatChannelId,
   content,
   userId,
   mentions = [],
@@ -48,11 +47,11 @@ const sendMessage = async (
     const newMessage = await useTransaction(
       async tr => {
         logger.info(
-          `${CONTROLLER_MESSAGE} creating a new message for chat thread with id ${chatThreadId}`,
+          `${CONTROLLER_MESSAGE} creating a new message for chat channel with id ${chatChannelId}`,
         )
 
         const chatMessage = await ChatMessage.insert(
-          { chatThreadId, userId, content, mentions },
+          { chatChannelId, userId, content, mentions },
           { trx: tr, ...restOptions },
         )
 
@@ -65,7 +64,7 @@ const sendMessage = async (
 
     mentions.forEach(mention => {
       // setup a timeout to send emails with delay (and possibility of being canceled)
-      globalTimeouts[`${mention}-${chatThreadId}`] = setTimeout(() => {
+      globalTimeouts[`${mention}-${chatChannelId}`] = setTimeout(() => {
         notifier.notify('hhmi.chatMention', { mention, newMessage }, 'email')
       }, 10000)
     })
@@ -114,7 +113,7 @@ const getMessages = async (threadId, options = {}) => {
 
   try {
     return (
-      await ChatMessage.query(options.trx).where('chatThreadId', threadId)
+      await ChatMessage.query(options.trx).where('chatChannelId', threadId)
     ).map(({ id, created, content, userId, mentions }) => ({
       id,
       content,
@@ -228,7 +227,7 @@ const notifyAdmins = async (message, mentionees, currentUser) => {
 }
 
 module.exports = {
-  createChatThread,
+  createChatChannel,
   getAttachments,
   getMessages,
   getMessageAuthor,

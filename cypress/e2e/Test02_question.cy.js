@@ -17,11 +17,7 @@ import {
   ProseMirror,
   basicButton,
 } from '../support/selectors'
-import {
-  dashboard as dashboardRoute,
-  graphqlEndpoint,
-  lists,
-} from '../support/routes'
+import { dashboard as dashboardRoute, lists } from '../support/routes'
 import { laptop } from '../support/viewport'
 
 const disableScripts = false
@@ -46,14 +42,13 @@ describe('Testing questions', () => {
   })
 
   beforeEach(() => {
-    cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     cy.viewport(laptop.preset)
   })
+
   context.skip('Wax editor', () => {
     beforeEach(() => {
       cy.login(user2)
       cy.get(createQuestionButton).click()
-      cy.wait('@GQLReq')
     })
     it('Widget is created correctly from the Item Type dropdown', () => {
       cy.contains(
@@ -125,12 +120,11 @@ describe('Testing questions', () => {
       cy.deleteAllQuestions(disableScripts)
     })
   })
+
   context('Functionalities', () => {
     it('creating a question & checking values in the UI', () => {
       cy.login(user2)
       cy.get(createQuestionButton).click()
-      cy.wait('@GQLReq')
-      cy.wait('@GQLReq')
       cy.fillQuestion(question)
       // [segment]: checking last save
       // cy.log('checking the last saved...')
@@ -162,10 +156,8 @@ describe('Testing questions', () => {
         .should('not.be.disabled')
         .click()
 
-      cy.wait('@GQLReq')
       // [segment]: checking if the values are retained in the UI
       cy.visit(dashboardRoute, { method: 'GET' })
-      cy.wait('@GQLReq')
       // [segment]: Checking  dashboardRoute
       cy.log('checking in the dashboard...')
       cy.contains('.ProseMirror p.paragraph', 'Question 1')
@@ -206,6 +198,7 @@ describe('Testing questions', () => {
 
       cy.deleteAllQuestions(disableScripts)
     })
+
     it('editing the question', () => {
       cy.seedQuestion(
         disableScripts,
@@ -218,13 +211,11 @@ describe('Testing questions', () => {
       // [info]: checking for dashboard to wait for login to complete
       cy.contains(anchorTags.dashboard, 'Dashboard').should('exist')
       cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
-      cy.wait('@GQLReq')
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')
         .contains(ProseMirror, 'Plants growing under direct sunlight')
         .click()
-      cy.wait('@GQLReq')
       cy.contains(basicButton, 'Unpublish').click()
       cy.contains(
         antModalContent,
@@ -239,7 +230,6 @@ describe('Testing questions', () => {
         `This item is unpublished. You will need to publish this item again for the changes to be reflected in the Browse Items page. After the item is edited, the previous version will not be available. Do you wish to continue?`,
       )
       cy.contains(buttonAntModalBody, 'Edit').click()
-      cy.wait('@GQLReq')
 
       cy.get('[contenteditable="true"]', {
         force: true,
@@ -255,6 +245,7 @@ describe('Testing questions', () => {
       )
       cy.contains(buttonAntModalBody, 'Ok').click()
     })
+
     it('duplicate question', () => {
       cy.deleteAllQuestions(disableScripts)
       cy.seedQuestion(
@@ -268,7 +259,6 @@ describe('Testing questions', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000)
       cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
-      cy.wait('@GQLReq')
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')
@@ -280,11 +270,8 @@ describe('Testing questions', () => {
         'div[class="ant-modal-body"] button[type="button"]',
         'Duplicate',
       ).click()
-      cy.wait('@GQLReq')
       cy.visit(dashboardRoute)
-      cy.wait('@GQLReq')
       cy.contains('div[role="tab"]', 'Authored Items').click()
-      cy.wait('@GQLReq')
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')
@@ -297,10 +284,7 @@ describe('Testing questions', () => {
     it.skip('check alternative text for empty questions', () => {
       cy.login(user2)
       cy.get(createQuestionButton).click()
-      cy.wait('@GQLReq')
-      cy.wait('@GQLReq')
       cy.visit(dashboardRoute, { method: 'GET' })
-      cy.wait('@GQLReq')
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')
@@ -313,7 +297,6 @@ describe('Testing questions', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000)
       cy.visit(dashboardRoute, { method: 'GET' })
-      cy.wait('@GQLReq')
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')
@@ -347,7 +330,6 @@ describe('Testing lists', () => {
     )
   })
   beforeEach(() => {
-    cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     cy.viewport(laptop.preset)
   })
   it('creating a list and deleting a list', () => {
@@ -365,7 +347,6 @@ describe('Testing lists', () => {
     // [info]: checking for dashboard to wait for login to complete
     cy.contains(anchorTags.dashboard, 'Dashboard').should('exist')
     cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
-    cy.wait('@GQLReq')
     // [segment]: adding question to new lsit
     cy.get(listItemWrapper)
       .eq(0)
@@ -380,7 +361,6 @@ describe('Testing lists', () => {
     // [segment]: adding question to existing list
     // making a random click to close the popup
     cy.reload()
-    cy.wait('@GQLReq')
     cy.get(listItemWrapper)
       .eq(1)
       .should('be.visible')
@@ -390,14 +370,12 @@ describe('Testing lists', () => {
     cy.get('button[data-testid="add-to-list-btn"]').click()
     cy.get('[data-testid="select-existing-list"]').click()
     cy.contains('new_list').click()
-    cy.wait('@GQLReq')
     cy.get('[data-testid="add-btn"]').click()
     // [segment]: checking if the questions are displayed inside the list
     cy.log('checking if the questions are displayed inside the list...')
     // Existing list
     cy.log('Existing list')
     cy.visit(lists, { method: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('new_list').click()
     cy.get(listItemWrapper)
       .eq(0)
@@ -407,7 +385,6 @@ describe('Testing lists', () => {
     // New list
     cy.log('new list')
     cy.visit(lists, { method: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('list2').click()
     cy.get(listItemWrapper)
       .eq(0)
@@ -424,7 +401,6 @@ describe('Testing lists', () => {
       cy.addQuestionToList(disableScripts, 'list3', qId)
     })
     cy.visit(lists)
-    cy.wait('@GQLReq')
     cy.contains('list3').click()
     cy.get(listItemWrapper)
       .eq(0)
@@ -491,6 +467,9 @@ describe('Testing lists', () => {
           }, 1000)
         })
 
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(1000)
+
       const downloadsFolder = Cypress.config('downloadsFolder')
 
       cy.log(downloadsFolder, `${id}.zip`)
@@ -509,7 +488,6 @@ describe('Testing lists', () => {
     cy.get(
       'div[id="list4-rename-popup"] button[data-testid="rename-btn"]',
     ).click()
-    cy.wait('@GQLReq')
     cy.contains('a', 'list5')
   })
 })

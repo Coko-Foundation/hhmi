@@ -1,6 +1,5 @@
-const { logger, useTransaction, pubsubManager } = require('@coko/server')
-
-const { ChatThread } = require('@coko/server/src/models')
+const { logger, useTransaction, subscriptionManager } = require('@coko/server')
+const { ChatChannel } = require('@coko/server/src/models')
 const config = require('config')
 const { uniq } = require('lodash')
 
@@ -21,11 +20,9 @@ const metadataValues = require('./metadataValues')
 const CokoNotifier = require('../services/notify')
 const { actions } = require('./constants')
 
-const { getPubsub } = pubsubManager
-
-const HE_TEAM = config.teams.nonGlobal.handlingEditor
-const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
-const EDITOR_TEAM = config.teams.global.editor
+const HE_TEAM = config.teams.nonGlobal.find(t => t.role === 'handlingEditor')
+const REVIEWER_TEAM = config.teams.nonGlobal.find(t => t.role === 'reviewer')
+const EDITOR_TEAM = config.teams.global.find(t => t.role === 'editor')
 
 const BASE_MESSAGE = 'Team controllers:'
 
@@ -251,8 +248,10 @@ const inviteReviewer = async (questionVersionId, reviewerId) => {
     }
   }
 
-  const pubsub = await getPubsub()
-  pubsub.publish(`${actions.DASHBOARD_UPDATED}.${reviewerId}`, 'reviewer')
+  subscriptionManager.publish(
+    `${actions.DASHBOARD_UPDATED}.${reviewerId}`,
+    'reviewer',
+  )
 
   const notifier = new CokoNotifier()
   notifier.notify('hhmi.reviewerInvited', {
@@ -303,8 +302,10 @@ const revokeInvitation = async (questionVersionId, reviewerId) => {
         await inviteMaxReviewers(questionVersion, { trx })
       }
 
-      const pubsub = await getPubsub()
-      pubsub.publish(`${actions.DASHBOARD_UPDATED}.${reviewerId}`, 'reviewer')
+      subscriptionManager.publish(
+        `${actions.DASHBOARD_UPDATED}.${reviewerId}`,
+        'reviewer',
+      )
 
       const notifier = new CokoNotifier()
       notifier.notify('hhmi.revokeInvitation', {
@@ -388,13 +389,7 @@ const searchForReviewers = async (searchTerm, questionVersionId) => {
           builder.as('full_results')
         })
         .whereIn('id', globalTeamMemberIds)
-        .whereNotIn('full_results.id', builder =>
-          builder
-            .select('users.id')
-            .from('users')
-            .whereIn('users.id', userIds)
-            .pluck('id'),
-        )
+        .whereNotIn('full_results.id', userIds)
 
       if (author?.id) {
         searchQuery.whereNot({ id: author.id })
@@ -515,7 +510,7 @@ const acceptOrRejectInvitation = async (
         { trx },
       )
 
-      await ChatThread.insert(
+      await ChatChannel.insert(
         {
           relatedObjectId: questionVersion.questionId,
           chatType: `reviewerChat-${userId}`,

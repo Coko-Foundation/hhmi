@@ -1,6 +1,6 @@
 const {
   BaseModel,
-  modelTypes: { id, boolean, object, string },
+  modelJsonSchemaTypes: { id, boolean, object, string },
 } = require('@coko/server')
 
 const { applyListQueryOptions } = require('../helpers')

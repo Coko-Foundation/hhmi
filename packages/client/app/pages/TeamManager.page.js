@@ -40,7 +40,7 @@ const TeamManagerPage = () => {
     refetchQueries: [{ query: GLOBAL_TEAMS }],
   })
 
-  const teams = teamsData?.getGlobalTeams.result.map(t => {
+  const teams = teamsData?.teams.result.map(t => {
     const { members, ...rest } = t
 
     const transformedMembers = members.map(m => {
@@ -80,10 +80,10 @@ const TeamManagerPage = () => {
 
     const mutationData = {
       variables: {
-        input: {
-          id: teamId,
-          members: [...existingMemberIds, ...newMemberIds],
-        },
+        teamId,
+        members: [...existingMemberIds, ...newMemberIds],
+        // input: {
+        // },
       },
     }
 
@@ -97,11 +97,11 @@ const TeamManagerPage = () => {
 
     const mutationData = {
       variables: {
-        input: {
-          id: teamId,
-          members: newMembers,
-          removedMembers: opts,
-        },
+        teamId,
+        members: newMembers,
+        // input: {
+        //   removedMembers: opts,
+        // },
       },
     }
 

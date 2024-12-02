@@ -1,5 +1,5 @@
 const {
-  modelTypes: { stringNullable },
+  modelJsonSchemaTypes: { stringNullable },
 } = require('@coko/server')
 
 const TeamMemberModel = require('@coko/server/src/models/teamMember/teamMember.model')

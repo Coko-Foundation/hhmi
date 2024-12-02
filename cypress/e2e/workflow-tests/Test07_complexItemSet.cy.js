@@ -15,7 +15,6 @@ import {
 import {
   dashboard as dashboardRoute,
   sets as setsPage,
-  graphqlEndpoint,
 } from '../../support/routes'
 
 const disableScripts = false
@@ -35,14 +34,12 @@ describe('Context-dependent item set workflows', () => {
   })
 
   beforeEach(() => {
-    cy.intercept({ url: graphqlEndpoint, method: 'POST' }).as('GQLReq')
     cy.viewport(laptop.preset)
   })
 
   // eslint-disable-next-line jest/no-disabled-tests
   it("Unpublished set shouldn't be visible to other authors' with no special roles", () => {
     cy.login({ ...user2, visitUrl: setsPage })
-    cy.wait('@GQLReq')
     cy.contains(`[class="ant-empty-description"]`, 'No Data')
   })
 
@@ -51,11 +48,9 @@ describe('Context-dependent item set workflows', () => {
     let setId
     cy.login({ ...admin, visit: dashboardRoute })
     cy.visit(setsPage, { method: 'GET' })
-    cy.wait('@GQLReq')
 
     cy.get(listItemWrapper, { timeout: 10000 }).should('exist')
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
-    cy.wait('@GQLReq')
     cy.contains(antTabs, 'Content').should('be.visible')
     cy.contains('h2', complexItemSet1.title).should('be.visible')
     cy.get(antTabs).contains('Edit').should('exist')
@@ -65,7 +60,6 @@ describe('Context-dependent item set workflows', () => {
     cy.logout()
 
     cy.login({ ...user2, visitUrl: dashboardRoute })
-    cy.wait('@GQLReq')
     cy.contains('Browse Items').should('exist')
     cy.then(() => {
       cy.visit(setId)
@@ -83,9 +77,7 @@ describe('Context-dependent item set workflows', () => {
     cy.seedUser(disableScripts, editor)
 
     cy.login({ ...editor, visitUrl: setsPage })
-    cy.wait('@GQLReq')
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
-    cy.wait('@GQLReq')
     cy.contains(antTabs, 'Content').should('be.visible')
     cy.contains('h2', complexItemSet1.title).should('be.visible')
     cy.get(antTabs).contains('Edit').should('exist')
@@ -101,9 +93,7 @@ describe('Context-dependent item set workflows', () => {
       cy.addQuestionToComplexItemSet(disableScripts, complexItemSet1.title, qId)
     })
     cy.visit(setsPage, { method: 'GET' })
-    cy.wait('@GQLReq')
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
-    cy.wait('@GQLReq')
     cy.contains(antTabs, 'Content').should('be.visible')
     cy.contains('h2', complexItemSet1.title).should('be.visible')
     cy.get(antTabs).contains('Edit').should('not.exist')
@@ -156,7 +146,6 @@ describe('Context-dependent item set workflows', () => {
     cy.log('cheking if published questions are listed...')
 
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
-    cy.wait('@GQLReq')
 
     cy.get(listItemWrapper)
       .eq(0)

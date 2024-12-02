@@ -6,7 +6,6 @@ import {
   complexItemSet2,
   complexItemSet3,
 } from '../support/appData'
-import { graphqlEndpoint } from '../support/routes'
 import {
   anchorTags,
   antTabs,
@@ -32,14 +31,11 @@ describe('Context-dependent item set', () => {
   })
   beforeEach(() => {
     cy.viewport(laptop.preset)
-    cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
-
     cy.login({ ...user2 })
   })
 
   it('checking if the set displays correct info from the database', () => {
     cy.get(anchorTags.sets).click({ force: true })
-    cy.wait('@GQLReq')
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title)
     cy.get(listItemWrapper)
       .eq(0)
@@ -73,11 +69,9 @@ describe('Context-dependent item set', () => {
     cy.get(ProseMirror).should('be.visible')
     cy.get(ProseMirror).type(complexItemSet2.leadingContent, { delay: 50 })
     cy.contains('button[type="submit"]', 'Save').click()
-    cy.wait('@GQLReq')
     cy.contains('Context-dependent item set was created successfully!')
     cy.get(anchorTags.sets).click({ force: true })
     cy.reload()
-    cy.wait('@GQLReq')
     // [segment]: checking if correct complex item set info is displayed
     cy.log(
       'checking if correct context-dependent item set info is displayed...',
@@ -105,7 +99,6 @@ describe('Context-dependent item set', () => {
 
     cy.get(ProseMirror).last().type(`{selectall}{del} edited set description`)
     cy.contains('button[type="submit"]', 'Update').click()
-    cy.wait('@GQLReq')
     cy.contains('div', 'Context-dependent item set updated successfully')
   })
 
@@ -121,7 +114,6 @@ describe('Context-dependent item set', () => {
 
     it('with "Add item to this set" button', () => {
       cy.get(anchorTags.sets).click({ force: true })
-      cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)
         // .eq(0)
@@ -144,13 +136,11 @@ describe('Context-dependent item set', () => {
         cy.updateQuestionStatus(disableScripts, qId, 'published')
       })
       cy.get(anchorTags.sets).click({ force: true })
-      cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)
         // .eq(0)
         .contains('h2', complexItemSet3.title)
         .click()
-      cy.wait('@GQLReq')
       // [segment]: checking if the question is listed in the set
       cy.log('checking if the question is listed in the set')
       // cy.get(listItemWrapper).eq(0).contains('p', 'Question1')
@@ -160,7 +150,6 @@ describe('Context-dependent item set', () => {
 
     it('from the question page', () => {
       cy.get(anchorTags.dashboard).first().click({ force: true })
-      cy.wait('@GQLReq')
       cy.get(createQuestionButton).click()
       cy.get('input[data-testid="belongs-to-set-checkbox"]').click()
       cy.get('div[data-testid="complexItemSet-select"]').click()
@@ -179,13 +168,11 @@ describe('Context-dependent item set', () => {
         cy.updateQuestionStatus(disableScripts, qId, 'published')
       })
       cy.get(anchorTags.sets).click({ force: true })
-      cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)
         // .eq(0)
         .contains('h2', complexItemSet3.title)
         .click()
-      cy.wait('@GQLReq')
 
       // [segment]: checking if the question is listed in the set
       cy.log('checking if the question is listed in the set')

@@ -14,7 +14,9 @@ const dbCleaner = async () => {
       rows.map(async row => {
         const { tablename } = row
 
-        if (tablename !== 'migrations') {
+        const tablesNotToClear = ['migrations', 'coko_server_meta']
+
+        if (!tablesNotToClear.includes(tablename)) {
           await db.raw(`TRUNCATE TABLE ${tablename} CASCADE`)
         }
 

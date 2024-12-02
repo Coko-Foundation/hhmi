@@ -19,6 +19,7 @@ const dbCleaner = async () => {
     'application',
     'skill',
     'understanding',
+    'coko_server_meta',
   ]
 
   const { rows } = query
@@ -37,6 +38,8 @@ const dbCleaner = async () => {
     )
     logger.info('[truncateDB]: database cleared')
   }
+
+  process.exit(0)
 }
 
 dbCleaner()

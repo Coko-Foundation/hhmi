@@ -110,7 +110,7 @@ export const FILTER_USERS = gql`
 `
 
 export const FILTER_USERS_OPTIONS = gql`
-  query FilterUsers($params: UsersQueryParams) {
+  query FilterUsers($params: UserFilter) {
     filterUsers(params: $params) {
       result {
         value: id

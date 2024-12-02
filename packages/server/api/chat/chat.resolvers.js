@@ -1,10 +1,8 @@
-const { pubsubManager } = require('@coko/server')
+const { subscriptionManager } = require('@coko/server')
 const { actions } = require('../../controllers/constants')
 
-const { getPubsub } = pubsubManager
-
 const {
-  createChatThread,
+  createChatChannel,
   getMessages,
   getMessageAuthor,
   getAttachments,
@@ -16,7 +14,7 @@ const {
 } = require('../../controllers/chat.controllers')
 
 const createChatThreadResolver = async (_, { input }) => {
-  return createChatThread(input)
+  return createChatChannel(input)
 }
 
 const messagesResolver = async thread => {
@@ -37,18 +35,20 @@ const attachmentResolver = async message => {
 
 const sendMessageResolver = async (_, { input }, ctx) => {
   try {
-    const { chatThreadId, content, userId, mentions, attachments } = input
+    const { chatChannelId, content, userId, mentions, attachments } = input
 
     const message = await sendMessage(
-      chatThreadId,
+      chatChannelId,
       content,
       userId,
       mentions,
       attachments,
     )
 
-    const pubsub = await getPubsub()
-    pubsub.publish(`${actions.MESSAGE_CREATED}.${chatThreadId}`, message.id)
+    subscriptionManager.publish(
+      `${actions.MESSAGE_CREATED}.${chatChannelId}`,
+      message.id,
+    )
 
     // send notification to all mentioned users
     await notifyMentionees(message, mentions)
@@ -62,11 +62,11 @@ const sendMessageResolver = async (_, { input }, ctx) => {
 }
 
 const cancelEmailNotificationResolver = (_, { chatThreadId }, ctx) => {
-  return cancelEmailNotification(ctx.user, chatThreadId)
+  return cancelEmailNotification(ctx.userId, chatThreadId)
 }
 
 module.exports = {
-  ChatThread: {
+  ChatChannel: {
     messages: messagesResolver,
   },
   ChatMessage: {
@@ -74,7 +74,7 @@ module.exports = {
     attachments: attachmentResolver,
   },
   Mutation: {
-    sendMessage: sendMessageResolver,
+    sendChatMessage: sendMessageResolver,
     createChatThread: createChatThreadResolver,
     cancelEmailNotification: cancelEmailNotificationResolver,
   },
@@ -88,9 +88,7 @@ module.exports = {
         return null
       },
       subscribe: async (_payload, vars) => {
-        const pubsub = await getPubsub()
-
-        return pubsub.asyncIterator(
+        return subscriptionManager.asyncIterator(
           `${actions.MESSAGE_CREATED}.${vars.chatThreadId}`,
         )
       },

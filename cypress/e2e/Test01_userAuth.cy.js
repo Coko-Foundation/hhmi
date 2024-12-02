@@ -20,7 +20,6 @@ import {
   requestPasswordReset as requestPasswordResetPage,
   login as loginPage,
   profile as profilePage,
-  graphqlEndpoint,
 } from '../support/routes'
 
 const disableScripts = false
@@ -37,12 +36,10 @@ describe('Tests for user authentication', () => {
 
   beforeEach(() => {
     cy.viewport(laptop.preset)
-    cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('GQLReq')
   })
 
   it('forgot password', () => {
     cy.visit(requestPasswordResetPage)
-    cy.wait('@GQLReq')
     cy.get(submitButton).click()
     cy.contains(alertContainer, 'Email is required')
     cy.contains(anchorTags.login, 'Return to login form')
@@ -67,7 +64,7 @@ describe('Tests for user authentication', () => {
     cy.signup(user2)
   })
 
-  it.skip('login & user profile', () => {
+  it('login & user profile', () => {
     cy.visit(loginPage)
     cy.contains('h1', 'Login')
     cy.contains(basicButton, 'Log in with BioInteractive')
@@ -81,7 +78,6 @@ describe('Tests for user authentication', () => {
     cy.contains(anchorTags.signup, 'Do you want to signup instead?')
 
     cy.login({ ...contact })
-    cy.wait('@GQLReq')
     cy.contains('User profile')
     cy.get(submitButton).click()
     cy.contains(alertContainer, 'Last name is required')
@@ -160,7 +156,6 @@ describe('Tests for user authentication', () => {
     cy.get('[id="source"]').type(reviewing.source)
 
     cy.get(submitButton).click()
-    cy.wait('@GQLReq')
     cy.contains('div', 'Thank you for submitting your profile!', {
       timeout: 8000,
     })
@@ -175,11 +170,9 @@ describe('Tests for user authentication', () => {
     cy.contains('a', 'Manage Users').should('not.exist')
     cy.contains('a', 'Manage Teams').should('not.exist')
     cy.visit(manageTeamPage, { method: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
     cy.visit(manageUserPage, { method: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
   })
@@ -196,12 +189,12 @@ describe('Tests for user authentication', () => {
     cy.contains('a', ' Profile').should('not.exist')
     cy.contains('a', ' Logout').should('not.exist')
 
+    cy.contains('Reviewer Items') // wait for dashboard to load
+
     cy.visit(manageTeamPage, { methosd: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
     cy.visit(manageUserPage, { method: 'GET' })
-    cy.wait('@GQLReq')
     cy.contains('div', '403')
     cy.contains('div', 'Sorry, you are not authorized to access this page.')
   })
@@ -209,7 +202,6 @@ describe('Tests for user authentication', () => {
   it('Team manager', () => {
     const addUserToRole = (role, username) => {
       cy.get(`[data-testid="select-${role}"]`).type(username)
-      cy.wait('@GQLReq')
       cy.contains('.ant-select-item-option-active', username).click()
       cy.get(`[aria-labelledby="${role}-team"]`).click()
       cy.contains(`[data-testid="${role}-list"]`, username)
@@ -217,9 +209,7 @@ describe('Tests for user authentication', () => {
 
     const removeUserFromRole = (role, username) => {
       cy.contains('div', username).click()
-      cy.wait('@GQLReq')
       cy.get(`[data-testid="remove-${role}"]`).click({ force: true })
-      cy.wait('@GQLReq')
     }
 
     cy.login({ ...admin, visitUrl: manageTeamPage })
@@ -286,7 +276,6 @@ describe('Tests for user authentication', () => {
     cy.get('[id="phone"]').clear().type(contact.updatedPhone)
     cy.get('[id="address"]').clear().type(address.updatedAddress)
     cy.contains(submitButton, 'Save').click()
-    cy.wait('@GQLReq')
     cy.contains('Profile updated successfully')
     cy.reload()
 
@@ -342,14 +331,12 @@ describe('Tests for user authentication', () => {
     cy.get('[id="newPassword"]').type(contact.updatedPassword)
     cy.get('[id="newPasswordConfirmation"]').type(contact.updatedPassword)
     cy.contains(submitButton, 'Save').click({ force: true })
-    cy.wait('@GQLReq')
     cy.contains('Profile updated successfully')
   })
 
   it('logout', () => {
     cy.login(contact)
     cy.logout()
-    cy.wait('@GQLReq')
     cy.visit(dashboardPage)
     cy.location().should(location => {
       // eslint-disable-next-line jest/valid-expect
