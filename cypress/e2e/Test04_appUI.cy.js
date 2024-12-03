@@ -18,7 +18,7 @@ import {
   antTabs,
   ProseMirror,
 } from '../support/selectors'
-import { discover as discoverPage, graphqlEndpoint } from '../support/routes'
+import { discover as discoverPage } from '../support/routes'
 
 const disableScripts = false
 describe('Testing apps responsiveness', () => {
@@ -38,12 +38,10 @@ describe('Testing apps responsiveness', () => {
   describe('mobile view', () => {
     beforeEach(() => {
       cy.viewport(mobile.preset)
-      cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     })
 
     it('navigation bar', () => {
       cy.login(editorRole)
-      cy.wait('@GQLReq')
       cy.get(anchorTags.discover).should('not.be.visible')
       cy.get(anchorTags.dashboard).should('not.be.visible')
       cy.get(anchorTags.about).should('not.be.visible')
@@ -58,7 +56,6 @@ describe('Testing apps responsiveness', () => {
 
     it('question page', () => {
       cy.login(editorRole)
-      cy.wait('@GQLReq')
       cy.get(createQuestionButton).click({ force: true })
       cy.get('[data-testid="editor-collapse"]').should('exist')
       cy.get('[data-testid="metadata-collapse"]').should('exist')
@@ -74,11 +71,9 @@ describe('Testing apps responsiveness', () => {
       cy.get(navToggle).click()
       cy.get(anchorTags.dashboard).click()
       cy.contains('Editor Items').click()
-      cy.wait('@GQLReq')
 
       cy.get(listItemWrapper).eq(1).contains(ProseMirror, 'By 2040').click()
 
-      cy.wait('@GQLReq')
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1000)
       cy.get(moreActionsToggle).click()
@@ -100,7 +95,6 @@ describe('Testing apps responsiveness', () => {
       cy.contains(buttonAntModalBody, 'Move to review').click()
 
       cy.contains(buttonAntModalBody, 'Ok').click()
-      cy.wait('@GQLReq')
 
       // [segment]: checking popup content in review stage
       cy.log('checking popup content in review stage...')
@@ -117,7 +111,6 @@ describe('Testing apps responsiveness', () => {
       ).click()
       cy.contains(buttonAntModalBody, 'Move to production').click()
       cy.contains(buttonAntModalBody, 'Ok').click()
-      cy.wait('@GQLReq')
 
       // [segment]: checking popup content in production stage
       cy.log('checking popup content in production stage...')
@@ -137,10 +130,8 @@ describe('Testing apps responsiveness', () => {
 
     it('discover page', () => {
       cy.login(editorRole)
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(200)
+      cy.contains('Authored Items') // wait for dashboard
       cy.visit(discoverPage)
-      cy.wait('@GQLReq')
       cy.get('[data-testid="filter-collapse"]').should('exist')
     })
   })
@@ -148,12 +139,10 @@ describe('Testing apps responsiveness', () => {
   describe('desktop view', () => {
     beforeEach(() => {
       cy.viewport(laptop.preset)
-      cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     })
 
     it('navigation bar', () => {
       cy.login(editorRole)
-      cy.wait('@GQLReq')
       cy.get(navToggle).should('not.be.visible')
       cy.get('[data-testid="nav-wrapper"]')
         .invoke('css', 'overflow', 'visible') // Change 'overflow' property to 'visible'
@@ -167,7 +156,6 @@ describe('Testing apps responsiveness', () => {
 
     it('question page', () => {
       cy.login(editorRole)
-      cy.wait('@GQLReq')
       cy.get(createQuestionButton).click({ force: true })
       cy.get('[data-testid="editor-collapse"]').should('not.exist')
       cy.get('[data-testid="metadata-collapse"]').should('not.exist')
@@ -175,8 +163,8 @@ describe('Testing apps responsiveness', () => {
 
     it('discover page', () => {
       cy.login(editorRole)
+      cy.contains('Authored Items') // wait for dashboard
       cy.visit(discoverPage)
-      cy.wait('@GQLReq')
       cy.get('[data-testid="filter-collapse"]').should('not.exist')
     })
   })
@@ -186,7 +174,7 @@ describe('Search filter', () => {
   const { contact: user1Creds } = user1
   before(() => {
     cy.resetDB(disableScripts)
-        cy.seedUser(disableScripts, { ...user1Creds })
+    cy.seedUser(disableScripts, { ...user1Creds })
     cy.seedUser(disableScripts, { ...user2 })
     cy.seedUser(disableScripts, { ...editorRole })
     cy.seedUser(disableScripts, { ...handlingEditor1 })
@@ -201,7 +189,6 @@ describe('Search filter', () => {
   })
 
   beforeEach(() => {
-    cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     cy.viewport(laptop.preset)
   })
 

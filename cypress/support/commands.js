@@ -24,7 +24,7 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-import { login, signup, graphqlEndpoint } from './routes'
+import { login, signup } from './routes'
 import { submitButton } from './selectors'
 
 const selectData = section => {
@@ -47,9 +47,7 @@ Cypress.Commands.add('login', ({ email, password, visitUrl }) => {
   cy.contains('button[type="button"]', 'Log in with Email').click()
   cy.get('input[id="email"]').type(email)
   cy.get('input[id="password"]').type(password)
-  cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('waitForLogin')
   cy.contains(submitButton, 'Log in').click()
-  cy.wait('@waitForLogin')
 })
 
 Cypress.Commands.add('signup', ({ firstName, lastName, email, password }) => {
@@ -61,9 +59,7 @@ Cypress.Commands.add('signup', ({ firstName, lastName, email, password }) => {
   cy.get('input[id="password"]').type(password)
   cy.get('input[id="confirmPassword"]').type(password)
   cy.get('input[id="agreedTc"]').click()
-  cy.intercept({ method: 'POST', url: graphqlEndpoint }).as('waitForSignup')
   cy.contains(submitButton, 'Sign up').click()
-  cy.wait('@waitForSignup')
 
   cy.contains('div', 'Sign up successful!', { timeout: 8000 })
   cy.contains(
@@ -87,7 +83,6 @@ Cypress.Commands.add(
     },
     options,
   ) => {
-    cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     selectDataWithoutParent(cognitiveLevel)
     selectData(course)
     keywords.value.forEach(keyword =>
@@ -139,10 +134,10 @@ Cypress.Commands.add('createQuestionWidget', () => {
 
 Cypress.Commands.add('resetDB', disabled => {
   if (!disabled) {
-    cy.exec('docker exec hhmi_server_1 node ./scripts/truncateDB.js')
+    cy.exec('docker exec hhmi-server-1 node ./scripts/truncateDB.js')
       .its('stdout')
       .should('contain', 'database cleared')
-    cy.exec('docker exec hhmi_server_1 node ./scripts/seedGlobalTeams.js')
+    cy.exec('docker exec hhmi-server-1 node ./scripts/seedGlobalTeams.js')
       .its('stdout')
       .should('contain', `Added global team "admin"`)
       .should('contain', `Added global team "reviewer"`)
@@ -157,7 +152,7 @@ Cypress.Commands.add(
   (disabled, { email, role, profileSubmitted = true }) => {
     if (!disabled) {
       cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedUser.js create ${email} ${
+        `docker exec hhmi-server-1 node ./scripts/seedUser.js create ${email} ${
           profileSubmitted ? 'profileSubmitted' : '_'
         } ${role || ''}`,
       )
@@ -175,7 +170,7 @@ Cypress.Commands.add(
   (disabled, username, date, metadata, status, handlingEditor = '') => {
     if (!disabled) {
       cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedQuestions.js create ${username} ${date} ${metadata} ${status} ${handlingEditor}`,
+        `docker exec hhmi-server-1 node ./scripts/seedQuestions.js create ${username} ${date} ${metadata} ${status} ${handlingEditor}`,
       )
         .its('stdout')
         .should(
@@ -193,7 +188,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('updateQuestionStatus', (disabled, questionId, status) => {
   if (!disabled) {
     cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js updateStatus ${questionId} ${status}`,
+      `docker exec hhmi-server-1 node ./scripts/seedQuestions.js updateStatus ${questionId} ${status}`,
     )
       .its('stdout')
       .should('contains', `question ${questionId} updated to ${status}`)
@@ -205,7 +200,7 @@ Cypress.Commands.add('updateQuestionStatus', (disabled, questionId, status) => {
 Cypress.Commands.add('deleteAllQuestions', disabled => {
   if (!disabled) {
     cy.exec(
-      'docker exec hhmi_server_1 node ./scripts/seedQuestions.js deleteAll',
+      'docker exec hhmi-server-1 node ./scripts/seedQuestions.js deleteAll',
     )
       .its('stdout')
       .should('contain', 'Emptied questions and question_versions')
@@ -217,7 +212,7 @@ Cypress.Commands.add('deleteAllQuestions', disabled => {
 Cypress.Commands.add('seedList', (disabled, listName, username) => {
   if (!disabled) {
     cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedList.js create ${listName} ${username}`,
+      `docker exec hhmi-server-1 node ./scripts/seedList.js create ${listName} ${username}`,
     )
       .its('stdout')
       .should('contain', `created ${listName} with author as ${username}`)
@@ -229,7 +224,7 @@ Cypress.Commands.add('seedList', (disabled, listName, username) => {
 Cypress.Commands.add('addQuestionToList', (disabled, listName, questionId) => {
   if (!disabled) {
     cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedList addToList ${listName} ${questionId}`,
+      `docker exec hhmi-server-1 node ./scripts/seedList addToList ${listName} ${questionId}`,
     )
       .its('stdout')
       .should(
@@ -246,7 +241,7 @@ Cypress.Commands.add(
   (disabled, username, title, leadingContent) => {
     if (!disabled) {
       cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedComplexItemSet.js create ${username} "${title}" "${leadingContent}"`,
+        `docker exec hhmi-server-1 node ./scripts/seedComplexItemSet.js create ${username} "${title}" "${leadingContent}"`,
       )
         .its('stdout')
         .should('contain', `set with title: "${title}" created!`)
@@ -262,7 +257,7 @@ Cypress.Commands.add(
   (disabled, title, questionId) => {
     if (!disabled) {
       cy.exec(
-        `docker exec hhmi_server_1 node ./scripts/seedComplexItemSet.js addQuestion "${title}" ${questionId}`,
+        `docker exec hhmi-server-1 node ./scripts/seedComplexItemSet.js addQuestion "${title}" ${questionId}`,
       )
         .its('stdout')
         .should('contains', ` question - ${questionId} added to set "${title}"`)
@@ -275,7 +270,7 @@ Cypress.Commands.add(
 Cypress.Commands.add('createChat', (disabled, questionId) => {
   if (!disabled) {
     cy.exec(
-      `docker exec hhmi_server_1 node ./scripts/seedQuestions.js createChat ${questionId}`,
+      `docker exec hhmi-server-1 node ./scripts/seedQuestions.js createChat ${questionId}`,
     )
       .its('stdout')
       .should(

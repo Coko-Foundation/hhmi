@@ -232,14 +232,23 @@ describe('Question API authorization', () => {
     })
 
     await Team.addMember(authorTeamQuestion.id, user.id)
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: GET_QUESTION,
-      variables: {
-        id: question.id,
+    const response = await testServer.executeOperation(
+      {
+        query: GET_QUESTION,
+        variables: {
+          id: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(result.errors).toBe(undefined)
     expect(result.data.question.author.displayName).toBe('user1')
@@ -251,18 +260,27 @@ describe('Question API authorization', () => {
       isActive: false,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: GET_AUTHOR_DASHBOARD,
-      variables: {
-        orderBy: 'created',
-        ascending: true,
-        page: 1,
-        pageSize: 10,
-        filters: {},
+    const response = await testServer.executeOperation(
+      {
+        query: GET_AUTHOR_DASHBOARD,
+        variables: {
+          orderBy: 'created',
+          ascending: true,
+          page: 1,
+          pageSize: 10,
+          filters: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -275,18 +293,27 @@ describe('Question API authorization', () => {
       isActive: true,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: GET_AUTHOR_DASHBOARD,
-      variables: {
-        orderBy: 'created',
-        ascending: true,
-        page: 1,
-        pageSize: 10,
-        filters: {},
+    const response = await testServer.executeOperation(
+      {
+        query: GET_AUTHOR_DASHBOARD,
+        variables: {
+          orderBy: 'created',
+          ascending: true,
+          page: 1,
+          pageSize: 10,
+          filters: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(true)
     expect(result.errors).toBe(undefined)
@@ -298,17 +325,26 @@ describe('Question API authorization', () => {
       isActive: false,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: GET_EDITOR_DASHBOARD,
-      variables: {
-        orderBy: 'created',
-        ascending: true,
-        page: 1,
-        pageSize: 10,
+    const response = await testServer.executeOperation(
+      {
+        query: GET_EDITOR_DASHBOARD,
+        variables: {
+          orderBy: 'created',
+          ascending: true,
+          page: 1,
+          pageSize: 10,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -321,17 +357,26 @@ describe('Question API authorization', () => {
       isActive: true,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: GET_EDITOR_DASHBOARD,
-      variables: {
-        orderBy: 'created',
-        ascending: true,
-        page: 1,
-        pageSize: 10,
+    const response = await testServer.executeOperation(
+      {
+        query: GET_EDITOR_DASHBOARD,
+        variables: {
+          orderBy: 'created',
+          ascending: true,
+          page: 1,
+          pageSize: 10,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
     expect(user.isActive).toBe(true)
@@ -357,17 +402,26 @@ describe('Question API authorization', () => {
       userId: user.id,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: GET_EDITOR_DASHBOARD,
-      variables: {
-        orderBy: 'created',
-        ascending: true,
-        page: 1,
-        pageSize: 10,
+    const response = await testServer.executeOperation(
+      {
+        query: GET_EDITOR_DASHBOARD,
+        variables: {
+          orderBy: 'created',
+          ascending: true,
+          page: 1,
+          pageSize: 10,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
     expect(user.isActive).toBe(true)
@@ -381,11 +435,20 @@ describe('Question API authorization', () => {
       isActive: false,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: CREATE_QUESTION,
-    })
+    const response = await testServer.executeOperation(
+      {
+        query: CREATE_QUESTION,
+      },
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -398,11 +461,20 @@ describe('Question API authorization', () => {
       isActive: true,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: CREATE_QUESTION,
-    })
+    const response = await testServer.executeOperation(
+      {
+        query: CREATE_QUESTION,
+      },
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(true)
     expect(result.errors).toBe(undefined)
@@ -417,22 +489,32 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: questionVersion.result[0].id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: questionVersion.result[0].id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('blocks users from updating rejected questions', async () => {
     const user = await User.insert({
       isActive: true,
@@ -441,22 +523,32 @@ describe('Question API authorization', () => {
     const question = await Question.insert({ rejected: true })
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: questionVersion.result[0].id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: questionVersion.result[0].id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(question.rejected).toBe(true)
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('blocks question update if question is not submitted and user is not its author', async () => {
     const user = await User.insert({
       isActive: true,
@@ -465,16 +557,25 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: questionVersion.result[0].id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: questionVersion.result[0].id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
@@ -493,22 +594,32 @@ describe('Question API authorization', () => {
       { submitted: true },
     )
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: submittedVersion.id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: submittedVersion.id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(submittedVersion.submitted).toBe(true)
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('blocks question update if question is under review', async () => {
     const user = await User.insert({
       isActive: true,
@@ -522,22 +633,32 @@ describe('Question API authorization', () => {
       { underReview: true },
     )
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: underReviewVersion.id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: underReviewVersion.id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(underReviewVersion.underReview).toBe(true)
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('blocks non-editors from updating questions in production', async () => {
     const user = await User.insert({
       isActive: true,
@@ -551,16 +672,25 @@ describe('Question API authorization', () => {
       { inProduction: true },
     )
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: inProductionVersion.id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: inProductionVersion.id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
     expect(user.isActive).toBe(true)
@@ -570,6 +700,7 @@ describe('Question API authorization', () => {
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('blocks question update if question is published', async () => {
     const user = await User.insert({
       isActive: true,
@@ -583,16 +714,25 @@ describe('Question API authorization', () => {
       { published: true },
     )
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: publishedVersion.id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: publishedVersion.id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(publishedVersion.published).toBe(true)
     expect(result.data).toBe(null)
@@ -621,16 +761,25 @@ describe('Question API authorization', () => {
       userId: user.id,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: questionVersion.result[0].id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: questionVersion.result[0].id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isAuthor = await Team.query()
       .leftJoin('team_members', 'team_members.team_id', 'teams.id')
@@ -672,16 +821,25 @@ describe('Question API authorization', () => {
       { submitted: true, inProduction: true },
     )
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: inProductionVersion.id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: inProductionVersion.id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
 
@@ -700,16 +858,25 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: SUBMIT_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: questionVersion.result[0].id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: SUBMIT_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: questionVersion.result[0].id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -725,16 +892,25 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: SUBMIT_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: questionVersion.result[0].id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: SUBMIT_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: questionVersion.result[0].id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
@@ -762,16 +938,25 @@ describe('Question API authorization', () => {
       userId: user.id,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: SUBMIT_QUESTION,
-      variables: {
-        questionId: question.id,
-        questionVersionId: questionVersion.result[0].id,
-        input: {},
+    const response = await testServer.executeOperation(
+      {
+        query: SUBMIT_QUESTION,
+        variables: {
+          questionId: question.id,
+          questionVersionId: questionVersion.result[0].id,
+          input: {},
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isAuthor = await Team.query()
       .leftJoin('team_members', 'team_members.team_id', 'teams.id')
@@ -795,14 +980,23 @@ describe('Question API authorization', () => {
 
     const question = await Question.insert({})
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: REJECT_QUESTION,
-      variables: {
-        questionId: question.id,
+    const response = await testServer.executeOperation(
+      {
+        query: REJECT_QUESTION,
+        variables: {
+          questionId: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -817,14 +1011,23 @@ describe('Question API authorization', () => {
 
     const question = await Question.insert({})
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: REJECT_QUESTION,
-      variables: {
-        questionId: question.id,
+    const response = await testServer.executeOperation(
+      {
+        query: REJECT_QUESTION,
+        variables: {
+          questionId: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
     expect(user.isActive).toBe(true)
@@ -877,14 +1080,23 @@ describe('Question API authorization', () => {
       userId: author.id,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: REJECT_QUESTION,
-      variables: {
-        questionId: question.id,
+    const response = await testServer.executeOperation(
+      {
+        query: REJECT_QUESTION,
+        variables: {
+          questionId: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
 
@@ -902,14 +1114,23 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: MOVE_QUESTION_VERSION_TO_REVIEW,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: MOVE_QUESTION_VERSION_TO_REVIEW,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -924,14 +1145,23 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: MOVE_QUESTION_VERSION_TO_REVIEW,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: MOVE_QUESTION_VERSION_TO_REVIEW,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
     expect(user.isActive).toBe(true)
@@ -961,14 +1191,23 @@ describe('Question API authorization', () => {
     const questionVersion = await Question.getVersions(question.id)
     await createIdentity(author, internet.email(), false, null)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: MOVE_QUESTION_VERSION_TO_REVIEW,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: MOVE_QUESTION_VERSION_TO_REVIEW,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
 
@@ -986,14 +1225,23 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: MOVE_QUESTION_VERSION_TO_PRODUCTION,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: MOVE_QUESTION_VERSION_TO_PRODUCTION,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -1008,14 +1256,23 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: MOVE_QUESTION_VERSION_TO_PRODUCTION,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: MOVE_QUESTION_VERSION_TO_PRODUCTION,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
     expect(user.isActive).toBe(true)
@@ -1024,6 +1281,7 @@ describe('Question API authorization', () => {
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('allows active editors to move questions to production', async () => {
     const user = await User.insert({
       isActive: true,
@@ -1052,14 +1310,23 @@ describe('Question API authorization', () => {
     await Team.addMember(authorTeamQuestion.id, user.id)
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: MOVE_QUESTION_VERSION_TO_PRODUCTION,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: MOVE_QUESTION_VERSION_TO_PRODUCTION,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
 
@@ -1077,20 +1344,30 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: PUBLISH_QUESTION_VERSION,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: PUBLISH_QUESTION_VERSION,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('blocks users who are not editors from publishing a question', async () => {
     const user = await User.insert({
       isActive: true,
@@ -1099,14 +1376,23 @@ describe('Question API authorization', () => {
     const question = await Question.insert({})
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: PUBLISH_QUESTION_VERSION,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: PUBLISH_QUESTION_VERSION,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
     expect(user.isActive).toBe(true)
@@ -1144,14 +1430,23 @@ describe('Question API authorization', () => {
     await Team.addMember(authorTeamQuestion.id, user.id)
     const questionVersion = await Question.getVersions(question.id)
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: PUBLISH_QUESTION_VERSION,
-      variables: {
-        questionVersionId: questionVersion.result[0].id,
+    const response = await testServer.executeOperation(
+      {
+        query: PUBLISH_QUESTION_VERSION,
+        variables: {
+          questionVersionId: questionVersion.result[0].id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isEditor = await user.hasGlobalRole('editor')
 
@@ -1168,20 +1463,30 @@ describe('Question API authorization', () => {
 
     const question = await Question.insert({})
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: CREATE_NEW_VERSION,
-      variables: {
-        questionId: question.id,
+    const response = await testServer.executeOperation(
+      {
+        query: CREATE_NEW_VERSION,
+        variables: {
+          questionId: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('blocks users who are not admins from creating new question versions', async () => {
     const user = await User.insert({
       isActive: true,
@@ -1189,14 +1494,23 @@ describe('Question API authorization', () => {
 
     const question = await Question.insert({})
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: CREATE_NEW_VERSION,
-      variables: {
-        questionId: question.id,
+    const response = await testServer.executeOperation(
+      {
+        query: CREATE_NEW_VERSION,
+        variables: {
+          questionId: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isAdmin = await user.hasGlobalRole('admin')
     expect(user.isActive).toBe(true)
@@ -1205,6 +1519,7 @@ describe('Question API authorization', () => {
     expect(result.errors.length).toBe(1)
     expect(result.errors[0].message).toEqual('Not Authorised!')
   })
+
   it('allows active admins to create new question versions', async () => {
     const user = await User.insert({
       isActive: true,
@@ -1223,14 +1538,23 @@ describe('Question API authorization', () => {
 
     const question = await Question.insert({})
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: CREATE_NEW_VERSION,
-      variables: {
-        questionId: question.id,
+    const response = await testServer.executeOperation(
+      {
+        query: CREATE_NEW_VERSION,
+        variables: {
+          questionId: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isAdmin = await user.hasGlobalRole('admin')
 
@@ -1282,15 +1606,24 @@ describe('Question API authorization', () => {
     const reviewer = await createUser()
     await createIdentity(reviewer, internet.email(), false, null)
 
-    const userTestServer = await createGraphQLServer(user.id)
+    const userTestServer = await createGraphQLServer()
 
-    let result = await userTestServer.executeOperation({
-      query: GET_QUESTION,
-      variables: {
-        id: question.id,
-        published: false,
+    let response = await userTestServer.executeOperation(
+      {
+        query: GET_QUESTION,
+        variables: {
+          id: question.id,
+          published: false,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    let result = response.body.singleResult
 
     const [userResultVersion] = result.data.question.versions
 
@@ -1300,16 +1633,24 @@ describe('Question API authorization', () => {
     await updateReviewerPool(questionVersion.id, [reviewer.id])
     await acceptOrRejectInvitation(questionVersion.id, true, null, reviewer.id)
 
-    const reviewerTestServer = await createGraphQLServer(reviewer.id)
+    const reviewerTestServer = await createGraphQLServer()
 
-    result = await reviewerTestServer.executeOperation({
-      query: GET_QUESTION,
-      variables: {
-        id: question.id,
-        published: false,
+    response = await reviewerTestServer.executeOperation(
+      {
+        query: GET_QUESTION,
+        variables: {
+          id: question.id,
+          published: false,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: reviewer.id,
+        },
+      },
+    )
 
+    result = response.body.singleResult
     const [reviewerResultVersion] = result.data.question.versions
 
     expect(reviewerResultVersion.reviewerStatus).toBe(
@@ -1322,14 +1663,22 @@ describe('Question API authorization', () => {
 
     await submitReview(questionVersion.id, reviewContent, reviewer.id)
 
-    result = await reviewerTestServer.executeOperation({
-      query: GET_QUESTION,
-      variables: {
-        id: question.id,
-        published: false,
+    response = await reviewerTestServer.executeOperation(
+      {
+        query: GET_QUESTION,
+        variables: {
+          id: question.id,
+          published: false,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: reviewer.id,
+        },
+      },
+    )
 
+    result = response.body.singleResult
     const [reviewerResultVersion2] = result.data.question.versions
 
     expect(reviewerResultVersion2.reviewerStatus).toBe(

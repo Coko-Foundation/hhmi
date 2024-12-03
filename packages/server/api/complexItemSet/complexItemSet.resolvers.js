@@ -12,19 +12,19 @@ const {
 const { getImageUrls } = require('../../controllers/utils')
 
 const complexItemSetsResolver = async (_, { params, options }, ctx) => {
-  return getComplexItemSets(ctx.user, params, options)
+  return getComplexItemSets(ctx.userId, params, options)
 }
 
 const complexItemSetResolver = async (_, { id, questionsOptions }, ctx) => {
   const complexItemSet = await getComplexItemSet(id)
-  complexItemSet.filter = { userId: ctx.user, questionsOptions }
+  complexItemSet.filter = { userId: ctx.userId, questionsOptions }
   return complexItemSet
 }
 
 const availableSetsResolver = async (_, { publishedOnly }, ctx) => {
   // pass current user if we're asking for sets that a user can assign question to
   // (so set that are not necessarily published)
-  const userId = publishedOnly ? null : ctx.user
+  const userId = publishedOnly ? null : ctx.userId
   return getAvailableSets(userId)
 }
 
@@ -33,7 +33,7 @@ const createComplexItemSetResolver = async (
   { title, leadingContent },
   ctx,
 ) => {
-  return createComplexItemSet(ctx.user, title, leadingContent)
+  return createComplexItemSet(ctx.userId, title, leadingContent)
 }
 
 const editComplexItemSetResolver = async (

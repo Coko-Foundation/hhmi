@@ -23,9 +23,10 @@
     }
   },
   "devDependencies": {
-    "@coko/lint": "^2.0.0",
+    "@coko/lint": "^2.1.0",
     "any-text": "^1.2.0",
-    "cypress": "^12.17.2",
+    "cypress": "^13.15.0",
     "lodash": "^4.17.21"
-  }
+  },
+  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
 }

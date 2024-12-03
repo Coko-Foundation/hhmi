@@ -1,19 +1,22 @@
-const { logger, modelTypes, useTransaction } = require('@coko/server')
-const UserModel = require('@coko/server/src/models/user/user.model')
+const {
+  logger,
+  modelJsonSchemaTypes: {
+    arrayOfStrings,
+    boolean,
+    booleanNullable,
+    stringNullable,
+  },
+  useTransaction,
+  User: UserModel,
+} = require('@coko/server')
 
 const { applyListQueryOptions } = require('../helpers')
-
-const { arrayOfStrings, boolean, booleanNullable, stringNullable } = modelTypes
 
 class User extends UserModel {
   static get schema() {
     return {
       type: 'object',
       required: [],
-      default: {
-        coursesTeaching: [],
-        topicsReviewing: [],
-      },
       properties: {
         middleName: stringNullable,
         displayName: stringNullable,

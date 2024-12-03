@@ -50,3 +50,6 @@ _build-storybook
 # .prettierrc.js
 # .stylelintrc.js
 cypress.json
+
+cypress/downloads
+cypress/screenshots

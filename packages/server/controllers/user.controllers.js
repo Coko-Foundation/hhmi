@@ -1,9 +1,16 @@
-const { logger, useTransaction, uuid, createJWT } = require('@coko/server')
+const {
+  logger,
+  useTransaction,
+  uuid,
+  createJWT,
+  ChatChannel,
+  ChatMessage,
+} = require('@coko/server')
+
 const axios = require('axios').default
 const crypto = require('node:crypto')
 const qs = require('node:querystring')
 
-const { ChatThread, ChatMessage } = require('@coko/server/src/models')
 const { roles } = require('../constants')
 
 const {
@@ -305,21 +312,21 @@ const deleteUsersRelatedItems = async (ids, options = {}) => {
                   })
 
                   // get all chat threads for questions
-                  const chatThreads = await ChatThread.find({
-                    relatedObjectId: question.id,
-                  })
+                  // const chatThreads = await ChatChannel.find({
+                  //   relatedObjectId: question.id,
+                  // })
 
-                  const chatThreadsIds = chatThreads.result.map(
-                    chatThread => chatThread.id,
-                  )
+                  // const chatThreadsIds = chatThreads.result.map(
+                  //   chatThread => chatThread.id,
+                  // )
 
-                  // delete all chat messages in those threads
-                  await ChatMessage.query(trx)
-                    .delete()
-                    .whereIn('chatThreadId', chatThreadsIds)
+                  // // delete all chat messages in those threads
+                  // await ChatMessage.query(trx)
+                  //   .delete()
+                  //   .whereIn('chatThreadId', chatThreadsIds)
 
                   // delete the chat threads
-                  await ChatThread.query(trx).delete().where({
+                  await ChatChannel.query(trx).delete().where({
                     relatedObjectId: question.id,
                   })
 

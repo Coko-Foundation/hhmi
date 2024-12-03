@@ -72,7 +72,7 @@ input UserProfileInput {
   source: String
 }
 
-extend input UsersQueryParams {
+extend input UserFilter {
   search: String
 }
 
@@ -84,7 +84,7 @@ type UsersQuestionsResult {
 }
 
 extend type Query {
-  filterUsers(params: UsersQueryParams, options: PageInput): Users!
+  filterUsers(params: UserFilter, options: PageInput): Users!
 }
 
 extend type Mutation {

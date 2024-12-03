@@ -1,6 +1,6 @@
 const {
   BaseModel,
-  modelTypes: { id, stringNotEmpty },
+  modelJsonSchemaTypes: { id, stringNotEmpty },
   logger,
 } = require('@coko/server')
 

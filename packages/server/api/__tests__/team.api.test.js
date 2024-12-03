@@ -18,8 +18,8 @@ const { updateReviewerPool } = require('../../controllers/question.controllers')
 
 // gql queries
 const UPDATE_GLOBAL_TEAMS = `
-  mutation updateGlobalTeams($input: [UpdateGlobalTeamsInput!]!) {
-    updateGlobalTeams(input: $input) {
+  mutation updateGlobalTeams($teamId: ID!, $members: [ID!]!) {
+    updateTeamMembership(teamId: $teamId, members: $members) {
       id
       role
       displayName
@@ -27,6 +27,7 @@ const UPDATE_GLOBAL_TEAMS = `
         id
         user {
           id
+          displayName
         }
       }
     }
@@ -105,19 +106,24 @@ describe('Team API authorization', () => {
       isActive: false,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_GLOBAL_TEAMS,
-      variables: {
-        input: [
-          {
-            id: '48b95dcb-54b2-4c55-b5bf-d832ce368601',
-            members: ['48b95dcb-54b2-4c55-b5bf-d832ce368602'],
-          },
-        ],
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_GLOBAL_TEAMS,
+        variables: {
+          teamId: '48b95dcb-54b2-4c55-b5bf-d832ce368601',
+          members: ['48b95dcb-54b2-4c55-b5bf-d832ce368602'],
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     expect(user.isActive).toBe(false)
     expect(result.data).toBe(null)
@@ -130,19 +136,24 @@ describe('Team API authorization', () => {
       isActive: true,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_GLOBAL_TEAMS,
-      variables: {
-        input: [
-          {
-            id: '48b95dcb-54b2-4c55-b5bf-d832ce368601',
-            members: ['48b95dcb-54b2-4c55-b5bf-d832ce368602'],
-          },
-        ],
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_GLOBAL_TEAMS,
+        variables: {
+          teamId: '48b95dcb-54b2-4c55-b5bf-d832ce368601',
+          members: ['48b95dcb-54b2-4c55-b5bf-d832ce368602'],
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isAdmin = await user.hasGlobalRole('admin')
     expect(user.isActive).toBe(true)
@@ -172,19 +183,24 @@ describe('Team API authorization', () => {
       userId: user.id,
     })
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const result = await testServer.executeOperation({
-      query: UPDATE_GLOBAL_TEAMS,
-      variables: {
-        input: [
-          {
-            id: globalTeam.id,
-            members: [user.id, user2.id],
-          },
-        ],
+    const response = await testServer.executeOperation(
+      {
+        query: UPDATE_GLOBAL_TEAMS,
+        variables: {
+          teamId: globalTeam.id,
+          members: [user.id, user2.id],
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const result = response.body.singleResult
 
     const isAdmin = await user.hasGlobalRole('admin')
 
@@ -248,14 +264,23 @@ describe('Team API authorization', () => {
 
     await updateReviewerPool(questionVersion.id, [reviewer1.id, reviewer2.id])
 
-    const testServer = await createGraphQLServer(user.id)
+    const testServer = await createGraphQLServer()
 
-    const { data: data1 } = await testServer.executeOperation({
-      query: QUESTION,
-      variables: {
-        id: question.id,
+    const response1 = await testServer.executeOperation(
+      {
+        query: QUESTION,
+        variables: {
+          id: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const data1 = response1.body.singleResult.data
 
     const [version1] = data1.question.versions
 
@@ -263,32 +288,55 @@ describe('Team API authorization', () => {
       expect(reviewer.reviewSubmitted).toBe(false),
     )
 
-    const reviewerServer1 = await createGraphQLServer(reviewer1.id)
-    const reviewerServer2 = await createGraphQLServer(reviewer2.id)
+    const reviewerServer1 = await createGraphQLServer()
+    const reviewerServer2 = await createGraphQLServer()
 
-    await reviewerServer1.executeOperation({
-      query: ACCEPT_OR_REJECT_REVIEW_INVITATION,
-      variables: {
-        questionVersionId: questionVersion.id,
-        accepted: false,
-        reason: 'no',
+    await reviewerServer1.executeOperation(
+      {
+        query: ACCEPT_OR_REJECT_REVIEW_INVITATION,
+        variables: {
+          questionVersionId: questionVersion.id,
+          accepted: false,
+          reason: 'no',
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: reviewer1.id,
+        },
+      },
+    )
 
-    await reviewerServer2.executeOperation({
-      query: ACCEPT_OR_REJECT_REVIEW_INVITATION,
-      variables: {
-        questionVersionId: questionVersion.id,
-        accepted: true,
+    await reviewerServer2.executeOperation(
+      {
+        query: ACCEPT_OR_REJECT_REVIEW_INVITATION,
+        variables: {
+          questionVersionId: questionVersion.id,
+          accepted: true,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: reviewer2.id,
+        },
+      },
+    )
 
-    const { data: data2 } = await testServer.executeOperation({
-      query: QUESTION,
-      variables: {
-        id: question.id,
+    const response2 = await testServer.executeOperation(
+      {
+        query: QUESTION,
+        variables: {
+          id: question.id,
+        },
       },
-    })
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const data2 = response2.body.singleResult.data
 
     const [version2] = data2.question.versions
 
@@ -302,23 +350,39 @@ describe('Team API authorization', () => {
         .reviewSubmitted,
     ).toBe(false)
 
-    await reviewerServer2.executeOperation({
-      query: SUBMIT_REVIEW,
-      variables: {
-        input: {
-          questionVersionId: version2.id,
-          attachments: [],
-          content: 'all good',
+    await reviewerServer2.executeOperation(
+      {
+        query: SUBMIT_REVIEW,
+        variables: {
+          input: {
+            questionVersionId: version2.id,
+            attachments: [],
+            content: 'all good',
+          },
         },
       },
-    })
-
-    const { data: data3 } = await testServer.executeOperation({
-      query: QUESTION,
-      variables: {
-        id: question.id,
+      {
+        contextValue: {
+          userId: reviewer2.id,
+        },
       },
-    })
+    )
+
+    const response3 = await testServer.executeOperation(
+      {
+        query: QUESTION,
+        variables: {
+          id: question.id,
+        },
+      },
+      {
+        contextValue: {
+          userId: user.id,
+        },
+      },
+    )
+
+    const data3 = response3.body.singleResult.data
 
     const [version3] = data3.question.versions
 

@@ -1,12 +1,11 @@
-const { logger } = require('@coko/server')
+const { logger, Team: TeamModel } = require('@coko/server')
 const config = require('config')
-const TeamModel = require('@coko/server/src/models/team/team.model')
 const { applyListQueryOptions } = require('../helpers')
 
 const User = require('../user/user.model')
 const TeamMember = require('../teamMember/teamMember.model')
 
-const AUTHOR_TEAM = config.teams.nonGlobal.author
+const AUTHOR_TEAM = config.teams.nonGlobal.find(t => t.role === 'author')
 
 class Team extends TeamModel {
   static async searchForNonTeamMemberUsers(teamId, query, options = {}) {

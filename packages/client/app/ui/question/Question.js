@@ -39,6 +39,7 @@ import AssignAuthorButton from './AssignAuthorButton'
 import ReviewerRejectButton from './ReviewerRejectButton'
 import ReviewerAcceptButton from './ReviewerAcceptButton'
 import ReviewerSubmitButton from './ReviewerSubmitButton'
+import ReviewerChats from './ReviewerChats'
 import { AssignReviewers } from '../assignReviewers'
 
 const ModalContext = React.createContext({ agree: false, setAgree: () => {} })
@@ -473,6 +474,8 @@ const Question = props => {
     showReviewerChatTab,
     showAssignReviewers,
     hasDeletedAuthor,
+    onSelectReviewer,
+    hasGeneralReviewerChatId,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -1568,6 +1571,209 @@ const Question = props => {
     }
   }
 
+  const tabItems = [
+    {
+      label: QuestionTab,
+      key: 'editor',
+      children: (
+        <>
+          {isRejected && (
+            <Ribbon status="error">
+              This item has been rejected by the editors.
+            </Ribbon>
+          )}
+          {isUnpublished && (
+            <Ribbon status="error">
+              This item has been unpublished by the editors.
+              {hasDeletedAuthor &&
+                ` The author of this item has been deleted. Assign a new author to be able to edit.`}
+            </Ribbon>
+          )}
+          {reviewInviteStatus === REVIEWER_STATUSES.revoked && (
+            <Ribbon status="error">
+              Invitation to review this item has been revoked.
+            </Ribbon>
+          )}
+          {reviewInviteStatus === REVIEWER_STATUSES.rejected && (
+            <Ribbon status="error">
+              You have rejected the invitation to review this item.
+            </Ribbon>
+          )}
+          {isArchived && (
+            <Ribbon status="error">This item has been archived.</Ribbon>
+          )}
+          <PanelWrapper
+            condition={false}
+            editor={
+              <QuestionEditor
+                complexItemSetId={complexItemSetId}
+                complexSetEditLink={complexSetEditLink}
+                content={editorContent}
+                innerRef={waxRef}
+                layout={preview || reviewerView ? TestModeLayout : HhmiLayout}
+                leadingContent={leadingContent}
+                onContentChange={handleQuestionContentChange}
+                onImageUpload={onImageUpload}
+                onSubmitReport={onSubmitReport}
+                published={isPublished}
+                readOnly={
+                  readOnly || preview || !selectedQuestionType //
+                }
+                refreshEditorContent={refreshEditorContent}
+                selectedQuestionType={selectedQuestionType}
+                showDialog={showDialog}
+                withFeedback={
+                  !(preview || reviewerView) || (showMetadata && facultyView)
+                }
+              />
+            }
+            metadata={
+              <>
+                <StyledMetadata
+                  complexItemSetOptions={complexItemSetOptions}
+                  editorView={editorView}
+                  initialValues={initialMetadataValues}
+                  innerRef={formRef}
+                  metadata={metadata}
+                  onAutoSave={handleMetadataAutoSave}
+                  onFormFinish={onFormFinish}
+                  presentationMode={facultyView}
+                  readOnly={readOnly}
+                  resources={resources}
+                  selectedQuestionType={selectedQuestionType?.metadataValue}
+                  showTopicAndSubtopicFields={
+                    isInProduction || isPublished || isUnpublished
+                  }
+                />
+                <SkipToTop
+                  href="#question-actions"
+                  onClick={e => {
+                    e.preventDefault()
+                    document.getElementById('question-actions').focus()
+                  }}
+                >
+                  {skipButtonText()}
+                </SkipToTop>
+              </>
+            }
+            showMetadata={showMetadata && (!preview || facultyView)}
+          />
+          <VisuallyHiddenElement as="div">
+            {imageLongDescs.map(longDesc => (
+              <p id={longDesc.id}>{longDesc.content}</p>
+            ))}
+          </VisuallyHiddenElement>
+        </>
+      ),
+    },
+    showAuthorChatTab && {
+      label: AuthorChatTab,
+      key: 'authorChat',
+      children: (
+        <ChatThread
+          announcementText={announcementText}
+          hasMore={hasMoreMessages}
+          isActive={activeKey === 'authorChat'}
+          messages={authorChatMessages}
+          onFetchMore={onFetchMoreMessages}
+          onSendMessage={onSendAuthorChatMessage}
+          participants={authorChatParticipants}
+        />
+      ),
+    },
+    showProductionChatTab && {
+      label: ProductionAssignmentsTab,
+      key: 'productionChat',
+      children: (
+        <ChatThread
+          isActive={activeKey === 'productionChat'}
+          messages={productionChatMessages}
+          onSendMessage={onSendProductionChatMessage}
+          participants={productionChatParticipants}
+        />
+      ),
+    },
+    showReviewerChatTab && {
+      label: ReviewerChatTab,
+      key: 'reviewerChat',
+      children:
+        reviewerView || hasGeneralReviewerChatId ? (
+          <ChatThread
+            hasMore={hasMoreMessages}
+            isActive={activeKey === 'reviewerChat'}
+            messages={reviewerChatMessages}
+            onFetchMore={onFetchMoreMessages}
+            onSendMessage={onSendReviewerChatMessage}
+            participants={reviewerChatParticipants}
+          />
+        ) : (
+          <ReviewerChats
+            hasMore={hasMoreMessages}
+            isActive={activeKey === 'reviewerChat'}
+            messages={reviewerChatMessages}
+            onFetchMore={onFetchMoreMessages}
+            onSelectReviewer={onSelectReviewer}
+            onSendMessage={onSendReviewerChatMessage}
+            participants={reviewerChatParticipants}
+            reviewers={reviewerPool.filter(r => r.acceptedInvitation)}
+          />
+        ),
+    },
+    showAssignReviewers && {
+      label: AssignReviewersTab,
+      key: 'assignReviewers',
+      children: (
+        <AssignReviewers
+          amountOfReviewers={amountOfReviewers}
+          automate={automateReviewerInvites}
+          canInviteMore={!!findAvailableReviewerSlots()}
+          onAddReviewers={onAddReviewers}
+          onAmountOfReviewersChange={onChangeAmountOfReviewers}
+          onAutomationChange={handleReviewerInviteAutomationChange}
+          onClickInvite={handleClickInviteReviewer}
+          onClickRemoveRow={onRemoveReviewerRow}
+          onClickRevokeInvitation={handleRevokeReviewerInvite}
+          onSearch={onReviewerSearch}
+          onTableChange={onReviewerTableChange}
+          reviewerPool={reviewerPool}
+          searchPlaceholder="Search by reviewer name or relevant topic"
+        />
+      ),
+    },
+  ]
+
+  useEffect(() => {
+    if (
+      showAuthorChatTab !== null &&
+      showProductionChatTab !== null &&
+      showReviewerChatTab !== null &&
+      showAssignReviewers !== null
+    ) {
+      switch (activeKey) {
+        case 'authorChat':
+          !showAuthorChatTab && handleTabChange('editor')
+          break
+        case 'reviewerChat':
+          !showReviewerChatTab && handleTabChange('editor')
+          break
+        case 'productionChat':
+          !showProductionChatTab && handleTabChange('editor')
+          break
+        case 'assignReviewers':
+          !showAssignReviewers && handleTabChange('editor')
+          break
+        default:
+          handleTabChange('editor')
+          break
+      }
+    }
+  }, [
+    showAuthorChatTab,
+    showProductionChatTab,
+    showReviewerChatTab,
+    showAssignReviewers,
+  ])
+
   return (
     <ModalContext.Provider value={contextValue}>
       <Wrapper>
@@ -1575,175 +1781,7 @@ const Question = props => {
           <StyledTabs
             $activebg="#fff"
             activeKey={activeKey}
-            items={[
-              {
-                label: QuestionTab,
-                key: 'editor',
-                children: (
-                  <>
-                    {isRejected && (
-                      <Ribbon status="error">
-                        This item has been rejected by the editors.
-                      </Ribbon>
-                    )}
-                    {isUnpublished && (
-                      <Ribbon status="error">
-                        This item has been unpublished by the editors.
-                        {hasDeletedAuthor &&
-                          ` The author of this item has been deleted. Assign a new author to be able to edit.`}
-                      </Ribbon>
-                    )}
-                    {reviewInviteStatus === REVIEWER_STATUSES.revoked && (
-                      <Ribbon status="error">
-                        Invitation to review this item has been revoked.
-                      </Ribbon>
-                    )}
-                    {reviewInviteStatus === REVIEWER_STATUSES.rejected && (
-                      <Ribbon status="error">
-                        You have rejected the invitation to review this item.
-                      </Ribbon>
-                    )}
-                    {isArchived && (
-                      <Ribbon status="error">
-                        This item has been archived.
-                      </Ribbon>
-                    )}
-                    <PanelWrapper
-                      condition={false}
-                      editor={
-                        <QuestionEditor
-                          complexItemSetId={complexItemSetId}
-                          complexSetEditLink={complexSetEditLink}
-                          content={editorContent}
-                          innerRef={waxRef}
-                          layout={
-                            preview || reviewerView
-                              ? TestModeLayout
-                              : HhmiLayout
-                          }
-                          leadingContent={leadingContent}
-                          onContentChange={handleQuestionContentChange}
-                          onImageUpload={onImageUpload}
-                          onSubmitReport={onSubmitReport}
-                          published={isPublished}
-                          readOnly={
-                            readOnly || preview || !selectedQuestionType //
-                          }
-                          refreshEditorContent={refreshEditorContent}
-                          selectedQuestionType={selectedQuestionType}
-                          showDialog={showDialog}
-                          withFeedback={
-                            !(preview || reviewerView) ||
-                            (showMetadata && facultyView)
-                          }
-                        />
-                      }
-                      metadata={
-                        <>
-                          <StyledMetadata
-                            complexItemSetOptions={complexItemSetOptions}
-                            editorView={editorView}
-                            initialValues={initialMetadataValues}
-                            innerRef={formRef}
-                            metadata={metadata}
-                            onAutoSave={handleMetadataAutoSave}
-                            onFormFinish={onFormFinish}
-                            presentationMode={facultyView}
-                            readOnly={readOnly}
-                            resources={resources}
-                            selectedQuestionType={
-                              selectedQuestionType?.metadataValue
-                            }
-                            showTopicAndSubtopicFields={
-                              isInProduction || isPublished || isUnpublished
-                            }
-                          />
-                          <SkipToTop
-                            href="#question-actions"
-                            onClick={e => {
-                              e.preventDefault()
-                              document
-                                .getElementById('question-actions')
-                                .focus()
-                            }}
-                          >
-                            {skipButtonText()}
-                          </SkipToTop>
-                        </>
-                      }
-                      showMetadata={showMetadata && (!preview || facultyView)}
-                    />
-                    <VisuallyHiddenElement as="div">
-                      {imageLongDescs.map(longDesc => (
-                        <p id={longDesc.id}>{longDesc.content}</p>
-                      ))}
-                    </VisuallyHiddenElement>
-                  </>
-                ),
-              },
-              showAuthorChatTab && {
-                label: AuthorChatTab,
-                key: 'authorChat',
-                children: (
-                  <ChatThread
-                    announcementText={announcementText}
-                    hasMore={hasMoreMessages}
-                    isActive={activeKey === 'authorChat'}
-                    messages={authorChatMessages}
-                    onFetchMore={onFetchMoreMessages}
-                    onSendMessage={onSendAuthorChatMessage}
-                    participants={authorChatParticipants}
-                  />
-                ),
-              },
-              showProductionChatTab && {
-                label: ProductionAssignmentsTab,
-                key: 'productionChat',
-                children: (
-                  <ChatThread
-                    isActive={activeKey === 'productionChat'}
-                    messages={productionChatMessages}
-                    onSendMessage={onSendProductionChatMessage}
-                    participants={productionChatParticipants}
-                  />
-                ),
-              },
-              showReviewerChatTab && {
-                label: ReviewerChatTab,
-                key: 'reviewerChat',
-                children: (
-                  <ChatThread
-                    hasMore={hasMoreMessages}
-                    isActive={activeKey === 'reviewerChat'}
-                    messages={reviewerChatMessages}
-                    onFetchMore={onFetchMoreMessages}
-                    onSendMessage={onSendReviewerChatMessage}
-                    participants={reviewerChatParticipants}
-                  />
-                ),
-              },
-              showAssignReviewers && {
-                label: AssignReviewersTab,
-                key: 'assignReviewers',
-                children: (
-                  <AssignReviewers
-                    amountOfReviewers={amountOfReviewers}
-                    automate={automateReviewerInvites}
-                    canInviteMore={!!findAvailableReviewerSlots()}
-                    onAddReviewers={onAddReviewers}
-                    onAmountOfReviewersChange={onChangeAmountOfReviewers}
-                    onAutomationChange={handleReviewerInviteAutomationChange}
-                    onClickInvite={handleClickInviteReviewer}
-                    onClickRemoveRow={onRemoveReviewerRow}
-                    onClickRevokeInvitation={handleRevokeReviewerInvite}
-                    onSearch={onReviewerSearch}
-                    onTableChange={onReviewerTableChange}
-                    reviewerPool={reviewerPool}
-                    searchPlaceholder="Search by reviewer name or relevant topic"
-                  />
-                ),
-              },
-            ]}
+            items={tabItems}
             onChange={handleTabChange}
             renderTabBar={(tabProps, DefaultTabBar) => {
               return facultyView && !reviewerView ? (
@@ -2145,6 +2183,8 @@ Question.propTypes = {
   showAssignReviewers: PropTypes.bool,
 
   hasDeletedAuthor: PropTypes.bool,
+  onSelectReviewer: PropTypes.func,
+  hasGeneralReviewerChatId: PropTypes.bool,
 }
 
 Question.defaultProps = {
@@ -2238,12 +2278,14 @@ Question.defaultProps = {
   selectedQuestionType: null,
 
   onChangeTab: () => {},
-  showAuthorChatTab: false,
-  showProductionChatTab: false,
-  showReviewerChatTab: false,
-  showAssignReviewers: false,
+  showAuthorChatTab: null,
+  showProductionChatTab: null,
+  showReviewerChatTab: null,
+  showAssignReviewers: null,
 
   hasDeletedAuthor: false,
+  onSelectReviewer: null,
+  hasGeneralReviewerChatId: false,
 }
 
 export default Question

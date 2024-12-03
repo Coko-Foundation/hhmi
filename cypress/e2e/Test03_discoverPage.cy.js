@@ -1,7 +1,7 @@
 /* eslint-disable jest/expect-expect */
 import path from 'path'
 import { user2 } from '../support/credentials'
-import { discover as discoverPage, graphqlEndpoint } from '../support/routes'
+import { discover as discoverPage } from '../support/routes'
 import { fillInTheBlankString } from '../support/appData'
 import {
   listItemWrapper,
@@ -42,7 +42,6 @@ describe('Discover page tests', () => {
 
   beforeEach(() => {
     cy.visit(discoverPage)
-    cy.intercept('POST', graphqlEndpoint).as('GQLReq')
 
     cy.viewport(laptop.preset)
     cy.contains('Log in with Email')
@@ -94,7 +93,6 @@ describe('Discover page tests', () => {
   })
 
   it('search functionality', () => {
-    cy.wait('@GQLReq')
     cy.get('[placeholder="Search..."]', { timeout: 10000 }).type(
       'bacillus{enter}',
     )
@@ -146,7 +144,6 @@ describe('Discover page tests', () => {
   it('checking the question', () => {
     // cy.login({ ...user2, visitUrl: discoverPage })
     cy.visit(discoverPage)
-    cy.wait('@GQLReq')
 
     cy.get(listItemWrapper)
       .eq(2)
@@ -154,7 +151,6 @@ describe('Discover page tests', () => {
       .contains('p')
       .first()
       .click()
-    cy.wait('@GQLReq')
 
     // cy.get(
     //   '[class="Question__FacultyHeaderWrapper-sc-12z17kk-6 dnjWAN"] button.ant-switch',
@@ -203,7 +199,6 @@ describe('Discover page tests', () => {
       ).click({
         force: true,
       })
-      cy.wait('@GQLReq')
 
       // [info]: triggering  a reload manually to avoid the page reload error
       cy.window()

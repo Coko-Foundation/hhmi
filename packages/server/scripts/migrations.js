@@ -1,3 +1,3 @@
-const { migrate } = require('@coko/server')
+const { migrationManager } = require('@coko/server')
 
-migrate()
+migrationManager.migrate()

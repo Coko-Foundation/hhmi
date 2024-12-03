@@ -67,6 +67,7 @@ export const GET_COMPLEX_ITEM_SET = gql`
             underReview
             inProduction
             published
+            unpublished
 
             topics {
               topic

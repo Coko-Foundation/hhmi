@@ -1,4 +1,4 @@
-const { pubsubManager } = require('@coko/server')
+const { subscriptionManager } = require('@coko/server')
 const { actions } = require('../../controllers/constants')
 
 const {
@@ -50,8 +50,6 @@ const {
   isItemArchivedForUser,
 } = require('../../controllers/question.controllers')
 
-const { getPubsub } = pubsubManager
-
 const questionResolver = async (_, { id, options }) => {
   return getQuestion(id, options)
 }
@@ -65,31 +63,31 @@ const getPublishedQuestionsIdsResolver = async () => {
 }
 
 const getAuthorDashboardResolver = async (_, args, ctx) => {
-  return getAuthorDashboard(ctx.user, args)
+  return getAuthorDashboard(ctx.userId, args)
 }
 
 const getReviewerDashboardResolver = async (_, args, ctx) => {
-  return getReviewerDashboard(ctx.user, args)
+  return getReviewerDashboard(ctx.userId, args)
 }
 
 const getManagingEditorDashboardResolver = async (_, args, ctx) => {
-  return getManagingEditorDashboard(ctx.user, args)
+  return getManagingEditorDashboard(ctx.userId, args)
 }
 
 const getInProductionDashboardResolver = async (_, args, ctx) => {
-  return getInProductionDashboard(ctx.user, args)
+  return getInProductionDashboard(ctx.userId, args)
 }
 
 const createQuestionResolver = async (_, { input }, ctx) => {
-  return createQuestion(ctx.user, input)
+  return createQuestion(ctx.userId, input)
 }
 
 const getHandlingEditorDashboardResolver = async (_, args, ctx) => {
-  return getHandlingEditorDashboard(ctx.user, args)
+  return getHandlingEditorDashboard(ctx.userId, args)
 }
 
 const duplicateQuestionResolver = async (_, { questionId }, ctx) => {
-  return duplicateQuestion(ctx.user, questionId)
+  return duplicateQuestion(ctx.userId, questionId)
 }
 
 const updateQuestionResolver = async (
@@ -223,7 +221,7 @@ const heAssignedResolver = async question => {
 }
 
 const isArchivedResolver = async (question, _, ctx) => {
-  return isItemArchivedForUser(question.id, ctx.user)
+  return isItemArchivedForUser(question.id, ctx.userId)
 }
 
 const getAuthorChatParticipantsResolver = async (_, { id }) => {
@@ -234,8 +232,11 @@ const getProductionChatParticipantsResolver = async (_, { id }) => {
   return getProductionChatParticipants(id)
 }
 
-const getReviewerChatParticipantsResolver = async (_, { id }) => {
-  return getReviewerChatParticipants(id)
+const getReviewerChatParticipantsResolver = async (
+  _,
+  { questionId, reviewerId },
+) => {
+  return getReviewerChatParticipants(questionId, reviewerId)
 }
 
 const updateReviewerPoolResolver = async (
@@ -260,7 +261,7 @@ const changeReviewerAutomationStatusResolver = async (
 }
 
 const reviewerStatusResolver = async (questionVersion, _, ctx) => {
-  return reviewerStatus(questionVersion.id, ctx.user)
+  return reviewerStatus(questionVersion.id, ctx.userId)
 }
 
 const questionVersionReviewsResolver = async (
@@ -268,7 +269,7 @@ const questionVersionReviewsResolver = async (
   { currentUserOnly },
   ctx,
 ) => {
-  return questionVersionReviews(questionVersion.id, currentUserOnly, ctx.user)
+  return questionVersionReviews(questionVersion.id, currentUserOnly, ctx.userId)
 }
 
 const reviewerPoolResolver = async questionVersion => {
@@ -280,7 +281,7 @@ const changeArchiveStatusForItemsResolver = async (
   { questionIds, isArchiving, role },
   ctx,
 ) => {
-  return changeArchiveStatusForItems(questionIds, isArchiving, role, ctx.user)
+  return changeArchiveStatusForItems(questionIds, isArchiving, role, ctx.userId)
 }
 
 module.exports = {
@@ -327,9 +328,9 @@ module.exports = {
         return dashboardId
       },
       subscribe: async (_payload, _vars, ctx) => {
-        const pubsub = await getPubsub()
-
-        return pubsub.asyncIterator(`${actions.DASHBOARD_UPDATED}.${ctx.user}`)
+        return subscriptionManager.asyncIterator(
+          `${actions.DASHBOARD_UPDATED}.${ctx.userId}`,
+        )
       },
     },
   },

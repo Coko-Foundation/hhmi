@@ -38,7 +38,7 @@ const {
   createGlobalReviewerTeamWithUsers,
 } = require('../../models/__tests__/__helpers__/teams')
 
-const HE_TEAM = config.teams.nonGlobal.handlingEditor
+const HE_TEAM = config.teams.nonGlobal.find(t => t.role === 'handlingEditor')
 
 const clearDb = require('../../models/__tests__/_clearDb')
 
@@ -958,7 +958,11 @@ describe('Question Controller', () => {
       reviewer2.id,
     ]
 
-    const participants = await getReviewerChatParticipants(question.id)
+    const participants = await getReviewerChatParticipants(
+      question.id,
+      reviewer1.id,
+    )
+
     const receivedParticipantIds = participants.map(p => p.id)
 
     expectedParticipantIds.forEach(participantId =>

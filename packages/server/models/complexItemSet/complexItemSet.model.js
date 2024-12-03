@@ -1,6 +1,6 @@
 const {
   BaseModel,
-  modelTypes: { boolean, objectNullable, stringNullable },
+  modelJsonSchemaTypes: { boolean, objectNullable, stringNullable },
 } = require('@coko/server')
 
 const cloneDeep = require('lodash/cloneDeep')
@@ -114,6 +114,7 @@ class ComplexItemSet extends BaseModel {
 
   static async filterSetsForUser(userId, searchQuery, options) {
     // userId will be null if user is not logged in or only public sets were requested
+    // Does not apply, all pages require the user to log in
     if (!userId) {
       return ComplexItemSet.query().select('*').where('isPublished', true)
     }
@@ -154,10 +155,14 @@ class ComplexItemSet extends BaseModel {
       query.select(selectFields)
     } else {
       query
-        .select(selectFields)
-        .where(builder =>
-          builder.where('isPublished', true).orWhereIn('id', authoredSets),
+        .leftJoin(
+          'question_versions',
+          'question_versions.complexItemSetId',
+          'complexItemSets.id',
         )
+        .select([...selectFields, 'question_versions.published'])
+        .whereIn('complexItemSets.id', authoredSets)
+        .orWhere('question_versions.published', true)
     }
 
     if (searchQuery) {

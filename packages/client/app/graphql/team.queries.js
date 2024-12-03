@@ -23,7 +23,7 @@ const TEAM = gql`
 
 const GLOBAL_TEAMS = gql`
   query GetGlobalTeams {
-    getGlobalTeams {
+    teams(filter: { global: true }) {
       result {
         id
         displayName
@@ -49,26 +49,6 @@ const NON_TEAM_MEMBER_USERS = gql`
   }
 `
 
-const ADD_TEAM_MEMBER = gql`
-  mutation AddTeamMember($teamId: ID!, $userId: ID!) {
-    addTeamMember(teamId: $teamId, userId: $userId) {
-      id
-      role
-      displayName
-      objectId
-      objectType
-      members {
-        id
-        user {
-          id
-          displayName
-        }
-      }
-      global
-    }
-  }
-`
-
 const UPDATE_TEAM_MEMBERSHIP = gql`
   mutation updateTeamMembership($teamId: ID!, $members: [ID!]!) {
     updateTeamMembership(teamId: $teamId, members: $members) {
@@ -90,8 +70,8 @@ const UPDATE_TEAM_MEMBERSHIP = gql`
 `
 
 const UPDATE_GLOBAL_TEAMS = gql`
-  mutation updateGlobalTeams($input: [UpdateGlobalTeamsInput!]!) {
-    updateGlobalTeams(input: $input) {
+  mutation updateGlobalTeams($teamId: ID!, $members: [ID!]!) {
+    updateTeamMembership(teamId: $teamId, members: $members) {
       id
       role
       displayName
@@ -183,7 +163,6 @@ const SEARCH_FOR_REVIEWERS = gql`
 export {
   TEAM,
   GLOBAL_TEAMS,
-  ADD_TEAM_MEMBER,
   UPDATE_TEAM_MEMBERSHIP,
   NON_TEAM_MEMBER_USERS,
   UPDATE_GLOBAL_TEAMS,
