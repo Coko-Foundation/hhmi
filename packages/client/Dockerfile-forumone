@@ -1,6 +1,5 @@
 # IMAGE FOR BUILDING
 FROM node:18.20.2-bullseye-slim AS client-build
-ENV NODE_ENV=production
 
 RUN apt-get update \
     && apt-get upgrade -y \
@@ -11,7 +10,7 @@ WORKDIR /home/node/app
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn install --frozen-lockfile --production
+RUN yarn install --frozen-lockfile
 
 COPY . .
 
