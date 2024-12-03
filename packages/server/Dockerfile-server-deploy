@@ -10,15 +10,15 @@ RUN apt-get update \
 
 WORKDIR /home/node/hhmi
 
-COPY package.json .
-COPY yarn.lock .
-
 RUN chown -R node:node .
 USER node
+
+COPY package.json .
+COPY yarn.lock .
 
 RUN yarn install --frozen-lockfile
 RUN yarn cache clean
 
 COPY --chown=node:node . .
 
-CMD ['yarn', 'coko-server', 'start']
+CMD ["yarn", "coko-server", "start"]
