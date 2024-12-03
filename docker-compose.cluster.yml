@@ -27,7 +27,8 @@ services:
       - MAILER_PORT=${MAILER_PORT}
       - MAILER_USER=${MAILER_USER}
       - MAILER_PASSWORD=${MAILER_PASSWORD}
-      - S3_URL=${S3_URL}
+      - S3_URL=${S3_PROTOCOL}://${S3_HOST}:${S3_PORT}
+      # - S3_URL=${S3_URL}
       # - S3_PROTOCOL=${S3_PROTOCOL}
       # - S3_HOST=${S3_HOST}
       # - S3_PORT=${S3_PORT}
