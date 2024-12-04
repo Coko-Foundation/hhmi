@@ -19,6 +19,10 @@ module.exports = {
     host: 'POSTGRES_HOST',
     database: 'POSTGRES_DB',
     port: 'POSTGRES_PORT',
+    allowSelfSignedCertificates: {
+      __name: 'POSTGRES_ALLOW_SELF_SIGNED_CERTIFICATES',
+      __format: 'json',
+    },
   },
   fileStorage: {
     accessKeyId: 'S3_ACCESS_KEY_ID',
