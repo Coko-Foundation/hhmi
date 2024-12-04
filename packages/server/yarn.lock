@@ -1461,10 +1461,10 @@
     stylelint-order "^5.0.0"
     stylelint-processor-styled-components "^1.10.0"
 
-"@coko/server@4.0.2":
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/@coko/server/-/server-4.0.2.tgz#89ebe5a8b48672d25e9b1427ab72157fb04f4dd6"
-  integrity sha512-GIC0bWhbW7iJQTRu/6d3i0xQK7yPZ9GBp6WWjm1gKk/Y8MrLl1iZ0QIKguHIZMfimAGxW+lMMI6AV1bLxZBvyg==
+"@coko/server@4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@coko/server/-/server-4.2.0.tgz#0dbdba31f16239c8fb86972e6122c9fccdde00e5"
+  integrity sha512-sE651oT2aXhV4b+SaQtv/4uyI6XNzYBm+yENk8uHhFZmGaAnkkcjb0k/v0YUJB3tkAhfxukhmwFRoVYMrcG1mg==
   dependencies:
     "@apollo/server" "^4.10.4"
     "@aws-sdk/client-s3" "^3.577.0"
