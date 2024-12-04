@@ -28,6 +28,7 @@ module.exports = {
   // pubsweet: {
   // },
   db: {},
+  subscriptionsDb: {},
   emailVerificationTokenExpiry: {
     amount: 24,
     unit: 'hours',
