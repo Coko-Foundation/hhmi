@@ -28,49 +28,54 @@ const convertListPositionToLetter = (pos, options = {}) => {
   return String.fromCharCode(code)
 }
 
-const flattenedMetadata = flattenLabels()
-
-const labels = {
-  ...flattenedMetadata,
-
-  complexItemSet: 'Context-Dependent Item Set',
-  questionType: 'Item type',
-
-  topics: 'Topics',
-  topic: 'Topic',
-  subtopic: 'Subtopic',
-
-  courses: 'Courses',
-  course: 'Course',
-  unit: 'Unit',
-  courseTopic: 'Course Topic',
-  learningObjective: 'Learning objective',
-  essentialKnowledge: 'Essential knowledge',
-  application: 'Application',
-  coreCompetence: 'Core competence',
-  coreConcept: 'Core concept',
-  skill: 'Skill',
-  subcompetence: 'Subcompetence',
-  subcompetenceStatement: 'Subcompetence statement',
-  subdiscipline: 'Subdiscipline',
-  subdisciplineStatement: 'Subdiscipline statement',
-  understanding: 'Understanding',
-
-  keywords: 'Keywords',
-  biointeractiveResources: 'BioInteractive resources',
-
-  cognitiveLevel: "Bloom's Cognitive Level",
-  affectiveLevel: "Bloom's Affective Level",
-  psychomotorLevel: "Bloom's Psychomotor Level",
-  readingLevel: "Bloom's Reading Level",
-
-  publicationDate: 'Publication date',
-}
+let labels
 
 class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   constructor(doc, imageData, metadata, options = {}) {
     super(doc, imageData, options)
     this.metadata = metadata
+
+    // IIAFE
+    ;(async () => {
+      const flattenedMetadata = await flattenLabels()
+
+      labels = {
+        ...flattenedMetadata,
+
+        complexItemSet: 'Context-Dependent Item Set',
+        questionType: 'Item type',
+
+        topics: 'Topics',
+        topic: 'Topic',
+        subtopic: 'Subtopic',
+
+        courses: 'Courses',
+        course: 'Course',
+        unit: 'Unit',
+        courseTopic: 'Course Topic',
+        learningObjective: 'Learning objective',
+        essentialKnowledge: 'Essential knowledge',
+        application: 'Application',
+        coreCompetence: 'Core competence',
+        coreConcept: 'Core concept',
+        skill: 'Skill',
+        subcompetence: 'Subcompetence',
+        subcompetenceStatement: 'Subcompetence statement',
+        subdiscipline: 'Subdiscipline',
+        subdisciplineStatement: 'Subdiscipline statement',
+        understanding: 'Understanding',
+
+        keywords: 'Keywords',
+        biointeractiveResources: 'BioInteractive resources',
+
+        cognitiveLevel: "Bloom's Cognitive Level",
+        affectiveLevel: "Bloom's Affective Level",
+        psychomotorLevel: "Bloom's Psychomotor Level",
+        readingLevel: "Bloom's Reading Level",
+
+        publicationDate: 'Publication date',
+      }
+    })()
 
     // #region handler-mapper
     const newHandlers = {
@@ -447,7 +452,9 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
     return [
       new Paragraph({ children: [] }),
-      ...this.contentParser(container.content, { fillTheGapGroupId: groupId }),
+      ...this.contentParser(container.content, {
+        fillTheGapGroupId: groupId,
+      }),
     ]
   }
 
@@ -1161,7 +1168,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     content.push(this.metadataBulletHeaderFactory(labels[key]))
 
     value.forEach(v => {
-      content.push(this.metadataBulletFactory(null, v))
+      content.push(this.metadataBulletFactory(null, labels[v]))
     })
   }
 

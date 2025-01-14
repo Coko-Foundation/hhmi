@@ -4,7 +4,7 @@ const archiver = require('archiver')
 const path = require('path')
 
 const metadataResolver = require('../../controllers/metadataHandler')
-const resources = require('../../controllers/resourcesData')
+const { getResources } = require('../../controllers/resources.controllers')
 
 class WaxToScormConverter {
   #correctAnswers = []
@@ -57,7 +57,7 @@ class WaxToScormConverter {
     })
   }
 
-  #metadataHandler = () => {
+  #metadataHandler = async () => {
     const metadata = metadataResolver()
     const metadataContent = {}
 
@@ -165,7 +165,9 @@ class WaxToScormConverter {
 
     metadataContent.keywords = this.#questionVersion.keywords
 
-    const selectedBiointeractiveResources = resources.filter(resource =>
+    const resources = await getResources()
+
+    const selectedBiointeractiveResources = resources.result.filter(resource =>
       this.#questionVersion.biointeractiveResources.includes(resource.value),
     )
 

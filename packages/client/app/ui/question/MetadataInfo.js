@@ -211,7 +211,7 @@ const MetadataInfo = props => {
             {values.biointeractiveResources.map(resource => {
               const resourceObject = resources.find(r => r.value === resource)
 
-              return (
+              return resourceObject ? (
                 <li key={resourceObject.value}>
                   <Link
                     as="a"
@@ -222,7 +222,7 @@ const MetadataInfo = props => {
                     {resourceObject.label}
                   </Link>
                 </li>
-              )
+              ) : null
             })}
           </StyledList>
         </>

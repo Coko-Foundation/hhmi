@@ -20,6 +20,7 @@ module.exports = [
   './models/review',
   './models/archivedItem',
   './models/report',
+  './models/resources',
 
   // local api
   './api', // graphql

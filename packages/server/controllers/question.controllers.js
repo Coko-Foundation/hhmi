@@ -26,7 +26,6 @@ const { labels, REVIEWER_STATUSES } = require('./constants')
 const WaxToScormConverter = require('../services/scorm/scorm.service')
 const WaxToQTIConverter = require('../services/qti/qti.service')
 const metadataResolver = require('./metadataHandler')
-const resources = require('./resourcesData')
 const { getImageUrls, findImages } = require('./utils')
 const { inviteMaxReviewers } = require('./review.controller')
 const { actions } = require('./constants')
@@ -926,8 +925,6 @@ const generateWordFile = async (questionVersionId, options = {}) => {
   }
 }
 
-const resourceResolver = async () => resources
-
 const assignHandlingEditors = async (questionIds, userIds, options = {}) => {
   const { trx } = options
 
@@ -1351,7 +1348,6 @@ module.exports = {
   assignAuthorship,
 
   metadataResolver,
-  resourceResolver,
   generateScormZip,
   generateWordFile,
   generateQtiZip,

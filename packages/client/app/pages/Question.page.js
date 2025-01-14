@@ -1533,7 +1533,7 @@ const QuestionPage = props => {
         qtiZipLoading={generateQtiZipLoading}
         questionAgreedTc={false} //
         refetchUser={refetchCurrentUser}
-        resources={getResources}
+        resources={getResources?.result}
         reviewerChatMessages={messagesApiToUi(
           reviewerChatMessages,
           currentUser?.id,

@@ -15,7 +15,7 @@ const dbCleaner = async () => {
       rows.map(async row => {
         const { tablename } = row
 
-        if (tablename !== 'migrations') {
+        if (tablename !== 'migrations' && tablename !== 'resources') {
           await db.raw(`TRUNCATE TABLE ${tablename} CASCADE`)
         }
 
