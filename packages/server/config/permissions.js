@@ -381,12 +381,16 @@ const permissions = {
     sendMessage: isActive,
     editMessage: isActive,
     deleteMessage: isActive,
+    // Metadata
+    updateResource: isAdmin,
+    deleteResource: isAdmin,
+    addResource: isAdmin,
   },
   Query: {
     '*': deny,
     getLoginConfig: allow,
-    getMetadata: isActive,
-    getResources: isActive,
+    getMetadata: allow,
+    getResources: allow,
     // Lists
     myLists: isActive,
     list: isActive,

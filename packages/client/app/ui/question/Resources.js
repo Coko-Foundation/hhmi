@@ -42,7 +42,7 @@ const Resources = props => {
     return selectedResourses.map(resource => {
       const resourceObject = resources.find(r => r.value === resource)
 
-      return (
+      return resourceObject ? (
         <li key={resourceObject.value}>
           <Link
             as="a"
@@ -53,7 +53,7 @@ const Resources = props => {
             {resourceObject.label}
           </Link>
         </li>
-      )
+      ) : null
     })
   }
 

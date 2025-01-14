@@ -1,3 +1,5 @@
+const { logger, useTransaction, uuid } = require('@coko/server')
+
 const resources = [
   {
     label: 'Adenosine Triphosphate (ATP)',
@@ -6934,4 +6936,33 @@ const resources = [
   },
 ]
 
-module.exports = resources
+exports.up = knex => {
+  try {
+    return useTransaction(async trx => {
+      await Promise.all(
+        resources.map(async resource => {
+          const { label, value, url, topics, subtopics } = resource
+
+          await knex('resources')
+            .transacting(trx)
+            .insert({
+              id: uuid(),
+              created: knex.fn.now(),
+              updated: knex.fn.now(),
+              type: 'resource',
+              label,
+              value,
+              url,
+              topics: JSON.stringify(topics),
+              subtopics: JSON.stringify(subtopics),
+            })
+        }),
+      )
+    })
+  } catch (error) {
+    logger.error('Resources: populate resources migration failed!')
+    throw new Error(error)
+  }
+}
+
+exports.down = knex => knex.schema.dropTable('resources')

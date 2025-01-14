@@ -226,9 +226,10 @@ const Metadata = React.forwardRef((props, ref) => {
 
   useEffect(() => {
     let sIndexes = [0]
+    const formValuesClone = structuredClone(formValues)
 
-    if (formValues[topicsKey]?.length) {
-      sIndexes = formValues[topicsKey]?.map((_, index) => index)
+    if (formValuesClone[topicsKey]?.length) {
+      sIndexes = formValuesClone[topicsKey]?.map((_, index) => index)
     }
 
     setTopicsIndexes(sIndexes)
@@ -236,17 +237,23 @@ const Metadata = React.forwardRef((props, ref) => {
     // reset to use for calculating existing supplementary curricula
     sIndexes = [0]
 
-    if (formValues[coursesKey]?.length) {
-      sIndexes = formValues[coursesKey]?.map((c, index) => {
+    if (formValuesClone[coursesKey]?.length) {
+      sIndexes = formValuesClone[coursesKey]?.map((c, index) => {
         return metadata.frameworks.find(f => f.value === c.course) !== undefined
           ? index
           : -1
       })
     }
 
+    // filter out non-existent resources
+    formValuesClone.biointeractiveResources =
+      formValuesClone.biointeractiveResources
+        .map(resource => resources.find(r => r.value === resource)?.value)
+        .filter(r => !!r)
+
     setCoursesIndexes(sIndexes)
 
-    form.setFieldsValue(formValues)
+    form.setFieldsValue(formValuesClone)
   }, [formValues])
 
   // TODO: find a better solution (assigning the initialValue directly confilcts with form.setFieldsValues)

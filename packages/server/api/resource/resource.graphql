@@ -1,4 +1,5 @@
 type Resource {
+  id: ID
   label: String!
   value: String!
   url: String!
@@ -6,6 +7,39 @@ type Resource {
   subtopics: [String!]!
 }
 
+type ResourceResponse {
+  result: [Resource!]!
+  totalCount: Int
+}
+
+input ResourceFilters {
+  search: String
+}
+
+input PaginationInput {
+  orderBy: String
+  ascending: Boolean
+  pageSize: Int
+  page: Int
+}
+
+input ResourceInput {
+  id: ID
+  label: String
+  url: String
+  topics: [String]
+  subtopics: [String]
+}
+
 extend type Query {
-  getResources: [Resource!]!
+  getResources(
+    filters: ResourceFilters
+    options: PaginationInput
+  ): ResourceResponse
+}
+
+extend type Mutation {
+  updateResource(input: ResourceInput): Resource
+  deleteResource(id: ID): Boolean
+  addResource(input: ResourceInput): Resource
 }
