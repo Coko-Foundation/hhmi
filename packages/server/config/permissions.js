@@ -385,11 +385,17 @@ const permissions = {
     updateResource: isAdmin,
     deleteResource: isAdmin,
     addResource: isAdmin,
+    disableCourseMetadata: isAdmin,
+    enableCourseMetadata: isAdmin,
+    editCourseMetadata: isAdmin,
+    addCourseMetadata: isAdmin,
+    reorderCourseMetadata: isAdmin,
   },
   Query: {
     '*': deny,
     getLoginConfig: allow,
     getMetadata: allow,
+    getMetadataOld: allow,
     getResources: allow,
     // Lists
     myLists: isActive,

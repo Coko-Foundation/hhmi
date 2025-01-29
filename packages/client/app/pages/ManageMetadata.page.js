@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
 
 import { useQuery, useMutation } from '@apollo/client'
-import { ResourcesTable } from 'ui'
+import { MetadataManager } from 'ui'
 import {
   GET_RESOURCES,
   UPDATE_RESOURCE,
   DELETE_RESOURCE,
   ADD_RESOURCE,
+  DISABLE_METADATA,
+  ENABLE_METADATA,
+  EDIT_METADATA,
+  CREATE_METADATA,
+  SORT_METADATA,
 } from '../graphql'
 import { useMetadata } from '../utilities'
 
@@ -24,13 +29,13 @@ const resourcesApiToUi = resources => {
   })
 }
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 10
 
-const ManageResourcesPage = () => {
+const ManageMetadataPage = () => {
   const [currentPage, setCurrentPage] = useState(0)
   const [search, setSearch] = useState('')
 
-  const { metadata } = useMetadata()
+  const { metadata, resetMetadata } = useMetadata()
 
   const { data: { getResources: { result, totalCount } = {} } = {} } = useQuery(
     GET_RESOURCES,
@@ -99,6 +104,32 @@ const ManageResourcesPage = () => {
     ],
   })
 
+  const [disableCourseMetadata] = useMutation(DISABLE_METADATA, {
+    onCompleted() {
+      resetMetadata()
+    },
+  })
+
+  const [enableCourseMetadata] = useMutation(ENABLE_METADATA, {
+    onCompleted() {
+      resetMetadata()
+    },
+  })
+
+  const [editCourseMetadata] = useMutation(EDIT_METADATA, {
+    onCompleted: () => {
+      resetMetadata()
+    },
+  })
+
+  const [createCourseMetadata] = useMutation(CREATE_METADATA, {
+    onCompleted: () => {
+      resetMetadata()
+    },
+  })
+
+  const [sortMetadata] = useMutation(SORT_METADATA)
+
   const handleResourceUpdate = data => {
     const mutationData = {
       variables: {
@@ -138,10 +169,86 @@ const ManageResourcesPage = () => {
     setSearch(query)
   }
 
+  const handleMetadataAdd = values => {
+    const { new: newKey, ...rest } = values
+
+    const mutationData = {
+      variables: {
+        input: { ...rest, key: newKey },
+      },
+    }
+
+    return createCourseMetadata(mutationData)
+  }
+
+  const handleMetadataDisable = (id, type) => {
+    const mutationData = {
+      variables: {
+        id,
+        type,
+      },
+    }
+
+    return disableCourseMetadata(mutationData)
+  }
+
+  const handleMetadataEnable = (id, type) => {
+    const mutationData = {
+      variables: {
+        id,
+        type,
+      },
+    }
+
+    return enableCourseMetadata(mutationData)
+  }
+
+  const handleMetadataUpdate = ({
+    id,
+    type,
+    label,
+    explanatoryItems,
+    explanation,
+  }) => {
+    const mutationData = {
+      variables: {
+        id,
+        type,
+        label,
+        explanatoryItems,
+        explanation,
+      },
+    }
+
+    return editCourseMetadata(mutationData)
+  }
+
+  const handleDataReordered = data => {
+    const { type } = data[0]
+
+    const mutationData = {
+      variables: {
+        input: {
+          type,
+          order: data.map(({ key }, index) => ({ id: key, index })),
+        },
+      },
+    }
+
+    return sortMetadata(mutationData)
+  }
+
   return (
-    <ResourcesTable
+    <MetadataManager
+      courses={metadata?.frameworks}
       currentPage={currentPage + 1}
       dataSource={resourcesApiToUi(result)}
+      introToBioMeta={metadata?.introToBioMeta}
+      onDataReordered={handleDataReordered}
+      onMetadataAdd={handleMetadataAdd}
+      onMetadataDisable={handleMetadataDisable}
+      onMetadataEnable={handleMetadataEnable}
+      onMetadataUpdate={handleMetadataUpdate}
       onPageChange={handlePageChange}
       onResourceCreate={handleResourceCreate}
       onResourceDelete={handleResourceDelete}
@@ -154,4 +261,4 @@ const ManageResourcesPage = () => {
   )
 }
 
-export default ManageResourcesPage
+export default ManageMetadataPage

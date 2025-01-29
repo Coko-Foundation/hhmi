@@ -8,6 +8,19 @@ const dbCleaner = async () => {
     `SELECT tablename FROM pg_tables WHERE schemaname='public'`,
   )
 
+  const permanentTables = [
+    'migrations',
+    'resources',
+    'course',
+    'unit',
+    'topic',
+    'learning_objective',
+    'essential_knowledge',
+    'application',
+    'skill',
+    'understanding',
+  ]
+
   const { rows } = query
 
   if (rows.length > 0) {
@@ -15,7 +28,7 @@ const dbCleaner = async () => {
       rows.map(async row => {
         const { tablename } = row
 
-        if (tablename !== 'migrations' && tablename !== 'resources') {
+        if (permanentTables.indexOf(tablename) === -1) {
           await db.raw(`TRUNCATE TABLE ${tablename} CASCADE`)
         }
 

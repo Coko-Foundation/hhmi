@@ -32,10 +32,6 @@ const SearchWrapper = styled.div`
   }
 `
 
-const StyledHeader = styled.header`
-  text-align: center;
-`
-
 const StyledTag = styled(Tag)`
   margin-block: ${grid(1)};
 `
@@ -241,7 +237,11 @@ const ResourceTable = props => {
           <Button key="cancel" onClick={() => dialog.destroy()}>
             Cancel
           </Button>
-          <Button key="save" onClick={() => updateResource(dialog)}>
+          <Button
+            key="save"
+            onClick={() => updateResource(dialog)}
+            type="primary"
+          >
             Save
           </Button>
         </ModalFooter>,
@@ -330,8 +330,14 @@ const ResourceTable = props => {
       key: 'key',
       render: key => (
         <ActionsWrapper>
-          <Button onClick={() => editResource(key)}>Edit</Button>
-          <Button onClick={() => deleteResource(key)} status="danger">
+          <Button onClick={() => editResource(key)} type="primary">
+            Edit
+          </Button>
+          <Button
+            onClick={() => deleteResource(key)}
+            status="danger"
+            type="primary"
+          >
             Delete
           </Button>
         </ActionsWrapper>
@@ -350,9 +356,6 @@ const ResourceTable = props => {
   return (
     <ModalContext.Provider>
       <StyledSection>
-        <StyledHeader>
-          <h1>Biointeractive resources</h1>
-        </StyledHeader>
         <SearchWrapper>
           <Search onSearch={onSearch} />
           <Button onClick={createResource} type="primary">

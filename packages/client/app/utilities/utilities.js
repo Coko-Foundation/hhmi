@@ -285,7 +285,7 @@ const extractCourseAndObjectives = (courses, frameworksMetadata) =>
       },
     }
 
-    switch (c.course) {
+    switch (courseInValues.textValue) {
       case 'apBiology':
       case 'apEnvironmentalScience':
       case 'introBioForMajors':
@@ -398,11 +398,11 @@ const extractIntroBioCourseMetadata = (
   )?.label
 
   const visionAndChange = extraFramewrok.find(
-    meta => meta.value === 'visionAndChange',
+    meta => meta.textValue === 'visionAndChange',
   )
 
   const aamc = extraFramewrok.find(
-    meta => meta.value === 'aamcFuturePhysicians',
+    meta => meta.textValue === 'aamcFuturePhysicians',
   )
 
   const coreConcept = visionAndChange.coreConcepts.find(
@@ -1595,6 +1595,16 @@ const flattenReviewerSearchResults = searchResults => {
   return flatResults
 }
 
+const mapMetadataToSelectOptions = (metadata, showDisabled) => {
+  return metadata
+    .map(m => ({
+      label: m.label,
+      value: m.value,
+      enabled: m.enabled,
+    }))
+    .filter(m => (showDisabled ? true : m.enabled))
+}
+
 export {
   extractDocumentText,
   extractTopicsAndSubtopics,
@@ -1627,4 +1637,5 @@ export {
   REVIEWER_STATUSES,
   flattenReviewerPool,
   flattenReviewerSearchResults,
+  mapMetadataToSelectOptions,
 }

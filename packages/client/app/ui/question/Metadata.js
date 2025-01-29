@@ -2,9 +2,8 @@ import React, { useState, useImperativeHandle, useEffect } from 'react'
 import { dropRight } from 'lodash'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
 import { grid } from '@coko/client'
-
+import { mapMetadataToSelectOptions } from '../../utilities'
 import {
   Select,
   Form,
@@ -56,6 +55,7 @@ const Metadata = React.forwardRef((props, ref) => {
   } = props
 
   const [formValues] = useState(initialValues)
+  const metadataMapper = data => mapMetadataToSelectOptions(data, readOnly)
 
   if (presentationMode) {
     return (
@@ -93,7 +93,7 @@ const Metadata = React.forwardRef((props, ref) => {
       f => f.value === selectedCourse,
     )
 
-    if (apCourses.includes(selectedCourse)) {
+    if (apCourses.includes(courseMetadata?.textValue)) {
       return (
         <APCourseMetadata
           courseData={courseMetadata}
@@ -107,7 +107,7 @@ const Metadata = React.forwardRef((props, ref) => {
       )
     }
 
-    if (ibCourses.includes(selectedCourse)) {
+    if (ibCourses.includes(courseMetadata?.textValue)) {
       return (
         <IBCourseMetadata
           courseData={courseMetadata}
@@ -121,7 +121,7 @@ const Metadata = React.forwardRef((props, ref) => {
       )
     }
 
-    if (introBioCourses.includes(selectedCourse)) {
+    if (introBioCourses.includes(courseMetadata?.textValue)) {
       return (
         <IntroToBioCourseMetadata
           courseData={courseMetadata}
@@ -383,10 +383,7 @@ const Metadata = React.forwardRef((props, ref) => {
                           onChange={value =>
                             resetCourseFields(value, index, coursesKey, remove)
                           }
-                          options={metadata.frameworks.map(i => ({
-                            label: i.label,
-                            value: i.value,
-                          }))}
+                          options={metadataMapper(metadata.frameworks)}
                         />
                       </Form.Item>
 

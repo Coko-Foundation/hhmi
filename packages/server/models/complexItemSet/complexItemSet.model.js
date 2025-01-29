@@ -161,6 +161,7 @@ class ComplexItemSet extends BaseModel {
           'complexItemSets.id',
         )
         .select([...selectFields, 'question_versions.published'])
+        .distinctOn('complexItemSets.id')
         .whereIn('complexItemSets.id', authoredSets)
         .orWhere('question_versions.published', true)
     }

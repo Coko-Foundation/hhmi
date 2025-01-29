@@ -6965,4 +6965,4 @@ exports.up = knex => {
   }
 }
 
-exports.down = knex => knex.schema.dropTable('resources')
+exports.down = knex => knex('resources').del() //

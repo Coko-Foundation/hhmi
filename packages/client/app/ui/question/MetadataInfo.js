@@ -93,7 +93,7 @@ const MetadataInfo = props => {
         )
 
         const courseUnits = course.units.map(unitData => {
-          switch (course.course) {
+          switch (courseObject.textValue) {
             case 'apBiology':
             case 'apEnvironmentalScience':
               return (
