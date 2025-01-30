@@ -67,7 +67,7 @@ describe('Context-dependent item set', () => {
     cy.log(
       'checking if correct context-dependent item set info is displayed...',
     )
-    cy.get(listItemWrapper).eq(1).contains('h2', complexItemSet2.title).click()
+    cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet2.title).click()
     cy.wait('@GQLReq')
     cy.contains('h2[data-testid="set-title"]', complexItemSet2.title)
     cy.contains(
@@ -78,7 +78,7 @@ describe('Context-dependent item set', () => {
 
   it('edit context-dependent item set', () => {
     cy.get(anchorTags.sets).click({ force: true })
-    cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
+    cy.get(listItemWrapper).eq(1).contains('h2', complexItemSet1.title).click()
     cy.contains(antTabs, 'Edit').click()
 
     cy.get('input[id="title"]')
@@ -107,7 +107,7 @@ describe('Context-dependent item set', () => {
       cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)
-        .eq(2)
+        .eq(0)
         .contains('h2', complexItemSet3.title)
         .click()
       cy.get('button[title="Add item to this set"]').click()
@@ -130,7 +130,7 @@ describe('Context-dependent item set', () => {
       cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)
-        .eq(2)
+        .eq(0)
         .contains('h2', complexItemSet3.title)
         .click()
       cy.wait('@GQLReq')
@@ -164,7 +164,7 @@ describe('Context-dependent item set', () => {
       cy.wait('@GQLReq')
 
       cy.get(listItemWrapper)
-        .eq(2)
+        .eq(0)
         .contains('h2', complexItemSet3.title)
         .click()
       cy.wait('@GQLReq')
