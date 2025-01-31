@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { uuid } from '@coko/client/dist'
-import { uniqBy } from 'lodash'
 import { Form, Select } from '../common'
+import { mapMetadataToSelectOptions } from '../../utilities'
 
 const VisionAndChangeMetadata = props => {
   const {
@@ -21,6 +21,8 @@ const VisionAndChangeMetadata = props => {
     supplementaryKey,
     index,
   } = props
+
+  const metadataMapper = data => mapMetadataToSelectOptions(data, readOnly)
 
   const coreConceptName = supplementaryKey
     ? [index, coreConceptKey]
@@ -150,13 +152,15 @@ const VisionAndChangeMetadata = props => {
   }
 
   const filterSubdisciplineOptions = () => {
-    return uniqBy(
-      conceptsAndCompetencies.subdisciplines?.map(s => ({
-        label: s.label,
-        value: s.value,
-      })),
-      'value',
-    )
+    const selectedCoreConcept = getFieldValue(coreConceptField)
+
+    return selectedCoreConcept
+      ? metadataMapper(
+          conceptsAndCompetencies.subdisciplines.filter(
+            s => s.coreConcept === selectedCoreConcept,
+          ),
+        )
+      : metadataMapper(conceptsAndCompetencies.subdisciplines)
   }
 
   const filterSubdisciplineStatementOptions = () => {
@@ -164,34 +168,29 @@ const VisionAndChangeMetadata = props => {
     const selectedSubdiscipline = getFieldValue(subdisciplineField)
 
     if (selectedCoreConcept && !selectedSubdiscipline) {
-      return conceptsAndCompetencies.subdisciplineStatements
-        .filter(s => s.coreConcept === selectedCoreConcept)
-        .map(s => ({
-          label: s.label,
-          value: s.value,
-        }))
+      return metadataMapper(
+        conceptsAndCompetencies.subdisciplineStatements.filter(
+          s => s.coreConcept === selectedCoreConcept,
+        ),
+      )
     }
 
     if (!selectedCoreConcept && selectedSubdiscipline) {
-      return conceptsAndCompetencies.subdisciplineStatements
-        .filter(s => s.subdiscipline === selectedSubdiscipline)
-        .map(s => ({
-          label: s.label,
-          value: s.value,
-        }))
+      return metadataMapper(
+        conceptsAndCompetencies.subdisciplineStatements.filter(
+          s => s.subdiscipline === selectedSubdiscipline,
+        ),
+      )
     }
 
     if (selectedCoreConcept && selectedSubdiscipline) {
-      return conceptsAndCompetencies.subdisciplineStatements
-        .filter(
+      return metadataMapper(
+        conceptsAndCompetencies.subdisciplineStatements.filter(
           s =>
             s.subdiscipline === selectedSubdiscipline &&
             s.coreConcept === selectedCoreConcept,
-        )
-        .map(s => ({
-          label: s.label,
-          value: s.value,
-        }))
+        ),
+      )
     }
 
     return conceptsAndCompetencies.subdisciplineStatements?.map(s => ({

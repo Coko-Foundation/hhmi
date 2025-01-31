@@ -53,6 +53,8 @@ import {
   ComplexItemSet,
   ComplexItemSetsList,
   Notifications,
+  ManageResources,
+  ManageMetadata,
 } from './pages'
 
 import { CURRENT_USER } from './graphql'
@@ -272,6 +274,7 @@ const SiteHeader = () => {
     learning: '/learning',
     manageUsers: '/manage-users',
     manageTeams: '/manage-teams',
+    manageMetadata: '/manage-metadata',
     // tasks: '/notifications/tasks',
     messages: '/notifications/messages',
     profile: '/profile',
@@ -304,6 +307,7 @@ const SiteHeader = () => {
 
   return (
     <Header
+      canManageResources={isAdmin}
       canManageTeams={isAdmin}
       canManageUsers={isAdmin}
       currentPath={currentPath}
@@ -449,6 +453,27 @@ const routes = (
                     </Authenticated>
                   )}
                 />
+
+                <Route
+                  exact
+                  path="/manage-resources"
+                  render={() => (
+                    <Authenticated>
+                      <ManageResources />
+                    </Authenticated>
+                  )}
+                />
+
+                <Route
+                  exact
+                  path="/manage-metadata"
+                  render={() => (
+                    <Authenticated>
+                      <ManageMetadata />
+                    </Authenticated>
+                  )}
+                />
+
                 <Route
                   exact
                   path="/profile"

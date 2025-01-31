@@ -49,7 +49,7 @@ const metadataTransformer = metadata => {
 
     let additionalMetadata
 
-    switch (meta.value) {
+    switch (meta.textValue) {
       case 'visionAndChange':
         additionalMetadata = flatVisionAndChangeMetadata(meta)
         break

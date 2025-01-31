@@ -1,22 +1,31 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
 import React, { useState, useEffect } from 'react'
-import { useQuery } from '@apollo/client'
+import { useLazyQuery } from '@apollo/client'
 import { MetadataContext } from './metadataContext'
 import { GET_METADATA } from '../graphql'
 
 const MetadataProvider = props => {
   const { children } = props
   const [metadata, setMetadata] = useState(null)
-  const { data } = useQuery(GET_METADATA)
+
+  const [getMetadata] = useLazyQuery(GET_METADATA, {
+    fetchPolicy: 'network-only',
+  })
 
   useEffect(() => {
-    if (data && !metadata) {
-      setMetadata(data.getMetadata)
-    }
-  }, [data])
+    resetMetadata()
+  }, [])
+
+  const resetMetadata = () => {
+    getMetadata().then(({ data }) => {
+      if (data) {
+        setMetadata(data.getMetadata)
+      }
+    })
+  }
 
   return (
-    <MetadataContext.Provider value={{ metadata }}>
+    <MetadataContext.Provider value={{ metadata, resetMetadata }}>
       {children}
     </MetadataContext.Provider>
   )

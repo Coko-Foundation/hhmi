@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { uniqBy } from 'lodash'
+import { mapMetadataToSelectOptions } from '../../utilities'
 import { Form, Select } from '../common'
 import VisionAndChangeMetadata from './VisionAndChangeMetadata'
 import AAMCFuturePhysiciansMetadata from './AAMCFuturePhysiciansMetadata'
@@ -20,6 +21,8 @@ const IntroToBioCourseMetadata = props => {
     supplementaryKey,
     setFieldsValue,
   } = props
+
+  const metadataMapper = data => mapMetadataToSelectOptions(data, readOnly)
 
   const unitName = supplementaryKey ? [index, unitKey] : unitKey
 
@@ -93,25 +96,14 @@ const IntroToBioCourseMetadata = props => {
   }
 
   const filterCourseUnitOptions = () => {
-    return courseData.units.map(u => ({
-      label: u.label,
-      value: u.value,
-    }))
+    return metadataMapper(courseData.units)
   }
 
   const filterCourseTopicOptions = () => {
     const selectedUnit = getFieldValue(unitField)
     return selectedUnit
-      ? courseData.topics
-          .filter(t => t.unit === selectedUnit)
-          .map(t => ({
-            label: t.label,
-            value: t.value,
-          }))
-      : courseData.topics.map(t => ({
-          label: t.label,
-          value: t.value,
-        }))
+      ? metadataMapper(courseData.topics.filter(t => t.unit === selectedUnit))
+      : metadataMapper(courseData.topics)
   }
 
   const filterLearningObjectiveOptions = () => {
@@ -119,36 +111,24 @@ const IntroToBioCourseMetadata = props => {
     const selectedTopic = getFieldValue(topicField)
 
     if (selectedTopic) {
-      return uniqBy(
-        courseData.learningObjectives
-          .filter(l => l.topic === selectedTopic)
-          .map(l => ({
-            label: l.label,
-            value: l.value,
-          })),
-        'value',
+      return metadataMapper(
+        uniqBy(
+          courseData.learningObjectives.filter(l => l.topic === selectedTopic),
+          'value',
+        ),
       )
     }
 
     if (selectedUnit) {
-      return uniqBy(
-        courseData.learningObjectives
-          .filter(l => l.unit === selectedUnit)
-          .map(l => ({
-            label: l.label,
-            value: l.value,
-          })),
-        'value',
+      return metadataMapper(
+        uniqBy(
+          courseData.learningObjectives.filter(l => l.unit === selectedUnit),
+          'value',
+        ),
       )
     }
 
-    return uniqBy(
-      courseData.learningObjectives.map(l => ({
-        label: l.label,
-        value: l.value,
-      })),
-      'value',
-    )
+    return metadataMapper(uniqBy(courseData.learningObjectives, 'value'))
   }
 
   return (
@@ -217,7 +197,7 @@ const IntroToBioCourseMetadata = props => {
       </Form.Item>
       <VisionAndChangeMetadata
         conceptsAndCompetencies={introToBioMeta.find(
-          f => f.value === 'visionAndChange',
+          f => f.textValue === 'visionAndChange',
         )}
         filterMode={filterMode}
         getFieldValue={getFieldValue}
@@ -226,10 +206,10 @@ const IntroToBioCourseMetadata = props => {
         setFieldsValue={setFieldsValue}
         supplementaryKey={supplementaryKey}
       />
-      {courseData.value === 'introBioForMajors' && (
+      {courseData.textValue === 'introBioForMajors' && (
         <AAMCFuturePhysiciansMetadata
           aamcMetadata={introToBioMeta.find(
-            f => f.value === 'aamcFuturePhysicians',
+            f => f.textValue === 'aamcFuturePhysicians',
           )}
           filterMode={filterMode}
           getFieldValue={getFieldValue}

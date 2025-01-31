@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { uniqBy } from 'lodash'
+import { mapMetadataToSelectOptions } from '../../utilities'
 import { Form, Select } from '../common'
 
 const APCourseMetadata = props => {
@@ -18,6 +19,8 @@ const APCourseMetadata = props => {
     supplementaryKey,
     setFieldsValue,
   } = props
+
+  const metadataMapper = data => mapMetadataToSelectOptions(data, readOnly)
 
   const unitName = supplementaryKey ? [index, unitKey] : unitKey
 
@@ -125,25 +128,14 @@ const APCourseMetadata = props => {
   }
 
   const filterCourseUnitOptions = () => {
-    return courseData.units.map(u => ({
-      label: u.label,
-      value: u.value,
-    }))
+    return metadataMapper(courseData.units)
   }
 
   const filterCourseTopicOptions = () => {
     const selectedUnit = getFieldValue(unitField)
     return selectedUnit
-      ? courseData.topics
-          .filter(t => t.unit === selectedUnit)
-          .map(t => ({
-            label: t.label,
-            value: t.value,
-          }))
-      : courseData.topics.map(t => ({
-          label: t.label,
-          value: t.value,
-        }))
+      ? metadataMapper(courseData.topics.filter(t => t.unit === selectedUnit))
+      : metadataMapper(courseData.topics)
   }
 
   const filterLearningObjectiveOptions = () => {
@@ -151,36 +143,24 @@ const APCourseMetadata = props => {
     const selectedTopic = getFieldValue(topicField)
 
     if (selectedTopic) {
-      return uniqBy(
-        courseData.learningObjectives
-          .filter(l => l.topic === selectedTopic)
-          .map(l => ({
-            label: l.label,
-            value: l.value,
-          })),
-        'value',
+      return metadataMapper(
+        uniqBy(
+          courseData.learningObjectives.filter(l => l.topic === selectedTopic),
+          'value',
+        ),
       )
     }
 
     if (selectedUnit) {
-      return uniqBy(
-        courseData.learningObjectives
-          .filter(l => l.unit === selectedUnit)
-          .map(l => ({
-            label: l.label,
-            value: l.value,
-          })),
-        'value',
+      return metadataMapper(
+        uniqBy(
+          courseData.learningObjectives.filter(l => l.unit === selectedUnit),
+          'value',
+        ),
       )
     }
 
-    return uniqBy(
-      courseData.learningObjectives.map(l => ({
-        label: l.label,
-        value: l.value,
-      })),
-      'value',
-    )
+    return metadataMapper(uniqBy(courseData.learningObjectives, 'value'))
   }
 
   const filterEssentialKnowledgeOptions = () => {
@@ -189,36 +169,26 @@ const APCourseMetadata = props => {
     const selectedLearningObjective = getFieldValue(learningObjectiveField)
 
     if (selectedLearningObjective) {
-      return courseData.essentialKnowledge
-        .filter(l => l.learningObjective === selectedLearningObjective)
-        .map(e => ({
-          label: e.label,
-          value: e.value,
-        }))
+      return metadataMapper(
+        courseData.essentialKnowledge.filter(
+          l => l.learningObjective === selectedLearningObjective,
+        ),
+      )
     }
 
     if (selectedTopic) {
-      return courseData.essentialKnowledge
-        .filter(l => l.topic === selectedTopic)
-        .map(e => ({
-          label: e.label,
-          value: e.value,
-        }))
+      return metadataMapper(
+        courseData.essentialKnowledge.filter(l => l.topic === selectedTopic),
+      )
     }
 
     if (selectedUnit) {
-      return courseData.essentialKnowledge
-        .filter(l => l.unit === selectedUnit)
-        .map(e => ({
-          label: e.label,
-          value: e.value,
-        }))
+      return metadataMapper(
+        courseData.essentialKnowledge.filter(l => l.unit === selectedUnit),
+      )
     }
 
-    return courseData.essentialKnowledge.map(e => ({
-      label: e.label,
-      value: e.value,
-    }))
+    return metadataMapper(courseData.essentialKnowledge)
   }
 
   return (

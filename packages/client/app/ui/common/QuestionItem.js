@@ -115,7 +115,7 @@ const courseOrder = [
 ]
 
 const sortFunction = (a, b) =>
-  courseOrder.indexOf(a.course.label) - courseOrder.indexOf(b.course.label)
+  courseOrder.indexOf(a.course?.label) - courseOrder.indexOf(b.course?.label)
 
 const QuestionItem = props => {
   const {
@@ -193,7 +193,7 @@ const QuestionItem = props => {
                 </MetadataLabel>
               </summary>
               <ul>
-                {c.objectives.map(o => o && <li key={uuid()}>{o.label}</li>)}
+                {c.objectives?.map(o => o && <li key={uuid()}>{o.label}</li>)}
               </ul>
             </details>
           )

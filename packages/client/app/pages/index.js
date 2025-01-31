@@ -19,4 +19,5 @@ export { default as PageNotFound } from './PageNotFound.page'
 export { default as ComplexItemSet } from './ComplexItemSet.page'
 export { default as ComplexItemSetsList } from './ComplexItemSetsList.page'
 export { default as Notifications } from './Notifications.page'
-//
+export { default as ManageResources } from './ManageResources.page'
+export { default as ManageMetadata } from './ManageMetadata.page'

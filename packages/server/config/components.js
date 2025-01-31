@@ -20,6 +20,8 @@ module.exports = [
   './models/review',
   './models/archivedItem',
   './models/report',
+  './models/resources',
+  './models/courseMetadata',
 
   // local api
   './api', // graphql

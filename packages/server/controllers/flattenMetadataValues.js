@@ -1,7 +1,7 @@
 const metadataValues = require('./metadataValues')
-const resourcesData = require('./resourcesData')
+const { getResources } = require('./resources.controllers')
 
-const flatten = () => {
+const flatten = async () => {
   const result = {}
 
   const extractLabelValuePairs = item => {
@@ -22,9 +22,11 @@ const flatten = () => {
 
   extractLabelValuePairs(metadataValues)
 
-  resourcesData.forEach(o => {
-    const { label, value } = o
-    if (label && value) result[value] = label
+  const resourcesData = await getResources()
+
+  resourcesData.result.forEach(o => {
+    const { label, id } = o
+    if (label && id) result[id] = label
   })
 
   return result
