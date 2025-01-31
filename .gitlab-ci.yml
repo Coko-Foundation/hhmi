@@ -11,6 +11,14 @@ variables:
   WORKDIR_SERVER: /home/node/hhmi
   WORKDIR_CLIENT: /home/node/app
 
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_TITLE =~ /^Draft:/
+      when: never
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == 'staging'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
 stages:
   - Build development
   - Lint & Unit test

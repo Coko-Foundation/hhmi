@@ -12,6 +12,8 @@ const Review = require('./review/review.model')
 const Notification = require('./notification/notification.model')
 const ArchivedItem = require('./archivedItem/archivedItem.model')
 const Report = require('./report/report.model')
+const Resource = require('./resources/resources.model')
+const CourseMetadata = require('./courseMetadata/courseMetadata.model')
 
 module.exports = {
   Question,
@@ -27,4 +29,6 @@ module.exports = {
   Notification,
   ArchivedItem,
   Report,
+  Resource,
+  CourseMetadata,
 }

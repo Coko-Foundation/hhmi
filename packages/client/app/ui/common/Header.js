@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th, darken } from '@coko/client'
-import { EditOutlined, LogoutOutlined } from '@ant-design/icons'
+import { EditOutlined, LogoutOutlined, TagsFilled } from '@ant-design/icons'
 import logoMobile from '../../../static/hhmi-logo-white-sm.svg'
 import manageTeamIcon from '../../../static/team.svg'
 import manageUserIcon from '../../../static/manageuser.svg'
@@ -645,6 +645,7 @@ const createHeaderLinksObject = ({
   onClick,
   canManageUsers,
   canManageTeams,
+  canManageResources,
   onLogout,
   windowWidth,
   pendingTsks,
@@ -707,6 +708,13 @@ const createHeaderLinksObject = ({
         icon: <StyledIcon alt="manage team" src={manageTeamIcon} />,
       },
       {
+        link: links.manageMetadata,
+        text: 'Manage Metadata',
+        onClick,
+        renderIf: canManageResources,
+        icon: <TagsFilled style={{ margin: '0 .5rem' }} />,
+      },
+      {
         link: links.profile,
         text: 'Profile',
         onClick,
@@ -738,6 +746,7 @@ const createHeaderLinksObject = ({
 const Header = props => {
   const {
     loggedin,
+    canManageResources,
     canManageUsers,
     canManageTeams,
     currentPath,
@@ -928,6 +937,7 @@ const Header = props => {
 Header.propTypes = {
   loggedin: PropTypes.bool,
   currentPath: PropTypes.string.isRequired,
+  canManageResources: PropTypes.bool,
   canManageUsers: PropTypes.bool,
   canManageTeams: PropTypes.bool,
   displayName: PropTypes.string,
@@ -938,6 +948,7 @@ Header.propTypes = {
 
 Header.defaultProps = {
   loggedin: false,
+  canManageResources: false,
   canManageUsers: false,
   canManageTeams: false,
   displayName: 'User',
@@ -952,6 +963,7 @@ Header.defaultProps = {
     learning: '#',
     manageUsers: '#',
     manageTeams: '#',
+    manageMetadata: '#',
     profile: '#',
     login: '#',
   },

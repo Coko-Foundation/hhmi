@@ -1,4 +1,4 @@
-const { logger } = require('@coko/server')
+const { logger, db } = require('@coko/server')
 
 const metadata = require('./utils/mockMetadata')
 
@@ -84,6 +84,50 @@ const checkDataType = (validData, dataType) => {
         if (!username) throw new Error('Username not provided')
 
         if (isValidType) {
+          const courseData = metadata[validDataType[typeIndex]].courses
+
+          const course = await db('course')
+            .select()
+            .where('value', courseData[0].course)
+            .first()
+
+          const unit = await db('unit')
+            .select()
+            .where('value', courseData[0].units[0].unit)
+            .first()
+
+          const topic = await db('topic')
+            .select()
+            .where('value', courseData[0].units[0].courseTopic)
+            .first()
+
+          const learningObjective = await db('learning_objective')
+            .select()
+            .where('value', courseData[0].units[0].learningObjective)
+            .first()
+
+          const essentialKnowledge = await db('essential_knowledge')
+            .select()
+            .where('value', courseData[0].units[0].essentialKnowledge)
+            .first()
+
+          metadata[validDataType[typeIndex]].courses = [
+            {
+              units: [
+                {
+                  unit: unit.id,
+                  skill: null,
+                  application: null,
+                  courseTopic: topic.id,
+                  understanding: null,
+                  learningObjective: learningObjective.id,
+                  essentialKnowledge: essentialKnowledge.id,
+                },
+              ],
+              course: course.id,
+            },
+          ]
+
           createQuestion(
             username,
             date,

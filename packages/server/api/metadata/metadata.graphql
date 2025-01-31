@@ -34,9 +34,11 @@ type CognitiveBloomsLevelMetadata {
 }
 
 type FrameworksMetadata {
+  id: ID
   value: String
   label: String
-  units: [SimpleValueLabelPair!]!
+  enabled: Boolean
+  units: [CourseUnit!]!
   topics: [CourseTopic!]!
   learningObjectives: [LearningObjective!]
   essentialKnowledge: [EssentialKnowledge!]
@@ -45,97 +47,183 @@ type FrameworksMetadata {
   understandings: [Understanding!]
 }
 
+type CourseUnit {
+  id: ID
+  label: String
+  value: String
+  enabled: Boolean
+}
+
 type CourseTopic {
+  id: ID
   value: String
   label: String
   unit: String
+  enabled: Boolean
 }
 
 type LearningObjective {
+  id: ID
   value: String
   label: String
   unit: String
   topic: String
+  enabled: Boolean
 }
 
 type EssentialKnowledge {
+  id: ID
   value: String
   label: String
   unit: String
   topic: String
   learningObjective: String
+  enabled: Boolean
 }
 
 type Application {
+  id: ID
   value: String
   label: String
   unit: String
   topic: String
+  enabled: Boolean
 }
 
 type Skill {
+  id: ID
   value: String
   label: String
   unit: String
   topic: String
+  enabled: Boolean
 }
 
 type Understanding {
+  id: ID
   value: String
   label: String
   unit: String
   topic: String
+  enabled: Boolean
 }
 
 type CoreConcept {
+  id: ID
   value: String
   label: String
   explanatoryItems: [String!]
+  enabled: Boolean
+}
+
+type Subdiscipline {
+  id: ID
+  value: String
+  label: String
+  coreConcept: String
+  enabled: Boolean
 }
 
 type SubdisciplineStatement {
+  id: ID
   value: String
   label: String
   coreConcept: String
   subdiscipline: String
+  enabled: Boolean
+}
+
+type CoreCompetence {
+  id: ID
+  value: String
+  label: String
+  enabled: Boolean
 }
 
 type Subcompetence {
+  id: ID
   value: String
   label: String
   coreCompetence: String
   explanation: String
+  enabled: Boolean
 }
 
 type SubcompetenceStatement {
+  id: ID
   value: String
   label: String
   coreCompetence: String
   subcompetence: String
+  enabled: Boolean
 }
 
-type AAMCCategories {
+type AAMCConcept {
+  id: ID
+  value: String
+  label: String
+  enabled: Boolean
+}
+
+type AAMCCategory {
+  id: ID
   value: String
   label: String
   concept: String
   explanation: String
+  enabled: Boolean
 }
 
 type IntroductoryBioMetadata {
+  id: ID
   value: String
   label: String
   # Vision and change metadata
   coreConcepts: [CoreConcept!]
-  subdisciplines: [SimpleValueLabelPair!]
+  subdisciplines: [Subdiscipline!]
   subdisciplineStatements: [SubdisciplineStatement!]
-  coreCompetencies: [SimpleValueLabelPair!]
+  coreCompetencies: [CoreCompetence!]
   subcompetencies: [Subcompetence!]
   subcompetenceStatements: [SubcompetenceStatement!]
   # AAMC future physicians metadata
-  concepts: [SimpleValueLabelPair!]
-  categories: [AAMCCategories!]
+  concepts: [AAMCConcept!]
+  categories: [AAMCCategory!]
+}
+
+input NewMetadataInput {
+  label: String!
+  newKey: String!
+  course: ID
+  unit: ID
+  topic: ID
+  learningObjective: ID
+}
+
+input MetadataOrderInput {
+  id: ID
+  index: Int
+}
+
+input SortMetadataInput {
+  type: String!
+  order: [MetadataOrderInput]
 }
 
 extend type Query {
+  getMetadataOld: Metadata!
   getMetadata: Metadata!
+}
+
+extend type Mutation {
+  disableCourseMetadata(id: ID, type: String!): Boolean
+  enableCourseMetadata(id: ID, type: String!): Boolean
+  editCourseMetadata(
+    id: ID!
+    type: String!
+    label: String!
+    explanatoryItems: [String]
+    explanation: String
+  ): Boolean
+  addCourseMetadata(input: NewMetadataInput!): Boolean
+  reorderCourseMetadata(input: SortMetadataInput!): Boolean
 }

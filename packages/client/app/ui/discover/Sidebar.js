@@ -1,9 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
 import { grid, th } from '@coko/client'
-
+import { mapMetadataToSelectOptions } from '../../utilities'
 import { Button, Select, Form } from '../common'
 import {
   TopicAndSubtopic,
@@ -54,6 +53,8 @@ const Sidebar = props => {
   const { className, text, setFilters, metadata, form, complexItemSetOptions } =
     props
 
+  const metadataMapper = data => mapMetadataToSelectOptions(data)
+
   const applyFilters = () => {
     setFilters(form.getFieldsValue())
   }
@@ -69,7 +70,7 @@ const Sidebar = props => {
       f => f.value === selectedCourse,
     )
 
-    if (apCourses.includes(selectedCourse)) {
+    if (apCourses.includes(courseMetadata.textValue)) {
       return (
         <APCourseMetadata
           courseData={courseMetadata}
@@ -80,7 +81,7 @@ const Sidebar = props => {
       )
     }
 
-    if (ibCourses.includes(selectedCourse)) {
+    if (ibCourses.includes(courseMetadata.textValue)) {
       return (
         <IBCourseMetadata
           courseData={courseMetadata}
@@ -91,7 +92,7 @@ const Sidebar = props => {
       )
     }
 
-    if (introBioCourses.includes(selectedCourse)) {
+    if (introBioCourses.includes(courseMetadata.textValue)) {
       return (
         <IntroToBioCourseMetadata
           courseData={courseMetadata}
@@ -124,12 +125,7 @@ const Sidebar = props => {
                   // allowClear
                   data-testid="course-select"
                   optionFilterProp="label"
-                  options={metadata.frameworks.map(i => {
-                    return {
-                      label: i.label,
-                      value: i.value,
-                    }
-                  })}
+                  options={metadataMapper(metadata.frameworks)}
                   showSearch
                 />
               </Form.Item>

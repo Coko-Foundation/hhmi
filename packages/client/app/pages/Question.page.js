@@ -115,18 +115,22 @@ const metadataUiToApi = values => {
   // transform courses structure
   const transformedCoursesData = []
 
-  values.courses.forEach(({ course, ...units }) => {
-    const prevIndex = transformedCoursesData.findIndex(c => c.course === course)
+  values.courses
+    .filter(c => !!c)
+    .forEach(({ course, ...units }) => {
+      const prevIndex = transformedCoursesData.findIndex(
+        c => c.course === course,
+      )
 
-    if (prevIndex < 0) {
-      transformedCoursesData.push({
-        course,
-        units: [units],
-      })
-    } else {
-      transformedCoursesData[prevIndex].units.push(units)
-    }
-  })
+      if (prevIndex < 0) {
+        transformedCoursesData.push({
+          course,
+          units: [units],
+        })
+      } else {
+        transformedCoursesData[prevIndex].units.push(units)
+      }
+    })
 
   // filter empty courses
   const coursesFields = course => {
@@ -1533,7 +1537,7 @@ const QuestionPage = props => {
         qtiZipLoading={generateQtiZipLoading}
         questionAgreedTc={false} //
         refetchUser={refetchCurrentUser}
-        resources={getResources}
+        resources={getResources?.result}
         reviewerChatMessages={messagesApiToUi(
           reviewerChatMessages,
           currentUser?.id,

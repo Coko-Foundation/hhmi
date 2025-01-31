@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
-export default gql`
-  query Metadata {
+export const GET_METADATA = gql`
+  query GetMetadata {
     getMetadata {
       topics {
         label
@@ -37,93 +37,154 @@ export default gql`
       }
       frameworks {
         label
-        value
+        value: id
+        textValue: value
+        enabled
         units {
           label
-          value
+          value: id
+          enabled
         }
         topics {
+          value: id
           label
-          value
           unit
+          enabled
         }
         learningObjectives {
           label
-          value
+          value: id
           unit
           topic
+          enabled
         }
         essentialKnowledge {
           label
-          value
+          value: id
           unit
           topic
           learningObjective
+          enabled
         }
         applications {
           label
-          value
+          value: id
           unit
           topic
+          enabled
         }
         skills {
           label
-          value
+          value: id
           unit
           topic
+          enabled
         }
         understandings {
           label
-          value
+          value: id
           unit
           topic
+          enabled
         }
       }
       introToBioMeta {
-        value
+        value: id
+        textValue: value
         label
         coreConcepts {
-          value
+          value: id
           label
           explanatoryItems
+          enabled
         }
         subdisciplines {
-          value
+          value: id
           label
+          coreConcept
+          enabled
         }
         subdisciplineStatements {
-          value
+          value: id
           label
           coreConcept
           subdiscipline
+          enabled
         }
         coreCompetencies {
-          value
+          value: id
           label
+          enabled
         }
         subcompetencies {
-          value
+          value: id
           label
           coreCompetence
           explanation
+          enabled
         }
         subcompetenceStatements {
-          value
+          value: id
           label
           coreCompetence
           subcompetence
+          enabled
         }
         concepts {
-          value
+          value: id
           label
+          enabled
         }
         categories {
-          value
+          value: id
           label
           concept
           explanation
+          enabled
         }
       }
     }
+  }
+`
+
+export const DISABLE_METADATA = gql`
+  mutation DisableMetadata($id: ID!, $type: String!) {
+    disableCourseMetadata(id: $id, type: $type)
+  }
+`
+
+export const ENABLE_METADATA = gql`
+  mutation EnableMetadata($id: ID!, $type: String!) {
+    enableCourseMetadata(id: $id, type: $type)
+  }
+`
+
+export const EDIT_METADATA = gql`
+  mutation EditMetadata(
+    $id: ID!
+    $type: String!
+    $label: String!
+    $explanatoryItems: [String]
+    $explanation: String
+  ) {
+    editCourseMetadata(
+      id: $id
+      type: $type
+      label: $label
+      explanatoryItems: $explanatoryItems
+      explanation: $explanation
+    )
+  }
+`
+
+export const CREATE_METADATA = gql`
+  mutation CreateMetadata($input: NewMetadataInput!) {
+    addCourseMetadata(input: $input)
+  }
+`
+
+export const SORT_METADATA = gql`
+  mutation ReorderMetadata($input: SortMetadataInput!) {
+    reorderCourseMetadata(input: $input)
   }
 `

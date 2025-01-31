@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
+import { mapMetadataToSelectOptions } from '../../utilities'
 import { Form, Select } from '../common'
 
 const IBCourseMetadata = props => {
@@ -18,6 +19,8 @@ const IBCourseMetadata = props => {
     supplementaryKey,
     index,
   } = props
+
+  const metadataMapper = data => mapMetadataToSelectOptions(data, readOnly)
 
   const unitName = supplementaryKey ? [index, unitKey] : unitKey
 
@@ -116,28 +119,19 @@ const IBCourseMetadata = props => {
   }
 
   const filterCourseUnitOptions = () => {
-    return courseData.units.map(u => ({
-      label: u.label,
-      value: u.value,
-    }))
+    return metadataMapper(courseData.units)
   }
 
   const filterCourseTopicOptions = () => {
     const selectedUnit = getFieldValue(unitField)
 
     if (selectedUnit) {
-      return courseData.topics
-        .filter(a => a.unit === selectedUnit)
-        .map(t => ({
-          label: t.label,
-          value: t.value,
-        }))
+      return metadataMapper(
+        courseData.topics.filter(a => a.unit === selectedUnit),
+      )
     }
 
-    return courseData.topics.map(t => ({
-      label: t.label,
-      value: t.value,
-    }))
+    return metadataMapper(courseData.topics)
   }
 
   const filterApplicationOptions = () => {
@@ -145,27 +139,18 @@ const IBCourseMetadata = props => {
     const selectedTopic = getFieldValue(topicField)
 
     if (selectedTopic) {
-      return courseData.applications
-        .filter(a => a.topic === selectedTopic)
-        .map(a => ({
-          label: a.label,
-          value: a.value,
-        }))
+      return metadataMapper(
+        courseData.applications.filter(a => a.topic === selectedTopic),
+      )
     }
 
     if (selectedUnit) {
-      return courseData.applications
-        .filter(a => a.unit === selectedUnit)
-        .map(a => ({
-          label: a.label,
-          value: a.value,
-        }))
+      return metadataMapper(
+        courseData.applications.filter(a => a.unit === selectedUnit),
+      )
     }
 
-    return courseData.applications.map(a => ({
-      label: a.label,
-      value: a.value,
-    }))
+    return metadataMapper(courseData.applications)
   }
 
   const filterUnderstandingOptions = () => {
@@ -173,27 +158,18 @@ const IBCourseMetadata = props => {
     const selectedTopic = getFieldValue(topicField)
 
     if (selectedTopic) {
-      return courseData.understandings
-        .filter(a => a.topic === selectedTopic)
-        .map(u => ({
-          label: u.label,
-          value: u.value,
-        }))
+      return metadataMapper(
+        courseData.understandings.filter(a => a.topic === selectedTopic),
+      )
     }
 
     if (selectedUnit) {
-      return courseData.understandings
-        .filter(a => a.unit === selectedUnit)
-        .map(u => ({
-          label: u.label,
-          value: u.value,
-        }))
+      return metadataMapper(
+        courseData.understandings.filter(a => a.unit === selectedUnit),
+      )
     }
 
-    return courseData.understandings.map(u => ({
-      label: u.label,
-      value: u.value,
-    }))
+    return metadataMapper(courseData.understandings)
   }
 
   const filterSkillOptions = () => {
@@ -201,27 +177,18 @@ const IBCourseMetadata = props => {
     const selectedTopic = getFieldValue(topicField)
 
     if (selectedTopic) {
-      return courseData.skills
-        .filter(a => a.topic === selectedTopic)
-        .map(s => ({
-          label: s.label,
-          value: s.value,
-        }))
+      return metadataMapper(
+        courseData.skills.filter(a => a.topic === selectedTopic),
+      )
     }
 
     if (selectedUnit) {
-      return courseData.skills
-        .filter(a => a.unit === selectedUnit)
-        .map(s => ({
-          label: s.label,
-          value: s.value,
-        }))
+      return metadataMapper(
+        courseData.skills.filter(a => a.unit === selectedUnit),
+      )
     }
 
-    return courseData.skills.map(s => ({
-      label: s.label,
-      value: s.value,
-    }))
+    return metadataMapper(courseData.skills)
   }
 
   return (

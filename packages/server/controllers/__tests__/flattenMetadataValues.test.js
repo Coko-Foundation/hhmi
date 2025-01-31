@@ -1,8 +1,8 @@
 const flattenMetadataValues = require('../flattenMetadataValues')
 
 describe('Flatten metadata values', () => {
-  it('flattens all keys', () => {
-    const flattened = flattenMetadataValues()
+  it('flattens all keys', async () => {
+    const flattened = await flattenMetadataValues()
 
     // topics
     expect(flattened.biochemistryMolecularBiology).toBe(
