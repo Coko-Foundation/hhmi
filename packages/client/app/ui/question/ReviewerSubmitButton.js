@@ -140,7 +140,7 @@ const ReviewerSubmitButton = props => {
             ]}
           >
             <StyledUpload
-              accept="image/*,.pdf,.docx,.odt"
+              accept=".pdf"
               aria-label="Upload attachments"
               beforeUpload={() => false}
               files={attachments}
