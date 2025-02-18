@@ -347,6 +347,7 @@ const QuestionPage = props => {
       variables: {
         id: question?.authorChatThreadId,
       },
+      fetchPolicy: 'network-only',
     })
 
   const { data: { chatThread: productionChatThread } = {} } = useQuery(
@@ -356,6 +357,7 @@ const QuestionPage = props => {
       variables: {
         id: question?.productionChatThreadId,
       },
+      fetchPolicy: 'network-only',
     },
   )
 
@@ -364,6 +366,7 @@ const QuestionPage = props => {
     variables: {
       id: question?.reviewerChatThreadId,
     },
+    fetchPolicy: 'network-only',
     onCompleted: ({ chatThread: reviewerChat }) => {
       setSelectedReviewerId(currentUser.id)
       setReviewerChatMessages(reviewerChat?.messages)
@@ -371,7 +374,9 @@ const QuestionPage = props => {
     },
   })
 
-  const [getReviewerChatThread] = useLazyQuery(FILTER_CHAT_THREADS)
+  const [getReviewerChatThread] = useLazyQuery(FILTER_CHAT_THREADS, {
+    fetchPolicy: 'network-only',
+  })
 
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
     skip: !authorChatThread?.id,
