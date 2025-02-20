@@ -15,7 +15,7 @@ const Upload = ({ files, onChange, onRemove, ...rest }) => {
       onRemove={onRemove}
       {...rest}
     >
-      <Tooltip placement="leftBottom" title="Upload files">
+      <Tooltip placement="left" title="Upload files">
         <PaperClipOutlined />
       </Tooltip>
     </StyledAntUpload>

@@ -235,10 +235,17 @@ const MentionsItem = ({ item, markAs }) => {
                     onClick={() => markAs(true, [id])}
                     to={
                       chatLink.indexOf('#reviewerChat') > -1
-                        ? chatLink.substring(
-                            0,
-                            chatLink.indexOf('#reviewerChat') + 13,
-                          )
+                        ? {
+                            pathname: chatLink.substring(
+                              0,
+                              chatLink.indexOf('#reviewerChat') + 13,
+                            ),
+                            state: {
+                              reviewerId: chatLink.substring(
+                                chatLink.indexOf('#reviewerChat') + 14,
+                              ),
+                            },
+                          }
                         : chatLink
                     }
                   >

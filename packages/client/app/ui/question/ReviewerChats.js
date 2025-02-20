@@ -49,12 +49,18 @@ const ReviewerChats = props => {
     onFetchMore,
     onSendMessage,
     participants,
-
+    reviewerId,
     reviewers,
     onSelectReviewer,
   } = props
 
   const [selectedReviewer, setSelectedReviewer] = useState()
+
+  useEffect(() => {
+    if (reviewerId) {
+      handleChangeReviewer(reviewerId)
+    }
+  }, [reviewerId])
 
   useEffect(() => {
     if (selectedReviewer?.id) {
@@ -79,6 +85,7 @@ const ReviewerChats = props => {
               label: r.displayName,
               value: r.id,
             }))}
+            {...(reviewerId ? { defaultValue: reviewerId } : {})}
           />
         </ReviewerSelectorWrapper>
       </ReviewerChatHeader>

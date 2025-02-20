@@ -476,6 +476,7 @@ const Question = props => {
     hasDeletedAuthor,
     onSelectReviewer,
     hasGeneralReviewerChatId,
+    reviewerId,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -895,14 +896,14 @@ const Question = props => {
     if (toAutomate) runAutomateInviteReviewers()
   }
 
-  const handleClickInviteReviewer = async reviewerId => {
+  const handleClickInviteReviewer = async invitedReviewerId => {
     if (!findAvailableReviewerSlots()) return Promise.resolve()
 
-    return onInviteReviewer(reviewerId)
+    return onInviteReviewer(invitedReviewerId)
   }
 
-  const handleRevokeReviewerInvite = async reviewerId => {
-    await onRevokeReviewerInvitation(reviewerId)
+  const handleRevokeReviewerInvite = async uninvitedReviewerId => {
+    await onRevokeReviewerInvitation(uninvitedReviewerId)
 
     if (automateReviewerInvites) await runAutomateInviteReviewers()
   }
@@ -1641,6 +1642,9 @@ const Question = props => {
                   readOnly={readOnly}
                   resources={resources}
                   selectedQuestionType={selectedQuestionType?.metadataValue}
+                  showIBoptionalFields={
+                    isInProduction || isPublished || isUnpublished
+                  }
                   showTopicAndSubtopicFields={
                     isInProduction || isPublished || isUnpublished
                   }
@@ -1715,6 +1719,7 @@ const Question = props => {
             onSelectReviewer={onSelectReviewer}
             onSendMessage={onSendReviewerChatMessage}
             participants={reviewerChatParticipants}
+            reviewerId={reviewerId}
             reviewers={reviewerPool.filter(r => r.acceptedInvitation)}
           />
         ),
@@ -2185,6 +2190,7 @@ Question.propTypes = {
   hasDeletedAuthor: PropTypes.bool,
   onSelectReviewer: PropTypes.func,
   hasGeneralReviewerChatId: PropTypes.bool,
+  reviewerId: PropTypes.string,
 }
 
 Question.defaultProps = {
@@ -2286,6 +2292,7 @@ Question.defaultProps = {
   hasDeletedAuthor: false,
   onSelectReviewer: null,
   hasGeneralReviewerChatId: false,
+  reviewerId: null,
 }
 
 export default Question

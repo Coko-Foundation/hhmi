@@ -18,6 +18,7 @@ const IBCourseMetadata = props => {
     understandingKey,
     supplementaryKey,
     index,
+    showIBoptionalFields,
   } = props
 
   const metadataMapper = data => mapMetadataToSelectOptions(data, readOnly)
@@ -193,7 +194,7 @@ const IBCourseMetadata = props => {
 
   return (
     <>
-      {!filterMode && <p>{courseData.label}: College Board Curriculum</p>}
+      {/* {!filterMode && <p>{courseData.label}: College Board Curriculum</p>} */}
       <Form.Item
         label="Course Unit"
         name={unitName}
@@ -236,87 +237,72 @@ const IBCourseMetadata = props => {
           </Form.Item>
         )}
       </Form.Item>
-      <Form.Item dependencies={[unitField, topicField]} noStyle>
-        {() =>
-          !filterApplicationOptions()?.length &&
-          (filterMode || !!getFieldValue(topicField)) ? null : (
-            <Form.Item
-              label={
-                courseData.value === 'biEnvironmentalScience'
-                  ? 'Application and Skill'
-                  : 'Application'
-              }
-              name={applicationName}
-              rules={[
-                isRequired
-                  ? { required: true, message: 'Application is required' }
-                  : {},
-              ]}
-            >
-              <Select
-                allowClear={filterMode}
-                disabled={
-                  readOnly || (!filterMode && !getFieldValue(topicField))
-                }
-                optionFilterProp="label"
-                options={filterApplicationOptions()}
-                showSearch
-                wrapOptionText
-              />
-            </Form.Item>
-          )
-        }
-      </Form.Item>
-      <Form.Item dependencies={[unitField, topicField]} noStyle>
-        {() =>
-          courseData.value === 'biEnvironmentalScience' ||
-          (!filterSkillOptions()?.length &&
-            (filterMode || !!getFieldValue(topicField))) ? null : (
-            <Form.Item
-              label="Skill"
-              name={skillName}
-              rules={[
-                isRequired
-                  ? { required: true, message: 'Skill is required' }
-                  : {},
-              ]}
-            >
-              <Select
-                allowClear={filterMode}
-                disabled={
-                  readOnly || (!filterMode && !getFieldValue(topicField))
-                }
-                optionFilterProp="label"
-                options={filterSkillOptions()}
-                showSearch
-                wrapOptionText
-              />
-            </Form.Item>
-          )
-        }
-      </Form.Item>
-      <Form.Item dependencies={[unitField, topicField]} noStyle>
-        {() => (
-          <Form.Item
-            label="Understanding"
-            name={understandingName}
-            rules={[
-              isRequired
-                ? { required: true, message: 'Understanding is required' }
-                : {},
-            ]}
-          >
-            <Select
-              allowClear={filterMode}
-              disabled={readOnly || (!filterMode && !getFieldValue(topicField))}
-              optionFilterProp="label"
-              options={filterUnderstandingOptions()}
-              showSearch
-              wrapOptionText
-            />
+      {showIBoptionalFields && (
+        <>
+          <Form.Item dependencies={[unitField, topicField]} noStyle>
+            {() =>
+              !filterApplicationOptions()?.length &&
+              (filterMode || !!getFieldValue(topicField)) ? null : (
+                <Form.Item
+                  label={
+                    courseData.value === 'biEnvironmentalScience'
+                      ? 'Application and Skill'
+                      : 'Application'
+                  }
+                  name={applicationName}
+                >
+                  <Select
+                    allowClear={filterMode}
+                    disabled={
+                      readOnly || (!filterMode && !getFieldValue(topicField))
+                    }
+                    optionFilterProp="label"
+                    options={filterApplicationOptions()}
+                    showSearch
+                    wrapOptionText
+                  />
+                </Form.Item>
+              )
+            }
           </Form.Item>
-        )}
-      </Form.Item>
+          <Form.Item dependencies={[unitField, topicField]} noStyle>
+            {() =>
+              courseData.value === 'biEnvironmentalScience' ||
+              (!filterSkillOptions()?.length &&
+                (filterMode || !!getFieldValue(topicField))) ? null : (
+                <Form.Item label="Skill" name={skillName}>
+                  <Select
+                    allowClear={filterMode}
+                    disabled={
+                      readOnly || (!filterMode && !getFieldValue(topicField))
+                    }
+                    optionFilterProp="label"
+                    options={filterSkillOptions()}
+                    showSearch
+                    wrapOptionText
+                  />
+                </Form.Item>
+              )
+            }
+          </Form.Item>
+          <Form.Item dependencies={[unitField, topicField]} noStyle>
+            {() => (
+              <Form.Item label="Understanding" name={understandingName}>
+                <Select
+                  allowClear={filterMode}
+                  disabled={
+                    readOnly || (!filterMode && !getFieldValue(topicField))
+                  }
+                  optionFilterProp="label"
+                  options={filterUnderstandingOptions()}
+                  showSearch
+                  wrapOptionText
+                />
+              </Form.Item>
+            )}
+          </Form.Item>
+        </>
+      )}
     </>
   )
 }
@@ -335,6 +321,7 @@ IBCourseMetadata.propTypes = {
   understandingKey: PropTypes.string,
   supplementaryKey: PropTypes.string,
   index: PropTypes.number,
+  showIBoptionalFields: PropTypes.bool,
 }
 
 IBCourseMetadata.defaultProps = {
@@ -348,6 +335,7 @@ IBCourseMetadata.defaultProps = {
   readOnly: false,
   supplementaryKey: '',
   index: 0,
+  showIBoptionalFields: true,
 }
 
 export default IBCourseMetadata
