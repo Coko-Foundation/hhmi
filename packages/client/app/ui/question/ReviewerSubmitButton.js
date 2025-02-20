@@ -4,32 +4,27 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { th } from '@coko/client'
-
-import { Button, Form, Link, TextArea, Modal, Upload } from '../common'
+import { Upload } from 'antd'
+import { Button, Form, Modal } from '../common'
 
 const StyledForm = styled(Form)`
   .ant-form-item-required::before {
     content: '' !important;
   }
-`
 
-const StyledFormItem = styled(Form.Item)`
-  bottom: 40px;
-  margin-bottom: -30px;
-  position: relative;
+  label::before {
+    margin: 0 !important;
+  }
 `
 
 const StyledUpload = styled(Upload)`
-  align-items: end;
   color: ${th('colorPrimary')};
   display: flex;
   flex-direction: column;
-  inset-block-end: 15px;
-  padding-inline: 10px;
+  margin-block: 15px;
   position: relative;
 
   .ant-upload {
-    /* inset-block-end: 15px; */
     position: relative;
 
     [role='button']:focus {
@@ -39,7 +34,6 @@ const StyledUpload = styled(Upload)`
   }
 
   .ant-upload-list.ant-upload-list-text {
-    direction: rtl;
     display: grid;
     position: relative;
     top: 5px;
@@ -47,20 +41,12 @@ const StyledUpload = styled(Upload)`
     button[title='Remove file'] {
       opacity: 1 !important;
     }
-
-    > * {
-      direction: ltr;
-      max-inline-size: 200px;
-    }
   }
 `
 
 const ModalHeader = Modal.header
 const ModalFooter = Modal.footer
 const ModalContext = React.createContext(null)
-
-const link =
-  'https://docs.google.com/document/d/11ouizynaBlamTANf-crPdlKL91eXhDioHdiy6rL2ArA/edit?usp=sharing'
 
 const ReviewerSubmitButton = props => {
   const { className, onSubmit, showDialog } = props
@@ -144,53 +130,27 @@ const ReviewerSubmitButton = props => {
           onValuesChange={() => reviewForm.validateFields(['content'])}
         >
           <Form.Item
-            label={
-              <span>
-                Please read the{' '}
-                <Link
-                  rel="noreferrer noopener"
-                  target="_blank"
-                  to={{ pathname: link }}
-                >
-                  guidelines on providing feedback
-                </Link>{' '}
-                and provide your feedback below.
-              </span>
-            }
-            name="content"
+            label="Please upload the PDF you received when you completed the Reviewer Feedback Form."
+            name="attachments"
             rules={[
               {
                 required: true,
-                message: 'Please provide a review',
-              },
-              {
-                validator(_, value) {
-                  if (value && value.length > 0) {
-                    return Promise.resolve()
-                  }
-
-                  return Promise.reject()
-                },
+                message: 'Please provide a review.',
               },
             ]}
-            validateTrigger="onSubmit"
           >
-            <TextArea
-              autoSize={{ minRows: 6, maxRows: 12 }}
-              data-testid="review-submit"
-              placeholder="Enter review here..."
-            />
-          </Form.Item>
-          <StyledFormItem name="attachments">
             <StyledUpload
-              accept="image/*,.pdf,.docx,.odt"
+              accept=".pdf"
               aria-label="Upload attachments"
+              beforeUpload={() => false}
               files={attachments}
               multiple
               onChange={handleAttachmentChange}
               onRemove={handleRemoveAttachment}
-            />
-          </StyledFormItem>
+            >
+              <Button>Upload files</Button>
+            </StyledUpload>
+          </Form.Item>
         </StyledForm>
       </Modal>
     </ModalContext.Provider>

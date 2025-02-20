@@ -20,6 +20,7 @@ export const GET_USER_NOTIFICATIONS = gql`
         content
         read
         from {
+          id
           displayName
         }
       }

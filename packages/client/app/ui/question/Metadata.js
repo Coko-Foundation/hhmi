@@ -52,6 +52,7 @@ const Metadata = React.forwardRef((props, ref) => {
     innerRef,
     selectedQuestionType,
     showTopicAndSubtopicFields,
+    showIBoptionalFields,
   } = props
 
   const [formValues] = useState(initialValues)
@@ -116,6 +117,7 @@ const Metadata = React.forwardRef((props, ref) => {
           isRequired
           readOnly={readOnly}
           setFieldsValue={form.setFieldsValue}
+          showIBoptionalFields={showIBoptionalFields}
           supplementaryKey={key}
         />
       )
@@ -777,6 +779,7 @@ Metadata.propTypes = {
   ),
   selectedQuestionType: PropTypes.string,
   showTopicAndSubtopicFields: PropTypes.bool,
+  showIBoptionalFields: PropTypes.bool,
 }
 
 Metadata.defaultProps = {
@@ -789,6 +792,7 @@ Metadata.defaultProps = {
   complexItemSetOptions: [],
   selectedQuestionType: null,
   showTopicAndSubtopicFields: false,
+  showIBoptionalFields: false,
 }
 
 export default Metadata
