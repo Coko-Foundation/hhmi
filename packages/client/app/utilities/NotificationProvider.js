@@ -74,9 +74,21 @@ export const NotificationsProvider = ({ children }) => {
     }) => {
       const { content: message, questionId, chatType } = JSON.parse(content)
       setNewNotification(() => {
+        const href =
+          chatType.indexOf('reviewerChat') > -1
+            ? {
+                pathname: `/question/${questionId}#reviewerChat`,
+                state: {
+                  reviewerId: chatType.substring(
+                    chatType.indexOf('reviewerChat') + 13,
+                  ),
+                },
+              }
+            : `/question/${questionId}#${chatType}`
+
         return {
           message: (
-            <StyledLink to={`/question/${questionId}#${chatType}`}>
+            <StyledLink to={href}>
               <StyledSpan>
                 <StyledMessage>
                   <StyledImage

@@ -218,7 +218,11 @@ const QuestionPage = props => {
   const { testMode } = props
 
   // #region hooks
-  const { id } = useParams()
+  // check if url fragment has been included in id param; if so, remove it
+  const { id: rawId } = useParams()
+  const hasIndex = rawId.indexOf('#')
+  const id = hasIndex > -1 ? rawId.substring(0, hasIndex) : rawId
+
   const history = useHistory()
   const { metadata } = useMetadata()
 
@@ -343,6 +347,7 @@ const QuestionPage = props => {
       variables: {
         id: question?.authorChatThreadId,
       },
+      fetchPolicy: 'network-only',
     })
 
   const { data: { chatThread: productionChatThread } = {} } = useQuery(
@@ -352,6 +357,7 @@ const QuestionPage = props => {
       variables: {
         id: question?.productionChatThreadId,
       },
+      fetchPolicy: 'network-only',
     },
   )
 
@@ -360,6 +366,7 @@ const QuestionPage = props => {
     variables: {
       id: question?.reviewerChatThreadId,
     },
+    fetchPolicy: 'network-only',
     onCompleted: ({ chatThread: reviewerChat }) => {
       setSelectedReviewerId(currentUser.id)
       setReviewerChatMessages(reviewerChat?.messages)
@@ -367,7 +374,9 @@ const QuestionPage = props => {
     },
   })
 
-  const [getReviewerChatThread] = useLazyQuery(FILTER_CHAT_THREADS)
+  const [getReviewerChatThread] = useLazyQuery(FILTER_CHAT_THREADS, {
+    fetchPolicy: 'network-only',
+  })
 
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
     skip: !authorChatThread?.id,
@@ -1543,6 +1552,7 @@ const QuestionPage = props => {
           currentUser?.id,
         )}
         reviewerChatParticipants={reviewerChatParticipants}
+        reviewerId={location.state?.reviewerId}
         reviewerPool={reviewerPool}
         reviewerView={isReviewer && isUnderReview}
         reviewInviteStatus={reviewerInviteStatus}

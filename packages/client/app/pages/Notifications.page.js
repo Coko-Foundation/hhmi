@@ -88,6 +88,7 @@ const NotificationPage = () => {
         includeFullListOfIds: true,
       },
     },
+    fetchPolicy: 'network-only',
     onCompleted: ({ userNotifications: { result } }) =>
       setUpdatedMentions(mentionsShape(result)),
   })

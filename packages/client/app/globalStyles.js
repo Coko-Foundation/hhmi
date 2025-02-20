@@ -31,7 +31,7 @@ export default createGlobalStyle`
     }
   }
 
-  #root .ant-tooltip .ant-tooltip-arrow::before {
+  .ant-tooltip .ant-tooltip-arrow::before {
     clip-path: polygon(0 100%, 50% 0%, 100% 100%);
   }
 
