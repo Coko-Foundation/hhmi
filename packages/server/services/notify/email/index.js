@@ -151,10 +151,13 @@ const productionChatActivityDigest = async context => {
   const link = `${clientUrl}/question/${questionId}#productionChat`
 
   const content = `
-    <p>The Production team have been discussing this item. 
+    <p>
+      The Production team has been discussing this item. 
+      You must be logged in to the Assessment Builder tool to see the item
       Click on <a href="${link}">this link</a> to view the discussion. 
       If you cannot see the link, copy and paste the following link into your browser.
-      <br/>
+    </p>
+    <p>
       ${link}
     </p>
   `
@@ -214,15 +217,19 @@ const inviteReviewer = async context => {
 
     const content = `
 	<p>
-    You have been invited to review an item in the Assessment Builder.
+    You have been invited to review an item in the Assessment Builder. 
+    You must be logged in to the AB tool to see the item.
 	</p>
 	<p>
-    Click on <a href="${link}">this link</a> to view the item and choose to accept or decline 
-    this review within the next seven days. We ask that reviews be completed within two weeks of acceptance. 
-    Thank you for considering sharing your expertise with the community.
-    <br/>
-    ${link}
-	</p>
+    Click on <a href="${link}">this link</a> to view the item and choose to accept or decline this review within the next seven days. 
+  </p>
+  <p>
+    If you are able to review the item, after accepting it, click on <a href="https://biointeractive.jotform.com/242195353808057">this link</a> 
+    to complete your review. For additional information and resources about the review process, click on <a href="https://drive.google.com/drive/u/0/folders/18ARogadE6RwDQiR9CMoaR3DCzwuyUhBK">this link</a>. 
+    We ask that reviews be completed within 14 days of acceptance. 
+  </p>
+  <p>Thank you for sharing your expertise with the community.</p>
+  <p>${link}</p>
 	`
 
     const text = `You have been invited to review an item in the Assessment Builder.
