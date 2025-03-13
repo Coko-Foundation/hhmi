@@ -37,12 +37,26 @@ const transform = data => {
   })
 }
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 20
+
+const sortOptions = [
+  {
+    label: 'Date (descending)',
+    value: 'date-desc',
+    isDefault: true,
+  },
+  {
+    label: 'Date (ascending)',
+    value: 'date-asc',
+    isDefault: false,
+  },
+]
 
 const ComplexItemSetsListPage = () => {
   const [searchParams, setSearchParams] = useState({
     searchQuery: '',
     page: 1,
+    ascending: false,
   })
 
   const { data: { complexItemSets } = {}, loading: loadingSets } = useQuery(
@@ -53,18 +67,29 @@ const ComplexItemSetsListPage = () => {
         options: {
           page: searchParams.page - 1,
           pageSize: PAGE_SIZE,
+          ascending: searchParams.ascending,
+          orderBy: 'created',
         },
       },
       fetchPolicy: 'network-only',
     },
   )
 
+  const handleSortOptionChange = sortBy => {
+    sortOptions.filter(opt => opt.isDefault)[0].isDefault = false
+    sortOptions.filter(opt => opt.value === sortBy)[0].isDefault = true
+
+    setSearchParams({ ...searchParams, ascending: sortBy === 'date-asc' })
+  }
+
   return (
     <ComplexItemSetList
       data={transform(complexItemSets)}
       loading={loadingSets}
       onSearch={setSearchParams}
+      onSortOptionChange={handleSortOptionChange}
       pageSize={PAGE_SIZE}
+      sortOptions={sortOptions}
       total={complexItemSets?.totalCount}
     />
   )

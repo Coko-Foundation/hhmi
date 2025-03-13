@@ -22,6 +22,19 @@ import {
 
 const NOTIFICATION_TIMEOUT = 5000
 
+const sortOptions = [
+  {
+    label: 'Date (descending)',
+    value: 'date-desc',
+    isDefault: true,
+  },
+  {
+    label: 'Date (ascending)',
+    value: 'date-asc',
+    isDefault: false,
+  },
+]
+
 const ComplexItemSetPage = () => {
   const { id } = useParams()
   const history = useHistory()
@@ -59,6 +72,7 @@ const ComplexItemSetPage = () => {
   const [submissionMessage, setSubmissionMessage] = useState(null)
   const [submissionStatus, setSubmissionStatus] = useState(null)
   const [questionsPage, setQuestionsPage] = useState(1)
+  const [sortAscending, setSortAscending] = useState(false)
 
   const { data, loading: loadingData } = useQuery(GET_COMPLEX_ITEM_SET, {
     variables: {
@@ -67,13 +81,20 @@ const ComplexItemSetPage = () => {
         page: questionsPage - 1,
         pageSize: 100, // needs discussion
         orderBy: 'publication_date',
-        ascending: false,
+        ascending: sortAscending,
       },
     },
     errorPolicy: 'ignore',
     skip: !id,
     fetchPolicy: 'network-only',
   })
+
+  const handleSortOptionChange = sortBy => {
+    sortOptions.filter(opt => opt.isDefault)[0].isDefault = false
+    sortOptions.filter(opt => opt.value === sortBy)[0].isDefault = true
+
+    setSortAscending(sortBy === 'date-asc')
+  }
 
   useEffect(() => {
     // if no compelx item set was found for given id, redirect to /sets
@@ -260,6 +281,7 @@ const ComplexItemSetPage = () => {
       onImageUpload={handleImageUpload}
       onQuestionsPageChange={setQuestionsPage}
       onSave={handleSave}
+      onSortOptionChange={handleSortOptionChange}
       questions={
         data && metadata && complexItemSetOptions
           ? dashboardDataMapper({
@@ -274,6 +296,7 @@ const ComplexItemSetPage = () => {
             })
           : []
       }
+      sortOptions={sortOptions}
       submissionMessage={submissionMessage}
       submissionStatus={submissionStatus}
       title={data?.complexItemSet?.title}

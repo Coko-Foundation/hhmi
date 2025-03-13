@@ -117,6 +117,8 @@ const ComplexItemSet = props => {
     submissionMessage,
     submissionStatus,
     totalQuestions,
+    onSortOptionChange,
+    sortOptions,
   } = props
 
   const [activeKey, setActiveKey] = useState(activeTab)
@@ -155,9 +157,11 @@ const ComplexItemSet = props => {
               ),
             }}
             onPageChange={onQuestionsPageChange}
+            onSortOptionChange={onSortOptionChange}
             questions={questions}
             showSearch={false}
-            showSort={false}
+            showSort
+            sortOptions={sortOptions}
             totalCount={totalQuestions} // not paginated for now, so total === question.length
           />
         </Wrapper>
@@ -227,6 +231,8 @@ ComplexItemSet.propTypes = {
   totalQuestions: PropTypes.number,
   activeTab: PropTypes.string,
   editWarning: PropTypes.bool,
+  onSortOptionChange: PropTypes.bool,
+  sortOptions: PropTypes.arrayOf(PropTypes.shape()),
 }
 
 ComplexItemSet.defaultProps = {
@@ -248,6 +254,8 @@ ComplexItemSet.defaultProps = {
   totalQuestions: 0,
   activeTab: 'content',
   editWarning: false,
+  onSortOptionChange: null,
+  sortOptions: [],
 }
 
 export default ComplexItemSet

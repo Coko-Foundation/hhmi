@@ -10,7 +10,7 @@ export const GET_COMPLEX_ITEM_SETS_OPTIONS = gql`
 `
 
 export const GET_COMPLEX_ITEM_SETS = gql`
-  query GetComplexItemSets($params: SetFilters, $options: PageInput) {
+  query GetComplexItemSets($params: SetFilters, $options: QuestionPageInput) {
     complexItemSets(params: $params, options: $options) {
       result {
         id
