@@ -52,6 +52,10 @@ const LoginPage = () => {
     const clientId = biointeractiveOathClientId
     const redirectUri = biointeractiveOathRedirectUri
 
+    if (window.location.search?.length) {
+      localStorage.setItem('redirectTo', window.location.search)
+    }
+
     localStorage.setItem('oauthState', oauthState)
 
     window.location.assign(
