@@ -1166,18 +1166,6 @@ const Question = props => {
         onExport={onClickExportToWord}
         showMetadataOption
       />
-      {showAssignHEButton && (
-        <StyledAssignHEButton
-          currentHandlingEditors={currentHandlingEditors}
-          handlingEditors={handlingEditors}
-          loadAssignedHEs={loadAssignedHEs}
-          loading={assignHELoading}
-          onAssign={onClickAssignHE}
-          onSearchHE={onSearchHE}
-          onUnassign={onUnassignHandlingEditor}
-          searchLoading={searchHELoading}
-        />
-      )}
       {((canAssignAuthor && isPublished) ||
         (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
         <StyledAssignAuthorButton
@@ -1235,6 +1223,18 @@ const Question = props => {
           </StyledButton>
         </>
       )}
+      {showAssignHEButton && (
+        <StyledAssignHEButton
+          currentHandlingEditors={currentHandlingEditors}
+          handlingEditors={handlingEditors}
+          loadAssignedHEs={loadAssignedHEs}
+          loading={assignHELoading}
+          onAssign={onClickAssignHE}
+          onSearchHE={onSearchHE}
+          onUnassign={onUnassignHandlingEditor}
+          searchLoading={searchHELoading}
+        />
+      )}
       {isPublished && canUnpublish && (
         <StyledButton onClick={showUnpublishModal} type="primary">
           Unpublish
@@ -1262,18 +1262,6 @@ const Question = props => {
           onExport={onClickExportToWord}
           showMetadataOption
         />
-        {showAssignHEButton && (
-          <StyledAssignHEButton
-            currentHandlingEditors={currentHandlingEditors}
-            handlingEditors={handlingEditors}
-            loadAssignedHEs={loadAssignedHEs}
-            loading={assignHELoading}
-            onAssign={onClickAssignHE}
-            onSearchHE={onSearchHE}
-            onUnassign={onUnassignHandlingEditor}
-            searchLoading={searchHELoading}
-          />
-        )}
         {((canAssignAuthor && isPublished) ||
           (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
           <StyledAssignAuthorButton
@@ -1304,16 +1292,6 @@ const Question = props => {
             </StyledButton>
           </>
         )}
-        {canPublish && isInProduction && (
-          <StyledButton
-            data-testid="publish-question-btn"
-            onClick={handlePublish}
-            type="primary"
-          >
-            Publish
-          </StyledButton>
-        )}
-
         {isSubmitted &&
           !isUnderReview &&
           !isInProduction &&
@@ -1338,7 +1316,27 @@ const Question = props => {
               </StyledButton>
             </>
           )}
-
+        {showAssignHEButton && (
+          <StyledAssignHEButton
+            currentHandlingEditors={currentHandlingEditors}
+            handlingEditors={handlingEditors}
+            loadAssignedHEs={loadAssignedHEs}
+            loading={assignHELoading}
+            onAssign={onClickAssignHE}
+            onSearchHE={onSearchHE}
+            onUnassign={onUnassignHandlingEditor}
+            searchLoading={searchHELoading}
+          />
+        )}
+        {canPublish && isInProduction && (
+          <StyledButton
+            data-testid="publish-question-btn"
+            onClick={handlePublish}
+            type="primary"
+          >
+            Publish
+          </StyledButton>
+        )}
         {isPublished && canUnpublish && (
           <StyledButton onClick={showUnpublishModal} type="primary">
             Unpublish
