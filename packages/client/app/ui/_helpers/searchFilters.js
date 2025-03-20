@@ -27,6 +27,7 @@ const filterStatusKey = { label: 'Status', value: 'status' }
 
 const filterStatusValues = [
   { label: 'Submitted', value: 'submitted', badgeBg: theme.colorText },
+  { label: 'Accepted', value: 'accepted', badgeBg: theme.colorTertiary },
   {
     label: 'Under Review',
     value: 'underReview',

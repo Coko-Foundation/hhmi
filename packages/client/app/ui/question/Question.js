@@ -400,6 +400,7 @@ const Question = props => {
     onClickExportToQti,
     onSubmitReport,
     initialMetadataValues,
+    isAccepted,
     isArchived,
     isUserLoggedIn,
     isPublished,
@@ -413,6 +414,7 @@ const Question = props => {
     loading,
     loadAuthors,
     metadata,
+    onAcceptQuestion,
     onAddReviewers,
     onAssignAuthor,
     onAutomateReviewerChange,
@@ -497,7 +499,9 @@ const Question = props => {
   const [imageLongDescs, setImageLongDescs] = useState([])
 
   const readOnly =
-    (editorView && !isInProduction && isSubmitted) ||
+    (editorView &&
+      isSubmitted &&
+      (isUnderReview || isPublished || isUnpublished)) ||
     (!editorView && isSubmitted) ||
     isRejected
 
@@ -1204,25 +1208,48 @@ const Question = props => {
           Publish
         </StyledButton>
       )}
-      {isSubmitted && !isUnderReview && !isInProduction && !isPublished && (
-        <>
-          <StyledButton
-            id="doNotAccept"
-            onClick={handleReject}
-            status="danger"
-            type="primary"
-          >
-            Do not accept
-          </StyledButton>
-          <StyledButton
-            id="moveToReview"
-            onClick={handleMoveToReview}
-            type="primary"
-          >
-            Move to review
-          </StyledButton>
-        </>
-      )}
+      {isSubmitted &&
+        !isAccepted &&
+        !isUnderReview &&
+        !isInProduction &&
+        !isPublished && (
+          <>
+            <StyledButton
+              id="doNotAccept"
+              onClick={handleReject}
+              status="danger"
+              type="primary"
+            >
+              Do not accept
+            </StyledButton>
+            <StyledButton id="accept" onClick={onAcceptQuestion} type="primary">
+              Accept
+            </StyledButton>
+          </>
+        )}
+      {isAccepted &&
+        !isUnderReview &&
+        !isInProduction &&
+        !isPublished &&
+        !isUnpublished && (
+          <>
+            <StyledButton
+              id="doNotAccept"
+              onClick={handleReject}
+              status="danger"
+              type="primary"
+            >
+              Do not accept
+            </StyledButton>
+            <StyledButton
+              id="moveToReview"
+              onClick={handleMoveToReview}
+              type="primary"
+            >
+              Move to review
+            </StyledButton>
+          </>
+        )}
       {showAssignHEButton && (
         <StyledAssignHEButton
           currentHandlingEditors={currentHandlingEditors}
@@ -1293,6 +1320,7 @@ const Question = props => {
           </>
         )}
         {isSubmitted &&
+          !isAccepted &&
           !isUnderReview &&
           !isInProduction &&
           !isPublished &&
@@ -1306,7 +1334,29 @@ const Question = props => {
               >
                 Do not accept
               </StyledButton>
-
+              <StyledButton
+                id="accept"
+                onClick={onAcceptQuestion}
+                type="primary"
+              >
+                Accept
+              </StyledButton>
+            </>
+          )}
+        {isAccepted &&
+          !isUnderReview &&
+          !isInProduction &&
+          !isPublished &&
+          !isUnpublished && (
+            <>
+              <StyledButton
+                id="doNotAccept"
+                onClick={handleReject}
+                status="danger"
+                type="primary"
+              >
+                Do not accept
+              </StyledButton>
               <StyledButton
                 id="moveToReview"
                 onClick={handleMoveToReview}
@@ -1829,6 +1879,7 @@ Question.propTypes = {
   hasMoreMessages: PropTypes.bool,
   loading: PropTypes.bool.isRequired,
   loadAuthors: PropTypes.func,
+  onAcceptQuestion: PropTypes.func,
   onAddReviewers: PropTypes.func,
   onAssignAuthor: PropTypes.func,
   onAutomateReviewerChange: PropTypes.func,
@@ -1866,6 +1917,7 @@ Question.propTypes = {
   editorContent: PropTypes.shape(),
   questionAgreedTc: PropTypes.bool,
   submitting: PropTypes.bool,
+  isAccepted: PropTypes.bool,
   isArchived: PropTypes.bool,
   isPublished: PropTypes.bool,
   isRejected: PropTypes.bool,
@@ -2202,6 +2254,7 @@ Question.defaultProps = {
   authorChatMessages: [],
   productionChatMessages: [],
   reviewerChatMessages: [],
+  onAcceptQuestion: () => {},
   onAddReviewers: () => {},
   onAutomateReviewerChange: () => {},
   onChangeAmountOfReviewers: () => {},
@@ -2239,6 +2292,7 @@ Question.defaultProps = {
   onSubmitReview: () => {},
   loadAuthors: () => {},
   submitting: false,
+  isAccepted: false,
   isArchived: false,
   isPublished: false,
   isRejected: false,

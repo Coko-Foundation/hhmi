@@ -33,6 +33,7 @@ const validDataType = ['biochemistry', 'anatomy', 'population', 'ecology']
 const validQuestionStatus = [
   'notSubmitted',
   'submitted',
+  'accepted',
   'underReview',
   'published',
   'inProduction',

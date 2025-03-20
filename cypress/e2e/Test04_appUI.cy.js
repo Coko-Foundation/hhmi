@@ -94,6 +94,12 @@ describe('Testing apps responsiveness', () => {
       ).should('be.visible')
 
       cy.contains(
+        '[data-testid="editor-actions-popup"] [id="accept"]',
+        'Accept',
+      ).click()
+      cy.wait('@GQLReq')
+
+      cy.contains(
         '[data-testid="editor-actions-popup"] [id="moveToReview"]',
         'Move to review',
       ).click()
@@ -186,7 +192,7 @@ describe('Search filter', () => {
   const { contact: user1Creds } = user1
   before(() => {
     cy.resetDB(disableScripts)
-        cy.seedUser(disableScripts, { ...user1Creds })
+    cy.seedUser(disableScripts, { ...user1Creds })
     cy.seedUser(disableScripts, { ...user2 })
     cy.seedUser(disableScripts, { ...editorRole })
     cy.seedUser(disableScripts, { ...handlingEditor1 })

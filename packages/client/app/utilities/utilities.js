@@ -1368,6 +1368,7 @@ const dashboardDataMapper = ({
 
   const renderStatus = ({
     submitted,
+    accepted,
     underReview,
     inProduction,
     published,
@@ -1377,6 +1378,7 @@ const dashboardDataMapper = ({
     if (!showStatus) return null
     let status = 'Not Submitted'
     if (submitted) status = 'Submitted'
+    if (accepted) status = 'Accepted'
     if (underReview) status = 'Under Review'
     if (inProduction) status = 'In Production'
     if (published) status = 'Published'

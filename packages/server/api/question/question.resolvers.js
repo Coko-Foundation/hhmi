@@ -20,6 +20,7 @@ const {
   updateQuestion,
   duplicateQuestion,
   submitQuestion,
+  acceptQuestion,
   rejectQuestion,
   moveQuestionVersionToReview,
   moveQuestionVersionToProduction,
@@ -106,6 +107,10 @@ const submitQuestionResolver = async (
   ctx,
 ) => {
   return submitQuestion(questionId, questionVersionId, input)
+}
+
+const acceptQuestionResolver = async (_, { questionVersionId }, ctx) => {
+  return acceptQuestion(questionVersionId)
 }
 
 const rejectQuestionResolver = async (_, { questionId }, ctx) => {
@@ -306,6 +311,7 @@ module.exports = {
     duplicateQuestion: duplicateQuestionResolver,
     updateQuestion: updateQuestionResolver,
     submitQuestion: submitQuestionResolver,
+    acceptQuestion: acceptQuestionResolver,
     rejectQuestion: rejectQuestionResolver,
     moveQuestionVersionToReview: moveQuestionVersionToReviewResolver,
     moveQuestionVersionToProduction: moveQuestionVersionToProductionResolver,

@@ -400,6 +400,19 @@ class Question extends BaseModel {
       case 'submitted':
         query.where({
           submitted: true,
+          accepted: false,
+          under_review: false,
+          in_production: false,
+          published: false,
+          unpublished: false,
+          rejected: false,
+        })
+        return query
+
+      case 'accepted':
+        query.where({
+          submitted: true,
+          accepted: true,
           under_review: false,
           in_production: false,
           published: false,
@@ -489,6 +502,7 @@ class Question extends BaseModel {
     if (status || searchQuery) {
       selectFields.push(
         'question_versions.submitted',
+        'question_versions.accepted',
         'question_versions.under_review',
         'question_versions.in_production',
         'question_versions.published',
@@ -563,6 +577,7 @@ class Question extends BaseModel {
     if (status) {
       selectFields.push(
         ...[
+          'question_versions.accepted',
           'question_versions.under_review',
           'question_versions.in_production',
           'question_versions.published',
@@ -716,6 +731,7 @@ class Question extends BaseModel {
 
       selectFields.push(
         'question_versions.submitted',
+        'question_versions.accepted',
         'question_versions.under_review',
         'question_versions.in_production',
         'question_versions.published',

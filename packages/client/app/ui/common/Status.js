@@ -10,6 +10,7 @@ const variantColor = ({ variant }) => {
     'Not Submitted': () => lighten('colorBorder', 0.5),
     Submitted: () => th('colorText'),
     Rejected: () => th('colorError'),
+    Accepted: () => th('colorTertiary'),
     'Under Review': () => th('colorWarning'),
     'In Production': () => th('colorPrimary'),
     Published: () => th('colorSuccess'),

@@ -23,6 +23,7 @@ type QuestionVersion {
   content: String
 
   submitted: Boolean!
+  accepted: Boolean!
   underReview: Boolean!
   inProduction: Boolean!
   published: Boolean!
@@ -272,6 +273,7 @@ extend type Mutation {
   createQuestion(input: UpdateQuestionInput): Question!
   duplicateQuestion(questionId: ID!): Question!
   rejectQuestion(questionId: ID!): Question!
+  acceptQuestion(questionVersionId: ID!): QuestionVersion!
   moveQuestionVersionToReview(questionVersionId: ID!): QuestionVersion!
   moveQuestionVersionToProduction(questionVersionId: ID!): QuestionVersion!
   publishQuestionVersion(questionVersionId: ID!): QuestionVersion!

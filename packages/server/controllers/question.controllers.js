@@ -504,6 +504,26 @@ const updateQuestion = async (
   return getQuestion(questionId)
 }
 
+const acceptQuestion = async (questionVersionId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} acceptQuestion:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} accepting question version with id ${questionVersionId}`,
+  )
+
+  try {
+    const questionVersion = await modifyQuestionVersion(
+      questionVersionId,
+      { accepted: true },
+      { trx: options.trx },
+    )
+
+    return questionVersion
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 const rejectQuestion = async (questionId, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} rejectQuestion:`
   logger.info(`${CONTROLLER_MESSAGE} rejecting question with id ${questionId}`)
@@ -1338,6 +1358,7 @@ module.exports = {
   duplicateQuestion,
   updateQuestion,
 
+  acceptQuestion,
   moveQuestionVersionToReview,
   moveQuestionVersionToProduction,
   publishQuestionVersion,
