@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams, useHistory, useLocation } from 'react-router-dom'
-import { useQuery, useMutation } from '@apollo/client'
+import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
 
 import { ComplexItemSet, Result, Spin } from 'ui'
 import {
@@ -18,6 +18,8 @@ import {
   CREATE_COMPLEX_ITEM_SET,
   UPLOAD_FILES,
   CREATE_QUESTION,
+  FILTER_USERS_OPTIONS,
+  ASSIGN_SET_AUTHOR,
 } from '../graphql'
 
 const NOTIFICATION_TIMEOUT = 5000
@@ -87,6 +89,35 @@ const ComplexItemSetPage = () => {
     errorPolicy: 'ignore',
     skip: !id,
     fetchPolicy: 'network-only',
+  })
+
+  const [assignAuthor] = useMutation(ASSIGN_SET_AUTHOR, {
+    refetchQueries: [
+      {
+        query: GET_COMPLEX_ITEM_SET,
+        variables: {
+          id,
+          questionsOptions: {
+            page: questionsPage - 1,
+            pageSize: 100, // needs discussion
+            orderBy: 'publication_date',
+            ascending: sortAscending,
+          },
+        },
+      },
+    ],
+  })
+
+  const [
+    getUsers,
+    { data: { filterUsers: { result: possibleAuthors } = {} } = {} },
+  ] = useLazyQuery(FILTER_USERS_OPTIONS, {
+    variables: {
+      params: {
+        isActive: true,
+        search: '',
+      },
+    },
   })
 
   const handleSortOptionChange = sortBy => {
@@ -227,6 +258,18 @@ const ComplexItemSetPage = () => {
       .catch(e => console.error(e))
   }
 
+  const handleAssignAuthor = authorId => {
+    const mutationData = {
+      variables: {
+        setId: id,
+        userId: authorId,
+      },
+    }
+
+    return assignAuthor(mutationData)
+  }
+
+  const isAdmin = hasGlobalRole(currentUser, 'admin')
   const isEditor = hasGlobalRole(currentUser, 'editor')
   const isAuthor = hasRole(currentUser, 'author', id)
   const isHandlingEditor = hasGlobalRole(currentUser, 'handlingEditor')
@@ -262,12 +305,15 @@ const ComplexItemSetPage = () => {
   return (
     <ComplexItemSet
       activeTab={state?.activeTab}
+      authors={possibleAuthors}
+      canAssignAuthor={isAdmin}
       canCreate={!!currentUser}
       canEdit={
         isEditor ||
         (isAuthor && !data?.complexItemSet?.containsSubmissions) ||
         state?.created
       }
+      currentAuthor={data?.complexItemSet?.author?.displayName}
       currentQuestionsPage={questionsPage}
       editWarning={hasPublishedQuestions}
       id={data?.complexItemSet?.id}
@@ -275,8 +321,10 @@ const ComplexItemSetPage = () => {
         data?.complexItemSet?.leadingContent &&
         JSON.parse(data?.complexItemSet?.leadingContent)
       }
+      loadAuthors={getUsers}
       loadingData={loadingData}
       loadingSave={loadingUpdate || loadingCreate}
+      onAssignAuthor={handleAssignAuthor}
       onCreateQuestion={handleCreateQuestion}
       onImageUpload={handleImageUpload}
       onQuestionsPageChange={setQuestionsPage}

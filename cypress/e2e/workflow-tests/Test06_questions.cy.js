@@ -458,7 +458,7 @@ describe('Question Workflows', () => {
       cy.contains('.ant-select-dropdown', user2.username).click()
       cy.contains(
         '[class="ant-modal-footer"] button[type="button"]',
-        'Yes, assign author',
+        'Assign',
       ).click()
       cy.contains(
         '[class="ant-modal-body"]',
@@ -466,7 +466,7 @@ describe('Question Workflows', () => {
       )
       cy.contains(
         '[class="ant-modal-footer"] button[type="button"]',
-        'Assign',
+        'Yes, assign author',
       ).click()
       cy.wait('@GQLReq')
       cy.contains(

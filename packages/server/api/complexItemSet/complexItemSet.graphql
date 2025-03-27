@@ -35,4 +35,5 @@ extend type Mutation {
     leadingContent: String
   ): ComplexItemSet!
   deleteComplexItemSet(id: ID!): ID!
+  assignSetAuthor(setId: ID!, userId: ID!): Boolean
 }

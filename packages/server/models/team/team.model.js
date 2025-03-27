@@ -81,6 +81,53 @@ class Team extends TeamModel {
     }
   }
 
+  static async assignSetAuthor(objectId, userId, options = {}) {
+    try {
+      const team = await Team.findOne({
+        objectId,
+        objectType: 'complexItemSet',
+        role: 'author',
+      })
+
+      let affecetedRows
+
+      if (team) {
+        const teamMember = await TeamMember.findOne({ teamId: team.id })
+
+        // if existing team member
+        if (teamMember) {
+          // patch team_members.user_id
+          affecetedRows = await TeamMember.query(options.trx)
+            .patch({ userId })
+            .where({ teamId: team.id })
+        } else {
+          // create new team member
+          affecetedRows = await Team.addMember(team.id, userId, {
+            trx: options.trx,
+          })
+        }
+      } else {
+        const newTeam = await Team.insert(
+          {
+            objectId,
+            objectType: 'complexItemSet',
+            role: AUTHOR_TEAM.role,
+            displayName: AUTHOR_TEAM.displayName,
+          },
+          { trx: options.trx },
+        )
+
+        affecetedRows = await Team.addMember(newTeam.id, userId, {
+          trx: options.trx,
+        })
+      }
+
+      return !!affecetedRows
+    } catch (e) {
+      throw new Error(e)
+    }
+  }
+
   static async filterGlobalTeamMembers(role, query = '', options = {}) {
     try {
       const parentQuery = User.query(options.trx)

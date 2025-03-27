@@ -52,6 +52,9 @@ export const GET_COMPLEX_ITEM_SET = gql`
       title
       leadingContent
       containsSubmissions
+      author {
+        displayName
+      }
       questions {
         result {
           id
@@ -112,5 +115,11 @@ export const UPDATE_COMPLEX_ITEM_SET = gql`
       title
       leadingContent
     }
+  }
+`
+
+export const ASSIGN_SET_AUTHOR = gql`
+  mutation AssingSetAuthor($setId: ID!, $userId: ID!) {
+    assignSetAuthor(setId: $setId, userId: $userId)
   }
 `

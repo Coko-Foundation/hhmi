@@ -7,6 +7,7 @@ const {
   getQuestionForComplexItemSet,
   getAuthorForComplexItemSet,
   containsSubmissions,
+  assignAuthorForComplexItemSet,
 } = require('../../controllers/complexItemSet.controller')
 
 const { getImageUrls } = require('../../controllers/utils')
@@ -53,6 +54,10 @@ const authorResolver = async complexItemSet => {
   return getAuthorForComplexItemSet(complexItemSet.id)
 }
 
+const assignSetAuthorResolver = async (_, { setId, userId }) => {
+  return assignAuthorForComplexItemSet(setId, userId)
+}
+
 const leadingContentResolver = async complexItemSet => {
   const { leadingContent } = complexItemSet
   if (leadingContent === null) return null
@@ -77,6 +82,7 @@ module.exports = {
     createComplexItemSet: createComplexItemSetResolver,
     editComplexItemSet: editComplexItemSetResolver,
     deleteComplexItemSet: deleteComplexItemSetResolver,
+    assignSetAuthor: assignSetAuthorResolver,
   },
   ComplexItemSet: {
     questions: complexItemSetQuestionsResolver,

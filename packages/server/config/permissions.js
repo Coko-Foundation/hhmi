@@ -394,6 +394,7 @@ const permissions = {
     createComplexItemSet: isActive,
     editComplexItemSet: isActive,
     deleteComplexItemSet: isActive,
+    assignSetAuthor: isAdmin,
     // Notifications
     markAs: isActive,
     // Reviews
