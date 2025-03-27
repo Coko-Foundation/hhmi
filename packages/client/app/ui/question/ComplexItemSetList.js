@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
@@ -48,30 +48,30 @@ const StyledList = styled(List)`
 `
 
 const ComplexItemSetList = props => {
-  const { data, loading, total, onSearch, pageSize } = props
+  const {
+    data,
+    loading,
+    total,
+    onSearch,
+    pageSize,
+    sortOptions,
+    onSortOptionChange,
+    searchParams,
+  } = props
 
   const history = useHistory()
 
-  const [searchParams, setSearchParams] = useState({
-    searchQuery: '',
-    page: 1,
-  })
-
   const handlePageChange = page => {
-    setSearchParams({ ...searchParams, page })
+    onSearch({ ...searchParams, page })
   }
 
   const handleSearch = searchQuery => {
-    setSearchParams({ searchQuery, page: 1 })
+    onSearch({ searchQuery, page: 1 })
   }
 
   const handleCreateNewSetClick = () => {
     history.push('/set/new')
   }
-
-  useEffect(() => {
-    onSearch(searchParams)
-  }, [searchParams])
 
   return (
     <Wrapper>
@@ -85,9 +85,10 @@ const ComplexItemSetList = props => {
         dataSource={data}
         loading={loading}
         onSearch={handleSearch}
+        onSortOptionChange={onSortOptionChange}
         pagination={{
           pageSize,
-          current: searchParams.page,
+          current: searchParams?.page,
           onChange: handlePageChange,
         }}
         renderItem={item => (
@@ -101,7 +102,9 @@ const ComplexItemSetList = props => {
         )}
         searchPlaceholder="Search..."
         showSearch
+        showSort
         showTotalCount
+        sortOptions={sortOptions}
         totalCount={total}
       />
     </Wrapper>
@@ -114,6 +117,11 @@ ComplexItemSetList.propTypes = {
   onSearch: PropTypes.func,
   pageSize: PropTypes.number,
   total: PropTypes.number,
+  sortOptions: PropTypes.arrayOf(PropTypes.shape()),
+  onSortOptionChange: PropTypes.func,
+  searchParams: PropTypes.shape({
+    page: PropTypes.number,
+  }),
 }
 ComplexItemSetList.defaultProps = {
   data: [],
@@ -121,6 +129,9 @@ ComplexItemSetList.defaultProps = {
   onSearch: () => {},
   pageSize: 10,
   total: 0,
+  sortOptions: [],
+  onSortOptionChange: () => {},
+  searchParams: {},
 }
 
 export default ComplexItemSetList

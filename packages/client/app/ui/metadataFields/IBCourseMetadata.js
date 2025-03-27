@@ -247,7 +247,7 @@ const IBCourseMetadata = props => {
                   label={
                     courseData.value === 'biEnvironmentalScience'
                       ? 'Application and Skill'
-                      : 'Application'
+                      : 'Course Subtopic'
                   }
                   name={applicationName}
                 >
@@ -270,7 +270,7 @@ const IBCourseMetadata = props => {
               courseData.value === 'biEnvironmentalScience' ||
               (!filterSkillOptions()?.length &&
                 (filterMode || !!getFieldValue(topicField))) ? null : (
-                <Form.Item label="Skill" name={skillName}>
+                <Form.Item label="Content Statement" name={skillName}>
                   <Select
                     allowClear={filterMode}
                     disabled={

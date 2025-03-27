@@ -171,6 +171,21 @@ const containsSubmissions = async complexItemSet => {
   }
 }
 
+const assignAuthorForComplexItemSet = async (setId, userId) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} assignAuthorForComplexItemSet:`
+
+  try {
+    return useTransaction(async trx => {
+      return Team.assignSetAuthor(setId, userId, {
+        trx,
+      })
+    })
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   getComplexItemSets,
   getComplexItemSet,
@@ -180,4 +195,5 @@ module.exports = {
   getQuestionForComplexItemSet,
   getAuthorForComplexItemSet,
   containsSubmissions,
+  assignAuthorForComplexItemSet,
 }

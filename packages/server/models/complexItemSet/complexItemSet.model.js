@@ -181,8 +181,12 @@ class ComplexItemSet extends BaseModel {
       )
     }
 
+    query.as('q1')
+
+    const parentQuery = ComplexItemSet.query().select('*').from(query)
+
     // paginate result only if options were passed
-    return options ? applyListQueryOptions(query, options) : query
+    return options ? applyListQueryOptions(parentQuery, options) : query
   }
 }
 

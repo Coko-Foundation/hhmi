@@ -21,7 +21,7 @@ type ComplexItemSetsResponse {
 extend type Query {
   complexItemSets(
     params: SetFilters
-    options: PageInput
+    options: QuestionPageInput
   ): ComplexItemSetsResponse!
   complexItemSet(id: ID!, questionsOptions: QuestionPageInput): ComplexItemSet
   getAvailableSets(publishedOnly: Boolean): [ComplexItemSet]!
@@ -35,4 +35,5 @@ extend type Mutation {
     leadingContent: String
   ): ComplexItemSet!
   deleteComplexItemSet(id: ID!): ID!
+  assignSetAuthor(setId: ID!, userId: ID!): Boolean
 }

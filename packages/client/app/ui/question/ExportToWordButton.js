@@ -51,7 +51,6 @@ const ExportToWordButton = props => {
           loading={loading}
           onClick={() => setShowModal(true)}
           title="Export to Word"
-          type="primary"
         />
       ) : (
         <Button
@@ -59,7 +58,6 @@ const ExportToWordButton = props => {
           id="exportToWord"
           loading={loading}
           onClick={() => setShowModal(true)}
-          type="primary"
         >
           Export to Word
         </Button>

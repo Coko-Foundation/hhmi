@@ -7,7 +7,7 @@ import { BioInteractiveOauth } from 'ui'
 
 import { BIOINTERACTIVE_LOGIN } from '../graphql'
 
-const BioInteractiveLoginPage = props => {
+const BioInteractiveLoginPage = () => {
   const { search } = useLocation()
   const history = useHistory()
   const { currentUser } = useCurrentUser()
@@ -24,7 +24,13 @@ const BioInteractiveLoginPage = props => {
   if (currentUser) return <Redirect to="/dashboard" />
 
   if (state !== localStorage.getItem('oauthState')) {
-    // after logging in redirect to the Browse Items page
+    // after logging in redirect to stored redirect url, or to /discover
+    if (localStorage.getItem('redirectTo')) {
+      const redirect = localStorage.getItem('redirectTo').substring(6)
+      localStorage.deleteItem('redirectTo')
+      return <Redirect to={redirect} />
+    }
+
     return <Redirect to="/discover" />
   }
 

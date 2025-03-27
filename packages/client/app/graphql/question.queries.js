@@ -26,6 +26,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
           content
 
           submitted
+          accepted
           underReview
           inProduction
           published
@@ -90,6 +91,7 @@ export const GET_EDITOR_DASHBOARD = gql`
           content
 
           submitted
+          accepted
           underReview
           inProduction
           published
@@ -153,6 +155,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
           content
 
           submitted
+          accepted
           underReview
           inProduction
           published
@@ -283,7 +286,7 @@ export const GET_PRODUCTION_DASHBOARD = gql`
           content
 
           submitted
-          underReview
+          # underReview
           inProduction
           published
           unpublished
@@ -358,6 +361,7 @@ export const GET_AUTHOR_CHAT_PARTICIPANTS = gql`
     }
   }
 `
+
 export const GET_PRODUCTION_CHAT_PARTICIPANTS = gql`
   query GetProductionChatParticipants($id: ID!) {
     getProductionChatParticipants(id: $id) {
@@ -408,6 +412,7 @@ export const QUESTION = gql`
         lastEdit
 
         submitted
+        accepted
         underReview
         inProduction
         published
@@ -512,6 +517,7 @@ export const UPDATE_QUESTION = gql`
         lastEdit
 
         submitted
+        accepted
         underReview
         inProduction
         published
@@ -585,6 +591,15 @@ export const REJECT_QUESTION = gql`
     rejectQuestion(questionId: $questionId) {
       id
       rejected
+    }
+  }
+`
+
+export const ACCEPT_QUESTION = gql`
+  mutation AcceptQuestionVersion($questionVersionId: ID!) {
+    acceptQuestion(questionVersionId: $questionVersionId) {
+      id
+      accepted
     }
   }
 `

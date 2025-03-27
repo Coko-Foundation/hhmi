@@ -101,14 +101,14 @@ describe('Question Workflows', () => {
         admin.username,
         -3,
         'population',
-        'submitted',
+        'accepted',
       )
       cy.seedQuestion(
         disableScripts,
         admin.username,
         -2,
         'biochemistry',
-        'submitted',
+        'accepted',
       )
     })
     after(() => {
@@ -344,7 +344,7 @@ describe('Question Workflows', () => {
           user2.username,
           -6,
           'anatomy',
-          'submitted',
+          'accepted',
           handlingEditor1.username,
         )
         cy.login({ ...handlingEditor1 })
@@ -399,7 +399,7 @@ describe('Question Workflows', () => {
           user2.username,
           -2,
           'anatomy',
-          'submitted',
+          'accepted',
           handlingEditor1.username,
         )
         cy.seedQuestion(
@@ -407,7 +407,7 @@ describe('Question Workflows', () => {
           user2.username,
           -3,
           'population',
-          'submitted',
+          'accepted',
           handlingEditor1.username,
         )
         cy.login(handlingEditor1)
@@ -458,7 +458,7 @@ describe('Question Workflows', () => {
       cy.contains('.ant-select-dropdown', user2.username).click()
       cy.contains(
         '[class="ant-modal-footer"] button[type="button"]',
-        'Yes, assign author',
+        'Assign',
       ).click()
       cy.contains(
         '[class="ant-modal-body"]',
@@ -466,7 +466,7 @@ describe('Question Workflows', () => {
       )
       cy.contains(
         '[class="ant-modal-footer"] button[type="button"]',
-        'Assign',
+        'Yes, assign author',
       ).click()
       cy.wait('@GQLReq')
       cy.contains(
@@ -562,7 +562,7 @@ describe('Question Workflows', () => {
         user2.username,
         -3,
         'population',
-        'submitted',
+        'accepted',
         handlingEditor1.username,
       )
     })

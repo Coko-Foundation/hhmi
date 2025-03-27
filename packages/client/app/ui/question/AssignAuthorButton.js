@@ -23,7 +23,15 @@ const ConfirmationScreen = styled.div`
 `
 
 const AssignAuthorButton = props => {
-  const { className, onAssignAuthor, authors, loadAuthors, refetchUser } = props
+  const {
+    className,
+    onAssignAuthor,
+    authors,
+    loadAuthors,
+    refetchUser,
+    usecase,
+    currentAuthor,
+  } = props
 
   const [showModal, setShowModal] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
@@ -110,12 +118,12 @@ const AssignAuthorButton = props => {
                   onClick={assignAuthorForm.submit}
                   type="primary"
                 >
-                  Assign
+                  Yes, assign author
                 </Button>
               </>
             ) : (
               <Button autoFocus onClick={confirmAuthorship} type="primary">
-                Yes, assign author
+                Assign
               </Button>
             )}
           </ModalFooter>
@@ -134,6 +142,9 @@ const AssignAuthorButton = props => {
           </ModalHeader>
         }
       >
+        {currentAuthor && !showConfirm && (
+          <p>Current author: {currentAuthor}</p>
+        )}
         <StyledForm
           form={assignAuthorForm}
           hidden={showConfirm}
@@ -142,7 +153,9 @@ const AssignAuthorButton = props => {
           onValuesChange={() => assignAuthorForm.validateFields(['author'])}
         >
           <Form.Item
-            label="Select the author of this item"
+            label={`Select the author of this ${
+              usecase === 'item' ? 'item' : 'set'
+            }`}
             name="author"
             rules={[
               {
@@ -170,15 +183,20 @@ const AssignAuthorButton = props => {
               showSearch
             />
           </Form.Item>
-          <Note>
-            <span>Note: </span>Make sure you select the correct user. The author
-            can only be assigned once.
-          </Note>
+          {usecase === 'item' && (
+            <Note>
+              <span>Note: </span>Make sure you select the correct user. The
+              author can only be assigned once.
+            </Note>
+          )}
         </StyledForm>
-        <ConfirmationScreen visible={showConfirm}>
+        <ConfirmationScreen visible={showConfirm && usecase === 'item'}>
           This action is irreversible. You will not be able to change the author
           of this item again.
         </ConfirmationScreen>
+        <p
+          style={{ padding: '1em', display: showConfirm ? 'block' : 'none' }}
+        />
       </Modal>
 
       {contextHolder}
@@ -193,16 +211,20 @@ AssignAuthorButton.propTypes = {
       value: PropTypes.string,
     }),
   ),
+  currentAuthor: PropTypes.string,
   onAssignAuthor: PropTypes.func,
   loadAuthors: PropTypes.func,
   refetchUser: PropTypes.func,
+  usecase: PropTypes.string,
 }
 
 AssignAuthorButton.defaultProps = {
   authors: [],
+  currentAuthor: null,
   onAssignAuthor: () => {},
   loadAuthors: () => {},
   refetchUser: () => {},
+  usecase: 'item',
 }
 
 export default AssignAuthorButton

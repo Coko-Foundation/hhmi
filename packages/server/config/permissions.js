@@ -100,6 +100,7 @@ const canUpdateQuestion = rule()(
         'questions.id',
         'questions.rejected',
         'question_versions.submitted',
+        'question_versions.accepted',
         'question_versions.under_review',
         'question_versions.in_production',
         'question_versions.published',
@@ -115,6 +116,14 @@ const canUpdateQuestion = rule()(
     if (!question.submitted) {
       // needs to be the author
       return isQuestionAuthor(ctx.connectors.Team.model, ctx.user, questionId)
+    }
+
+    if (question.accepted) {
+      // only editors, handling editors, production team members or admins can edit
+      const isUserEditor = await user.hasGlobalRole('editor')
+      const isUserHE = await user.hasGlobalRole('handlingEditor')
+      const isUserAdmin = await user.hasGlobalRole('admin')
+      return isUserEditor || isUserAdmin || isUserHE
     }
 
     // the only other editable state is 'inProduction'
@@ -188,6 +197,20 @@ const canCreateNewVersion = rule()(async (_, __, ctx) => {
   return (
     user.isActive &&
     ((await user.hasGlobalRole('editor')) || user.hasGlobalRole('admin'))
+  )
+})
+
+// editors and handlingEditors can accept questions
+const canAcceptQuestion = rule()(async (_, __, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+
+  return (
+    user.isActive &&
+    ((await user.hasGlobalRole('editor')) ||
+      user.hasGlobalRole('handlingEditor'))
   )
 })
 
@@ -332,6 +355,7 @@ const permissions = {
     createQuestion: isActive,
     updateQuestion: canUpdateQuestion,
     submitQuestion: isAuthor,
+    acceptQuestion: canAcceptQuestion,
     rejectQuestion: canRejectQuestion,
     moveQuestionVersionToReview: canMoveToReview,
     moveQuestionVersionToProduction: canMoveToProduction,
@@ -370,6 +394,7 @@ const permissions = {
     createComplexItemSet: isActive,
     editComplexItemSet: isActive,
     deleteComplexItemSet: isActive,
+    assignSetAuthor: isAdmin,
     // Notifications
     markAs: isActive,
     // Reviews

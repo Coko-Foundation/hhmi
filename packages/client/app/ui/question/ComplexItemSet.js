@@ -4,7 +4,14 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { PlusOutlined } from '@ant-design/icons'
-import { QuestionList, TabsStyled as Tabs, Empty, Button } from '../common'
+import {
+  QuestionList,
+  TabsStyled as Tabs,
+  Empty,
+  Button,
+  ButtonGroup,
+} from '../common'
+import AssignAuthorButton from './AssignAuthorButton'
 import ComplexItemSetForm from './ComplexItemSetForm'
 import Wax from '../wax/Wax'
 import { simpleConfig } from '../wax/config'
@@ -117,6 +124,14 @@ const ComplexItemSet = props => {
     submissionMessage,
     submissionStatus,
     totalQuestions,
+    onSortOptionChange,
+    sortOptions,
+    onAssignAuthor,
+    canAssignAuthor,
+    authors,
+    loadAuthors,
+    refetchUser,
+    currentAuthor,
   } = props
 
   const [activeKey, setActiveKey] = useState(activeTab)
@@ -155,9 +170,11 @@ const ComplexItemSet = props => {
               ),
             }}
             onPageChange={onQuestionsPageChange}
+            onSortOptionChange={onSortOptionChange}
             questions={questions}
             showSearch={false}
-            showSort={false}
+            showSort
+            sortOptions={sortOptions}
             totalCount={totalQuestions} // not paginated for now, so total === question.length
           />
         </Wrapper>
@@ -193,15 +210,30 @@ const ComplexItemSet = props => {
       onChange={setActiveKey}
       tabBarExtraContent={
         id ? (
-          <StyledButton
-            aria-label="Add item to this set"
-            icon={<PlusOutlined />}
-            onClick={onCreateQuestion}
-            title="Add item to this set"
-            type="primary"
-          >
-            Add item to this set
-          </StyledButton>
+          <ButtonGroup>
+            {canAssignAuthor && (
+              <AssignAuthorButton
+                // aria-label="Add item to this set"
+                // onClick={onAssignAuthor}
+                authors={authors}
+                currentAuthor={currentAuthor}
+                loadAuthors={loadAuthors}
+                onAssignAuthor={onAssignAuthor}
+                refetchUser={refetchUser}
+                usecase="set"
+              >
+                Assign author
+              </AssignAuthorButton>
+            )}
+            <StyledButton
+              icon={<PlusOutlined />}
+              onClick={onCreateQuestion}
+              title="Add item to this set"
+              type="primary"
+            >
+              Add item to this set
+            </StyledButton>
+          </ButtonGroup>
         ) : null
       }
     />
@@ -227,6 +259,19 @@ ComplexItemSet.propTypes = {
   totalQuestions: PropTypes.number,
   activeTab: PropTypes.string,
   editWarning: PropTypes.bool,
+  onSortOptionChange: PropTypes.bool,
+  sortOptions: PropTypes.arrayOf(PropTypes.shape()),
+  onAssignAuthor: PropTypes.func,
+  canAssignAuthor: PropTypes.bool,
+  authors: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.string,
+    }),
+  ),
+  loadAuthors: PropTypes.func,
+  refetchUser: PropTypes.func,
+  currentAuthor: PropTypes.string,
 }
 
 ComplexItemSet.defaultProps = {
@@ -248,6 +293,14 @@ ComplexItemSet.defaultProps = {
   totalQuestions: 0,
   activeTab: 'content',
   editWarning: false,
+  onSortOptionChange: null,
+  sortOptions: [],
+  onAssignAuthor: () => {},
+  canAssignAuthor: true,
+  authors: [],
+  loadAuthors: () => {},
+  refetchUser: () => {},
+  currentAuthor: null,
 }
 
 export default ComplexItemSet

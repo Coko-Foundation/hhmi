@@ -21,6 +21,7 @@ import {
 import { grid, th } from '@coko/client'
 import { Button, Table, Modal, Form, Input } from '../common'
 
+// #region styled
 const StyledSection = styled.section`
   background: ${th('colorBackground')};
   display: flex;
@@ -98,6 +99,7 @@ const DynamicFormItemWrapper = styled.div`
     }
   }
 `
+// #endregion styled
 
 const courseDataToUi = (data, type, isLast) => {
   if (!data) return []
@@ -148,8 +150,12 @@ const newButtonsConfigs = {
     label: 'Add application',
     key: 'application',
   },
+  courseSubtopic: {
+    label: 'Add course subtopic',
+    key: 'application',
+  },
   skill: {
-    label: 'Add skill',
+    label: 'Add content statement',
     key: 'skill',
   },
   understanding: {
@@ -332,6 +338,7 @@ const CourseMetadataTable = props => {
     )
 
     const firstColumn = structuredClone(firstColumnConfig)
+    const currentCourse = navigation[1]?.label
 
     const lastNavItem = navigation[navigation.length - 1]
 
@@ -358,10 +365,15 @@ const CourseMetadataTable = props => {
         break
       case 'biSubtopic':
         if (lastNavItem.key === 'applications') {
-          firstColumn.title = 'Application'
-          setNewButtonAttrs(newButtonsConfigs.application)
+          if (currentCourse === 'IB Biology') {
+            firstColumn.title = 'Course Subtopic'
+            setNewButtonAttrs(newButtonsConfigs.courseSubtopic)
+          } else {
+            firstColumn.title = 'Application'
+            setNewButtonAttrs(newButtonsConfigs.application)
+          }
         } else if (lastNavItem.key === 'skills') {
-          firstColumn.title = 'Skill'
+          firstColumn.title = 'Content Statement'
           setNewButtonAttrs(newButtonsConfigs.skill)
         } else if (lastNavItem.key === 'understandings') {
           firstColumn.title = 'Understanding'
@@ -618,7 +630,8 @@ const CourseMetadataTable = props => {
     newMetadataForm
       .validateFields()
       .then(v => {
-        onMetadataAdd(v).then(() => {
+        const { biSubtopic, ...rest } = v
+        onMetadataAdd(rest).then(() => {
           dialog.destroy()
         })
       })
@@ -761,12 +774,17 @@ const CourseMetadataTable = props => {
         case 'biBiology': {
           const biBioSubtopics = [
             {
-              label: 'Applications',
+              label: 'Course Subtopic',
               value: 'applications',
               topic: key,
               enabled: true,
             },
-            { label: 'Skills', value: 'skills', topic: key, enabled: true },
+            {
+              label: 'Content Statement',
+              value: 'skills',
+              topic: key,
+              enabled: true,
+            },
             {
               label: 'Understandings',
               value: 'understandings',

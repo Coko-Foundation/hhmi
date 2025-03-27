@@ -18,6 +18,7 @@ import {
   QUESTION,
   SUBMIT_QUESTION,
   UPDATE_QUESTION,
+  ACCEPT_QUESTION,
   REJECT_QUESTION,
   MOVE_QUESTION_VERSION_TO_REVIEW,
   MOVE_QUESTION_VERSION_TO_PRODUCTION,
@@ -287,6 +288,8 @@ const QuestionPage = props => {
   const [rejectQuestionMutation] = useMutation(REJECT_QUESTION, {
     variables: { questionId: id },
   })
+
+  const [acceptQuestionVersion] = useMutation(ACCEPT_QUESTION)
 
   const [moveQuestionVersionToReviewMutation] = useMutation(
     MOVE_QUESTION_VERSION_TO_REVIEW,
@@ -728,6 +731,7 @@ const QuestionPage = props => {
   const isSubmitted = version?.submitted || (isAdmin && isAuthor)
   const isUnderReview = version?.underReview
   const isInProduction = version?.inProduction
+  const isAccepted = version?.accepted
   const isPublished = version?.published
 
   const isArchived = question?.isArchived && !testMode
@@ -956,6 +960,16 @@ const QuestionPage = props => {
     }
 
     return false
+  }
+
+  const handleAcceptQuestion = () => {
+    const mutationData = {
+      variables: {
+        questionVersionId: version.id,
+      },
+    }
+
+    return acceptQuestionVersion(mutationData)
   }
 
   const handleMoveToReview = () => {
@@ -1472,6 +1486,7 @@ const QuestionPage = props => {
           version,
           testMode || (isReviewer && isUnderReview),
         )}
+        isAccepted={isAccepted}
         isArchived={isArchived}
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
         // unless the question has already been published
@@ -1502,6 +1517,7 @@ const QuestionPage = props => {
           !complexItemSetOptions
         }
         metadata={metadata || {}}
+        onAcceptQuestion={handleAcceptQuestion}
         onAddReviewers={handleAddReviewers}
         onAssignAuthor={handleAssignAuthor}
         onAutomateReviewerChange={handleReviewerInviteAutomationChange}

@@ -300,7 +300,7 @@ describe('ChatThreads', () => {
         .eq(0)
         .contains(ProseMirror, 'What substance')
         .click()
-      
+
       cy.reload()
       cy.contains(antTabs, 'Production chat').click()
 

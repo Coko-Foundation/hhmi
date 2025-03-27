@@ -306,7 +306,6 @@ class CourseMetadata extends BaseModel {
       case 'course':
       case 'unit':
       case 'topic':
-      case 'application':
       case 'concept':
       case 'category':
       case 'subdiscipline':
@@ -316,6 +315,8 @@ class CourseMetadata extends BaseModel {
         return 'learning_objective'
       case 'essentialKnowledge':
         return 'essential_knowledge'
+      case 'applications':
+        return 'application'
       case 'skills':
         return 'skill'
       case 'understandings':
