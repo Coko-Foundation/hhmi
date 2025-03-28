@@ -139,7 +139,7 @@ build client:
 
 # END TO END TEST
 
-end to end tests:
+.end to end tests:
   stage: End to end test
   image: cokoapps/hhmi-dnn
   needs:

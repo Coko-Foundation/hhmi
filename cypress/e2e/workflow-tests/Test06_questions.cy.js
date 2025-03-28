@@ -471,7 +471,7 @@ describe('Question Workflows', () => {
       cy.wait('@GQLReq')
       cy.contains(
         '[class="ant-modal-confirm-content"]',
-        `User ${user2.username} has been assgined as the author of this item`,
+        `User ${user2.username} has been assgined author of this item`,
       )
       cy.contains(
         '[class="ant-modal-content"] button[type="button"]',

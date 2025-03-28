@@ -59,7 +59,9 @@ const AssignAuthorButton = props => {
             authors.find(
               a => a.value === assignAuthorForm.getFieldValue('author'),
             )?.label
-          } has been assgined as the author of this item`,
+          } has been assgined author of this ${
+            usecase === 'item' ? 'item' : 'leader text'
+          }.`,
           footer: [
             <ModalFooter key="footer">
               <Button onClick={successModal.destroy} type="primary">

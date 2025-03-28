@@ -75,6 +75,10 @@ const ComplexItemSetsListPage = () => {
     },
   )
 
+  const handleSearchParamsChange = params => {
+    setSearchParams({ ...searchParams, ...params })
+  }
+
   const handleSortOptionChange = sortBy => {
     sortOptions.filter(opt => opt.isDefault)[0].isDefault = false
     sortOptions.filter(opt => opt.value === sortBy)[0].isDefault = true
@@ -86,7 +90,7 @@ const ComplexItemSetsListPage = () => {
     <ComplexItemSetList
       data={transform(complexItemSets)}
       loading={loadingSets}
-      onSearch={setSearchParams}
+      onSearch={handleSearchParamsChange}
       onSortOptionChange={handleSortOptionChange}
       pageSize={PAGE_SIZE}
       sortOptions={sortOptions}
