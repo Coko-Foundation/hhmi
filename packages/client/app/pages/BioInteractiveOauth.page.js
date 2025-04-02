@@ -27,7 +27,7 @@ const BioInteractiveLoginPage = () => {
     // after logging in redirect to stored redirect url, or to /discover
     if (localStorage.getItem('redirectTo')) {
       const redirect = localStorage.getItem('redirectTo').substring(6)
-      localStorage.deleteItem('redirectTo')
+      localStorage.removeItem('redirectTo')
       return <Redirect to={redirect} />
     }
 
