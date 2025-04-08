@@ -249,6 +249,7 @@ const Dashboard = props => {
         ?.questions.filter(q => selectedQuestions.indexOf(q.id) !== -1)
         .every(
           q =>
+            q.status === 'Not Submitted' ||
             q.status === 'Submitted' ||
             q.status === 'Published' ||
             q.status === 'Rejected' ||
