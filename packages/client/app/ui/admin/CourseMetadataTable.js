@@ -834,7 +834,7 @@ const CourseMetadataTable = props => {
         .find(c => c.value === navigation[1].key)
         [key].filter(lo => lo.topic === data.topic)
 
-      setDataSource(courseDataToUi(items, data.label.toLowerCase(), true))
+      setDataSource(courseDataToUi(items, data.key, true))
     } else if (type === 'learningObjective') {
       const eks = courses
         .find(c => c.value === navigation[1].key)

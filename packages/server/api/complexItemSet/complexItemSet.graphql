@@ -36,4 +36,19 @@ extend type Mutation {
   ): ComplexItemSet!
   deleteComplexItemSet(id: ID!): ID!
   assignSetAuthor(setId: ID!, userId: ID!): Boolean
+  exportSets(setIds: [ID!]!, options: GenerateWordFileOptionsInput): String!
+  exportSetQuestions(
+    setId: ID!
+    questionIds: [ID!]!
+    orderBy: String
+    ascending: Boolean
+    options: GenerateWordFileOptionsInput
+  ): String!
+  exportSetsQTI(setIds: [ID!]!): String!
+  exportSetQuestionsQTI(
+    setId: ID!
+    questionIds: [ID!]!
+    orderBy: String
+    ascending: Boolean
+  ): String!
 }

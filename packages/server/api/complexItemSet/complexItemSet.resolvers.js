@@ -8,6 +8,10 @@ const {
   getAuthorForComplexItemSet,
   containsSubmissions,
   assignAuthorForComplexItemSet,
+  exportSets,
+  exportSetQuestions,
+  exportSetsQTI,
+  exportSetQuestionsQTI,
 } = require('../../controllers/complexItemSet.controller')
 
 const { getImageUrls } = require('../../controllers/utils')
@@ -58,6 +62,28 @@ const assignSetAuthorResolver = async (_, { setId, userId }) => {
   return assignAuthorForComplexItemSet(setId, userId)
 }
 
+const exportSetsResolver = async (_, { setIds, options }, ctx) => {
+  return exportSets(setIds, ctx.user, options)
+}
+
+const exportSetQuestionsResolver = async (
+  _,
+  { setId, questionIds, orderBy, ascending, options },
+) => {
+  return exportSetQuestions(setId, questionIds, orderBy, ascending, options)
+}
+
+const exportSetsQTIResolver = async (_, { setIds, options }, ctx) => {
+  return exportSetsQTI(setIds, ctx.user, options)
+}
+
+const exportSetQuestionsQTIResolver = async (
+  _,
+  { setId, questionIds, orderBy, ascending, options },
+) => {
+  return exportSetQuestionsQTI(setId, questionIds, orderBy, ascending, options)
+}
+
 const leadingContentResolver = async complexItemSet => {
   const { leadingContent } = complexItemSet
   if (leadingContent === null) return null
@@ -83,6 +109,10 @@ module.exports = {
     editComplexItemSet: editComplexItemSetResolver,
     deleteComplexItemSet: deleteComplexItemSetResolver,
     assignSetAuthor: assignSetAuthorResolver,
+    exportSets: exportSetsResolver,
+    exportSetQuestions: exportSetQuestionsResolver,
+    exportSetsQTI: exportSetsQTIResolver,
+    exportSetQuestionsQTI: exportSetQuestionsQTIResolver,
   },
   ComplexItemSet: {
     questions: complexItemSetQuestionsResolver,

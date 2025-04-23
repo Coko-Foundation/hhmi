@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { useHistory } from 'react-router-dom'
 import { List, Button } from '../common'
 import ComplexItemSetListItem from './ComplexItemSetListItem'
+import ExportListToWordButton from '../myList/ExportModal'
 
 const Wrapper = styled.section`
   display: flex;
@@ -47,6 +48,11 @@ const StyledList = styled(List)`
   }
 `
 
+const BulkActionWrapper = styled.div`
+  display: flex;
+  gap: ${grid(2)};
+`
+
 const ComplexItemSetList = props => {
   const {
     data,
@@ -57,9 +63,13 @@ const ComplexItemSetList = props => {
     sortOptions,
     onSortOptionChange,
     searchParams,
+    onWordExport,
+    onQTIExport,
   } = props
 
   const history = useHistory()
+
+  const [selectedSets, setSelectedSets] = useState([])
 
   const handlePageChange = page => {
     onSearch({ ...searchParams, page })
@@ -73,6 +83,18 @@ const ComplexItemSetList = props => {
     history.push('/set/new')
   }
 
+  const onSetsSelected = ids => {
+    setSelectedSets(ids)
+  }
+
+  const handleWordExport = showFeedback => {
+    return onWordExport(selectedSets, showFeedback)
+  }
+
+  const handleQTIExport = () => {
+    return onQTIExport(selectedSets)
+  }
+
   return (
     <Wrapper>
       <StyledHeading>
@@ -83,6 +105,27 @@ const ComplexItemSetList = props => {
       </StyledHeading>
       <StyledList
         dataSource={data}
+        footerContent={
+          selectedSets.length ? (
+            <BulkActionWrapper>
+              <ExportListToWordButton
+                // afterClose={() =>
+                //   document.body.querySelector('#export-popup-toggle').focus()
+                // }
+                onExport={handleWordExport}
+                text="All questions of the selected set(s) will be exported in the order of publication."
+              >
+                Export to Word
+              </ExportListToWordButton>
+              <Button onClick={handleQTIExport} type="primary">
+                Export QTI
+              </Button>
+            </BulkActionWrapper>
+          ) : null
+        }
+        itemSelection={{
+          onChange: id => onSetsSelected(id),
+        }}
         loading={loading}
         onSearch={handleSearch}
         onSortOptionChange={onSortOptionChange}
@@ -122,6 +165,8 @@ ComplexItemSetList.propTypes = {
   searchParams: PropTypes.shape({
     page: PropTypes.number,
   }),
+  onWordExport: PropTypes.func,
+  onQTIExport: PropTypes.func,
 }
 ComplexItemSetList.defaultProps = {
   data: [],
@@ -132,6 +177,8 @@ ComplexItemSetList.defaultProps = {
   sortOptions: [],
   onSortOptionChange: () => {},
   searchParams: {},
+  onWordExport: null,
+  onQTIExport: null,
 }
 
 export default ComplexItemSetList

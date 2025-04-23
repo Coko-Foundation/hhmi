@@ -16,6 +16,7 @@ import ComplexItemSetForm from './ComplexItemSetForm'
 import Wax from '../wax/Wax'
 import { simpleConfig } from '../wax/config'
 import { LeadingContentLayout } from '../wax/layout'
+import ExportListToWordButton from '../myList/ExportModal'
 
 const StyledTabs = styled(Tabs)`
   height: 100%;
@@ -104,6 +105,11 @@ const StyledButton = styled(Button)`
   }
 `
 
+const BulkActionWrapper = styled.div`
+  display: flex;
+  gap: ${grid(2)};
+`
+
 const ComplexItemSet = props => {
   const {
     activeTab,
@@ -132,14 +138,29 @@ const ComplexItemSet = props => {
     loadAuthors,
     refetchUser,
     currentAuthor,
+    onWordExport,
+    onQTIExport,
   } = props
 
   const [activeKey, setActiveKey] = useState(activeTab)
+  const [selectedQuestions, setSelectedQuestions] = useState([])
 
   useEffect(() => {
     if (id && activeTab !== 'edit') setActiveKey('content')
     else setActiveKey('edit')
   }, [id, activeTab])
+
+  const handleQuestionsSelected = ids => {
+    setSelectedQuestions(ids)
+  }
+
+  const handleWordExport = showFeedback => {
+    return onWordExport(selectedQuestions, showFeedback)
+  }
+
+  const handleQTIExport = () => {
+    return onQTIExport(selectedQuestions)
+  }
 
   const tabItems = [
     // show Content tab with list of questions if complex item set exists
@@ -158,6 +179,24 @@ const ComplexItemSet = props => {
             />
           </InfoWrapper>
           <StyledQuestionList
+            bulkAction={
+              selectedQuestions.length ? (
+                <BulkActionWrapper>
+                  <ExportListToWordButton
+                    // afterClose={() =>
+                    //   document.body.querySelector('#export-popup-toggle').focus()
+                    // }
+                    onExport={handleWordExport}
+                    text="All selected questions will be exported in the order of publication."
+                  >
+                    Export to Word
+                  </ExportListToWordButton>
+                  <Button onClick={handleQTIExport} type="primary">
+                    Export QTI
+                  </Button>
+                </BulkActionWrapper>
+              ) : null
+            }
             currentPage={currentQuestionsPage}
             loading={loadingData}
             locale={{
@@ -170,8 +209,10 @@ const ComplexItemSet = props => {
               ),
             }}
             onPageChange={onQuestionsPageChange}
+            onQuestionSelected={handleQuestionsSelected}
             onSortOptionChange={onSortOptionChange}
             questions={questions}
+            showRowCheckboxes
             showSearch={false}
             showSort
             sortOptions={sortOptions}
@@ -259,7 +300,7 @@ ComplexItemSet.propTypes = {
   totalQuestions: PropTypes.number,
   activeTab: PropTypes.string,
   editWarning: PropTypes.bool,
-  onSortOptionChange: PropTypes.bool,
+  onSortOptionChange: PropTypes.func,
   sortOptions: PropTypes.arrayOf(PropTypes.shape()),
   onAssignAuthor: PropTypes.func,
   canAssignAuthor: PropTypes.bool,
@@ -272,6 +313,8 @@ ComplexItemSet.propTypes = {
   loadAuthors: PropTypes.func,
   refetchUser: PropTypes.func,
   currentAuthor: PropTypes.string,
+  onWordExport: PropTypes.func,
+  onQTIExport: PropTypes.func,
 }
 
 ComplexItemSet.defaultProps = {
@@ -301,6 +344,8 @@ ComplexItemSet.defaultProps = {
   loadAuthors: () => {},
   refetchUser: () => {},
   currentAuthor: null,
+  onWordExport: () => {},
+  onQTIExport: () => {},
 }
 
 export default ComplexItemSet

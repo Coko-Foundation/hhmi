@@ -395,6 +395,10 @@ const permissions = {
     editComplexItemSet: isActive,
     deleteComplexItemSet: isActive,
     assignSetAuthor: isAdmin,
+    exportSets: isActive,
+    exportSetQuestions: isActive,
+    exportSetsQTI: isActive,
+    exportSetQuestionsQTI: isActive,
     // Notifications
     markAs: isActive,
     // Reviews

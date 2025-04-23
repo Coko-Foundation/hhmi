@@ -13,6 +13,7 @@ import {
 } from '../common'
 import { ArchiveItemsButton, AssignHEButton } from '../question'
 import useBreakpoint from '../_helpers/useBreakpoint'
+import AddToListPopup from '../common/AddToListPopup'
 
 const Wrapper = styled.div`
   height: 100%;
@@ -71,6 +72,11 @@ const Dashboard = props => {
     onSearchHE,
     tabsContent,
     withFilters,
+    existingListsOptions,
+    onAddToList,
+    onCreateList,
+    loadingAddToList,
+    loadingCreateList,
   } = props
 
   const isMobile = useBreakpoint('(max-width: 900px)')
@@ -249,6 +255,7 @@ const Dashboard = props => {
         ?.questions.filter(q => selectedQuestions.indexOf(q.id) !== -1)
         .every(
           q =>
+            q.status === 'Not Submitted' ||
             q.status === 'Submitted' ||
             q.status === 'Published' ||
             q.status === 'Rejected' ||
@@ -257,6 +264,16 @@ const Dashboard = props => {
         <ArchiveItemsButton
           isArchived={searchParams.archived}
           onChangeArchiveStatus={handleArchiveSelectedItems}
+        />
+      )}
+      {selectedQuestions.length && (
+        <AddToListPopup
+          existingListsOptions={existingListsOptions}
+          loadingAddToList={loadingAddToList}
+          loadingCreateList={loadingCreateList}
+          onAddToList={onAddToList}
+          onCreateList={onCreateList}
+          selectedRows={selectedQuestions}
         />
       )}
     </BulkActionWrapper>
@@ -393,6 +410,11 @@ Dashboard.propTypes = {
     }),
   ),
   withFilters: PropTypes.bool,
+  existingListsOptions: PropTypes.arrayOf(PropTypes.shape()),
+  onAddToList: PropTypes.func,
+  onCreateList: PropTypes.func,
+  loadingAddToList: PropTypes.bool,
+  loadingCreateList: PropTypes.bool,
 }
 
 Dashboard.defaultProps = {
@@ -407,6 +429,11 @@ Dashboard.defaultProps = {
   sortOptions: [],
   tabsContent: [],
   withFilters: false,
+  onAddToList: () => {},
+  onCreateList: () => {},
+  loadingAddToList: false,
+  loadingCreateList: false,
+  existingListsOptions: [],
 }
 
 export default Dashboard

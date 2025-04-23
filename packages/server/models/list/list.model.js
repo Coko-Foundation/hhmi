@@ -96,9 +96,9 @@ class List extends BaseModel {
         'question_versions.question_type',
       )
       .distinctOn('questions.id')
-      .where({
-        published: true,
-      })
+      // .where({
+      //   published: true,
+      // })
       .whereIn('questions.id', questionIds)
       .orderBy([
         'questions.id',

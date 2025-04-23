@@ -123,3 +123,39 @@ export const ASSIGN_SET_AUTHOR = gql`
     assignSetAuthor(setId: $setId, userId: $userId)
   }
 `
+
+export const EXPORT_SETS = gql`
+  mutation ExportSets($setIds: [ID!]!, $options: GenerateWordFileOptionsInput) {
+    exportSets(setIds: $setIds, options: $options)
+  }
+`
+
+export const EXPORT_SET_QUESTIONS = gql`
+  mutation ExportSetQuestions(
+    $setId: ID!
+    $questionIds: [ID!]!
+    $orderBy: String
+    $ascending: Boolean
+    $options: GenerateWordFileOptionsInput
+  ) {
+    exportSetQuestions(
+      setId: $setId
+      questionIds: $questionIds
+      orderBy: $orderBy
+      ascending: $ascending
+      options: $options
+    )
+  }
+`
+
+export const EXPORT_SETS_QTI = gql`
+  mutation ExportSetsQTI($setIds: [ID!]!) {
+    exportSetsQTI(setIds: $setIds)
+  }
+`
+
+export const EXPORT_SET_QUESTIONS_QTI = gql`
+  mutation ExportSetQuestionsQTI($setId: ID!, $questionIds: [ID!]!) {
+    exportSetQuestionsQTI(setId: $setId, questionIds: $questionIds)
+  }
+`

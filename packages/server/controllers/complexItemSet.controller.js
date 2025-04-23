@@ -1,7 +1,12 @@
 const { logger, useTransaction } = require('@coko/server')
+const path = require('path')
 const config = require('config')
 const { ComplexItemSet, Question, Team, User } = require('../models')
 const { labels } = require('./constants')
+const { findImages } = require('./utils')
+const { clearTempImageFiles } = require('./helpers')
+const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
+const WaxToQTIConverter = require('../services/qti/qti.service')
 // const { applyListQueryOptions } = require('../models/helpers')
 
 const AUTHOR_TEAM = config.teams.nonGlobal.author
@@ -186,6 +191,235 @@ const assignAuthorForComplexItemSet = async (setId, userId) => {
   }
 }
 
+const exportSets = async (setIds, userId, options) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} exportSets:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} generating word file for sets with ids ${setIds.join(
+      ', ',
+    )}`,
+  )
+
+  try {
+    const questions = await Promise.all(
+      setIds.map(async id => {
+        const setQuestions = await getQuestionForComplexItemSet(
+          id,
+          userId,
+          options,
+        )
+
+        return setQuestions.result
+      }),
+    )
+
+    const questionIds = questions.flat().map(question => question.id)
+
+    return exportSetQuestions(setIds, questionIds, options)
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const exportSetQuestions = async (setIds, questionIds, options) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} exportSetQuestions:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} generating word file for questions with ids ${questionIds}`,
+  )
+
+  const imageData = {}
+  const tempFolderPath = path.join(__dirname, '..', 'tmp')
+
+  try {
+    const { showFeedback } = options
+
+    const setIdsArray = typeof setIds === 'object' ? setIds : [setIds]
+
+    const leadingContent = await Promise.all(
+      setIdsArray.map(async id => {
+        const set = await ComplexItemSet.findById(id)
+        return { id, type: 'complexItemSet', content: set.leadingContent }
+      }),
+    )
+
+    const versions = await Promise.all(
+      questionIds.map(async questionId => {
+        const versionsResult = await Question.getVersions(questionId, {
+          latestOnly: true,
+        })
+
+        return versionsResult.result[0]
+      }),
+    )
+
+    if (versions.length === 0) {
+      logger.error(`${CONTROLLER_MESSAGE} 'list is empty'`)
+      throw new Error("The list you're trying to export is empty")
+    }
+
+    const complexItemSets = versions.map(v => v.complexItemSetId)
+
+    const map = new Map()
+    complexItemSets.forEach(key => {
+      map.set(
+        key,
+        versions.filter(v => v.complexItemSetId === key),
+      )
+    })
+
+    let versionsSorted = []
+    versions.forEach(v => {
+      if (map.get(v.complexItemSetId)) {
+        versionsSorted.push(map.get(v.complexItemSetId))
+        map.delete(v.complexItemSetId)
+      }
+    })
+    versionsSorted = versionsSorted.flat()
+
+    leadingContent.forEach(set => {
+      const firstVersionOfSet = versionsSorted.findIndex(
+        v => v.complexItemSetId === set.id,
+      )
+
+      versionsSorted.splice(firstVersionOfSet, 0, set)
+    })
+
+    const allVersionsContent = versionsSorted.map(
+      version => version.content.content,
+    )
+
+    await Promise.all(
+      allVersionsContent
+        .flat()
+        .map(async node => findImages(node, imageData, tempFolderPath)),
+    )
+
+    const fullContent = {
+      type: 'doc',
+      content: [
+        {
+          type: 'question_list',
+          content: [],
+        },
+      ],
+    }
+
+    versionsSorted.forEach((version, i) => {
+      if (version.type === 'complexItemSet') {
+        fullContent.content[0].content.push({
+          type: 'leading_content',
+          content: [...version.content.content],
+        })
+      } else {
+        fullContent.content[0].content.push({
+          type: 'question',
+          content: [...version.content.content],
+        })
+      }
+    })
+
+    const converter = new WaxToDocxConverter(
+      fullContent,
+      imageData,
+      {},
+      {
+        showFeedback,
+      },
+    )
+
+    const filename =
+      setIdsArray.lengh > 1 ? `sets-export.docx` : `${setIdsArray[0]}.docx`
+
+    const filePath = path.join(tempFolderPath, filename)
+    await converter.writeToPath(filePath)
+    await clearTempImageFiles(imageData)
+    return filename
+  } catch (error) {
+    await clearTempImageFiles(imageData)
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const exportSetsQTI = async (setIds, userId) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} exportSetsQTI:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} generating qti package for sets with ids ${setIds.join(
+      ', ',
+    )}`,
+  )
+
+  try {
+    const questions = await Promise.all(
+      setIds.map(async id => {
+        const setQuestions = await getQuestionForComplexItemSet(id, userId)
+
+        return setQuestions.result
+      }),
+    )
+
+    const questionIds = questions
+      .flat()
+      .map(question => question.id)
+      .filter(question => question.questionType !== 'numerical')
+
+    return exportSetQuestionsQTI(setIds, questionIds)
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
+const exportSetQuestionsQTI = async (setIds, questionIds) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} exportSetQuestionsQTI:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} generating qti package for questions with ids ${questionIds}`,
+  )
+
+  try {
+    const setIdsArray = typeof setIds === 'object' ? setIds : [setIds]
+
+    const leadingContent = await Promise.all(
+      setIdsArray.map(async id => {
+        const set = await ComplexItemSet.findById(id)
+        return { id, type: 'complexItemSet', content: set.leadingContent }
+      }),
+    )
+
+    const versions = await Promise.all(
+      questionIds.map(async questionId => {
+        const versionsResult = await Question.getVersions(questionId, {
+          latestOnly: true,
+        })
+
+        return versionsResult.result[0]
+      }),
+    )
+
+    versions.forEach((version, i) => {
+      version.content.content.unshift(
+        // ...[...complexItemSets[i].leadingContent.content],
+        ...[
+          ...leadingContent.find(l => l.id === version.complexItemSetId).content
+            .content,
+        ],
+      )
+    })
+
+    const qtiExporter = new WaxToQTIConverter(
+      versions,
+      setIdsArray.lengh > 1 ? `sets-QTI-export` : `${setIdsArray[0]}`,
+    )
+
+    const exportFilename = await qtiExporter.buildQtiExport()
+
+    return exportFilename
+  } catch (error) {
+    logger.error(`${CONTROLLER_MESSAGE} ${error}`)
+    throw new Error(error)
+  }
+}
+
 module.exports = {
   getComplexItemSets,
   getComplexItemSet,
@@ -196,4 +430,8 @@ module.exports = {
   getAuthorForComplexItemSet,
   containsSubmissions,
   assignAuthorForComplexItemSet,
+  exportSets,
+  exportSetQuestions,
+  exportSetsQTI,
+  exportSetQuestionsQTI,
 }
