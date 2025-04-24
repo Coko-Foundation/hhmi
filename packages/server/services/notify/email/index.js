@@ -72,7 +72,7 @@ const questionRejected = async context => {
     // notify author
     const author = await Question.getAuthor(questionId)
 
-    const authorIdentity = await Identity.findOne({ userId: author.id })
+    const authorIdentity = await Identity.findOne({ userId: author[0].id })
 
     const content = `
     <p>  
@@ -343,7 +343,7 @@ const moveQuestionVersionToReview = async context => {
 
     const to = `assessmentbuilder@hhmi.org`
     const author = await Question.getAuthor(questionVersion.questionId)
-    const identity = await Identity.findOne({ userId: author.id })
+    const identity = await Identity.findOne({ userId: author[0].id })
     const link = `${clientUrl}/question/${questionVersion.questionId}`
     const bloomsLevel = flatten()[questionVersion.cognitiveLevel]
 
@@ -354,7 +354,7 @@ const moveQuestionVersionToReview = async context => {
 	  <p>This item has passed Editorial Review and payment to the Author should proceed.</p>
 	  <p>Item details:</p>
 	  <ul>
-	    <li>Author name: ${author.displayName}</li>
+	    <li>Author name: ${author[0].displayName}</li>
 	    <li>Author email: ${identity.email}</li>
 	    <li>Item ID: ${questionVersion.questionId}</li>
 	    <li>Bloom's level of the item: ${bloomsLevel}</li>

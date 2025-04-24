@@ -92,7 +92,7 @@ describe('ComplexItemSet controller', () => {
     const user = await User.insert({})
     const complexItem = await createComplexItemSet(user.id, 'set 1', null)
     const author = await getAuthorForComplexItemSet(complexItem.id)
-    expect(author.id).toBe(user.id)
+    expect(author[0].id).toBe(user.id)
   })
 
   test('getQuestionForComplexItemSet gets correct questions belonging to a set', async () => {

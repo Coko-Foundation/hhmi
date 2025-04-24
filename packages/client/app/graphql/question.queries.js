@@ -82,7 +82,7 @@ export const GET_EDITOR_DASHBOARD = gql`
       result {
         id
         rejected
-        author {
+        authors {
           displayName
         }
         heAssigned
@@ -147,7 +147,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
       result {
         id
         rejected
-        author {
+        authors {
           displayName
         }
         versions(latestOnly: true) {
@@ -209,7 +209,7 @@ export const GET_REVIEWER_DASHBOARD = gql`
       result {
         id
         rejected
-        author {
+        authors {
           displayName
         }
         versions(latestOnly: true) {
@@ -278,7 +278,7 @@ export const GET_PRODUCTION_DASHBOARD = gql`
       result {
         id
         rejected
-        author {
+        authors {
           displayName
         }
         versions(latestOnly: true, publishedOnly: false) {
@@ -489,6 +489,11 @@ export const QUESTION = gql`
         }
       }
 
+      authors {
+        id
+        displayName
+      }
+
       authorChatThreadId
       productionChatThreadId
       reviewerChatThreadId
@@ -697,7 +702,7 @@ export const GET_PUBLISHED_QUESTIONS = gql`
     getPublishedQuestions(params: $params, options: $options) {
       result {
         id
-        author {
+        authors {
           displayName
         }
         versions(latestOnly: true, publishedOnly: true) {
@@ -768,9 +773,18 @@ export const UPLOAD_FILES = gql`
   }
 `
 
+export const GET_QUESTION_AUTHORS = gql`
+  query GetQuestionAuthors($questionId: ID!) {
+    getQuestionAuthors(questionId: $questionId) {
+      id
+      displayName
+    }
+  }
+`
+
 export const ASSIGN_QUESTION_AUTHOR = gql`
-  mutation ($questionId: ID!, $userId: ID!) {
-    assignAuthorship(questionId: $questionId, userId: $userId)
+  mutation ($questionId: ID!, $userIds: [ID!]!) {
+    assignAuthorship(questionId: $questionId, userIds: $userIds)
   }
 `
 

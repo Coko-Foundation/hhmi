@@ -8,18 +8,8 @@ const ModalHeader = Modal.header
 const ModalFooter = Modal.footer
 const ModalContext = React.createContext(null)
 
-const Note = styled.p`
-  span {
-    font-weight: bold;
-  }
-`
-
 const StyledForm = styled(Form)`
   display: ${props => (props.hidden ? 'none' : 'block')};
-`
-
-const ConfirmationScreen = styled.div`
-  display: ${props => (props.visible ? 'block' : 'none')};
 `
 
 const AssignAuthorButton = props => {
@@ -47,6 +37,15 @@ const AssignAuthorButton = props => {
     }
   }, [showModal])
 
+  useEffect(() => {
+    if (currentAuthor?.length) {
+      assignAuthorForm.setFieldValue(
+        'author',
+        currentAuthor?.map(a => a.id),
+      )
+    }
+  }, [currentAuthor])
+
   const handleAssign = ({ author }) => {
     setShowModal(false)
     onAssignAuthor(author)
@@ -55,11 +54,12 @@ const AssignAuthorButton = props => {
         successModal.update({
           afterClose: refetchUser,
           title: 'Author assigned',
-          content: `User ${
-            authors.find(
-              a => a.value === assignAuthorForm.getFieldValue('author'),
-            )?.label
-          } has been assgined author of this ${
+          content: `User${author.length > 1 ? 's' : ''} ${authors
+            .filter(auth => author.findIndex(a => auth.value === a) > -1)
+            .map(auth => auth.label)
+            .join(', ')} ${
+            author.length > 1 ? 'have' : 'has'
+          } been assgined author of this ${
             usecase === 'item' ? 'item' : 'leader text'
           }.`,
           footer: [
@@ -89,14 +89,6 @@ const AssignAuthorButton = props => {
       })
   }
 
-  const confirmAuthorship = () => {
-    if (assignAuthorForm.getFieldValue('author')) {
-      setShowConfirm(true)
-    } else {
-      assignAuthorForm.validateFields(['author'])
-    }
-  }
-
   return (
     <ModalContext.Provider value={null}>
       <Button
@@ -112,22 +104,9 @@ const AssignAuthorButton = props => {
         destroyOnClose
         footer={
           <ModalFooter>
-            {showConfirm ? (
-              <>
-                <Button onClick={() => setShowConfirm(false)}>Back</Button>
-                <Button
-                  autoFocus
-                  onClick={assignAuthorForm.submit}
-                  type="primary"
-                >
-                  Yes, assign author
-                </Button>
-              </>
-            ) : (
-              <Button autoFocus onClick={confirmAuthorship} type="primary">
-                Assign
-              </Button>
-            )}
+            <Button onClick={assignAuthorForm.submit} type="primary">
+              Assign
+            </Button>
           </ModalFooter>
         }
         onCancel={() => setShowModal(false)}
@@ -144,18 +123,14 @@ const AssignAuthorButton = props => {
           </ModalHeader>
         }
       >
-        {currentAuthor && !showConfirm && (
-          <p>Current author: {currentAuthor}</p>
-        )}
         <StyledForm
           form={assignAuthorForm}
-          hidden={showConfirm}
           layout="vertical"
           onFinish={handleAssign}
           onValuesChange={() => assignAuthorForm.validateFields(['author'])}
         >
           <Form.Item
-            label={`Select the author of this ${
+            label={`Select one or more authors for this ${
               usecase === 'item' ? 'item' : 'set'
             }`}
             name="author"
@@ -179,23 +154,14 @@ const AssignAuthorButton = props => {
             <Select
               data-testid="author-select"
               defaultOpen={false}
+              mode="multiple"
               optionFilterProp="label"
               options={authors}
               placeholder="Search authors"
               showSearch
             />
           </Form.Item>
-          {usecase === 'item' && (
-            <Note>
-              <span>Note: </span>Make sure you select the correct user. The
-              author can only be assigned once.
-            </Note>
-          )}
         </StyledForm>
-        <ConfirmationScreen visible={showConfirm && usecase === 'item'}>
-          This action is irreversible. You will not be able to change the author
-          of this item again.
-        </ConfirmationScreen>
         <p
           style={{ padding: '1em', display: showConfirm ? 'block' : 'none' }}
         />

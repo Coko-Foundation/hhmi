@@ -250,15 +250,11 @@ const canAssignAuthor = rule()(async (_, { questionId }, ctx) => {
   const QuestionModel = ctx.connectors.Question.model
   const question = await QuestionModel.query().findById(questionId)
 
-  const adminAndAuthor =
-    userIsAdmin &&
-    (await isQuestionAuthor(ctx.connectors.Team.model, ctx.user, questionId))
-
   const adminOrEditorAndDeletedAuthor =
     !!question.deletedAuthorName &&
     (userIsAdmin || (await user.hasGlobalRole('editor')))
 
-  return user.isActive && (adminAndAuthor || adminOrEditorAndDeletedAuthor)
+  return user.isActive && (userIsAdmin || adminOrEditorAndDeletedAuthor)
 })
 
 const canArchiveQuestions = rule()(async (_, { questionIds }, ctx) => {

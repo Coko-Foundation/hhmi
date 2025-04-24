@@ -714,10 +714,12 @@ const unpublishQuestionVersion = async (questionVersionId, options = {}) => {
   return modifiedVersion
 }
 
-const assignAuthorship = async (questionId, userId, options = {}) => {
+const assignAuthorship = async (questionId, userIds, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} assignAuthorship:`
   logger.info(
-    `${CONTROLLER_MESSAGE} assigning user ${userId} as author of question ${questionId}`,
+    `${CONTROLLER_MESSAGE} assigning user(s) ${userIds.join(
+      ', ',
+    )} as author of question ${questionId}`,
   )
 
   try {
@@ -728,9 +730,23 @@ const assignAuthorship = async (questionId, userId, options = {}) => {
           .update({ deletedAuthorName: null })
           .where({ id: questionId })
 
-        return Team.assignQuestionAuthor(questionId, userId, {
-          trx,
+        const team = await Team.findOne({
+          objectId: questionId,
+          objectType: 'question',
+          role: 'author',
         })
+
+        await TeamMember.query().delete().where({ team_id: team.id })
+
+        const results = await Promise.all(
+          userIds.map(userId => {
+            return Team.assignQuestionAuthor(questionId, userId, {
+              trx,
+            })
+          }),
+        )
+
+        return results.every(res => res)
       },
       {
         trx: options.trx,

@@ -16,7 +16,7 @@ export const GET_COMPLEX_ITEM_SETS = gql`
         id
         title
         leadingContent
-        author {
+        authors {
           displayName
         }
         created
@@ -52,13 +52,14 @@ export const GET_COMPLEX_ITEM_SET = gql`
       title
       leadingContent
       containsSubmissions
-      author {
+      authors {
+        id
         displayName
       }
       questions {
         result {
           id
-          author {
+          authors {
             displayName
           }
           versions(latestOnly: true, publishedOnly: false) {
@@ -119,8 +120,8 @@ export const UPDATE_COMPLEX_ITEM_SET = gql`
 `
 
 export const ASSIGN_SET_AUTHOR = gql`
-  mutation AssingSetAuthor($setId: ID!, $userId: ID!) {
-    assignSetAuthor(setId: $setId, userId: $userId)
+  mutation AssingSetAuthor($setId: ID!, $userIds: [ID!]!) {
+    assignSetAuthor(setId: $setId, userIds: $userIds)
   }
 `
 
