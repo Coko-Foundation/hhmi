@@ -15,7 +15,7 @@ const transform = data => {
     const metadata = [
       {
         label: 'author',
-        value: set.author?.displayName,
+        value: set.authors?.map(a => a.displayName).join(', '),
       },
       {
         label: 'created at',

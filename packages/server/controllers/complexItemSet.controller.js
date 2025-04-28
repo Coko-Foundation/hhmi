@@ -1,7 +1,15 @@
 const { logger, useTransaction } = require('@coko/server')
 const path = require('path')
 const config = require('config')
-const { ComplexItemSet, Question, Team, User } = require('../models')
+
+const {
+  ComplexItemSet,
+  Question,
+  Team,
+  TeamMember,
+  User,
+} = require('../models')
+
 const { labels } = require('./constants')
 const { findImages } = require('./utils')
 const { clearTempImageFiles } = require('./helpers')
@@ -129,14 +137,18 @@ const getAuthorForComplexItemSet = async (complexItemSetId, options = {}) => {
   try {
     const { trx } = options
 
-    const author = await ComplexItemSet.query(trx)
+    const authors = await ComplexItemSet.query(trx)
       .leftJoin('teams', 'complex_item_sets.id', 'teams.object_id')
       .leftJoin('team_members', 'teams.id', 'team_members.team_id')
       .select('team_members.user_id')
-      .findOne({ 'teams.role': 'author', 'teams.objectId': complexItemSetId })
+      .where({ 'teams.role': 'author', 'teams.objectId': complexItemSetId })
       .throwIfNotFound()
 
-    return User.findById(author.userId)
+    return Promise.all(
+      authors.map(author => {
+        return User.findById(author.userId)
+      }),
+    )
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
     throw new Error(e)
@@ -176,14 +188,28 @@ const containsSubmissions = async complexItemSet => {
   }
 }
 
-const assignAuthorForComplexItemSet = async (setId, userId) => {
+const assignAuthorForComplexItemSet = async (setId, userIds) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} assignAuthorForComplexItemSet:`
 
   try {
     return useTransaction(async trx => {
-      return Team.assignSetAuthor(setId, userId, {
-        trx,
+      const team = await Team.findOne({
+        objectId: setId,
+        objectType: 'complexItemSet',
+        role: 'author',
       })
+
+      await TeamMember.query().delete().where({ team_id: team.id })
+
+      const results = await Promise.all(
+        userIds.map(userId => {
+          return Team.assignSetAuthor(setId, userId, {
+            trx,
+          })
+        }),
+      )
+
+      return results.every(res => res)
     })
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)

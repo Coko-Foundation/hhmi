@@ -45,20 +45,9 @@ class Team extends TeamModel {
       let affecetedRows
 
       if (team) {
-        const teamMember = await TeamMember.findOne({ teamId: team.id })
-
-        // if existing team member
-        if (teamMember) {
-          // patch team_members.user_id
-          affecetedRows = await TeamMember.query(options.trx)
-            .patch({ userId })
-            .where({ teamId: team.id })
-        } else {
-          // create new team member
-          affecetedRows = await Team.addMember(team.id, userId, {
-            trx: options.trx,
-          })
-        }
+        affecetedRows = await Team.addMember(team.id, userId, {
+          trx: options.trx,
+        })
       } else {
         const newTeam = await Team.insert(
           {
@@ -92,20 +81,9 @@ class Team extends TeamModel {
       let affecetedRows
 
       if (team) {
-        const teamMember = await TeamMember.findOne({ teamId: team.id })
-
-        // if existing team member
-        if (teamMember) {
-          // patch team_members.user_id
-          affecetedRows = await TeamMember.query(options.trx)
-            .patch({ userId })
-            .where({ teamId: team.id })
-        } else {
-          // create new team member
-          affecetedRows = await Team.addMember(team.id, userId, {
-            trx: options.trx,
-          })
-        }
+        affecetedRows = await Team.addMember(team.id, userId, {
+          trx: options.trx,
+        })
       } else {
         const newTeam = await Team.insert(
           {

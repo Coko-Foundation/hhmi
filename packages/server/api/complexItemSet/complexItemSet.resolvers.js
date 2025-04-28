@@ -58,8 +58,8 @@ const authorResolver = async complexItemSet => {
   return getAuthorForComplexItemSet(complexItemSet.id)
 }
 
-const assignSetAuthorResolver = async (_, { setId, userId }) => {
-  return assignAuthorForComplexItemSet(setId, userId)
+const assignSetAuthorResolver = async (_, { setId, userIds }) => {
+  return assignAuthorForComplexItemSet(setId, userIds)
 }
 
 const exportSetsResolver = async (_, { setIds, options }, ctx) => {
@@ -116,7 +116,7 @@ module.exports = {
   },
   ComplexItemSet: {
     questions: complexItemSetQuestionsResolver,
-    author: authorResolver,
+    authors: authorResolver,
     leadingContent: leadingContentResolver,
     containsSubmissions: containsSubmissionsResolver,
   },

@@ -5,7 +5,7 @@ type Question {
   versions(latestOnly: Boolean, publishedOnly: Boolean): [QuestionVersion!]!
   agreedTc: Boolean!
   rejected: Boolean!
-  author: User
+  authors: [User]!
   authorChatThreadId: ID
   productionChatThreadId: ID
   reviewerChatThreadId: ID
@@ -280,7 +280,7 @@ extend type Mutation {
   unpublishQuestionVersion(questionVersionId: ID!): QuestionVersion!
   createNewQuestionVersion(questionId: ID!): Question!
 
-  assignAuthorship(questionId: ID!, userId: ID!): Boolean
+  assignAuthorship(questionId: ID!, userIds: [ID!]!): Boolean
 
   updateQuestion(
     questionId: ID!

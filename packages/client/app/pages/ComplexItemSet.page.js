@@ -263,11 +263,11 @@ const ComplexItemSetPage = () => {
       .catch(e => console.error(e))
   }
 
-  const handleAssignAuthor = authorId => {
+  const handleAssignAuthor = authorIds => {
     const mutationData = {
       variables: {
         setId: id,
-        userId: authorId,
+        userIds: authorIds,
       },
     }
 
@@ -367,7 +367,7 @@ const ComplexItemSetPage = () => {
         (isAuthor && !data?.complexItemSet?.containsSubmissions) ||
         state?.created
       }
-      currentAuthor={data?.complexItemSet?.author?.displayName}
+      currentAuthor={data?.complexItemSet?.authors}
       currentQuestionsPage={questionsPage}
       editWarning={hasPublishedQuestions}
       id={data?.complexItemSet?.id}

@@ -89,8 +89,8 @@ describe('Question Controller', () => {
     )
 
     const author = await Question.getAuthor(duplicateQuestion.id)
-    expect(author.id).not.toBe(user1.id)
-    expect(author.id).toBe(user2.id)
+    expect(author[0].id).not.toBe(user1.id)
+    expect(author[0].id).toBe(user2.id)
   })
 
   test('getAuthorChatParticipants gets correct question participants', async () => {

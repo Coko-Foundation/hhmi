@@ -1103,11 +1103,11 @@ const QuestionPage = props => {
     })
   }
 
-  const handleAssignAuthor = authorId => {
+  const handleAssignAuthor = authorIds => {
     const mutationData = {
       variables: {
         questionId: id,
-        userId: authorId,
+        userIds: authorIds,
       },
     }
 
@@ -1455,8 +1455,9 @@ const QuestionPage = props => {
         )}
         authorChatParticipants={authorChatParticipants}
         authors={possibleAuthors}
+        authorsCurrent={question?.authors}
         automateReviewerInvites={automateReviewerInvites}
-        canAssignAuthor={isAdmin && isAuthor}
+        canAssignAuthor={isAdmin}
         canCreateNewVersion={isAdmin || isEditor}
         canPublish={isEditor || isHandlingEditor || isAdmin}
         canUnpublish={isAdmin || isEditor}
