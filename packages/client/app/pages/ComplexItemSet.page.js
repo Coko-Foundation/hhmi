@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams, useHistory, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
-
+import { serverUrl } from '@coko/client'
 import { ComplexItemSet, Result, Spin } from 'ui'
 import {
   dashboardDataMapper,
@@ -20,6 +20,8 @@ import {
   CREATE_QUESTION,
   FILTER_USERS_OPTIONS,
   ASSIGN_SET_AUTHOR,
+  EXPORT_SET_QUESTIONS,
+  EXPORT_SET_QUESTIONS_QTI,
 } from '../graphql'
 
 const NOTIFICATION_TIMEOUT = 5000
@@ -119,6 +121,9 @@ const ComplexItemSetPage = () => {
       },
     },
   })
+
+  const [exportQuestionsMutation] = useMutation(EXPORT_SET_QUESTIONS)
+  const [exportQuestionsQTIMutation] = useMutation(EXPORT_SET_QUESTIONS_QTI)
 
   const handleSortOptionChange = sortBy => {
     sortOptions.filter(opt => opt.isDefault)[0].isDefault = false
@@ -258,15 +263,64 @@ const ComplexItemSetPage = () => {
       .catch(e => console.error(e))
   }
 
-  const handleAssignAuthor = authorId => {
+  const handleAssignAuthor = authorIds => {
     const mutationData = {
       variables: {
         setId: id,
-        userId: authorId,
+        userIds: authorIds,
       },
     }
 
     return assignAuthor(mutationData)
+  }
+
+  const handleWordExport = async (questionIds, showFeedback) => {
+    const mutationData = {
+      variables: {
+        setId: id,
+        questionIds,
+        orderBy: 'publication_date',
+        ascending: sortAscending,
+        options: { showFeedback },
+      },
+    }
+
+    return exportQuestionsMutation(mutationData)
+      .then(res => {
+        const filename = res.data.exportSetQuestions
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject()
+        })
+      })
+  }
+
+  const handleQTIExport = async questionIds => {
+    const mutationData = {
+      variables: {
+        setId: id,
+        questionIds,
+        // orderBy: 'publication_date',
+        // ascending: sortAscending,
+      },
+    }
+
+    return exportQuestionsQTIMutation(mutationData)
+      .then(res => {
+        const filename = res.data.exportSetQuestionsQTI
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject()
+        })
+      })
   }
 
   const isAdmin = hasGlobalRole(currentUser, 'admin')
@@ -313,7 +367,7 @@ const ComplexItemSetPage = () => {
         (isAuthor && !data?.complexItemSet?.containsSubmissions) ||
         state?.created
       }
-      currentAuthor={data?.complexItemSet?.author?.displayName}
+      currentAuthor={data?.complexItemSet?.authors}
       currentQuestionsPage={questionsPage}
       editWarning={hasPublishedQuestions}
       id={data?.complexItemSet?.id}
@@ -327,9 +381,11 @@ const ComplexItemSetPage = () => {
       onAssignAuthor={handleAssignAuthor}
       onCreateQuestion={handleCreateQuestion}
       onImageUpload={handleImageUpload}
+      onQTIExport={handleQTIExport}
       onQuestionsPageChange={setQuestionsPage}
       onSave={handleSave}
       onSortOptionChange={handleSortOptionChange}
+      onWordExport={handleWordExport}
       questions={
         data && metadata && complexItemSetOptions
           ? dashboardDataMapper({

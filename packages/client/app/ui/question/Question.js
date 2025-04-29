@@ -479,6 +479,7 @@ const Question = props => {
     onSelectReviewer,
     hasGeneralReviewerChatId,
     reviewerId,
+    authorsCurrent,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -1174,6 +1175,7 @@ const Question = props => {
         (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
         <StyledAssignAuthorButton
           authors={authors}
+          currentAuthor={authorsCurrent}
           loadAuthors={loadAuthors}
           onAssignAuthor={onAssignAuthor}
           refetchUser={refetchUser}
@@ -1293,6 +1295,8 @@ const Question = props => {
           (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
           <StyledAssignAuthorButton
             authors={authors}
+            authorsCurrent={authorsCurrent}
+            currentAuthor={authorsCurrent}
             loadAuthors={loadAuthors}
             onAssignAuthor={onAssignAuthor}
             refetchUser={refetchUser}
@@ -1526,6 +1530,7 @@ const Question = props => {
       {isPublished && canAssignAuthor && (
         <StyledAssignAuthorButton
           authors={authors}
+          currentAuthor={authorsCurrent}
           loadAuthors={loadAuthors}
           onAssignAuthor={onAssignAuthor}
           refetchUser={refetchUser}
@@ -1568,6 +1573,7 @@ const Question = props => {
           {isPublished && canAssignAuthor && (
             <StyledAssignAuthorButton
               authors={authors}
+              currentAuthor={authorsCurrent}
               loadAuthors={loadAuthors}
               onAssignAuthor={onAssignAuthor}
               refetchUser={refetchUser}
@@ -2241,6 +2247,7 @@ Question.propTypes = {
   onSelectReviewer: PropTypes.func,
   hasGeneralReviewerChatId: PropTypes.bool,
   reviewerId: PropTypes.string,
+  authorsCurrent: PropTypes.arrayOf(PropTypes.shape()),
 }
 
 Question.defaultProps = {
@@ -2345,6 +2352,7 @@ Question.defaultProps = {
   onSelectReviewer: null,
   hasGeneralReviewerChatId: false,
   reviewerId: null,
+  authorsCurrent: [],
 }
 
 export default Question

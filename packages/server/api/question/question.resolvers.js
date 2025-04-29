@@ -139,8 +139,8 @@ const unpublishQuestionVersionResolver = async (_, { questionVersionId }) => {
   return unpublishQuestionVersion(questionVersionId)
 }
 
-const assignAuthorshipResolver = async (_, { questionId, userId }) => {
-  return assignAuthorship(questionId, userId)
+const assignAuthorshipResolver = async (_, { questionId, userIds }) => {
+  return assignAuthorship(questionId, userIds)
 }
 
 const versionsResolver = async (
@@ -344,7 +344,7 @@ module.exports = {
   },
   Question: {
     versions: versionsResolver,
-    author: authorResolver,
+    authors: authorResolver,
     authorChatThreadId: authorChatThreadResolver,
     productionChatThreadId: productionChatThreadResolver,
     reviewerChatThreadId: reviewerChatThreadIdResolver,

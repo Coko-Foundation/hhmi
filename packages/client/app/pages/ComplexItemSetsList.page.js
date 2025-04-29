@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import { useQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
+import { serverUrl } from '@coko/client'
 import { ComplexItemSetList } from 'ui'
-import { GET_COMPLEX_ITEM_SETS } from '../graphql'
+import { GET_COMPLEX_ITEM_SETS, EXPORT_SETS, EXPORT_SETS_QTI } from '../graphql'
 import { extractDocumentText } from '../utilities'
 
 const transform = data => {
@@ -14,7 +15,7 @@ const transform = data => {
     const metadata = [
       {
         label: 'author',
-        value: set.author?.displayName,
+        value: set.authors?.map(a => a.displayName).join(', '),
       },
       {
         label: 'created at',
@@ -75,6 +76,9 @@ const ComplexItemSetsListPage = () => {
     },
   )
 
+  const [exportSetsMutation] = useMutation(EXPORT_SETS)
+  const [exportSetsQTIMutation] = useMutation(EXPORT_SETS_QTI)
+
   const handleSearchParamsChange = params => {
     setSearchParams({ ...searchParams, ...params })
   }
@@ -86,12 +90,59 @@ const ComplexItemSetsListPage = () => {
     setSearchParams({ ...searchParams, ascending: sortBy === 'date-asc' })
   }
 
+  const handleWordExport = async (setIds, showFeedback) => {
+    const mutationData = {
+      variables: {
+        setIds,
+        options: {
+          showFeedback,
+        },
+      },
+    }
+
+    return exportSetsMutation(mutationData)
+      .then(res => {
+        const filename = res.data.exportSets
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject(e.message)
+        })
+      })
+  }
+
+  const handleQTIExport = async setIds => {
+    const mutationData = {
+      variables: {
+        setIds,
+      },
+    }
+
+    return exportSetsQTIMutation(mutationData)
+      .then(res => {
+        const filename = res.data.exportSetsQTI
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject(e.message)
+        })
+      })
+  }
+
   return (
     <ComplexItemSetList
       data={transform(complexItemSets)}
       loading={loadingSets}
+      onQTIExport={handleQTIExport}
       onSearch={handleSearchParamsChange}
       onSortOptionChange={handleSortOptionChange}
+      onWordExport={handleWordExport}
       pageSize={PAGE_SIZE}
       sortOptions={sortOptions}
       total={complexItemSets?.totalCount}

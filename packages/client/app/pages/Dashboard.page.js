@@ -22,6 +22,10 @@ import {
   GET_PRODUCTION_DASHBOARD,
   DASHBOARD_SUBSCRIPTION,
   CHANGE_ARCHIVE_STATUS_FOR_ITEMS,
+  GET_LISTS_OPTIONS,
+  ADD_TO_LIST,
+  CREATE_LIST,
+  GET_LISTS,
 } from '../graphql'
 import {
   hasGlobalRole,
@@ -191,6 +195,37 @@ const DashboardPage = () => {
       }
     },
   })
+
+  const { data: { myLists: { result: existingLists } = {} } = {} } = useQuery(
+    GET_LISTS_OPTIONS,
+    {
+      fetchPolicy: 'network-only',
+    },
+  )
+
+  const [addToExistingListMutation, { loading: loadingAddToList }] =
+    useMutation(ADD_TO_LIST)
+
+  const [addToNewListMutation, { loading: loadingCreateList }] = useMutation(
+    CREATE_LIST,
+    {
+      refetchQueries: [
+        {
+          query: GET_LISTS,
+          variables: {
+            page: 0,
+            pageSize: 10,
+            searchQuery: '',
+            orderBy: 'created',
+            ascending: true,
+          },
+        },
+        {
+          query: GET_LISTS_OPTIONS,
+        },
+      ],
+    },
+  )
 
   const authorData = authorResponse && authorResponse.getAuthorDashboard
   const editorData = editorResponse && editorResponse.getManagingEditorDashboard
@@ -386,6 +421,38 @@ const DashboardPage = () => {
     return changeArchiveStatusForItems(mutationData)
   }
 
+  const handleAddToList = (existingList, questions) => {
+    const mutationData = {
+      variables: {
+        listId: existingList,
+        questionIds: questions,
+      },
+    }
+
+    return addToExistingListMutation(mutationData).then(response => {
+      return new Promise((resolve, reject) => {
+        if (response?.data?.addToList) resolve()
+        else reject()
+      })
+    })
+  }
+
+  const handleCreateList = (title, questions) => {
+    const mutationData = {
+      variables: {
+        title,
+        questions,
+      },
+    }
+
+    return addToNewListMutation(mutationData).then(response => {
+      return new Promise((resolve, reject) => {
+        if (response?.data?.createList?.id) resolve()
+        else reject()
+      })
+    })
+  }
+
   // #endregion handlers
 
   // #region data
@@ -472,13 +539,18 @@ const DashboardPage = () => {
     <>
       <VisuallyHiddenElement as="h1">Dashboard page</VisuallyHiddenElement>
       <Dashboard
+        existingListsOptions={existingLists}
         handlingEditors={handlingEditors?.result || []}
         initialTabKey={initialTabKey}
         loading={loading}
+        loadingAddToList={loadingAddToList}
+        loadingCreateList={loadingCreateList}
         loadingSearchHEs={loadingSearchHEs}
+        onAddToList={handleAddToList}
         onAssignHE={handleAssignHE}
         onChangeArchiveStatus={handleChangeArchiveStatus}
         onClickCreate={handleCreateQuestion}
+        onCreateList={handleCreateList}
         onSearch={handleSearch}
         onSearchHE={handleSearchHE}
         // showSort

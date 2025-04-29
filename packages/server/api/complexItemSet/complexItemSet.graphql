@@ -3,7 +3,7 @@ type ComplexItemSet {
   title: String!
   leadingContent: String
   questions: QuestionsResponse
-  author: User
+  authors: [User]
   created: DateTime
   updated: DateTime
   containsSubmissions: Boolean
@@ -35,5 +35,20 @@ extend type Mutation {
     leadingContent: String
   ): ComplexItemSet!
   deleteComplexItemSet(id: ID!): ID!
-  assignSetAuthor(setId: ID!, userId: ID!): Boolean
+  assignSetAuthor(setId: ID!, userIds: [ID!]!): Boolean
+  exportSets(setIds: [ID!]!, options: GenerateWordFileOptionsInput): String!
+  exportSetQuestions(
+    setId: ID!
+    questionIds: [ID!]!
+    orderBy: String
+    ascending: Boolean
+    options: GenerateWordFileOptionsInput
+  ): String!
+  exportSetsQTI(setIds: [ID!]!): String!
+  exportSetQuestionsQTI(
+    setId: ID!
+    questionIds: [ID!]!
+    orderBy: String
+    ascending: Boolean
+  ): String!
 }

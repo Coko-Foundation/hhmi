@@ -83,7 +83,7 @@ export const GET_LIST = gql`
         result {
           id
           rejected
-          versions(latestOnly: true, publishedOnly: true) {
+          versions(latestOnly: true) {
             id
             content
             publicationDate

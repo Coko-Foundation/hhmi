@@ -187,7 +187,7 @@ query getQuestion($id:ID!, $published: Boolean){
     id
     agreedTc
     rejected
-    author{
+    authors{
       displayName
       givenNames
     }
@@ -242,8 +242,8 @@ describe('Question API authorization', () => {
     })
 
     expect(result.errors).toBe(undefined)
-    expect(result.data.question.author.displayName).toBe('user1')
-    expect(result.data.question.author.givenNames).toBe('user 1')
+    expect(result.data.question.authors[0].displayName).toBe('user1')
+    expect(result.data.question.authors[0].givenNames).toBe('user 1')
   })
 
   it("blocks inactive users from quering author's dashboard", async () => {

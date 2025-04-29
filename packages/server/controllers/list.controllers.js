@@ -218,7 +218,7 @@ const exportQuestionsToWordFile = async (
       questionIds.map(async questionId => {
         const versionsResult = await Question.getVersions(questionId, {
           latestOnly: true,
-          publishedOnly: true,
+          // publishedOnly: true,
         })
 
         return versionsResult.result[0]
@@ -394,7 +394,7 @@ const exportQuestionsToQti = async (
       questionIds.map(async questionId => {
         const versionsResult = await Question.getVersions(questionId, {
           latestOnly: true,
-          publishedOnly: true,
+          // publishedOnly: true,
         })
 
         return versionsResult.result[0]

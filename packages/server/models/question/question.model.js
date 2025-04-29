@@ -905,22 +905,32 @@ class Question extends BaseModel {
     const { trx } = options
 
     try {
-      const author = await Question.query(trx)
+      const authors = await Question.query(trx)
         .leftJoin('teams', 'questions.id', 'teams.object_id')
         .leftJoin('team_members', 'teams.id', 'team_members.team_id')
         .select('team_members.user_id')
-        .findOne({ 'teams.role': 'author', 'teams.objectId': questionId })
+        .where({ 'teams.role': 'author', 'teams.objectId': questionId })
 
-      if (author.userId) {
-        const user = await User.findById(author.userId)
-        return user
-      }
+      const users = await Promise.all(
+        authors.map(author => {
+          if (author.userId) {
+            return User.findById(author.userId)
+          }
+
+          return null
+        }),
+      )
+
+      if (users.length) return users
 
       // if no user was found then the author was deleted, so read the deleted_author_name field from question record
       const question = await Question.findById(questionId)
-      return {
-        displayName: question.deletedAuthorName,
-      }
+
+      return [
+        {
+          displayName: question.deletedAuthorName,
+        },
+      ]
     } catch (e) {
       console.error('Question model: getAuthor failed', e)
       // throw new Error(e)

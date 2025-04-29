@@ -16,7 +16,7 @@ export const GET_COMPLEX_ITEM_SETS = gql`
         id
         title
         leadingContent
-        author {
+        authors {
           displayName
         }
         created
@@ -52,13 +52,14 @@ export const GET_COMPLEX_ITEM_SET = gql`
       title
       leadingContent
       containsSubmissions
-      author {
+      authors {
+        id
         displayName
       }
       questions {
         result {
           id
-          author {
+          authors {
             displayName
           }
           versions(latestOnly: true, publishedOnly: false) {
@@ -119,7 +120,43 @@ export const UPDATE_COMPLEX_ITEM_SET = gql`
 `
 
 export const ASSIGN_SET_AUTHOR = gql`
-  mutation AssingSetAuthor($setId: ID!, $userId: ID!) {
-    assignSetAuthor(setId: $setId, userId: $userId)
+  mutation AssingSetAuthor($setId: ID!, $userIds: [ID!]!) {
+    assignSetAuthor(setId: $setId, userIds: $userIds)
+  }
+`
+
+export const EXPORT_SETS = gql`
+  mutation ExportSets($setIds: [ID!]!, $options: GenerateWordFileOptionsInput) {
+    exportSets(setIds: $setIds, options: $options)
+  }
+`
+
+export const EXPORT_SET_QUESTIONS = gql`
+  mutation ExportSetQuestions(
+    $setId: ID!
+    $questionIds: [ID!]!
+    $orderBy: String
+    $ascending: Boolean
+    $options: GenerateWordFileOptionsInput
+  ) {
+    exportSetQuestions(
+      setId: $setId
+      questionIds: $questionIds
+      orderBy: $orderBy
+      ascending: $ascending
+      options: $options
+    )
+  }
+`
+
+export const EXPORT_SETS_QTI = gql`
+  mutation ExportSetsQTI($setIds: [ID!]!) {
+    exportSetsQTI(setIds: $setIds)
+  }
+`
+
+export const EXPORT_SET_QUESTIONS_QTI = gql`
+  mutation ExportSetQuestionsQTI($setId: ID!, $questionIds: [ID!]!) {
+    exportSetQuestionsQTI(setId: $setId, questionIds: $questionIds)
   }
 `

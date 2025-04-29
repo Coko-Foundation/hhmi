@@ -1455,7 +1455,12 @@ const dashboardDataMapper = ({
         // question type: how do we know that data ?? what if it's more than one?
         { label: "bloom's level", value: cognitiveDisplayValue },
         ...(showAuthor
-          ? [{ label: 'author', value: question?.author?.displayName }]
+          ? [
+              {
+                label: 'author',
+                value: question?.authors?.map(a => a.displayName).join(', '),
+              },
+            ]
           : []),
         {
           label: 'published date',

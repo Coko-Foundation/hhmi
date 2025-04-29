@@ -66,7 +66,6 @@ describe('Team Model', () => {
 
   test('assigning author to a question', async () => {
     const question = await Question.insert({})
-    const admin = await User.insert({})
     const author = await User.insert({})
 
     const team = await Team.insert({
@@ -75,8 +74,6 @@ describe('Team Model', () => {
       objectId: question.id,
       objectType: 'question',
     })
-
-    await Team.addMember(team.id, admin.id)
 
     const result = await Team.assignQuestionAuthor(question.id, author.id)
     const fetchedTeam = await TeamMember.find({ teamId: team.id })
