@@ -322,7 +322,9 @@ const CourseMetadataTable = props => {
       setDataSource(courseDataToUi(courses, 'course'))
     } else if (dataSource) {
       // update ui by reseting the current dataSource
-      selectEntry(currentEntry)
+      Array.isArray(currentEntry) && currentEntry.length === 0
+        ? selectEntry({ type: '' })
+        : selectEntry(currentEntry)
     }
   }, [courses])
 
