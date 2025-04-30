@@ -56,6 +56,14 @@ const DashboardPage = () => {
   const [currentShowArchived, setCurrentShowArchived] = useState(false)
   const [currentSearchQuery, setCurrentSearchQuery] = useState(null)
 
+  const [searchParams, setSearchParams] = useState({
+    query: '',
+    page: 1,
+    sortBy: 'date',
+    role: initialTabKey,
+    archived: false,
+  })
+
   const [heFilterOptions, setHeFilterOptions] = useState(
     createHeAssignedFilters([]),
   )
@@ -356,6 +364,23 @@ const DashboardPage = () => {
     CHANGE_ARCHIVE_STATUS_FOR_ITEMS,
     {
       onCompleted: () => {
+        const currentData =
+          authorData ||
+          editorData ||
+          handlingEditorData ||
+          reviewerData ||
+          productionData
+
+        if (currentData.result.length === 1 && currentPage > 1) {
+          setCurrentPage(currentPage - 1)
+          setSearchParams({
+            ...searchParams,
+            page: currentPage - 1,
+            filters: queryMapper.query || {},
+            archived: currentShowArchived,
+          })
+        }
+
         runQuery(currentSearchQuery)
       },
     },
@@ -539,6 +564,7 @@ const DashboardPage = () => {
     <>
       <VisuallyHiddenElement as="h1">Dashboard page</VisuallyHiddenElement>
       <Dashboard
+        controlledSearchParams={searchParams}
         existingListsOptions={existingLists}
         handlingEditors={handlingEditors?.result || []}
         initialTabKey={initialTabKey}

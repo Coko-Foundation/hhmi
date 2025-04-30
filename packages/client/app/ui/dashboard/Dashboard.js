@@ -77,23 +77,22 @@ const Dashboard = props => {
     onCreateList,
     loadingAddToList,
     loadingCreateList,
+    controlledSearchParams,
   } = props
 
   const isMobile = useBreakpoint('(max-width: 900px)')
 
-  const [searchParams, setSearchParams] = useState({
-    query: '',
-    page: 1,
-    sortBy: 'date',
-    role: initialTabKey,
-    archived: false,
-  })
+  const [searchParams, setSearchParams] = useState(controlledSearchParams)
 
   const [selectedQuestions, setSelectedQuestions] = useState([])
 
   useEffect(() => {
     onSearch(searchParams)
   }, [searchParams])
+
+  useEffect(() => {
+    setSearchParams(controlledSearchParams)
+  }, [controlledSearchParams])
 
   const setSearchPage = page => {
     setSearchParams({ ...searchParams, page })
@@ -415,6 +414,7 @@ Dashboard.propTypes = {
   onCreateList: PropTypes.func,
   loadingAddToList: PropTypes.bool,
   loadingCreateList: PropTypes.bool,
+  controlledSearchParams: PropTypes.shape(),
 }
 
 Dashboard.defaultProps = {
@@ -434,6 +434,7 @@ Dashboard.defaultProps = {
   loadingAddToList: false,
   loadingCreateList: false,
   existingListsOptions: [],
+  controlledSearchParams: null,
 }
 
 export default Dashboard
