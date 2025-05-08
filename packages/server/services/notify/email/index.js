@@ -499,6 +499,34 @@ const submitReport = async ({
   }
 }
 
+const submitItem = async ({ questionId, to }) => {
+  try {
+    const link = `${clientUrl}/question/${questionId}`
+
+    const subject =
+      'HHMI BioInteractive Assessment Builder: An item was editted and resubmitted'
+
+    const content = `
+      <p>The item with id ${questionId} has been edited and resubmitted by the author</p>
+      <p>
+      Click on <a href="${link}">this link</a> to view the item.
+      If you cannot see the link, copy and paste the following link into your browser.
+      <br/>
+      ${link}
+    </p>`
+
+    const text = `The item with id ${questionId} has been edited and resubmitted by the author.
+		\nCopy and paste the following link into your browser to view the item.
+		\n${link}
+		`
+
+    return { content, subject, text, to }
+  } catch (e) {
+    logger.error(`Failed to create email for submit item: ${e}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   sendEmail: send,
   handlers: {
@@ -515,5 +543,6 @@ module.exports = {
     'hhmi.submitReview': submitReview,
     'hhmi.sendReviewCopyToReviewer': sendReviewCopyToReviewer,
     'hhmi.submitReport': submitReport,
+    'hhmi.submitItem': submitItem,
   },
 }

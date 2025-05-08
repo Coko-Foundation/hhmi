@@ -564,7 +564,11 @@ class Question extends BaseModel {
       'question_versions.question_id',
     )
 
-    const selectFields = ['questions.*', 'question_versions.submitted']
+    const selectFields = [
+      'questions.*',
+      'question_versions.submitted',
+      'question_versions.editing',
+    ]
 
     // if searchQuery, we'll need the question's content and keywords
     if (searchQuery) {
@@ -606,7 +610,7 @@ class Question extends BaseModel {
     query.select(selectFields)
 
     if (submittedOnly) {
-      query.where({ submitted: true })
+      query.where({ submitted: true, editing: false })
     }
 
     // create initial query for questions excluding author's ones

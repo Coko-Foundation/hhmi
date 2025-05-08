@@ -100,6 +100,7 @@ const canUpdateQuestion = rule()(
         'questions.id',
         'questions.rejected',
         'question_versions.submitted',
+        'question_versions.editing',
         'question_versions.accepted',
         'question_versions.under_review',
         'question_versions.in_production',
@@ -113,7 +114,7 @@ const canUpdateQuestion = rule()(
 
     if (question.rejected) return false
 
-    if (!question.submitted) {
+    if (!question.submitted || question.editing) {
       // needs to be the author
       return isQuestionAuthor(ctx.connectors.Team.model, ctx.user, questionId)
     }
@@ -201,18 +202,47 @@ const canCreateNewVersion = rule()(async (_, __, ctx) => {
 })
 
 // editors and handlingEditors can accept questions
-const canAcceptQuestion = rule()(async (_, __, ctx) => {
+const canAcceptQuestion = rule()(async (_, { questionVersionId }, ctx) => {
   if (!ctx.user) return false
 
   const UserModel = ctx.connectors.User.model
   const user = await UserModel.query().findById(ctx.user)
 
+  const QuestionVersionModel = ctx.connectors.QuestionVersion.model
+
+  const questionVersion = await QuestionVersionModel.query().findById(
+    questionVersionId,
+  )
+
   return (
     user.isActive &&
+    !questionVersion.editing &&
     ((await user.hasGlobalRole('editor')) ||
       user.hasGlobalRole('handlingEditor'))
   )
 })
+
+const canEditQuestion = rule()(
+  async (_, { questionId, questionVersionId }, ctx) => {
+    if (!ctx.user) return false
+
+    const UserModel = ctx.connectors.User.model
+    const user = await UserModel.query().findById(ctx.user)
+
+    if (!user.isActive) return false
+
+    const QuestionVersionModel = ctx.connectors.QuestionVersion.model
+
+    const questionVersion = await QuestionVersionModel.query().findById(
+      questionVersionId,
+    )
+
+    return (
+      isQuestionAuthor(ctx.connectors.Team.model, ctx.user, questionId) &&
+      !questionVersion.accepted
+    )
+  },
+)
 
 // editors and handlingEditors can reject questions
 const canRejectQuestion = rule()(async (_, __, ctx) => {
@@ -352,6 +382,7 @@ const permissions = {
     updateQuestion: canUpdateQuestion,
     submitQuestion: isAuthor,
     acceptQuestion: canAcceptQuestion,
+    editQuestion: canEditQuestion,
     rejectQuestion: canRejectQuestion,
     moveQuestionVersionToReview: canMoveToReview,
     moveQuestionVersionToProduction: canMoveToProduction,

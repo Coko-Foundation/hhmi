@@ -23,6 +23,7 @@ type QuestionVersion {
   content: String
 
   submitted: Boolean!
+  editing: Boolean
   accepted: Boolean!
   underReview: Boolean!
   inProduction: Boolean!
@@ -328,7 +329,9 @@ extend type Mutation {
     questionIds: [ID!]!
     isArchiving: Boolean!
     role: String!
-  ): Boolean
+  ): Int!
+
+  editQuestion(questionId: ID!, questionVersionId: ID!): QuestionVersion!
 }
 
 extend type Subscription {

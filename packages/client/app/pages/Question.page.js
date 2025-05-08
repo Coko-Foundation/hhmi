@@ -19,6 +19,7 @@ import {
   SUBMIT_QUESTION,
   UPDATE_QUESTION,
   ACCEPT_QUESTION,
+  EDIT_QUESTION,
   REJECT_QUESTION,
   MOVE_QUESTION_VERSION_TO_REVIEW,
   MOVE_QUESTION_VERSION_TO_PRODUCTION,
@@ -289,7 +290,15 @@ const QuestionPage = props => {
     variables: { questionId: id },
   })
 
-  const [acceptQuestionVersion] = useMutation(ACCEPT_QUESTION)
+  const [acceptQuestionVersion] = useMutation(ACCEPT_QUESTION, {
+    onError: e => {
+      if (e.message === 'Not Authorised!') {
+        refetchQuestion()
+      }
+    },
+  })
+
+  const [editQuestionVersion] = useMutation(EDIT_QUESTION)
 
   const [moveQuestionVersionToReviewMutation] = useMutation(
     MOVE_QUESTION_VERSION_TO_REVIEW,
@@ -729,6 +738,7 @@ const QuestionPage = props => {
     isAdmin
 
   const isSubmitted = version?.submitted || (isAdmin && isAuthor)
+  const isEditing = version?.editing
   const isUnderReview = version?.underReview
   const isInProduction = version?.inProduction
   const isAccepted = version?.accepted
@@ -970,6 +980,20 @@ const QuestionPage = props => {
     }
 
     return acceptQuestionVersion(mutationData)
+  }
+
+  const handleEditQuestion = () => {
+    const mutationData = {
+      variables: {
+        questionId: question.id,
+        questionVersionId: version.id,
+      },
+    }
+
+    return editQuestionVersion(mutationData).catch(e => {
+      refetchQuestion()
+      throw new Error(e)
+    })
   }
 
   const handleMoveToReview = () => {
@@ -1443,6 +1467,22 @@ const QuestionPage = props => {
     )
   }
 
+  if (
+    question &&
+    (!question.versions[0]?.submitted || question.versions[0]?.editing) &&
+    !isAuthor
+  ) {
+    return (
+      <Result
+        // replace link with a Button with to="/dashboard" after MR is merged
+        extra={<Link to="/dashboard">Go back to the dashboard</Link>}
+        status="404"
+        subTitle="Sorry, this item is being edited by the author."
+        title="Item Not Ready"
+      />
+    )
+  }
+
   return (
     <>
       <VisuallyHiddenElement as="h1">{pageTitle}</VisuallyHiddenElement>
@@ -1489,6 +1529,7 @@ const QuestionPage = props => {
         )}
         isAccepted={isAccepted}
         isArchived={isArchived}
+        isEditing={isEditing}
         // admins can always treat their questions as if they are in produciton, meaning they can edit and publish them directly,
         // unless the question has already been published
         isInProduction={
@@ -1521,6 +1562,7 @@ const QuestionPage = props => {
         onAcceptQuestion={handleAcceptQuestion}
         onAddReviewers={handleAddReviewers}
         onAssignAuthor={handleAssignAuthor}
+        onAuthorEdit={handleEditQuestion}
         onAutomateReviewerChange={handleReviewerInviteAutomationChange}
         onChangeAmountOfReviewers={handleChangeAmountOfReviewers}
         onChangeTab={persistQuestionTab}

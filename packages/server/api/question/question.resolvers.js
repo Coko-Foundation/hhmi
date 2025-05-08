@@ -49,6 +49,7 @@ const {
   reviewerPool,
   changeArchiveStatusForItems,
   isItemArchivedForUser,
+  editQuestion,
 } = require('../../controllers/question.controllers')
 
 const { getPubsub } = pubsubManager
@@ -291,6 +292,10 @@ const changeArchiveStatusForItemsResolver = async (
   return changeArchiveStatusForItems(questionIds, isArchiving, role, ctx.user)
 }
 
+const editQuestionResolver = async (_, { questionVersionId }) => {
+  return editQuestion(questionVersionId)
+}
+
 module.exports = {
   Query: {
     question: questionResolver,
@@ -329,6 +334,7 @@ module.exports = {
     changeAmountOfReviewers: changeAmountOfReviewersResolver,
     changeReviewerAutomationStatus: changeReviewerAutomationStatusResolver,
     changeArchiveStatusForItems: changeArchiveStatusForItemsResolver,
+    editQuestion: editQuestionResolver,
   },
   Subscription: {
     dashboardUpdate: {

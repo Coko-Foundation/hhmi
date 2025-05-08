@@ -412,6 +412,7 @@ export const QUESTION = gql`
         lastEdit
 
         submitted
+        editing
         accepted
         underReview
         inProduction
@@ -843,5 +844,17 @@ export const CHANGE_ARCHIVE_STATUS_FOR_ITEMS = gql`
       isArchiving: $isArchiving
       role: $role
     )
+  }
+`
+
+export const EDIT_QUESTION = gql`
+  mutation EditQuestion($questionId: ID!, $questionVersionId: ID!) {
+    editQuestion(
+      questionId: $questionId
+      questionVersionId: $questionVersionId
+    ) {
+      id
+      editing
+    }
   }
 `

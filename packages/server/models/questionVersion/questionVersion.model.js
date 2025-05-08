@@ -120,6 +120,7 @@ class QuestionVersion extends BaseModel {
         contentText: stringNullable,
 
         submitted: boolean,
+        editing: boolean,
         accepted: boolean,
         underReview: boolean,
         inProduction: boolean,

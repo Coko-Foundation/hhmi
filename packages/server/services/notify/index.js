@@ -86,6 +86,9 @@ class CokoNotifier {
     'hhmi.submitReport': {
       notifyBy: ['email'],
     },
+    'hhmi.submitItem': {
+      notifyBy: ['email'],
+    },
     // ...
   }
 

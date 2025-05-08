@@ -480,6 +480,8 @@ const Question = props => {
     hasGeneralReviewerChatId,
     reviewerId,
     authorsCurrent,
+    onAuthorEdit,
+    isEditing,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -503,7 +505,7 @@ const Question = props => {
     (editorView &&
       isSubmitted &&
       (isUnderReview || isPublished || isUnpublished)) ||
-    (!editorView && isSubmitted) ||
+    (!editorView && isSubmitted && !isEditing) ||
     isRejected
 
   // need to reset showMetadata, in case user loads after the page is rendered
@@ -664,6 +666,23 @@ const Question = props => {
           </ModalContext.Consumer>
         </ModalFooter>,
       ],
+    })
+  }
+
+  const handleEdit = () => {
+    onAuthorEdit().catch(e => {
+      if (e.message.indexOf('Not Authorised!') > -1) {
+        const errorModal = error()
+        errorModal.update({
+          title: <ModalHeader>This item has already been accepted</ModalHeader>,
+          content: (
+            <Paragraph>
+              You cannot edit this item anymore, because it has already been
+              accepted by the editors.
+            </Paragraph>
+          ),
+        })
+      }
     })
   }
 
@@ -1112,57 +1131,78 @@ const Question = props => {
 
   const isMobile = useBreakpoint('(max-width: 900px)')
 
-  // eslint-disable-next-line no-nested-ternary
-  const RightAreaAuthor = isSubmitted ? (
-    <StyledWordExportButton
-      isIconButton={isMobile}
-      loading={wordFileLoading}
-      onExport={onClickExportToWord}
-      showMetadataOption={isUserLoggedIn}
-    />
-  ) : isMobile ? (
-    <>
-      <StyledWordExportButton
-        isIconButton
-        loading={wordFileLoading}
-        onExport={onClickExportToWord}
-        showMetadataOption={isUserLoggedIn}
-      />
+  const RightAreaAuthor =
+    // eslint-disable-next-line no-nested-ternary
+    isSubmitted ? (
+      <>
+        <StyledWordExportButton
+          isIconButton={isMobile}
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption={isUserLoggedIn}
+        />
 
-      <Button
-        aria-label="Submit"
-        // onClick={handleSubmitButtonClick}
+        {!isEditing && !isAccepted && (
+          <Button onClick={handleEdit} type="primary">
+            Edit
+          </Button>
+        )}
+        {isEditing && (
+          <Button
+            aria-label="Submit"
+            // onClick={handleSubmitButtonClick}
 
-        onClick={handleSubmit}
-        title="Submit"
-        type="primary"
-      >
-        Submit
-      </Button>
-    </>
-  ) : (
-    <>
-      <StyledWordExportButton
-        loading={wordFileLoading}
-        onExport={onClickExportToWord}
-        showMetadataOption={isUserLoggedIn}
-      />
+            onClick={handleSubmit}
+            title="Submit"
+            type="primary"
+          >
+            Submit
+          </Button>
+        )}
+      </>
+    ) : isMobile ? (
+      <>
+        <StyledWordExportButton
+          isIconButton
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption={isUserLoggedIn}
+        />
 
-      <SubmitButton
-        data-testid="submit-question-btn"
-        disabled={
-          // !formRef.current.isFieldsTouched(true) ||
-          submitting
-          // formRef.current.getFieldsError().filter(({ errors }) => errors.length)
-          //   .length > 0 ||
-        }
-        onClick={handleSubmit}
-        type="primary"
-      >
-        Submit
-      </SubmitButton>
-    </>
-  )
+        <Button
+          aria-label="Submit"
+          // onClick={handleSubmitButtonClick}
+
+          onClick={handleSubmit}
+          title="Submit"
+          type="primary"
+        >
+          Submit
+        </Button>
+      </>
+    ) : (
+      <>
+        <StyledWordExportButton
+          loading={wordFileLoading}
+          onExport={onClickExportToWord}
+          showMetadataOption={isUserLoggedIn}
+        />
+
+        <SubmitButton
+          data-testid="submit-question-btn"
+          disabled={
+            // !formRef.current.isFieldsTouched(true) ||
+            submitting
+            // formRef.current.getFieldsError().filter(({ errors }) => errors.length)
+            //   .length > 0 ||
+          }
+          onClick={handleSubmit}
+          type="primary"
+        >
+          Submit
+        </SubmitButton>
+      </>
+    )
 
   const editorActionsDropdownMenu = (
     <>
@@ -2248,6 +2288,8 @@ Question.propTypes = {
   hasGeneralReviewerChatId: PropTypes.bool,
   reviewerId: PropTypes.string,
   authorsCurrent: PropTypes.arrayOf(PropTypes.shape()),
+  onAuthorEdit: PropTypes.func,
+  isEditing: PropTypes.bool,
 }
 
 Question.defaultProps = {
@@ -2353,6 +2395,8 @@ Question.defaultProps = {
   hasGeneralReviewerChatId: false,
   reviewerId: null,
   authorsCurrent: [],
+  onAuthorEdit: null,
+  isEditing: false,
 }
 
 export default Question

@@ -17,6 +17,7 @@ const {
   ComplexItemSet,
   Review,
   ArchivedItem,
+  Identity,
 } = require('../models')
 
 const CokoNotifier = require('../services/notify')
@@ -464,7 +465,13 @@ const submitQuestion = async (
   logger.info(`${CONTROLLER_MESSAGE} submitting question with id ${questionId}`)
 
   const { agreedTc, ...versionData } = data
-  const newData = { ...versionData, submitted: true }
+
+  const currentQv = await QuestionVersion.query().findOne({
+    id: questionVersionId,
+  })
+
+  const resubmission = currentQv?.submitted
+  const newData = { ...versionData, submitted: true, editing: false }
   // set submitted = true in QuestionVersion
   await modifyQuestionVersion(
     questionVersionId,
@@ -479,6 +486,26 @@ const submitQuestion = async (
   managingEditors.result.forEach(editor =>
     pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
   )
+
+  if (resubmission) {
+    // send emails to managingEditors
+    const notifier = new CokoNotifier()
+
+    await Promise.all(
+      managingEditors.result.map(async editor => {
+        const editorIdentity = await Identity.findOne(
+          { userId: editor.id, isDefault: true },
+          { trx: options.trx },
+        )
+
+        notifier.notify('hhmi.submitItem', {
+          questionId,
+          to: editorIdentity.email,
+        })
+      }),
+    )
+  }
+
   // set agreedTc = true in Question and return
   return modifyQuestion(questionId, { agreedTc }, options, CONTROLLER_MESSAGE)
 }
@@ -1336,10 +1363,17 @@ const changeArchiveStatusForItems = async (
           { trx },
         )
 
-        return !!archiveResults
+        return archiveResults?.length
       }
 
-      return ArchivedItem.unarchiveQuestions(questionIds, userId, role, { trx })
+      const unarchiveResults = await ArchivedItem.unarchiveQuestions(
+        questionIds,
+        userId,
+        role,
+        { trx },
+      )
+
+      return unarchiveResults && questionIds.length
     })
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e}`)
@@ -1351,6 +1385,26 @@ const isItemArchivedForUser = async (questionId, userId) => {
   const { totalCount } = await ArchivedItem.find({ questionId, userId })
 
   return !!totalCount
+}
+
+const editQuestion = async (questionVersionId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} editQuestion:`
+  logger.info(
+    `${CONTROLLER_MESSAGE} moving question version with id ${questionVersionId} to editing mode`,
+  )
+
+  try {
+    const questionVersion = await modifyQuestionVersion(
+      questionVersionId,
+      { editing: true },
+      { trx: options.trx },
+    )
+
+    return questionVersion
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
 }
 
 module.exports = {
@@ -1407,4 +1461,5 @@ module.exports = {
 
   changeArchiveStatusForItems,
   isItemArchivedForUser,
+  editQuestion,
 }
