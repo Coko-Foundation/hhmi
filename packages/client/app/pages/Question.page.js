@@ -247,7 +247,7 @@ const QuestionPage = props => {
 
   const { data: { getAuthorChatParticipants: authorChatParticipants } = {} } =
     useQuery(GET_AUTHOR_CHAT_PARTICIPANTS, {
-      skip: !question?.versions[0]?.submitted,
+      skip: !question?.versions[0]?.submitted || testMode,
       variables: {
         id,
       },
@@ -256,7 +256,7 @@ const QuestionPage = props => {
   const {
     data: { getProductionChatParticipants: productionChatParticipants } = {},
   } = useQuery(GET_PRODUCTION_CHAT_PARTICIPANTS, {
-    skip: !question?.versions[0]?.inProduction,
+    skip: !question?.versions[0]?.inProduction || testMode,
     variables: {
       id,
     },
@@ -265,7 +265,8 @@ const QuestionPage = props => {
   const {
     data: { getReviewerChatParticipants: reviewerChatParticipants } = {},
   } = useQuery(GET_REVIEWER_CHAT_PARTICIPANTS, {
-    skip: !question?.versions[0]?.underReview || !selectedReviewerId,
+    skip:
+      !question?.versions[0]?.underReview || !selectedReviewerId || testMode,
     variables: {
       questionId: id,
       reviewerId: selectedReviewerId,
@@ -355,7 +356,7 @@ const QuestionPage = props => {
 
   const { data: { chatThread: authorChatThread } = {}, loading: chatLoading } =
     useQuery(GET_CHAT_THREAD, {
-      skip: !question?.authorChatThreadId,
+      skip: !question?.authorChatThreadId || testMode,
       variables: {
         id: question?.authorChatThreadId,
       },
@@ -365,7 +366,7 @@ const QuestionPage = props => {
   const { data: { chatThread: productionChatThread } = {} } = useQuery(
     GET_CHAT_THREAD,
     {
-      skip: !question?.productionChatThreadId,
+      skip: !question?.productionChatThreadId || testMode,
       variables: {
         id: question?.productionChatThreadId,
       },
@@ -374,7 +375,10 @@ const QuestionPage = props => {
   )
 
   useQuery(GET_CHAT_THREAD, {
-    skip: !question?.reviewerChatThreadId || question?.versions[0].underReview,
+    skip:
+      !question?.reviewerChatThreadId ||
+      question?.versions[0].underReview ||
+      testMode,
     variables: {
       id: question?.reviewerChatThreadId,
     },
@@ -391,7 +395,7 @@ const QuestionPage = props => {
   })
 
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
-    skip: !authorChatThread?.id,
+    skip: !authorChatThread?.id || testMode,
     variables: { chatThreadId: authorChatThread?.id },
     onData: ({
       data: {
@@ -419,7 +423,7 @@ const QuestionPage = props => {
   })
 
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
-    skip: !productionChatThread?.id,
+    skip: !productionChatThread?.id || testMode,
     variables: { chatThreadId: productionChatThread?.id },
     onData: ({
       data: {
@@ -447,7 +451,7 @@ const QuestionPage = props => {
   })
 
   useSubscription(MESSAGE_CREATED_SUBSCRIPTION, {
-    skip: !reviewerChatThread?.id,
+    skip: !reviewerChatThread?.id || testMode,
     variables: { chatThreadId: reviewerChatThread?.id },
     onData: ({
       data: {
