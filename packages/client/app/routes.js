@@ -293,6 +293,38 @@ const SiteHeader = () => {
     return unlisten
   }, [])
 
+  // inject GTM script
+  useEffect(() => {
+    let headScript
+    let noscript
+
+    if (window.location.origin === 'https://assessment.biointeractive.org') {
+      headScript = document.createElement('script')
+      headScript.replaceChildren(`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MR7JX6C');`)
+
+      noscript = document.createElement('noscript')
+      noscript.replaceChildren(`
+        <iframe
+          height="0"
+          src="https://www.googletagmanager.com/ns.html?id=GTM-MR7JX6C"
+          style="display:none;visibility:hidden"
+          width="0"
+        />`)
+
+      document.head.prepend(headScript)
+      document.body.prepend(noscript)
+    }
+
+    return () => {
+      noscript && document.body.removeChild(noscript)
+      headScript && document.head.removeChild(headScript)
+    }
+  }, [])
+
   const logout = () => {
     setCurrentUser(null)
     client.cache.reset()
