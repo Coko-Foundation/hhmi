@@ -42,6 +42,7 @@ type QuestionVersion {
   affectiveLevel: String
   psychomotorLevel: String
   readingLevel: String
+  literatureAttribution: String
 
   questionType: String
   complexItemSetId: ID
@@ -118,6 +119,7 @@ input UpdateQuestionInput {
   affectiveLevel: String
   psychomotorLevel: String
   readingLevel: String
+  literatureAttribution: String
 }
 
 input TopicInput {

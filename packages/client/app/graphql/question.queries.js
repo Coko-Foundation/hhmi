@@ -456,6 +456,7 @@ export const QUESTION = gql`
         affectiveLevel
         psychomotorLevel
         readingLevel
+        literatureAttribution
 
         questionType
         complexItemSetId
@@ -567,6 +568,7 @@ export const UPDATE_QUESTION = gql`
         affectiveLevel
         psychomotorLevel
         readingLevel
+        literatureAttribution
       }
     }
   }
@@ -680,6 +682,7 @@ export const CREATE_NEW_VERSION = gql`
         affectiveLevel
         psychomotorLevel
         readingLevel
+        literatureAttribution
 
         questionType
       }

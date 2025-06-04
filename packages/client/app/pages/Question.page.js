@@ -157,6 +157,7 @@ const metadataUiToApi = values => {
     affectiveLevel: values.affectiveLevel || null,
     psychomotorLevel: values.psychomotorLevel || null,
     readingLevel: values.readingLevel || null,
+    literatureAttribution: values.literatureAttribution || null,
     questionType: values.questionType || null,
     complexItemSetId,
   }

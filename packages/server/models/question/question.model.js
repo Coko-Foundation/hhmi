@@ -88,6 +88,7 @@ class Question extends BaseModel {
       affectiveLevel,
       psychomotorLevel,
       readingLevel,
+      literatureAttribution,
       questionType,
     } = originalQuestionVersions.result[0]
 
@@ -104,6 +105,7 @@ class Question extends BaseModel {
         affectiveLevel,
         psychomotorLevel,
         readingLevel,
+        literatureAttribution,
         questionType,
       })
       .where('question_id', question.id)
@@ -129,6 +131,7 @@ class Question extends BaseModel {
         affectiveLevel,
         psychomotorLevel,
         readingLevel,
+        literatureAttribution,
         questionType,
         contentText,
       } = previousVersions.result[0]
@@ -147,6 +150,7 @@ class Question extends BaseModel {
           affectiveLevel,
           psychomotorLevel,
           readingLevel,
+          literatureAttribution,
           questionType,
           contentText,
           inProduction: true,

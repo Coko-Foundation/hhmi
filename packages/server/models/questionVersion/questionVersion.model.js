@@ -192,6 +192,7 @@ class QuestionVersion extends BaseModel {
         affectiveLevel: stringNullable,
         psychomotorLevel: stringNullable,
         readingLevel: stringNullable,
+        literatureAttribution: stringNullable,
 
         questionType: stringNullable,
         lastEdit: dateNullable,
