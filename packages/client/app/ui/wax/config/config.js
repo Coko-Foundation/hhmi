@@ -16,6 +16,8 @@ import { TablesService, tableEditing } from 'wax-table-service'
 
 import { DefaultSchema } from 'wax-prosemirror-core'
 
+import charactersList from './charactersList'
+
 export default {
   MenuService: [
     {
@@ -33,6 +35,7 @@ export default {
           //   'StrikeThrough',
           // ],
         },
+        'SpecialCharacters',
         { name: 'Lists', exclude: ['BlockQuote'] },
         'Images',
         'Tables',
@@ -51,6 +54,7 @@ export default {
   ],
 
   SchemaService: DefaultSchema,
+  SpecialCharactersService: charactersList,
   PmPlugins: [tableEditing()],
 
   ImageService: { showAlt: true, showLongDesc: true },
