@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import biointeractiveLogo from '../../../static/biointeractive.svg'
+import biointeractiveLogoSmall from '../../../static/hhmi-logo-white-sm.svg'
+import { VERSION } from '../../utilities'
 
 const StyledFooter = styled.footer`
   background-color: ${th('colorBody')};
@@ -26,6 +28,11 @@ const SiteLogo = styled.a`
   margin-inline-end: ${grid(5)};
   overflow: hidden;
   width: 160px;
+
+  @media (max-width: 450px) {
+    background-image: ${`url(${biointeractiveLogoSmall})`};
+    width: 90px;
+  }
 
   &:hover,
   &:focus-visible {
@@ -93,6 +100,8 @@ const Footer = props => {
             Privacy Policy
           </a>
         </li>
+
+        <li>v{VERSION}</li>
       </FooterList>
 
       <SiteLogo href="https://www.biointeractive.org/" rel="external">
