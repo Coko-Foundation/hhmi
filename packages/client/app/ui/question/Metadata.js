@@ -11,6 +11,7 @@ import {
   VisuallyHiddenElement,
   Checkbox,
   Modal,
+  Input,
 } from '../common'
 import {
   TopicAndSubtopic,
@@ -510,6 +511,9 @@ const Metadata = React.forwardRef((props, ref) => {
               readOnly={readOnly}
               resources={resources}
             />
+          </Form.Item>
+          <Form.Item label="Citation" name="literatureAttribution">
+            <Input disabled={readOnly} />
           </Form.Item>
         </Form>
       </Wrapper>

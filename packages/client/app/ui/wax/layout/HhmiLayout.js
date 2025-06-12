@@ -60,6 +60,16 @@ const TopMenu = styled.div`
       display: none;
     }
   }
+
+  /* stylelint-disable-next-line string-quotes */
+  [title='Special Characters'] ~ div {
+    min-width: 200px;
+    right: 0;
+
+    > div {
+      width: auto;
+    }
+  }
 `
 
 const StyledLink = styled(Link)`

@@ -94,6 +94,7 @@ const QuestionList = props => {
     selectedQuestions,
     withFilters,
     filters,
+    defaultSearch,
   } = props
 
   const itemSelection = showRowCheckboxes
@@ -121,6 +122,7 @@ const QuestionList = props => {
       autoFocusSearch={autoFocusSearch}
       className={className}
       dataSource={questions}
+      defaultSearch={defaultSearch}
       draggable={draggable}
       filters={filters}
       footerContent={bulkAction}
@@ -211,6 +213,7 @@ QuestionList.propTypes = {
     oneOfType([PropTypes.string, PropTypes.bool, PropTypes.object]),
   ),
   withFilters: PropTypes.bool,
+  defaultSearch: PropTypes.string,
 }
 
 QuestionList.defaultProps = {
@@ -241,6 +244,7 @@ QuestionList.defaultProps = {
   selectedQuestions: [],
   filters: [],
   withFilters: false,
+  defaultSearch: '',
 }
 
 export default QuestionList

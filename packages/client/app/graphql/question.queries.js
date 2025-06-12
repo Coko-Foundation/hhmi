@@ -46,7 +46,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
               # courseTopic
               # essentialKnowledge
               learningObjective
-              # skill
+              skill
               understanding
               # unit
             }
@@ -111,7 +111,7 @@ export const GET_EDITOR_DASHBOARD = gql`
               # courseTopic
               # essentialKnowledge
               learningObjective
-              # skill
+              skill
               understanding
               # unit
             }
@@ -175,7 +175,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
               # courseTopic
               # essentialKnowledge
               learningObjective
-              # skill
+              skill
               understanding
               # unit
             }
@@ -234,7 +234,7 @@ export const GET_REVIEWER_DASHBOARD = gql`
               # courseTopic
               # essentialKnowledge
               learningObjective
-              # skill
+              skill
               understanding
               # unit
             }
@@ -305,7 +305,7 @@ export const GET_PRODUCTION_DASHBOARD = gql`
               # courseTopic
               # essentialKnowledge
               learningObjective
-              # skill
+              skill
               understanding
               # unit
             }
@@ -456,6 +456,7 @@ export const QUESTION = gql`
         affectiveLevel
         psychomotorLevel
         readingLevel
+        literatureAttribution
 
         questionType
         complexItemSetId
@@ -567,6 +568,7 @@ export const UPDATE_QUESTION = gql`
         affectiveLevel
         psychomotorLevel
         readingLevel
+        literatureAttribution
       }
     }
   }
@@ -680,6 +682,7 @@ export const CREATE_NEW_VERSION = gql`
         affectiveLevel
         psychomotorLevel
         readingLevel
+        literatureAttribution
 
         questionType
       }
@@ -725,6 +728,7 @@ export const GET_PUBLISHED_QUESTIONS = gql`
             course
             units {
               learningObjective
+              skill
               understanding
             }
           }

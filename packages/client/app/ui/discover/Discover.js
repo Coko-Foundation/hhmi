@@ -141,6 +141,7 @@ export const Discover = props => {
     totalCount,
     showSort,
     sortOptions,
+    globalFilters,
   } = props
 
   // key to force list to rerender and empty search box when filters change
@@ -177,11 +178,18 @@ export const Discover = props => {
     }
   }, [loadingCreateList])
 
+  useEffect(() => {
+    if (globalFilters?.filters) {
+      const hasKeys = !!Object.keys(globalFilters?.filters).length
+      hasKeys && filtersForm.setFieldsValue(globalFilters.filters)
+    }
+  }, [])
+
   const [searchParams, setSearchParams] = useState({
-    query: '',
-    page: 1,
-    filters: {},
-    orderBy: 'date-desc',
+    query: globalFilters?.query || '',
+    page: globalFilters?.page || 1,
+    filters: globalFilters?.filters || {},
+    orderBy: globalFilters?.orderBy || 'date-desc',
   })
 
   const setSearchPage = page => {
@@ -415,6 +423,7 @@ export const Discover = props => {
           <QuestionList
             bulkAction={(isUserLoggedIn && BulkAction) || null}
             currentPage={searchParams.page}
+            defaultSearch={searchParams.query}
             key={listKey}
             loading={loading}
             locale={mergedLocale}
@@ -678,6 +687,13 @@ Discover.propTypes = {
   totalCount: PropTypes.number,
   sortOptions: PropTypes.arrayOf(PropTypes.shape()),
   showSort: PropTypes.bool,
+  globalFilters: PropTypes.shape({
+    query: PropTypes.string,
+    page: PropTypes.number,
+    filters: PropTypes.string,
+    orderBy: PropTypes.string,
+    ascending: PropTypes.bool,
+  }),
 }
 
 Discover.defaultProps = {
@@ -696,6 +712,7 @@ Discover.defaultProps = {
   totalCount: 0,
   sortOptions: [],
   showSort: false,
+  globalFilters: null,
 }
 
 export default Discover

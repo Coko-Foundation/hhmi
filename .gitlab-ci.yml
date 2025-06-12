@@ -26,6 +26,7 @@ stages:
   - End to end test
   - Publish production
   - Deploy production
+  - Release
 
 # BUILD DEVELOPMENT
 
@@ -237,3 +238,33 @@ deploy production:
     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
   only:
     - staging
+
+create_release_from_ui:
+  stage: Release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+  variables:
+    VERSION_BUMP_TYPE: "patch" # Default, can be overridden
+  script:
+    - |
+      # Bump root version
+      npm version $VERSION_BUMP_TYPE -m "chore(release): bump version to %s [skip ci]"
+      # Bump client version
+      cd packages/client
+      npm version $VERSION_BUMP_TYPE -m "chore(release): bump client version to %s [skip ci]"
+      # Bump server version
+      cd ../server
+      npm version $VERSION_BUMP_TYPE -m "chore(release): bump server version to %s [skip ci]"
+      git push origin HEAD:${CI_DEFAULT_BRANCH} --follow-tags
+      git push --tags
+      cd ../..
+      # Get the new version (assuming both use same version)
+      NEW_VERSION=$(node -p "require('./packages/client/package.json').version")
+      echo Release version: ${NEW_VERSION}
+  release:
+    name: '${NEW_VERSION}'
+    description: 'Created through GitLab Releases UI'
+    tag_name: '${NEW_VERSION}'
+    ref: '$CI_COMMIT_SHA'
