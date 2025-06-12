@@ -17,6 +17,7 @@ workflow:
       when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_BRANCH == 'staging'
+    - if: $CI_COMMIT_BRANCH == 'ci-release-and-version-bump'
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 stages:
@@ -239,12 +240,12 @@ deploy production:
   only:
     - staging
 
-.create_release_from_ui:
-  stage: release
+create_release_from_ui:
+  stage: Release
   # image: registry.gitlab.com/gitlab-org/release-cli:latest
   image: node:20-bullseye
   rules:
-    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == 'ci-release-and-version-bump'
       when: manual
   variables:
     VERSION_BUMP_TYPE: "patch" # Default, can be overridden
