@@ -251,13 +251,13 @@ create_release_from_ui:
   script:
     - |
       # Bump root version
-      yarn version --new-version $VERSION_BUMP_TYPE -m "chore(release): bump version to %s [skip ci]"
+      npm version $VERSION_BUMP_TYPE -m "chore(release): bump version to %s [skip ci]"
       # Bump client version
       cd packages/client
-      yarn version --new-version $VERSION_BUMP_TYPE -m "chore(release): bump client version to %s [skip ci]"
+      npm version $VERSION_BUMP_TYPE -m "chore(release): bump client version to %s [skip ci]"
       # Bump server version
       cd ../server
-      yarn version --new-version $VERSION_BUMP_TYPE -m "chore(release): bump server version to %s [skip ci]"
+      npm version $VERSION_BUMP_TYPE -m "chore(release): bump server version to %s [skip ci]"
       git push origin HEAD:${CI_DEFAULT_BRANCH} --follow-tags
       git push --tags
       cd ../..
