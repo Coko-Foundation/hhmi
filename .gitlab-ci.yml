@@ -260,6 +260,7 @@ create_release_from_ui:
   script:
     - |
       # Bump root version
+      npm install --ignore-scripts
       npm version $VERSION_BUMP_TYPE -m "chore(release): bump version to %s [skip ci]"
       # Bump client version
       cd packages/client
