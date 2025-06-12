@@ -30,7 +30,7 @@ stages:
 
 # BUILD DEVELOPMENT
 
-client build development:
+.client build development:
   stage: Build development
   image: docker:26
   services:
@@ -42,7 +42,7 @@ client build development:
     - docker build --tag $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA ./packages/client -f packages/client/Dockerfile-development
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
 
-server build development:
+.server build development:
   stage: Build development
   image: docker:26
   services:
@@ -56,7 +56,7 @@ server build development:
 
 # LINT & UNIT TEST
 
-client lint:
+.client lint:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -67,7 +67,7 @@ client lint:
     - yarn prettier --check .
     - yarn stylelint "**/*.js"
 
-client unit test:
+.client unit test:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -76,7 +76,7 @@ client unit test:
     - cd $WORKDIR_CLIENT
     - yarn jest
 
-server lint:
+.server lint:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -86,7 +86,7 @@ server lint:
     - yarn eslint .
     - yarn prettier --check .
 
-server unit test:
+.server unit test:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -108,7 +108,7 @@ server unit test:
 
 # BUILD PRODUCTION
 
-build server:
+.build server:
   stage: Build production
   image: docker:26
   services:
@@ -123,7 +123,7 @@ build server:
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:latest
 
-build client:
+.build client:
   stage: Build production
   image: docker:26
   services:
@@ -241,7 +241,8 @@ deploy production:
 
 create_release_from_ui:
   stage: Release
-  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  # image: registry.gitlab.com/gitlab-org/release-cli:latest
+  image: node:20-bullseye
   rules:
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
@@ -250,13 +251,13 @@ create_release_from_ui:
   script:
     - |
       # Bump root version
-      npm version $VERSION_BUMP_TYPE -m "chore(release): bump version to %s [skip ci]"
+      yarn version --new-version $VERSION_BUMP_TYPE -m "chore(release): bump version to %s [skip ci]"
       # Bump client version
       cd packages/client
-      npm version $VERSION_BUMP_TYPE -m "chore(release): bump client version to %s [skip ci]"
+      yarn version --new-version $VERSION_BUMP_TYPE -m "chore(release): bump client version to %s [skip ci]"
       # Bump server version
       cd ../server
-      npm version $VERSION_BUMP_TYPE -m "chore(release): bump server version to %s [skip ci]"
+      yarn version --new-version $VERSION_BUMP_TYPE -m "chore(release): bump server version to %s [skip ci]"
       git push origin HEAD:${CI_DEFAULT_BRANCH} --follow-tags
       git push --tags
       cd ../..
