@@ -240,7 +240,7 @@ deploy production:
     - staging
 
 create_release_from_ui:
-  stage: Release
+  stage: release
   # image: registry.gitlab.com/gitlab-org/release-cli:latest
   image: node:20-bullseye
   rules:
@@ -248,6 +248,10 @@ create_release_from_ui:
       when: manual
   variables:
     VERSION_BUMP_TYPE: "patch" # Default, can be overridden
+  before_script:
+    - git config --global user.email "gitlab-ci@${CI_PROJECT_ID}.example.com"
+    - git config --global user.name "GitLab CI"
+    - git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
   script:
     - |
       # Bump root version
