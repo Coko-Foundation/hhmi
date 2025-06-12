@@ -249,6 +249,7 @@ create_release_from_ui:
       when: manual
   variables:
     VERSION_BUMP_TYPE: "patch" # Default, can be overridden
+    HUSKY: "0"  # Disable Husky
   before_script:
     - |
       git config --global user.email "gitlab-ci@${CI_PROJECT_ID}.example.com"
