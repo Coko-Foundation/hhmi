@@ -250,12 +250,13 @@ create_release_from_ui:
   variables:
     VERSION_BUMP_TYPE: "patch" # Default, can be overridden
     HUSKY: "0"  # Disable Husky
+    npm_config_ignore_scripts: "true"
   before_script:
     - |
+      rm -rf .husky || true
       git config --global user.email "gitlab-ci@${CI_PROJECT_ID}.example.com"
       git config --global user.name "GitLab CI"
       git remote set-url origin "https://gitlab-ci-token:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
-      npm config set ignore-scripts true
   script:
     - |
       # Bump root version
