@@ -412,6 +412,7 @@ export const Discover = props => {
             complexItemSetOptions={complexItemSetOptions}
             form={filtersForm}
             metadata={sidebarMetadata}
+            presetFilters={globalFilters?.filters}
             setFilters={setFilters}
             text={sidebarText}
           />,
