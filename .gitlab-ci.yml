@@ -270,7 +270,7 @@ bump version:
   image: node:20-bullseye
   rules:
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual 
+      when: always 
   variables:
     VERSION_BUMP_TYPE: "patch" # Default, can be overridden
     HUSKY: "0"  # Disable Husky
@@ -325,7 +325,7 @@ create_release:
     - bump version
   rules:
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
+      when: always
   before_script:
     - source version.env
   script:
