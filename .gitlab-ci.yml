@@ -254,10 +254,24 @@ create_release_from_ui:
   before_script:
     - |
       rm -rf .husky || true
-      apt-get update && apt-get install -y git >/dev/null
+      apt-get update && apt-get install -y openssh-client git >/dev/null
+      mkdir -p ~/.ssh && chmod 700 ~/.ssh
+      echo -n "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/ssh_private_key
+      cat << EOF >> ~/.ssh/config
+      Host gitlab.coko.foundation
+          User git
+          IdentityFile ~/.ssh/ssh_private_key
+          IdentitiesOnly yes
+      StrictHostKeyChecking no
+      EOF
+
+      chmod -R 400 ~/.ssh/ssh_private_key ~/.ssh/config
+
       git config --global user.email ${GITLAB_USER_EMAIL}
       git config --global user.name ${GITLAB_USER_NAME}
-      git remote set-url origin https://oauth2:${AUTOMATION_ACCESS_TOKEN}@${CI_PROJECT_URL#https://}.git
+      eval "$(ssh-agent -s)"
+      ssh-add ~/.ssh/ssh_private_key
+      git remote set-url origin git@gitlab.com:${CI_PROJECT_PATH}.git
   script:
     - |
       # Bump client version
@@ -277,3 +291,6 @@ create_release_from_ui:
     description: 'Created through GitLab Releases UI'
     tag_name: '${NEW_VERSION}'
     ref: '$CI_COMMIT_SHA'
+
+
+    
