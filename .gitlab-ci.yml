@@ -14,10 +14,10 @@ variables:
 workflow:
   rules:
     - if: $CI_MERGE_REQUEST_TITLE =~ /^Draft:/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # disable automatic pipelines on master, run manually to specify VERSION_BUMP_TYPE
       when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_BRANCH == 'staging'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 stages:
   - Build development
@@ -244,9 +244,6 @@ bump version:
   stage: Version
   # image: registry.gitlab.com/gitlab-org/release-cli:latest
   image: node:20-bullseye
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == 'ci-release-and-version-bump'
-      when: manual
   variables:
     VERSION_BUMP_TYPE: "patch" # Default, can be overridden
     HUSKY: "0"  # Disable Husky
@@ -288,6 +285,8 @@ bump version:
       git push --tags
       # echo "NEW_VERSION=${NEW_VERSION}" > version.env
       echo Release version: ${NEW_VERSION}
+  only:
+    - master
   # artifacts:
   #   paths:
   #     - version.env
