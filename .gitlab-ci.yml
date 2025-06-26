@@ -34,6 +34,9 @@ stages:
 client build development:
   stage: Build development
   image: docker:26
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   services:
     - docker:26-dind
   before_script:
@@ -46,6 +49,9 @@ client build development:
 server build development:
   stage: Build development
   image: docker:26
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   services:
     - docker:26-dind
   before_script:
@@ -60,8 +66,11 @@ server build development:
 client lint:
   stage: Lint & Unit test
   needs:
-    - client build development
+    - client build development    
   image: $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   script:
     - cd $WORKDIR_CLIENT
     - yarn eslint .
@@ -73,6 +82,9 @@ client unit test:
   needs:
     - client build development
   image: $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   script:
     - cd $WORKDIR_CLIENT
     - yarn jest
@@ -82,6 +94,9 @@ server lint:
   needs:
     - server build development
   image: $IMAGE_ORG/$IMAGE_NAME_SERVER_DEVELOPMENT:$CI_COMMIT_SHA
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   script:
     - cd $WORKDIR_SERVER
     - yarn eslint .
@@ -92,6 +107,9 @@ server unit test:
   needs:
     - server build development
   image: docker:23
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   services:
     - docker:23-dind
   script:
@@ -112,6 +130,9 @@ server unit test:
 build server:
   stage: Build production
   image: docker:26
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   services:
     - docker:26-dind
   before_script:
@@ -127,6 +148,9 @@ build server:
 build client:
   stage: Build production
   image: docker:26
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
   services:
     - docker:26-dind
   before_script:
