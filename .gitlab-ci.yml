@@ -320,7 +320,7 @@ bump version:
 
 create_release:
   stage: Release
-  image: registry.gitlab.com/gitlab-org/cli:latest
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
   needs: 
     - bump version
   rules:
