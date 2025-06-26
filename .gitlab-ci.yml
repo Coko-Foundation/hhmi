@@ -14,11 +14,10 @@ variables:
 workflow:
   rules:
     - if: $CI_MERGE_REQUEST_TITLE =~ /^Draft:/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH # disable automatic pipelines on master, run manually to specify VERSION_BUMP_TYPE
       when: never
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
     - if: $CI_COMMIT_BRANCH == 'staging'
-    - if: $CI_COMMIT_BRANCH == 'ci-release-and-version-bump'
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 stages:
   - Build development
@@ -27,11 +26,12 @@ stages:
   - End to end test
   - Publish production
   - Deploy production
+  - Version
   - Release
 
 # BUILD DEVELOPMENT
 
-.client build development:
+client build development:
   stage: Build development
   image: docker:26
   services:
@@ -43,7 +43,7 @@ stages:
     - docker build --tag $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA ./packages/client -f packages/client/Dockerfile-development
     - docker push $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
 
-.server build development:
+server build development:
   stage: Build development
   image: docker:26
   services:
@@ -57,7 +57,7 @@ stages:
 
 # LINT & UNIT TEST
 
-.client lint:
+client lint:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -68,7 +68,7 @@ stages:
     - yarn prettier --check .
     - yarn stylelint "**/*.js"
 
-.client unit test:
+client unit test:
   stage: Lint & Unit test
   needs:
     - client build development
@@ -77,7 +77,7 @@ stages:
     - cd $WORKDIR_CLIENT
     - yarn jest
 
-.server lint:
+server lint:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -87,7 +87,7 @@ stages:
     - yarn eslint .
     - yarn prettier --check .
 
-.server unit test:
+server unit test:
   stage: Lint & Unit test
   needs:
     - server build development
@@ -109,7 +109,7 @@ stages:
 
 # BUILD PRODUCTION
 
-.build server:
+build server:
   stage: Build production
   image: docker:26
   services:
@@ -124,7 +124,7 @@ stages:
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:latest
 
-.build client:
+build client:
   stage: Build production
   image: docker:26
   services:
@@ -240,8 +240,8 @@ deploy production:
   only:
     - staging
 
-create_release_from_ui:
-  stage: Release
+bump version:
+  stage: Version
   # image: registry.gitlab.com/gitlab-org/release-cli:latest
   image: node:20-bullseye
   rules:
@@ -276,21 +276,36 @@ create_release_from_ui:
     - |
       # Bump client version
       cd packages/client
-      npm version $VERSION_BUMP_TYPE -m "chore(release): bump client version to %s [skip ci]"
+      npm version $VERSION_BUMP_TYPE
       # Bump server version
       cd ../server
-      npm version $VERSION_BUMP_TYPE -m "chore(release): bump server version to %s [skip ci]"
-      git push origin HEAD:${CI_DEFAULT_BRANCH} --follow-tags
-      git push --tags
+      npm version $VERSION_BUMP_TYPE
       cd ../..
-      # Get the new version (assuming both use same version)
       NEW_VERSION=$(node -p "require('./packages/client/package.json').version")
+      git add package.json packages/client/package.json packages/server/package.json
+      git commit -m "chore(release): bump version to $NEW_VERSION [skip ci]"
+      git push origin HEAD:${CI_COMMIT_BRANCH} --follow-tags
+      git push --tags
+      # echo "NEW_VERSION=${NEW_VERSION}" > version.env
       echo Release version: ${NEW_VERSION}
-  release:
-    name: '${NEW_VERSION}'
-    description: 'Created through GitLab Releases UI'
-    tag_name: '${NEW_VERSION}'
-    ref: '$CI_COMMIT_SHA'
+  # artifacts:
+  #   paths:
+  #     - version.env
+  #   expire_in: 1 hour
 
 
-    
+# create_release:
+#   stage: Release
+#   needs: 
+#     - bump version
+#   rules:
+#     - if: $CI_PIPELINE_SOURCE == "web"
+#   before_script:
+#     - source version.env
+#   script:
+#     - echo "Creating release for version ${NEW_VERSION}"
+#   release:
+#     name: '${NEW_VERSION}'
+#     description: 'Automatic release for version ${NEW_VERSION}'
+#     tag_name: '${NEW_VERSION}'
+#     ref: '$CI_COMMIT_SHA'
