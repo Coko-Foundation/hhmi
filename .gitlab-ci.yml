@@ -299,6 +299,7 @@ bump version:
   script:
     - |
       # Bump client version
+      npm version $VERSION_BUMP_TYPE
       cd packages/client
       npm version $VERSION_BUMP_TYPE
       # Bump server version
@@ -310,12 +311,12 @@ bump version:
       git commit -m "chore(release): bump version to $NEW_VERSION [skip ci]"
       git push origin HEAD:${CI_COMMIT_BRANCH} --follow-tags
       git push --tags
-      # echo "NEW_VERSION=${NEW_VERSION}" > version.env
+      echo "NEW_VERSION=${NEW_VERSION}" > version.env
       echo Release version: ${NEW_VERSION}
-  # artifacts:
-  #   paths:
-  #     - version.env
-  #   expire_in: 1 hour
+  artifacts:
+    paths:
+      - version.env
+    expire_in: 1 hour
 
 
 create_release:
