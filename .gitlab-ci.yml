@@ -256,7 +256,7 @@ create_release_from_ui:
       rm -rf .husky || true
       apt-get update && apt-get install -y openssh-client git >/dev/null
       mkdir -p ~/.ssh && chmod 700 ~/.ssh
-      echo -n "$SSH_PRIVATE_KEY_BASE64" -d > ~/.ssh/ssh_private_key
+      echo -n "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/ssh_private_key
       cat << EOF >> ~/.ssh/config
       Host gitlab.coko.foundation
           User git
