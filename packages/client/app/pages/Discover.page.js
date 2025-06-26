@@ -3,10 +3,9 @@ import React, { useState, useRef } from 'react'
 import { Discover, VisuallyHiddenElement } from 'ui'
 import { useQuery, useMutation } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
-
 import { useCurrentUser } from '@coko/client'
 
-import { useMetadata, dashboardDataMapper } from '../utilities'
+import { useMetadata, useFilters, dashboardDataMapper } from '../utilities'
 
 import {
   GET_PUBLISHED_QUESTIONS,
@@ -37,12 +36,14 @@ const sidebarText = 'Explore items by applying one or more of the filters below'
 const PAGE_SIZE = 10
 
 const DiscoverPage = () => {
+  const { filters, setFilters } = useFilters()
+
   const [searchParams, setSearchParams] = useState({
-    query: '',
-    page: 1,
-    filters: {},
-    orderBy: 'publication_date',
-    ascending: false,
+    query: filters?.query || '',
+    page: filters?.page || 1,
+    filters: filters?.filters || {},
+    orderBy: filters?.orderBy || 'publication_date',
+    ascending: filters?.ascending || false,
   })
 
   const { currentUser } = useCurrentUser()
@@ -137,11 +138,14 @@ const DiscoverPage = () => {
   )
 
   const handleSearch = params => {
-    setSearchParams({
+    const discover = {
       ...params,
       orderBy: 'publication_date',
       ascending: params.orderBy !== 'date-desc',
-    })
+    }
+
+    setSearchParams(discover)
+    setFilters(discover)
   }
 
   const handleAddToList = (existingList, questions) => {
@@ -192,6 +196,7 @@ const DiscoverPage = () => {
       <Discover
         complexItemSetOptions={complexItemSetOptions}
         existingListsOptions={existingLists}
+        globalFilters={filters}
         isUserLoggedIn={!!currentUser}
         loading={loading}
         loadingAddToList={loadingAddToList}

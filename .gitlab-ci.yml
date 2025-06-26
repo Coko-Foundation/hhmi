@@ -26,12 +26,17 @@ stages:
   - End to end test
   - Publish production
   - Deploy production
+  - Version
+  - Release
 
 # BUILD DEVELOPMENT
 
 client build development:
   stage: Build development
   image: docker:26
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   services:
     - docker:26-dind
   before_script:
@@ -44,6 +49,9 @@ client build development:
 server build development:
   stage: Build development
   image: docker:26
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   services:
     - docker:26-dind
   before_script:
@@ -58,8 +66,11 @@ server build development:
 client lint:
   stage: Lint & Unit test
   needs:
-    - client build development
+    - client build development    
   image: $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   script:
     - cd $WORKDIR_CLIENT
     - yarn eslint .
@@ -71,6 +82,9 @@ client unit test:
   needs:
     - client build development
   image: $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   script:
     - cd $WORKDIR_CLIENT
     - yarn jest
@@ -80,6 +94,9 @@ server lint:
   needs:
     - server build development
   image: $IMAGE_ORG/$IMAGE_NAME_SERVER_DEVELOPMENT:$CI_COMMIT_SHA
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   script:
     - cd $WORKDIR_SERVER
     - yarn eslint .
@@ -90,6 +107,9 @@ server unit test:
   needs:
     - server build development
   image: docker:23
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   services:
     - docker:23-dind
   script:
@@ -110,6 +130,9 @@ server unit test:
 build server:
   stage: Build production
   image: docker:26
+  rules:
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: never
   services:
     - docker:26-dind
   before_script:
@@ -125,6 +148,9 @@ build server:
 build client:
   stage: Build production
   image: docker:26
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
   services:
     - docker:26-dind
   before_script:
@@ -237,3 +263,75 @@ deploy production:
     - ANSIBLE_FORCE_COLOR=true ansible-playbook bootstrap.yml -e "compose_file=$DEPLOY_COMPOSE_FILE"
   only:
     - staging
+
+bump version:
+  stage: Version
+  # image: registry.gitlab.com/gitlab-org/release-cli:latest
+  image: node:20-bullseye
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always 
+  variables:
+    VERSION_BUMP_TYPE: "patch" # Default, can be overridden
+    HUSKY: "0"  # Disable Husky
+    npm_config_ignore_scripts: "true"
+  before_script:
+    - |
+      rm -rf .husky || true
+      apt-get update && apt-get install -y openssh-client git >/dev/null
+      mkdir -p ~/.ssh && chmod 700 ~/.ssh
+      echo -n "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/ssh_private_key
+      cat << EOF >> ~/.ssh/config
+      Host gitlab.coko.foundation
+          User git
+          IdentityFile ~/.ssh/ssh_private_key
+          IdentitiesOnly yes
+      StrictHostKeyChecking no
+      EOF
+
+      chmod -R 400 ~/.ssh/ssh_private_key ~/.ssh/config
+
+      git config --global user.email ${GITLAB_USER_EMAIL}
+      git config --global user.name ${GITLAB_USER_NAME}
+      eval "$(ssh-agent -s)"
+      ssh-add ~/.ssh/ssh_private_key
+      git remote set-url origin git@gitlab.coko.foundation:${CI_PROJECT_PATH}.git
+  script:
+    - |
+      # Bump client version
+      cd packages/client
+      npm version $VERSION_BUMP_TYPE
+      # Bump server version
+      cd ../server
+      npm version $VERSION_BUMP_TYPE
+      cd ../..
+      NEW_VERSION=$(node -p "require('./packages/client/package.json').version")
+      git add package.json packages/client/package.json packages/server/package.json
+      git commit -m "chore(release): bump version to $NEW_VERSION [skip ci]"
+      git push origin HEAD:${CI_COMMIT_BRANCH} --follow-tags
+      git push --tags
+      echo "NEW_VERSION=${NEW_VERSION}" > version.env
+      echo Release version: ${NEW_VERSION}
+  artifacts:
+    paths:
+      - version.env
+    expire_in: 1 hour
+
+
+create_release:
+  stage: Release
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  needs: 
+    - bump version
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: always
+  before_script:
+    - source version.env
+  script:
+    - echo "Creating release for version ${NEW_VERSION}"
+  release:
+    name: '${NEW_VERSION}'
+    description: 'Automatic release for version ${NEW_VERSION}'
+    tag_name: '${NEW_VERSION}'
+    ref: '$CI_COMMIT_SHA'

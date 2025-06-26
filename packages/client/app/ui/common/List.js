@@ -279,6 +279,7 @@ const List = props => {
     filters,
     fullListOfIds,
     infiniteScroll,
+    defaultSearch,
     ...rest
   } = props
 
@@ -548,6 +549,7 @@ const List = props => {
           <Search
             aria-label="Enter text to search in list"
             autoFocus={autoFocusSearch}
+            defaultValue={defaultSearch}
             filters={filters}
             loading={searchLoading}
             onSearch={onSearch}
@@ -668,6 +670,7 @@ List.propTypes = {
     enabled: PropTypes.bool,
     props: PropTypes.shape({}),
   }),
+  defaultSearch: PropTypes.string,
 }
 
 List.defaultProps = {
@@ -699,6 +702,7 @@ List.defaultProps = {
   filters: [],
   withFilters: false,
   infiniteScroll: { enabled: false, props: {} },
+  defaultSearch: '',
 }
 
 List.Item = AntList.Item

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
@@ -50,10 +50,25 @@ const ibCourses = ['biBiology', 'biEnvironmentalScience']
 const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
 
 const Sidebar = props => {
-  const { className, text, setFilters, metadata, form, complexItemSetOptions } =
-    props
+  const {
+    className,
+    text,
+    setFilters,
+    metadata,
+    form,
+    complexItemSetOptions,
+    presetFilters,
+  } = props
 
   const metadataMapper = data => mapMetadataToSelectOptions(data)
+
+  useEffect(() => {
+    if (presetFilters) {
+      setTimeout(() => {
+        form.setFieldsValue(presetFilters)
+      }, 500)
+    }
+  }, [])
 
   const applyFilters = () => {
     setFilters(form.getFieldsValue())
@@ -369,6 +384,7 @@ Sidebar.propTypes = {
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
     }),
   ),
+  presetFilters: PropTypes.shape(),
 }
 
 Sidebar.defaultProps = {
@@ -376,6 +392,7 @@ Sidebar.defaultProps = {
   metadata: null,
   form: {},
   complexItemSetOptions: [],
+  presetFilters: null,
 }
 
 export default Sidebar

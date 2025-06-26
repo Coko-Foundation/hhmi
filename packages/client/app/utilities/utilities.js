@@ -301,6 +301,17 @@ const extractCourseAndObjectives = (courses, frameworksMetadata) =>
         )
         break
       case 'biBiology':
+        result.label = 'Content statement'
+        result.objectives = c.units.map(unit =>
+          unit.skill
+            ? {
+                label: courseInValues?.skills?.find(
+                  und => und.value === unit.skill,
+                )?.label,
+              }
+            : null,
+        )
+        break
       case 'biEnvironmentalScience':
         result.label = 'understandings'
         result.objectives = c.units.map(unit =>
@@ -373,11 +384,17 @@ const extractIBCourseMetadata = (unitData, courseMetadata) => {
     u => u.value === unitData.understanding,
   )?.label
 
+  const applicationLabel =
+    courseMetadata.textValue === 'biBiology' ? 'Course Subtopic' : 'Application'
+
+  const skillLabel =
+    courseMetadata.textValue === 'biBiology' ? 'Content Statement' : 'Skill'
+
   return [
     { label: 'Unit', value: unit },
     { label: 'Topic', value: courseTopic },
-    { label: 'Application', value: application },
-    { label: 'Skill', value: skill },
+    { label: applicationLabel, value: application },
+    { label: skillLabel, value: skill },
     { label: 'Understanding', value: understanding },
   ]
 }

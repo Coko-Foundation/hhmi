@@ -227,6 +227,12 @@ const MetadataInfo = props => {
           </StyledList>
         </>
       )}
+      {values.literatureAttribution && (
+        <>
+          <MetadataHeading>Citation</MetadataHeading>
+          <p>{values.literatureAttribution}</p>
+        </>
+      )}
     </Wrapper>
   )
 }
@@ -460,6 +466,7 @@ MetadataInfo.propTypes = {
     affectiveLevel: PropTypes.string,
     psychomotorLevel: PropTypes.string,
     readingLevel: PropTypes.string,
+    literatureAttribution: PropTypes.string,
   }).isRequired,
   resources: PropTypes.arrayOf(
     PropTypes.shape({
