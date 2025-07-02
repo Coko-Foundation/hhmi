@@ -11,6 +11,7 @@ COPY package.json .
 COPY yarn.lock .
 
 RUN yarn install --frozen-lockfile --production
+RUN yarn install --production=false
 
 COPY . .
 
