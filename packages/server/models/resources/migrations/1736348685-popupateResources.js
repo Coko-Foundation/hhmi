@@ -6965,4 +6965,4 @@ exports.up = knex => {
   }
 }
 
-exports.down = knex => knex('resources').del() //
+exports.down = knex => knex('resources').del()
