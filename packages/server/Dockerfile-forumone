@@ -21,4 +21,4 @@ USER node
 RUN yarn install --frozen-lockfile
 COPY --chown=node:node . .
 
-# CMD ["yarn", "coko-server", "start"]
+CMD ["yarn", "coko-server", "start"]
