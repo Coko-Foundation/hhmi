@@ -37,6 +37,7 @@ client build development:
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     when: never
+  - when: always
   services:
     - docker:26-dind
   before_script:
@@ -52,6 +53,7 @@ server build development:
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     when: never
+  - when: always
   services:
     - docker:26-dind
   before_script:
@@ -71,6 +73,7 @@ client lint:
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     when: never
+  - when: always
   script:
     - cd $WORKDIR_CLIENT
     - yarn eslint .
@@ -85,6 +88,7 @@ client unit test:
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     when: never
+  - when: always
   script:
     - cd $WORKDIR_CLIENT
     - yarn jest
@@ -97,6 +101,7 @@ server lint:
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     when: never
+  - when: always
   script:
     - cd $WORKDIR_SERVER
     - yarn eslint .
@@ -110,6 +115,7 @@ server unit test:
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     when: never
+  - when: always
   services:
     - docker:23-dind
   script:
@@ -133,6 +139,7 @@ build server:
   rules:
   - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     when: never
+  - when: always
   services:
     - docker:26-dind
   before_script:
@@ -151,6 +158,7 @@ build client:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: never
+    - when: always
   services:
     - docker:26-dind
   before_script:
@@ -316,7 +324,6 @@ bump version:
     paths:
       - version.env
     expire_in: 1 hour
-
 
 create_release:
   stage: Release

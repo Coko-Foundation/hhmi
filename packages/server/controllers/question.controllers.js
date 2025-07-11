@@ -964,6 +964,7 @@ const generateWordFile = async (questionVersionId, options = {}) => {
         affectiveLevel: version.affectiveLevel,
         psychomotorLevel: version.psychomotorLevel,
         readingLevel: version.readingLevel,
+        literatureAttribution: version.literatureAttribution,
 
         publicationDate: formatDate(version.publicationDate),
       },
