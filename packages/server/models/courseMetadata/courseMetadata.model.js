@@ -310,6 +310,9 @@ class CourseMetadata extends BaseModel {
       case 'category':
       case 'subdiscipline':
       case 'subcompetence':
+      case 'application': // extra
+      case 'skill': // extra
+      case 'understanding': // extra
         return type
       case 'learningObjective':
         return 'learning_objective'
@@ -329,6 +332,8 @@ class CourseMetadata extends BaseModel {
         return 'core_competence'
       case 'subcompetenceStatement':
         return 'subcompetence_statement'
+      case 'courseTopic': // extra
+        return 'topic'
       default:
         return null
     }
