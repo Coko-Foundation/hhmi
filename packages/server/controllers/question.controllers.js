@@ -1017,7 +1017,8 @@ const generateWordFile = async (questionVersionId, options = {}) => {
         readingLevel: version.readingLevel,
         literatureAttribution: version.literatureAttribution,
 
-        publicationDate: formatDate(version.publicationDate),
+        publicationDate:
+          version.publicationDate && formatDate(version.publicationDate),
       },
       {
         showFeedback,
