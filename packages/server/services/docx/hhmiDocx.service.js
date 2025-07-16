@@ -1218,6 +1218,17 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       content.push(this.metadataBulletFactory(labels.topic, topic))
       content.push(this.metadataBulletFactory(labels.subtopic, subtopic, 1))
     })
+
+    // insert empty row
+    content.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: ' ',
+          }),
+        ],
+      }),
+    )
   }
 
   metadataCoursesParser = (content, key, value) => {
@@ -1236,6 +1247,17 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         })
       })
     })
+
+    // insert empty row
+    content.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: ' ',
+          }),
+        ],
+      }),
+    )
   }
 
   metadataCitationParser = (content, key, value) => {
@@ -1250,8 +1272,24 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
               text: c,
             }),
           ],
+          numbering: {
+            reference: this.listTypes.BULLET,
+            level: 0,
+            instance: this.listInstance,
+          },
         }),
       ),
+    )
+
+    // insert empty row
+    content.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: ' ',
+          }),
+        ],
+      }),
     )
   }
 
@@ -1283,6 +1321,14 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       if (key === 'biointeractiveResources') {
         if (value.length) {
           this.metadataArrayOfStringsAsBulletListParser(content, key, value)
+        }
+
+        return
+      }
+
+      if (key === 'keywords') {
+        if (value.length) {
+          this.metadataValueParser(content, key, value)
         }
 
         return
