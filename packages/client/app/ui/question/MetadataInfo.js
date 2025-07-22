@@ -230,7 +230,11 @@ const MetadataInfo = props => {
       {values.literatureAttribution && (
         <>
           <MetadataHeading>Citation</MetadataHeading>
-          <p>{values.literatureAttribution}</p>
+          <ul>
+            {values.literatureAttribution.split('\n').map((c, i) => (
+              <li key={c}>{c}</li>
+            ))}
+          </ul>
         </>
       )}
     </Wrapper>
