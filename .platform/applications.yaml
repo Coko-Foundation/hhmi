@@ -52,7 +52,7 @@ drupal:
       - apcu
 
   disk: 512
-#
+
   mounts:
     # The default Drupal files directory.
     '/public/sites/default/files':
@@ -143,16 +143,6 @@ server:
   source:
     root: server
 
-#  hooks:
-    # The build hook runs after Composer to finish preparing up your code.
-    # No services are available but the disk is writeable.
-#    build: |
-#      set -e
-#      yarn install --frozen-lockfile --production
-#    deploy: |
-#      set -e
-#      bash $PLATFORM_APP_DIR/platformsh-scripts/hooks.deploy.sh
-
   mounts:
     "uploads":
       source: local
@@ -163,11 +153,6 @@ server:
     "temp":
       source: local
       source_path: temp
-
-  web:
-    commands:
-      start: |
-        node $PLATFORM_APP_DIR/startServer.js
 
     locations:
       "/graphql":
@@ -206,17 +191,6 @@ client:
   dependencies:
     nodejs:
       yarn: "*"
-
-  hooks:
-
-    build: |
-      set -e
-      yarn install --frozen-lockfile --production
-      yarn coko-client-build
-    post_deploy: |
-      set -e
-      bash $PLATFORM_APP_DIR/platformsh-scripts/hooks.deploy.sh
-
 
   # The web key configures the web server running in front of your app.
   web:
