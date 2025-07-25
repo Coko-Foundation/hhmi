@@ -181,6 +181,7 @@ input SidebarFilters {
   cognitiveLevel: [String]
   questionType: [String]
   complexItemSet: [String]
+  biointeractiveResources: [String]
 }
 
 input FilterQuestionsParams {

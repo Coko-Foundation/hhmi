@@ -255,6 +255,19 @@ class Question extends BaseModel {
       if (filters.complexItemSet && filters.complexItemSet.length) {
         query.whereIn('complex_item_set_id', filters.complexItemSet)
       }
+
+      if (
+        filters.biointeractiveResources &&
+        filters.biointeractiveResources.length
+      ) {
+        query.where(subquery => {
+          filters.biointeractiveResources.forEach(resourceId => {
+            subquery.orWhereJsonSupersetOf('biointeractive_resources', [
+              resourceId,
+            ])
+          })
+        })
+      }
     }
 
     if (searchQuery) {
@@ -303,6 +316,8 @@ class Question extends BaseModel {
           'users.given_names as author_name',
           'users.surname as author_surname',
           'question_versions.complex_item_set_id',
+          'question_versions.complex_item_set_id',
+          'question_versions.biointeractive_resources',
         )
         .distinctOn('questions.id')
         .where({

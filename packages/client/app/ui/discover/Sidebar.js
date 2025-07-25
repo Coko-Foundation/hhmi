@@ -57,6 +57,7 @@ const Sidebar = props => {
     metadata,
     form,
     complexItemSetOptions,
+    biointeractiveResources,
     presetFilters,
   } = props
 
@@ -174,6 +175,18 @@ const Sidebar = props => {
                   mode="multiple"
                   optionFilterProp="label"
                   options={complexItemSetOptions}
+                  showSearch
+                />
+              </Form.Item>
+              <Form.Item
+                label="Biointeractive Resource"
+                name="biointeractiveResources"
+              >
+                <Select
+                  data-testid="complex-item-set-select"
+                  mode="multiple"
+                  optionFilterProp="label"
+                  options={biointeractiveResources}
                   showSearch
                 />
               </Form.Item>
@@ -384,6 +397,12 @@ Sidebar.propTypes = {
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
     }),
   ),
+  biointeractiveResources: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
   presetFilters: PropTypes.shape(),
 }
 
@@ -392,6 +411,7 @@ Sidebar.defaultProps = {
   metadata: null,
   form: {},
   complexItemSetOptions: [],
+  biointeractiveResources: [],
   presetFilters: null,
 }
 
