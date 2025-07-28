@@ -7,9 +7,9 @@ drupal:
       memory_limit: 512M
       max_input_vars: 3000
 
- # dependencies:
- #   php:
- #     composer/composer: '^2'
+  # dependencies:
+  #   php:
+  #     composer/composer: '^2'
 
   build:
     flavor: none
@@ -22,8 +22,8 @@ drupal:
     # No services are available but the disk is writeable.
     build: |
       set -e
-#      mkdir -p public/drupal
-#      find . -mindepth 1 -maxdepth 1 -exec mv -t.. -- {} +
+    # mkdir -p public/drupal
+    # find . -mindepth 1 -maxdepth 1 -exec mv -t.. -- {} +
 
 
     # The deploy hook runs after your application has been deployed and started.
@@ -138,8 +138,18 @@ server:
       service: minio
       endpoint: http
 
-
   disk: 512
+
+  hooks:
+  # The build hook runs after Composer to finish preparing up your code.
+  # No services are available but the disk is writeable.
+  build: |
+    set -e
+    yarn install --frozen-lockfile --production
+  deploy: |
+    set -e
+    yarn coko-server start
+
   source:
     root: server
 
@@ -191,6 +201,15 @@ client:
   dependencies:
     nodejs:
       yarn: "*"
+
+  hooks:
+    build: |
+      set -e
+      yarn install --frozen-lockfile --production
+      yarn coko-client-build
+    post_deploy: |
+      set -e
+      bash $PLATFORM_APP_DIR/platformsh-scripts/hooks.deploy.sh
 
   # The web key configures the web server running in front of your app.
   web:
