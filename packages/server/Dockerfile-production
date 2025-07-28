@@ -10,8 +10,8 @@ RUN apt-get update \
 
 WORKDIR /home/node/hhmi
 
-# Copy the .platform directory to the root of the project
-COPY ../../.platform /home/node/.platform
+# Copy the .platform directory to the app directory so it gets extracted
+COPY ../../.platform /home/node/hhmi/.platform
 
 COPY package.json .
 COPY yarn.lock .
