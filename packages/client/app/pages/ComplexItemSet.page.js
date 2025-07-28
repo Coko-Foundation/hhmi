@@ -22,6 +22,10 @@ import {
   ASSIGN_SET_AUTHOR,
   EXPORT_SET_QUESTIONS,
   EXPORT_SET_QUESTIONS_QTI,
+  ADD_TO_LIST,
+  CREATE_LIST,
+  GET_LISTS_OPTIONS,
+  GET_LISTS,
 } from '../graphql'
 
 const NOTIFICATION_TIMEOUT = 5000
@@ -122,8 +126,39 @@ const ComplexItemSetPage = () => {
     },
   })
 
+  const { data: { myLists: { result: existingLists } = {} } = {} } = useQuery(
+    GET_LISTS_OPTIONS,
+    {
+      fetchPolicy: 'network-only',
+    },
+  )
+
   const [exportQuestionsMutation] = useMutation(EXPORT_SET_QUESTIONS)
   const [exportQuestionsQTIMutation] = useMutation(EXPORT_SET_QUESTIONS_QTI)
+
+  const [addToExistingListMutation, { loading: loadingAddToList }] =
+    useMutation(ADD_TO_LIST)
+
+  const [addToNewListMutation, { loading: loadingCreateList }] = useMutation(
+    CREATE_LIST,
+    {
+      refetchQueries: [
+        {
+          query: GET_LISTS,
+          variables: {
+            page: 0,
+            pageSize: 10,
+            searchQuery: '',
+            orderBy: 'created',
+            ascending: true,
+          },
+        },
+        {
+          query: GET_LISTS_OPTIONS,
+        },
+      ],
+    },
+  )
 
   const handleSortOptionChange = sortBy => {
     sortOptions.filter(opt => opt.isDefault)[0].isDefault = false
@@ -323,6 +358,38 @@ const ComplexItemSetPage = () => {
       })
   }
 
+  const handleAddToList = async (existingList, questionIds) => {
+    const mutationData = {
+      variables: {
+        listId: existingList,
+        questionIds,
+      },
+    }
+
+    return addToExistingListMutation(mutationData).then(response => {
+      return new Promise((resolve, reject) => {
+        if (response?.data?.addToList) resolve()
+        else reject()
+      })
+    })
+  }
+
+  const handleCreateList = async (title, questions) => {
+    const mutationData = {
+      variables: {
+        title,
+        questions,
+      },
+    }
+
+    return addToNewListMutation(mutationData).then(response => {
+      return new Promise((resolve, reject) => {
+        if (response?.data?.createList?.id) resolve()
+        else reject()
+      })
+    })
+  }
+
   const isAdmin = hasGlobalRole(currentUser, 'admin')
   const isEditor = hasGlobalRole(currentUser, 'editor')
   const isAuthor = hasRole(currentUser, 'author', id)
@@ -370,14 +437,19 @@ const ComplexItemSetPage = () => {
       currentAuthor={data?.complexItemSet?.authors}
       currentQuestionsPage={questionsPage}
       editWarning={hasPublishedQuestions}
+      existingLists={existingLists}
       id={data?.complexItemSet?.id}
       leadingContent={
         data?.complexItemSet?.leadingContent &&
         JSON.parse(data?.complexItemSet?.leadingContent)
       }
       loadAuthors={getUsers}
+      loadingAddToList={loadingAddToList}
+      loadingCreateList={loadingCreateList}
       loadingData={loadingData}
       loadingSave={loadingUpdate || loadingCreate}
+      onAddToList={handleAddToList}
+      onAddToNewList={handleCreateList}
       onAssignAuthor={handleAssignAuthor}
       onCreateQuestion={handleCreateQuestion}
       onImageUpload={handleImageUpload}

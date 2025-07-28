@@ -446,7 +446,7 @@ const DashboardPage = () => {
     return changeArchiveStatusForItems(mutationData)
   }
 
-  const handleAddToList = (existingList, questions) => {
+  const handleAddToList = async (existingList, questions) => {
     const mutationData = {
       variables: {
         listId: existingList,
@@ -462,7 +462,7 @@ const DashboardPage = () => {
     })
   }
 
-  const handleCreateList = (title, questions) => {
+  const handleCreateList = async (title, questions) => {
     const mutationData = {
       variables: {
         title,

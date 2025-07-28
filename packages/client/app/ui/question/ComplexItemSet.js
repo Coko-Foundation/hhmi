@@ -10,6 +10,8 @@ import {
   Empty,
   Button,
   ButtonGroup,
+  AddToListPopup,
+  Popup,
 } from '../common'
 import AssignAuthorButton from './AssignAuthorButton'
 import ComplexItemSetForm from './ComplexItemSetForm'
@@ -110,6 +112,12 @@ const BulkActionWrapper = styled.div`
   gap: ${grid(2)};
 `
 
+const PopupContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${grid(2)};
+`
+
 const ComplexItemSet = props => {
   const {
     activeTab,
@@ -140,6 +148,11 @@ const ComplexItemSet = props => {
     currentAuthor,
     onWordExport,
     onQTIExport,
+    onAddToList,
+    onAddToNewList,
+    existingLists,
+    loadingAddToList,
+    loadingCreateList,
   } = props
 
   const [activeKey, setActiveKey] = useState(activeTab)
@@ -162,6 +175,14 @@ const ComplexItemSet = props => {
     return onQTIExport(selectedQuestions)
   }
 
+  const handleAddToList = existingList => {
+    return onAddToList(existingList, selectedQuestions)
+  }
+
+  const handleAddNewToList = listName => {
+    return onAddToNewList(listName, selectedQuestions)
+  }
+
   const tabItems = [
     // show Content tab with list of questions if complex item set exists
     id && {
@@ -182,18 +203,42 @@ const ComplexItemSet = props => {
             bulkAction={
               selectedQuestions.length ? (
                 <BulkActionWrapper>
-                  <ExportListToWordButton
-                    // afterClose={() =>
-                    //   document.body.querySelector('#export-popup-toggle').focus()
-                    // }
-                    onExport={handleWordExport}
-                    text="All selected questions will be exported in the order of publication."
+                  <AddToListPopup
+                    existingListsOptions={existingLists}
+                    loadingAddToList={loadingAddToList}
+                    loadingCreateList={loadingCreateList}
+                    onAddToList={handleAddToList}
+                    onCreateList={handleAddNewToList}
+                  />
+                  <Popup
+                    id="export-popup"
+                    popupPlacement="top"
+                    toggle={
+                      <Button
+                        data-testid="add-to-list-btn"
+                        disabled={selectedQuestions.length === 0}
+                        id="export-popup-toggle"
+                        type="primary"
+                      >
+                        Export
+                      </Button>
+                    }
                   >
-                    Export to Word
-                  </ExportListToWordButton>
-                  <Button onClick={handleQTIExport} type="primary">
-                    Export QTI
-                  </Button>
+                    <PopupContentWrapper>
+                      <ExportListToWordButton
+                        // afterClose={() =>
+                        //   document.body.querySelector('#export-popup-toggle').focus()
+                        // }
+                        onExport={handleWordExport}
+                        text="All selected questions will be exported in the order of publication."
+                      >
+                        Export to Word
+                      </ExportListToWordButton>
+                      <Button onClick={handleQTIExport} type="primary">
+                        Export QTI
+                      </Button>
+                    </PopupContentWrapper>
+                  </Popup>
                 </BulkActionWrapper>
               ) : null
             }
@@ -315,6 +360,11 @@ ComplexItemSet.propTypes = {
   currentAuthor: PropTypes.string,
   onWordExport: PropTypes.func,
   onQTIExport: PropTypes.func,
+  onAddToList: PropTypes.func,
+  onAddToNewList: PropTypes.func,
+  existingLists: PropTypes.arrayOf(PropTypes.shape()),
+  loadingAddToList: PropTypes.bool,
+  loadingCreateList: PropTypes.bool,
 }
 
 ComplexItemSet.defaultProps = {
@@ -346,6 +396,11 @@ ComplexItemSet.defaultProps = {
   currentAuthor: null,
   onWordExport: () => {},
   onQTIExport: () => {},
+  onAddToList: () => {},
+  onAddToNewList: () => {},
+  existingLists: [],
+  loadingAddToList: false,
+  loadingCreateList: false,
 }
 
 export default ComplexItemSet

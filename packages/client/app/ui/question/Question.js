@@ -33,6 +33,7 @@ import {
   Spin,
   TabsStyled as Tabs,
   VisuallyHiddenElement,
+  AddToListPopup,
 } from '../common'
 import { REVIEWER_STATUSES, extractDocumentText } from '../../utilities'
 import AssignAuthorButton from './AssignAuthorButton'
@@ -482,6 +483,11 @@ const Question = props => {
     authorsCurrent,
     onAuthorEdit,
     isEditing,
+    onAddToList,
+    onAddToNewList,
+    existingLists,
+    loadingAddToList,
+    loadingCreateList,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -1593,18 +1599,48 @@ const Question = props => {
 
       <div>
         {isUserLoggedIn && <ViewAsWrapper>{ViewAsContent}</ViewAsWrapper>}
-        <ActionsWrapper>
-          <StyledWordExportButton
-            loading={wordFileLoading}
-            onExport={onClickExportToWord}
-            showMetadataOption={isUserLoggedIn}
+        <span style={{ marginInlineEnd: '8px' }}>
+          <AddToListPopup
+            alignment="end"
+            existingListsOptions={existingLists}
+            id="list-actions-popup"
+            loadingAddToList={loadingAddToList}
+            loadingCreateList={loadingCreateList}
+            onAddToList={onAddToList}
+            onCreateList={onAddToNewList}
+            position="block-end"
           />
-          {isUserLoggedIn && (
-            <StyledScormExportButton
-              loading={qtiZipLoading}
-              onExport={onClickExportToQti}
-            />
-          )}
+        </span>
+        <ActionsWrapper>
+          <Popup
+            id="export-popup"
+            position="block-end"
+            toggle={
+              <Button
+                data-testid="add-to-list-btn"
+                id="export-popup-toggle"
+                style={{ marginInlineEnd: '8px' }}
+                type="primary"
+              >
+                Export
+              </Button>
+            }
+          >
+            <PopupContentWrapper>
+              <StyledWordExportButton
+                loading={wordFileLoading}
+                onExport={onClickExportToWord}
+                showMetadataOption={isUserLoggedIn}
+              />
+              {isUserLoggedIn && (
+                <StyledScormExportButton
+                  loading={qtiZipLoading}
+                  onExport={onClickExportToQti}
+                />
+              )}
+            </PopupContentWrapper>
+          </Popup>
+
           {isPublished && canUnpublish && (
             <StyledButton onClick={showUnpublishModal} type="primary">
               Unpublish
@@ -2290,6 +2326,11 @@ Question.propTypes = {
   authorsCurrent: PropTypes.arrayOf(PropTypes.shape()),
   onAuthorEdit: PropTypes.func,
   isEditing: PropTypes.bool,
+  onAddToList: PropTypes.func,
+  onAddToNewList: PropTypes.func,
+  existingLists: PropTypes.arrayOf(PropTypes.shape()),
+  loadingAddToList: PropTypes.bool,
+  loadingCreateList: PropTypes.bool,
 }
 
 Question.defaultProps = {
@@ -2397,6 +2438,11 @@ Question.defaultProps = {
   authorsCurrent: [],
   onAuthorEdit: null,
   isEditing: false,
+  onAddToList: null,
+  onAddToNewList: null,
+  existingLists: [],
+  loadingAddToList: false,
+  loadingCreateList: false,
 }
 
 export default Question
