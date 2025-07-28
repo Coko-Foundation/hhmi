@@ -110,7 +110,7 @@ steps:
           <<: *git
           files:
             force-add:
-              - .platform
+              - .platform/
               - client
             ignore:
               # - .platform
@@ -160,7 +160,7 @@ steps:
           <<: *git
           files:
             force-add:
-              - .platform
+              - .platform/
               - server
             ignore:
               # - .platform
