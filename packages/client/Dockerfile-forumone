@@ -9,7 +9,7 @@ RUN apt-get update \
 WORKDIR /home/node/app
 
 # Copy the .platform directory to the root of the project
-COPY --from=additional_context .platform /home/node/.platform
+COPY .platform /home/node/.platform
 
 COPY package.json .
 COPY yarn.lock .

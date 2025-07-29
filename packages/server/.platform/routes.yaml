@@ -1,0 +1,21 @@
+https://{default}:
+  type: upstream
+  upstream: "client:http"
+  id: "client"
+https://{default}/drupal:
+  type: upstream
+  upstream: "drupal:http"
+  id: "drupal"
+  cache:
+    enabled: true
+    cookies: ['/^SS?ESS/', '/^Drupal.visitor/']
+https://node.{default}:
+ type: upstream
+ upstream: "server:http"
+ id: "server"
+ cache:
+   enabled: false
+https://minio.{default}:
+  type: upstream
+  upstream: "minio:http"
+  id: "minio"
