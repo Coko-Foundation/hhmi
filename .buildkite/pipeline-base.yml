@@ -52,7 +52,7 @@ steps:
     <<: *step-defaults
     <<: *docker-agents
     command:
-      - "docker build --target client-build -f ${DOCKERFILE_CLIENT}/Dockerfile-forumone -t ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-client ${DOCKERFILE_CLIENT} --build-arg SERVER_URL=${SERVER_URL}"
+      - "docker build --target client-build -f ${DOCKERFILE_CLIENT}/Dockerfile-forumone -t ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-client ${DOCKERFILE_CLIENT} --build-arg SERVER_URL=${SERVER_URL} --build-context additional_context=../.platform"
       - "docker push ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-client"
     plugins:
       - *ecr
@@ -62,7 +62,7 @@ steps:
     <<: *step-defaults
     <<: *docker-agents
     command:
-      - "docker build --target server-build -f ${DOCKERFILE_SERVER}/Dockerfile-forumone -t ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-server ${DOCKERFILE_SERVER}"
+      - "docker build --target server-build -f ${DOCKERFILE_SERVER}/Dockerfile-forumone -t ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-server ${DOCKERFILE_SERVER} --build-context additional_context=../.platform"
       - "docker push ${ECR_NAMESPACE}-${BUILDKITE_BUILD_NUMBER}-${BUILDKITE_COMMIT}-server"
     plugins:
       - *ecr
