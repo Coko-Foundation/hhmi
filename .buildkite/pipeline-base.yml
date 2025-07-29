@@ -112,7 +112,7 @@ steps:
             force-add:
               - client
             ignore:
-              # - .platform
+              - .platform
               - minio
               - server
               - drupal
@@ -161,7 +161,7 @@ steps:
             force-add:
               - server
             ignore:
-              # - .platform
+              - .platform
               - minio
               - client
               - drupal
