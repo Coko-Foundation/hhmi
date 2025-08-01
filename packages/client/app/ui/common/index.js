@@ -1,4 +1,5 @@
 export { default as AutoComplete } from './AutoComplete'
+export { default as AddToListPopup } from './AddToListPopup'
 export { default as Button } from './Button'
 export { default as ButtonGroup } from './ButtonGroup'
 export { default as ChatBox } from './ChatBox'

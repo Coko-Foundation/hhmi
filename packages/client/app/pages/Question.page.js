@@ -56,6 +56,10 @@ import {
   CHANGE_REVIEWER_AUTOMATION_STATUS,
   SUBMIT_REPORT,
   FILTER_CHAT_THREADS,
+  ADD_TO_LIST,
+  CREATE_LIST,
+  GET_LISTS,
+  GET_LISTS_OPTIONS,
 } from '../graphql'
 import {
   useMetadata,
@@ -334,6 +338,37 @@ const QuestionPage = props => {
   })
 
   const [cancelEmailNotification] = useMutation(CANCEL_EMAIL_NOTIFICATION)
+
+  const [addToExistingListMutation, { loading: loadingAddToList }] =
+    useMutation(ADD_TO_LIST)
+
+  const [addToNewListMutation, { loading: loadingCreateList }] = useMutation(
+    CREATE_LIST,
+    {
+      refetchQueries: [
+        {
+          query: GET_LISTS,
+          variables: {
+            page: 0,
+            pageSize: 10,
+            searchQuery: '',
+            orderBy: 'created',
+            ascending: true,
+          },
+        },
+        {
+          query: GET_LISTS_OPTIONS,
+        },
+      ],
+    },
+  )
+
+  const { data: { myLists: { result: existingLists } = {} } = {} } = useQuery(
+    GET_LISTS_OPTIONS,
+    {
+      fetchPolicy: 'network-only',
+    },
+  )
 
   const [
     filterGlobalTeamMembers,
@@ -1423,6 +1458,38 @@ const QuestionPage = props => {
 
     return changeReviewerAutomationStatus(mutationData)
   }
+
+  const handleAddToList = async existingList => {
+    const mutationData = {
+      variables: {
+        listId: existingList,
+        questionIds: [id],
+      },
+    }
+
+    return addToExistingListMutation(mutationData).then(response => {
+      return new Promise((resolve, reject) => {
+        if (response?.data?.addToList) resolve()
+        else reject()
+      })
+    })
+  }
+
+  const handleCreateList = async title => {
+    const mutationData = {
+      variables: {
+        title,
+        questions: [id],
+      },
+    }
+
+    return addToNewListMutation(mutationData).then(response => {
+      return new Promise((resolve, reject) => {
+        if (response?.data?.createList?.id) resolve()
+        else reject()
+      })
+    })
+  }
   // #endregion handlers
 
   useEffect(() => {
@@ -1522,6 +1589,7 @@ const QuestionPage = props => {
             !isAuthor) ||
           isAdmin
         }
+        existingLists={existingLists}
         facultyView={testMode || (isReviewer && isUnderReview)}
         handlingEditors={handlingEditors?.result || []}
         hasDeletedAuthor={!!question?.deletedAuthorName}
@@ -1563,9 +1631,13 @@ const QuestionPage = props => {
           !getResources ||
           !complexItemSetOptions
         }
+        loadingAddToList={loadingAddToList}
+        loadingCreateList={loadingCreateList}
         metadata={metadata || {}}
         onAcceptQuestion={handleAcceptQuestion}
         onAddReviewers={handleAddReviewers}
+        onAddToList={handleAddToList}
+        onAddToNewList={handleCreateList}
         onAssignAuthor={handleAssignAuthor}
         onAuthorEdit={handleEditQuestion}
         onAutomateReviewerChange={handleReviewerInviteAutomationChange}

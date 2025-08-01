@@ -138,6 +138,7 @@ export const Discover = props => {
     pageSize,
     sidebarMetadata,
     complexItemSetOptions,
+    biointeractiveResources,
     totalCount,
     showSort,
     sortOptions,
@@ -409,6 +410,7 @@ export const Discover = props => {
       <Wrapper className={className}>
         {wrapFilters(
           <Sidebar
+            biointeractiveResources={biointeractiveResources}
             complexItemSetOptions={complexItemSetOptions}
             form={filtersForm}
             metadata={sidebarMetadata}
@@ -687,6 +689,7 @@ Discover.propTypes = {
   }),
   totalCount: PropTypes.number,
   sortOptions: PropTypes.arrayOf(PropTypes.shape()),
+  biointeractiveResources: PropTypes.arrayOf(PropTypes.shape()),
   showSort: PropTypes.bool,
   globalFilters: PropTypes.shape({
     query: PropTypes.string,
@@ -714,6 +717,7 @@ Discover.defaultProps = {
   sortOptions: [],
   showSort: false,
   globalFilters: null,
+  biointeractiveResources: [],
 }
 
 export default Discover

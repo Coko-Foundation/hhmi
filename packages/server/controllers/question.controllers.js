@@ -6,6 +6,7 @@ const {
   logger,
   useTransaction,
   pubsubManager,
+  db,
 } = require('@coko/server')
 
 const {
@@ -18,6 +19,7 @@ const {
   Review,
   ArchivedItem,
   Identity,
+  CourseMetadata,
 } = require('../models')
 
 const CokoNotifier = require('../services/notify')
@@ -920,6 +922,55 @@ const generateWordFile = async (questionVersionId, options = {}) => {
 
     const version = await QuestionVersion.findById(questionVersionId)
 
+    version.courses = await Promise.all(
+      version.courses.map(async course => {
+        const units = await Promise.all(
+          course.units.map(async unit => {
+            // remove null values
+            let validMetadata = Object.entries(unit).filter(
+              ([_, value]) => value !== null,
+            )
+
+            // find labels from id values
+            validMetadata = await Promise.all(
+              validMetadata.map(async ([key, value]) => {
+                if (value) {
+                  const tableName = await CourseMetadata.findTablenameByType(
+                    key,
+                  )
+
+                  if (tableName) {
+                    const res = await db(`${tableName}`)
+                      .select('label')
+                      .where('id', value)
+
+                    return [key, res[0].label]
+                  }
+
+                  return [key, null]
+                }
+
+                return [key, null]
+              }),
+            )
+
+            // recreate object
+            return Object.fromEntries(validMetadata)
+          }),
+        )
+
+        // find course label from id
+        const res = await db(`course`)
+          .select('label')
+          .where('id', course.course)
+
+        return {
+          course: res[0].label,
+          units,
+        }
+      }),
+    )
+
     const tempFolderPath = path.join(__dirname, '..', 'tmp')
 
     await Promise.all(
@@ -964,8 +1015,10 @@ const generateWordFile = async (questionVersionId, options = {}) => {
         affectiveLevel: version.affectiveLevel,
         psychomotorLevel: version.psychomotorLevel,
         readingLevel: version.readingLevel,
+        literatureAttribution: version.literatureAttribution,
 
-        publicationDate: formatDate(version.publicationDate),
+        publicationDate:
+          version.publicationDate && formatDate(version.publicationDate),
       },
       {
         showFeedback,

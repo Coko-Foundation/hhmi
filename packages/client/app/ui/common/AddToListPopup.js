@@ -79,6 +79,8 @@ const AddToListPopup = props => {
     loadingAddToList,
     loadingCreateList,
     existingListsOptions,
+    position,
+    alignment,
   } = props
 
   const [existingListForm] = Form.useForm()
@@ -115,8 +117,9 @@ const AddToListPopup = props => {
 
   return (
     <StyledPopup
+      alignment={alignment}
       id="list-popup"
-      popupPlacement="top"
+      position={position}
       toggle={
         <Button
           data-testid="add-to-list-btn"
@@ -215,6 +218,8 @@ AddToListPopup.propTypes = {
   loadingAddToList: PropTypes.bool,
   loadingCreateList: PropTypes.bool,
   existingListsOptions: PropTypes.arrayOf(PropTypes.shape()),
+  position: PropTypes.string,
+  alignment: PropTypes.string,
 }
 
 AddToListPopup.defaultProps = {
@@ -224,6 +229,8 @@ AddToListPopup.defaultProps = {
   loadingAddToList: false,
   loadingCreateList: false,
   existingListsOptions: [],
+  position: 'block-start',
+  alignment: 'start',
 }
 
 export default AddToListPopup

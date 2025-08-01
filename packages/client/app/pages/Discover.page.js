@@ -16,6 +16,7 @@ import {
   GET_LISTS,
   CURRENT_USER,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
+  GET_RESOURCES,
 } from '../graphql'
 
 const sortOptions = [
@@ -58,6 +59,10 @@ const DiscoverPage = () => {
       variables: { publishedOnly: true },
     },
   )
+
+  const {
+    data: { getResources: { result: biointeractiveResources } = {} } = {},
+  } = useQuery(GET_RESOURCES)
 
   const { data: questionsData, loading } = useQuery(GET_PUBLISHED_QUESTIONS, {
     variables: {
@@ -194,6 +199,7 @@ const DiscoverPage = () => {
     <>
       <VisuallyHiddenElement as="h1">Browse items page</VisuallyHiddenElement>
       <Discover
+        biointeractiveResources={biointeractiveResources}
         complexItemSetOptions={complexItemSetOptions}
         existingListsOptions={existingLists}
         globalFilters={filters}

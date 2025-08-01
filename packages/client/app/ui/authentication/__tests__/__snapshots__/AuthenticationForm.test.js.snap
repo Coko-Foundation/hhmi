@@ -2,13 +2,13 @@
 
 exports[`AuthenticationForm matches snapshot 1`] = `
 <div
-  className="sc-jkxtGR"
+  className="sc-fbUwh"
 >
   <div
-    className="sc-fmSAUk jvdyCW"
+    className="sc-irTswW dxKpil"
   >
     <div
-      className="sc-hAtEyd QahTu sc-fGFwAa fyZAVU"
+      className="sc-kFuwaP dMQJGJ sc-csCMJt lfHAws"
       data-testid="feedback-element"
       role="status"
     >
@@ -24,10 +24,10 @@ exports[`AuthenticationForm matches snapshot 1`] = `
         Test form
       </p>
       <div
-        className="sc-ieZDjg"
+        className="sc-fmSAUk"
       >
         <input
-          className="ant-input css-dev-only-do-not-override-12jzuas sc-dKfzgJ lldjka"
+          className="ant-input css-dev-only-do-not-override-12jzuas sc-fGFwAa hCtTI"
           disabled={false}
           onBlur={[Function]}
           onChange={[Function]}
@@ -40,7 +40,7 @@ exports[`AuthenticationForm matches snapshot 1`] = `
         />
       </div>
       <button
-        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-qRumB leliJo sc-cYRYSS KLZZj"
+        className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-dKfzgJ dSYqjz sc-ciABCq bhTEMN"
         disabled={false}
         onClick={[Function]}
         status={null}
@@ -54,13 +54,13 @@ exports[`AuthenticationForm matches snapshot 1`] = `
     </form>
   </div>
   <div
-    className="sc-hTQyD eXCHYO"
+    className="sc-kGYcGX bTKQhn"
   >
     <div
-      className="sc-fbUwh klmYqf"
+      className="sc-dQVSQq iIZubh"
     >
       <a
-        className="sc-hyBYnz eDtHdv"
+        className="sc-hMRyxU ftPaum"
         href="/alt-link"
         onClick={[Function]}
       >

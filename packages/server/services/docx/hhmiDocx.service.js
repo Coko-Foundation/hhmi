@@ -72,6 +72,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         affectiveLevel: "Bloom's Affective Level",
         psychomotorLevel: "Bloom's Psychomotor Level",
         readingLevel: "Bloom's Reading Level",
+        literatureAttribution: 'Citations',
 
         publicationDate: 'Publication date',
       }
@@ -673,7 +674,6 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   // #endregion essay
 
   // #region numerical
-
   numericalAnswerContainerHandler = numericalQuestion => {
     const {
       id,
@@ -701,6 +701,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
 
     return [...this.contentParser(numericalQuestion.content)]
   }
+  // #endregion numerical
 
   // #region feedback
   feedbackParser = () => {
@@ -1217,6 +1218,17 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       content.push(this.metadataBulletFactory(labels.topic, topic))
       content.push(this.metadataBulletFactory(labels.subtopic, subtopic, 1))
     })
+
+    // insert empty row
+    content.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: ' ',
+          }),
+        ],
+      }),
+    )
   }
 
   metadataCoursesParser = (content, key, value) => {
@@ -1235,6 +1247,50 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         })
       })
     })
+
+    // insert empty row
+    content.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: ' ',
+          }),
+        ],
+      }),
+    )
+  }
+
+  metadataCitationParser = (content, key, value) => {
+    const citations = value.split(/\r?\n/)
+
+    content.push(this.metadataStringFactory(key, ''))
+    citations.forEach(c =>
+      content.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: c,
+            }),
+          ],
+          numbering: {
+            reference: this.listTypes.BULLET,
+            level: 0,
+            instance: this.listInstance,
+          },
+        }),
+      ),
+    )
+
+    // insert empty row
+    content.push(
+      new Paragraph({
+        children: [
+          new TextRun({
+            text: ' ',
+          }),
+        ],
+      }),
+    )
   }
 
   metadataParser = () => {
@@ -1263,7 +1319,25 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       }
 
       if (key === 'biointeractiveResources') {
-        this.metadataArrayOfStringsAsBulletListParser(content, key, value)
+        if (value.length) {
+          this.metadataArrayOfStringsAsBulletListParser(content, key, value)
+        }
+
+        return
+      }
+
+      if (key === 'keywords') {
+        if (value.length) {
+          this.metadataValueParser(content, key, value)
+        }
+
+        return
+      }
+
+      if (key === 'literatureAttribution') {
+        if (value.trim().length) {
+          this.metadataCitationParser(content, key, value.trim())
+        }
 
         return
       }
