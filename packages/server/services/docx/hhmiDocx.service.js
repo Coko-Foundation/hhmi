@@ -1335,7 +1335,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       }
 
       if (key === 'literatureAttribution') {
-        if (value.trim().length) {
+        if (value && value.trim().length) {
           this.metadataCitationParser(content, key, value.trim())
         }
 
