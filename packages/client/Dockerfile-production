@@ -30,7 +30,7 @@ ENV CLIENT_SHOW_EMAIL_LOGIN_OPTION=$show_email_login
 ENV CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID=$oauth_client_id
 ENV CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI=$oauth_redirect_uri
 
-RUN yarn coko-client-build
+RUN yarn coko-client-build-js
 
 ######################################################################
 ######################################################################
