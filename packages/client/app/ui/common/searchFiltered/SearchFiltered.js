@@ -2,9 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { PropTypes, oneOfType } from 'prop-types'
 import styled from 'styled-components'
 import { th } from '@coko/client'
+import { VisuallyHiddenElement } from '@coko/client/dist/ui'
 
 import { Input } from 'antd'
-import VisuallyHiddenElement from '../VisuallyHiddenElement'
 
 import { safeCall, safeIndex, setSafeHTML } from '../../../utilities'
 import useBoolState from '../../_helpers/useBoolState'

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid } from '@coko/client'
 
-import Divider from './Divider'
+import { Divider } from '@coko/client/dist/ui'
 import { H2 } from './Headings'
 
 const Wrapper = styled.div`

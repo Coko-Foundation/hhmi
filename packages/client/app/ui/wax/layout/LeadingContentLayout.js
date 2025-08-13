@@ -2,10 +2,10 @@
 import React from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { grid, th } from '@coko/client'
+import { VisuallyHiddenElement } from '@coko/client/dist/ui'
 import { WaxView } from 'wax-prosemirror-core'
 import theme from '../../../theme'
 import commonStyles from './commonWaxStyles'
-import VisuallyHiddenElement from '../../common/VisuallyHiddenElement'
 
 import 'wax-prosemirror-core/dist/index.css'
 import 'wax-prosemirror-services/dist/index.css'
