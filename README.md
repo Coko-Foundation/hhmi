@@ -44,7 +44,7 @@ You can also try making a call to the `/healthcheck` endpoint, which should retu
 source .env
 yarn install --frozen-lockfile --production
 cd packages/client
-yarn coko-client-build
+yarn coko-client-build-js
 ```
 
 ##### Run the client

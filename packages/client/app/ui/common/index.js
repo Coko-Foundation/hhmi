@@ -48,5 +48,4 @@ export * from './Typography'
 
 export { Tag } from 'antd'
 
-export { default as DateParser } from './DateParser'
-// export { DateParser } from '@pubsweet/ui'
+export { DateParser } from '@coko/client/dist/ui'

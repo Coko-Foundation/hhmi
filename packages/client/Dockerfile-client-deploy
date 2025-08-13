@@ -23,7 +23,7 @@ ENV CLIENT_PAGE_TITLE='HHMI Assessment Builder'
 ENV CLIENT_FAVICON_PATH='../static/favicon.ico'
 ENV CLIENT_LANGUAGE='en-US'
 
-RUN yarn coko-client-build
+RUN yarn coko-client-build-js
 
 ######################################################################
 ######################################################################

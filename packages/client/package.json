@@ -34,11 +34,9 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@pubsweet/ui": "^12.6.13",
     "antd": "^5.6.1",
     "dompurify": "^3.2.6",
     "lodash": "^4.17.21",
-    "moment": "^2.29.4",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.1",
@@ -52,10 +50,6 @@
     "wax-table-service": "0.9.60"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-decorators": "^7.27.1",
-    "@babel/plugin-transform-class-properties": "^7.25.7",
-    "@babel/plugin-transform-private-methods": "^7.25.7",
-    "@babel/plugin-transform-private-property-in-object": "^7.25.8",
     "@coko/lint": "^2.1.0",
     "@coko/storybook": "^2.0.0",
     "@storybook/manager-webpack5": "^6.4.9",
