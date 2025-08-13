@@ -10,7 +10,7 @@ module.exports = {
   host: 'SERVER_HOST',
   port: 'SERVER_PORT',
   protocol: 'SERVER_PROTOCOL',
-  secret: 'PUBSWEET_SECRET',
+  secret: 'SECRET',
   serveClient: 'SERVE_CLIENT',
   externalURL: 'EXTERNAL_URL',
   db: {

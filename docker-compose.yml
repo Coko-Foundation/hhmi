@@ -39,7 +39,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB:-hhmi_dev}
       - POSTGRES_USER=${POSTGRES_USER:-hhmi_dev_user}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-hhmi_dev_user_password}
-      - PUBSWEET_SECRET=${PUBSWEET_SECRET:-superSecretThing}
+      - SECRET=${SECRET:-superSecretThing}
       - SERVER_PORT=${SERVER_PORT:-3000}
       - CLIENT_URL=${CLIENT_URL:-http://localhost:4000}
       - MAILER_SENDER=${MAILER_SENDER:-dev@example.com}
