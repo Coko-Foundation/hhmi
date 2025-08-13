@@ -2,8 +2,6 @@ const { logger, clientUrl, ChatChannel, sendEmail } = require('@coko/server')
 const moment = require('moment')
 
 const config = require('config')
-// eslint-disable-next-line import/no-extraneous-dependencies
-// const mailer = require('@pubsweet/component-send-email')
 
 const { Question, Identity, User, QuestionVersion } = require('../../../models')
 const flatten = require('../../../controllers/flattenMetadataValues')

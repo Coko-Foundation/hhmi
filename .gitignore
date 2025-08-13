@@ -69,8 +69,6 @@ packages/server/scripts/local
 # Container data
 data/
 minio/
-
-# Pubsweet
 uploads/
 
 # IDE

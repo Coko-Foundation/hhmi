@@ -1,19 +1,8 @@
 const path = require('path')
-// const winston = require('winston')
 
 const components = require('./components')
 const permissions = require('./permissions')
 const productionChatActivityNotification = require('../services/chatActivityNotifications')
-
-// const logger = new winston.Logger({
-//   transports: [
-//     new winston.transports.Console({
-//       colorize: true,
-//       handleExceptions: true,
-//       humanReadableUnhandledException: true,
-//     }),
-//   ],
-// })
 
 module.exports = {
   passwordReset: {
@@ -25,8 +14,6 @@ module.exports = {
   },
   permissions,
   components,
-  // pubsweet: {
-  // },
   db: {},
   subscriptionsDb: {},
   emailVerificationTokenExpiry: {
@@ -53,7 +40,6 @@ module.exports = {
       },
     },
   ],
-  // graphiql: true,
   teams: {
     global: [
       {
