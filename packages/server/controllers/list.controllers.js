@@ -1,6 +1,6 @@
 const path = require('path')
 const { uniq } = require('lodash')
-
+const sanitizeHtml = require('sanitize-html')
 const { logger, useTransaction } = require('@coko/server')
 
 const config = require('config')
@@ -56,7 +56,12 @@ const createList = async (userId, title, questions = []) => {
     return useTransaction(async trx => {
       const list = await List.insert(
         {
-          title,
+          title:
+            sanitizeHtml(title, {
+              allowedTags: [],
+              allowedAttributes: {},
+              textFilter: text => text,
+            }) || '[invalid title]',
         },
         { trx },
       )
@@ -91,7 +96,18 @@ const editList = async (listId, title, options = {}) => {
   try {
     return useTransaction(
       async trx => {
-        return List.patchAndFetchById(listId, { title }, trx)
+        return List.patchAndFetchById(
+          listId,
+          {
+            title:
+              sanitizeHtml(title, {
+                allowedTags: [],
+                allowedAttributes: {},
+                textFilter: text => text,
+              }) || '[invalid title]',
+          },
+          trx,
+        )
       },
       {
         trx: options.trx,

@@ -36,7 +36,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@pubsweet/ui": "^12.6.13",
     "antd": "^5.6.1",
-    "dompurify": "^3.0.6",
+    "dompurify": "^3.2.6",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "prop-types": "^15.7.2",

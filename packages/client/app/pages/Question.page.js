@@ -594,7 +594,7 @@ const QuestionPage = props => {
 
         setPageTitle(title)
         document.title = title
-        document.getElementById('page-announcement').innerHTML = title
+        document.getElementById('page-announcement').replaceChildren(title)
       }
 
       // update title dashboard questions
@@ -619,7 +619,7 @@ const QuestionPage = props => {
 
         setPageTitle(title)
         document.title = title
-        document.getElementById('page-announcement').innerHTML = title
+        document.getElementById('page-announcement').replaceChildren(title)
       }
     }
   }, [version, metadata])
