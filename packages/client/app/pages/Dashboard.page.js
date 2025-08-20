@@ -37,6 +37,7 @@ import {
   editorStatusFilters,
   createHeAssignedFilters,
   authorStatusFilters,
+  reviewerStatusFilters,
 } from '../ui/_helpers/searchFilters'
 
 const defaultSearchOptions = {
@@ -557,6 +558,7 @@ const DashboardPage = () => {
       totalCount: reviewerData?.totalCount,
       showBulkActions: false,
       loading: reviewerLoading,
+      filters: reviewerStatusFilters,
     },
   ].filter(Boolean)
 
@@ -584,9 +586,12 @@ const DashboardPage = () => {
         // showSort
         // sortOptions
         tabsContent={tabs}
-        withFilters={['editor', 'handlingEditor', 'author'].includes(
-          currentTabKey,
-        )}
+        withFilters={[
+          'editor',
+          'handlingEditor',
+          'author',
+          'reviewer',
+        ].includes(currentTabKey)}
       />
       <VisuallyHiddenElement
         aria-live="polite"

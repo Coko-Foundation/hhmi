@@ -170,15 +170,12 @@ const getAuthorDashboard = async (userId, options = {}) => {
 const getReviewerDashboard = async (userId, options = {}) => {
   const { orderBy, ascending, page, pageSize, filters, trx } = options
 
-  const { searchQuery } = filters
-
   return Question.getReviewerDashboard(userId, 'reviewer', {
     orderBy,
     ascending,
     page,
     pageSize,
-    searchQuery,
-    filters: { status: 'under_review', searchQuery },
+    filters, // { status: 'under_review', searchQuery },
     trx,
   })
 }

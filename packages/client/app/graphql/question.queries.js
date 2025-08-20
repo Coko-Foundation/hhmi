@@ -469,6 +469,10 @@ export const QUESTION = gql`
           id
           content
           reviewerId
+          attachments {
+            name
+            url
+          }
           status {
             submitted
           }

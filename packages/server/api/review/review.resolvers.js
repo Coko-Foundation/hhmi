@@ -4,8 +4,13 @@ const {
 } = require('../../controllers/review.controller')
 
 const submitReviewResolver = async (_, { input }, ctx) => {
-  const { questionVersionId, content, attachments } = input
-  return submitReview(questionVersionId, content, ctx.user, attachments)
+  const { questionVersionId, content, attachments, reviewerId } = input
+  return submitReview(
+    questionVersionId,
+    content,
+    reviewerId || ctx.user,
+    attachments,
+  )
 }
 
 const attachmentsResolver = async ({ id }) => {

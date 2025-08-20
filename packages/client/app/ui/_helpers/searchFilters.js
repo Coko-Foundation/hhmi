@@ -77,6 +77,15 @@ export const editorStatusFilters = [
   // },
 ]
 
+export const reviewerStatusFilters = [
+  {
+    key: filterStatusKey,
+    values: filterStatusValues.filter(
+      f => f.value !== 'submitted' && f.value !== 'accepted',
+    ),
+  },
+]
+
 export const authorStatusFilters = [
   {
     key: filterStatusKey,
