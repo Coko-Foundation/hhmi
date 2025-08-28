@@ -594,7 +594,7 @@ const QuestionPage = props => {
 
         setPageTitle(title)
         document.title = title
-        document.getElementById('page-announcement').innerHTML = title
+        document.getElementById('page-announcement').replaceChildren(title)
       }
 
       // update title dashboard questions
@@ -619,7 +619,7 @@ const QuestionPage = props => {
 
         setPageTitle(title)
         document.title = title
-        document.getElementById('page-announcement').innerHTML = title
+        document.getElementById('page-announcement').replaceChildren(title)
       }
     }
   }, [version, metadata])
@@ -821,7 +821,17 @@ const QuestionPage = props => {
     review => review.reviewerId === currentUser?.id && review.status.submitted,
   )
 
-  const reviewerPool = flattenReviewerPool(version?.reviewerPool || [])
+  const reviewerPool = flattenReviewerPool(version?.reviewerPool || []).map(
+    rev => {
+      const submittedReview = reviews.find(r => r.reviewerId === rev.id)
+
+      if (submittedReview) {
+        return { ...rev, submitted: submittedReview.attachments }
+      }
+
+      return rev
+    },
+  )
 
   const showAssignReviewersTab =
     isUnderReview && !isAuthor && (isEditor || isHandlingEditor)
@@ -1316,7 +1326,7 @@ const QuestionPage = props => {
     return acceptOrRejectInvitation(mutationData)
   }
 
-  const handleSubmitReview = async ({ attachments, content }) => {
+  const handleSubmitReview = async ({ attachments, content, reviewerId }) => {
     const fileObjects = attachments.map(attachment => attachment.originFileObj)
 
     const mutationData = {
@@ -1325,6 +1335,7 @@ const QuestionPage = props => {
           questionVersionId: version?.id,
           attachments: fileObjects,
           content,
+          reviewerId: isReviewer ? null : reviewerId,
         },
       },
     }

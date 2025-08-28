@@ -94,6 +94,7 @@ export const FILTER_USERS = gql`
           email
         }
         coursesTeaching
+        topicsReviewing
         created
         isActive
 
@@ -158,4 +159,10 @@ export const GET_USER_DATA = gql`
     }
   }
   ${USER_FIELDS}
+`
+
+export const DOWNLOAD_USERS_DATA = gql`
+  mutation DownloadUsersData($userIds: [ID!]!) {
+    downloadUsersData(userIds: $userIds)
+  }
 `

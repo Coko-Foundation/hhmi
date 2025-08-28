@@ -74,6 +74,8 @@ input UserProfileInput {
 
 extend input UsersQueryParams {
   search: String
+  role: String
+  expertise: String
 }
 
 type UsersQuestionsResult {
@@ -92,4 +94,5 @@ extend type Mutation {
   updateUserProfile(input: UserProfileInput!): User!
   bioInteractiveLogin(authCode: String!): LoginResult!
   deleteUsersRelatedItems(ids: [ID!]!): Boolean!
+  downloadUsersData(userIds: [ID!]!): String
 }

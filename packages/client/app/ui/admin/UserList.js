@@ -18,7 +18,6 @@ import {
 } from '../common'
 import {
   conditionalWord,
-  profileOptions,
   setSafeHTML,
   capitalize,
   safeCall,
@@ -117,6 +116,7 @@ const UserList = ({
   onBulkActivate,
   onBulkDeactivate,
   onBulkDelete,
+  onBulkDownload,
   onPageChange,
   onSearch,
   pageSize,
@@ -126,6 +126,9 @@ const UserList = ({
   setSelectedRows,
   showDeactivated,
   onClickShowDeactivated,
+  filters,
+  withFilters,
+  expertiseOptions,
 }) => {
   const [modal, contextHolder] = Modal.useModal()
   const { confirm, error } = modal
@@ -177,7 +180,7 @@ const UserList = ({
           {arrayOfStrings &&
             arrayOfStrings.map(course => (
               <Tag key={uuid()}>
-                {profileOptions.courses.find(c => c.value === course)?.label}
+                {expertiseOptions.find(c => c.value === course)?.label}
               </Tag>
             ))}
         </>
@@ -293,6 +296,39 @@ const UserList = ({
     })
   }
 
+  const handleBulkDownload = async () => {
+    const dialog = modal.info()
+    dialog.update({
+      title: <ModalHeader>Download CSV</ModalHeader>,
+      content: <p>Download data for selected users.</p>,
+      footer: [
+        <ModalFooter key="footer">
+          <Button key="cancel" onClick={() => dialog.destroy()}>
+            Cancel
+          </Button>
+          <Button
+            autoFocus
+            onClick={async () => {
+              try {
+                await onBulkDownload({ variables: { userIds: selectedRows } })
+              } catch {
+                modals.error(
+                  `${capitalize('download')} error`,
+                  `There was an error trying to download the user(s)`,
+                )
+              } finally {
+                dialog.destroy()
+              }
+            }}
+            type="primary"
+          >
+            Download
+          </Button>
+        </ModalFooter>,
+      ],
+    })
+  }
+
   const modals = {
     activate: () =>
       actionModalTemplate({
@@ -328,10 +364,11 @@ const UserList = ({
         ],
       })
     },
+    download: () => handleBulkDownload(),
   }
 
   const bulkAction = action =>
-    selectedRows.indexOf(currentUserId) !== -1
+    action !== 'download' && selectedRows.indexOf(currentUserId) !== -1
       ? modals.error(
           'Cannot delete or deactivate current user',
           'You cannot delete or deactivate the user you are currently logged in as. Please deselect your current user and try again',
@@ -353,6 +390,7 @@ const UserList = ({
           <StyledTable
             columns={columns}
             dataSource={dataSource}
+            filters={filters}
             loading={loading}
             locale={mergedLocale}
             onSearch={onSearch}
@@ -361,6 +399,7 @@ const UserList = ({
             searchLoading={searchLoading}
             searchPlaceholder="Search for users"
             showSearch
+            withFilters={withFilters}
           />
           <FooterActionsWrapper>
             <Checkbox
@@ -371,6 +410,13 @@ const UserList = ({
               Show inactive users
             </Checkbox>
             <ButtonGroup justify="right">
+              <Button
+                data-testid={`${isActivated()}-btn`}
+                disabled={selectedRows.length === 0}
+                onClick={() => bulkAction('download')}
+              >
+                Download csv
+              </Button>
               <Button
                 data-testid={`${isActivated()}-btn`}
                 disabled={selectedRows.length === 0}
@@ -415,6 +461,7 @@ UserList.propTypes = {
   onBulkActivate: PropTypes.func.isRequired,
   onBulkDeactivate: PropTypes.func.isRequired,
   onBulkDelete: PropTypes.func.isRequired,
+  onBulkDownload: PropTypes.func.isRequired,
   onClickShowDeactivated: PropTypes.func.isRequired,
   onPageChange: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
@@ -424,6 +471,9 @@ UserList.propTypes = {
   searchLoading: PropTypes.bool,
   totalUserCount: PropTypes.number,
   showDeactivated: PropTypes.bool.isRequired,
+  filters: PropTypes.arrayOf(PropTypes.shape()),
+  withFilters: PropTypes.bool,
+  expertiseOptions: PropTypes.arrayOf(PropTypes.shape()),
 }
 UserList.defaultProps = {
   data: [],
@@ -432,6 +482,9 @@ UserList.defaultProps = {
   pageSize: 10,
   searchLoading: false,
   totalUserCount: 0,
+  filters: [],
+  withFilters: false,
+  expertiseOptions: [],
 }
 
 export default UserList

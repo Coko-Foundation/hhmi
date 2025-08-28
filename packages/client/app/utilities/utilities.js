@@ -1510,8 +1510,8 @@ const setSafeHTML = (selector, html, timeout) => {
 
   const writeOnElement = () =>
     element && typeof html === 'string'
-      ? (element.innerHTML = html)
-      : (element.innerHTML = '')
+      ? element.replaceChildren(html)
+      : element.replaceChildren('')
 
   typeof timeout !== 'number'
     ? writeOnElement()

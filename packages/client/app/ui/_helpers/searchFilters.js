@@ -77,6 +77,15 @@ export const editorStatusFilters = [
   // },
 ]
 
+export const reviewerStatusFilters = [
+  {
+    key: filterStatusKey,
+    values: filterStatusValues.filter(
+      f => f.value !== 'submitted' && f.value !== 'accepted',
+    ),
+  },
+]
+
 export const authorStatusFilters = [
   {
     key: filterStatusKey,
@@ -103,5 +112,18 @@ export const notificationMessageFilters = [
   {
     key: { label: 'From', value: 'messageAuthor' },
     values: [{ label: '%', value: '%' }],
+  },
+]
+
+export const userRoleFilters = [
+  {
+    key: { label: 'Role', value: 'role' },
+    values: [
+      { label: 'Managing Editor', value: 'editor' },
+      { label: 'Handling Editor', value: 'handlingEditor' },
+      { label: 'Reviewer', value: 'reviewer' },
+      { label: 'Production', value: 'production' },
+      { label: 'Admin', value: 'admin' },
+    ],
   },
 ]

@@ -97,8 +97,9 @@ const DiscoverPage = () => {
           )} with ${nrOfQuestions} questions from a total of ${total}`
         }
 
-        document.querySelector('#search-results-update').innerHTML =
-          announcement
+        document
+          .querySelector('#search-results-update')
+          .replaceChildren(announcement)
       }
     },
   })

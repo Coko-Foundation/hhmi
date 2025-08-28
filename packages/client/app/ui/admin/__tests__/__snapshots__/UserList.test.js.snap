@@ -32,6 +32,7 @@ exports[`UserList matches snapshot 1`] = `
             <input
               className="ant-input css-dev-only-do-not-override-12jzuas"
               disabled={false}
+              filters={[]}
               hidden={null}
               onBlur={[Function]}
               onChange={[Function]}
@@ -141,7 +142,7 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper sc-cyRfQX aXdxs sc-dQVSQq SPHnK css-dev-only-do-not-override-12jzuas"
+                                className="ant-checkbox-wrapper sc-cyRfQX hiCCaO sc-dQVSQq SPHnK css-dev-only-do-not-override-12jzuas"
                               >
                                 <span
                                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -568,7 +569,7 @@ exports[`UserList matches snapshot 1`] = `
       className="sc-hGBxYJ eXWnmJ"
     >
       <label
-        className="ant-checkbox-wrapper sc-cyRfQX aXdxs css-dev-only-do-not-override-12jzuas"
+        className="ant-checkbox-wrapper sc-cyRfQX hiCCaO css-dev-only-do-not-override-12jzuas"
       >
         <span
           className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -592,6 +593,19 @@ exports[`UserList matches snapshot 1`] = `
       <div
         className="sc-bALXmG kCIuCj"
       >
+        <button
+          className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-default sc-dKfzgJ cqCBNt"
+          data-testid="deactivate-btn"
+          disabled={true}
+          onClick={[Function]}
+          status={null}
+          style={{}}
+          type="button"
+        >
+          <span>
+            Download csv
+          </span>
+        </button>
         <button
           className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-dKfzgJ cqCBNt"
           data-testid="deactivate-btn"

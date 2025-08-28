@@ -345,7 +345,8 @@ const moveQuestionVersionToReview = async context => {
     const author = await Question.getAuthor(questionVersion.questionId)
     const identity = await Identity.findOne({ userId: author[0].id })
     const link = `${clientUrl}/question/${questionVersion.questionId}`
-    const bloomsLevel = flatten()[questionVersion.cognitiveLevel]
+    const flattenedMetadata = await flatten()
+    const bloomsLevel = flattenedMetadata[questionVersion.cognitiveLevel]
 
     const subject =
       'HHMI BioInteractive Assessment Builder: Item passed Editorial Review'

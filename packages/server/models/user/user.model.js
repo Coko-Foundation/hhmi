@@ -66,11 +66,22 @@ class User extends UserModel {
   static async filter(data = {}, options = {}) {
     try {
       const { trx, ...otherOptions } = options
-      const { search = '', ...params } = data
+      const { search = '', role, expertise, ...params } = data
 
       return useTransaction(
         async tr => {
           let queryBuilder = this.query(tr)
+
+          if (role) {
+            queryBuilder = queryBuilder
+              .leftJoin('team_members', 'team_members.user_id', 'users.id')
+              .leftJoin('teams', 'teams.id', 'team_members.team_id')
+              .select('teams.role', 'teams.global', 'users.*')
+              .where({
+                role,
+                'teams.global': true,
+              })
+          }
 
           if (search) {
             queryBuilder = queryBuilder
@@ -78,10 +89,16 @@ class User extends UserModel {
               .where(builder =>
                 builder
                   .where('defaultIdentity.email', 'ilike', `%${search}%`)
-                  .orWhere('displayName', 'ilike', `%${search}%`)
+                  .orWhere('users.displayName', 'ilike', `%${search}%`)
                   .orWhere('givenNames', 'ilike', `%${search}%`)
                   .orWhere('surname', 'ilike', `%${search}%`),
               )
+          }
+
+          if (expertise) {
+            queryBuilder = queryBuilder
+              .whereJsonSupersetOf('users.courses_teaching', [expertise])
+              .orWhereJsonSupersetOf('users.topics_reviewing', [expertise])
           }
 
           queryBuilder = queryBuilder.where(params)

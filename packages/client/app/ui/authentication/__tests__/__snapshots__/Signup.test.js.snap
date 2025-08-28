@@ -402,7 +402,7 @@ exports[`Signup matches snapshot 1`] = `
                     className="ant-form-item-control-input-content"
                   >
                     <label
-                      className="ant-checkbox-wrapper ant-checkbox-wrapper-in-form-item sc-cyRfQX aXdxs css-dev-only-do-not-override-12jzuas"
+                      className="ant-checkbox-wrapper ant-checkbox-wrapper-in-form-item sc-cyRfQX hiCCaO css-dev-only-do-not-override-12jzuas"
                     >
                       <span
                         className="ant-checkbox css-dev-only-do-not-override-12jzuas"

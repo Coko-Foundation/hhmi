@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useParams, useHistory, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useLazyQuery } from '@apollo/client'
+import DOMPurify from 'dompurify'
 import { serverUrl } from '@coko/client'
 import { ComplexItemSet, Result, Spin } from 'ui'
 import {
@@ -174,8 +175,11 @@ const ComplexItemSetPage = () => {
     }
 
     if (data?.complexItemSet?.title) {
-      const pageTitle = `${data?.complexItemSet?.title} - Context-Dependent Item Set`
-      document.getElementById('page-announcement').innerHTML = pageTitle
+      const pageTitle = `${DOMPurify.sanitize(
+        data?.complexItemSet?.title,
+      )} - Context-Dependent Item Set`
+
+      document.getElementById('page-announcement').replaceChildren(pageTitle)
       document.title = `${pageTitle} - HHMI Assessment Builder`
     }
   }, [data])
@@ -475,7 +479,7 @@ const ComplexItemSetPage = () => {
       sortOptions={sortOptions}
       submissionMessage={submissionMessage}
       submissionStatus={submissionStatus}
-      title={data?.complexItemSet?.title}
+      title={DOMPurify.sanitize(data?.complexItemSet?.title)}
       totalQuestions={data?.complexItemSet.questions.totalCount}
     />
   )

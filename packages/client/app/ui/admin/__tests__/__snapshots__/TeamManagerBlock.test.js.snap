@@ -227,7 +227,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 data-testid="list-item-wrapper"
               >
                 <label
-                  className="ant-checkbox-wrapper sc-cyRfQX aXdxs sc-dxroEu dUCzuG css-dev-only-do-not-override-12jzuas"
+                  className="ant-checkbox-wrapper sc-cyRfQX hiCCaO sc-dxroEu dUCzuG css-dev-only-do-not-override-12jzuas"
                 >
                   <span
                     className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -256,7 +256,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 data-testid="list-item-wrapper"
               >
                 <label
-                  className="ant-checkbox-wrapper sc-cyRfQX aXdxs sc-dxroEu dUCzuG css-dev-only-do-not-override-12jzuas"
+                  className="ant-checkbox-wrapper sc-cyRfQX hiCCaO sc-dxroEu dUCzuG css-dev-only-do-not-override-12jzuas"
                 >
                   <span
                     className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -285,7 +285,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 data-testid="list-item-wrapper"
               >
                 <label
-                  className="ant-checkbox-wrapper sc-cyRfQX aXdxs sc-dxroEu dUCzuG css-dev-only-do-not-override-12jzuas"
+                  className="ant-checkbox-wrapper sc-cyRfQX hiCCaO sc-dxroEu dUCzuG css-dev-only-do-not-override-12jzuas"
                 >
                   <span
                     className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -314,7 +314,7 @@ exports[`TeamManagerBlock matches snapshot 1`] = `
                 data-testid="list-item-wrapper"
               >
                 <label
-                  className="ant-checkbox-wrapper sc-cyRfQX aXdxs sc-dxroEu dUCzuG css-dev-only-do-not-override-12jzuas"
+                  className="ant-checkbox-wrapper sc-cyRfQX hiCCaO sc-dxroEu dUCzuG css-dev-only-do-not-override-12jzuas"
                 >
                   <span
                     className="ant-checkbox css-dev-only-do-not-override-12jzuas"

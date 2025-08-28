@@ -815,23 +815,23 @@ class Question extends BaseModel {
 
     const query = Question.query(options.trx)
 
-    if (status || searchQuery) {
-      query.leftJoin(
-        'question_versions',
-        'questions.id',
-        'question_versions.question_id',
-      )
+    // if (status || searchQuery) {
+    query.leftJoin(
+      'question_versions',
+      'questions.id',
+      'question_versions.question_id',
+    )
 
-      // add author to selection
-      query
-        .leftJoin('teams as t1', builder => {
-          builder
-            .on('t1.object_id', '=', 'questions.id')
-            .andOn('t1.role', '=', db.raw('?', ['author']))
-        })
-        .leftJoin('team_members as tm1', 'tm1.team_id', 't1.id')
-        .leftJoin('users as u1', 'u1.id', 'tm1.user_id')
-    }
+    // add author to selection
+    query
+      .leftJoin('teams as t1', builder => {
+        builder
+          .on('t1.object_id', '=', 'questions.id')
+          .andOn('t1.role', '=', db.raw('?', ['author']))
+      })
+      .leftJoin('team_members as tm1', 'tm1.team_id', 't1.id')
+      .leftJoin('users as u1', 'u1.id', 'tm1.user_id')
+    // }
 
     query
       .leftJoin('teams', 'question_versions.id', 'teams.object_id')
@@ -839,25 +839,25 @@ class Question extends BaseModel {
 
     const selectFields = ['questions.*', 'teams.role', 'team_members.user_id']
 
-    if (status || searchQuery) {
-      query
-        .distinctOn('questions.id')
-        .orderBy([
-          'questions.id',
-          { column: 'question_versions.created', order: 'desc' },
-        ])
+    // if (status || searchQuery) {
+    query
+      .distinctOn('questions.id')
+      .orderBy([
+        'questions.id',
+        { column: 'question_versions.created', order: 'desc' },
+      ])
 
-      selectFields.push(
-        'question_versions.submitted',
-        'question_versions.under_review',
-        'question_versions.in_production',
-        'question_versions.published',
-        'question_versions.unpublished',
-        'u1.displayName',
-        'u1.givenNames',
-        'u1.surname',
-      )
-    }
+    selectFields.push(
+      'question_versions.submitted',
+      'question_versions.under_review',
+      'question_versions.in_production',
+      'question_versions.published',
+      'question_versions.unpublished',
+      'u1.displayName',
+      'u1.givenNames',
+      'u1.surname',
+    )
+    // }
 
     query.select(selectFields)
 
