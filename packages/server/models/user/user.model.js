@@ -96,9 +96,11 @@ class User extends UserModel {
           }
 
           if (expertise) {
-            queryBuilder = queryBuilder
-              .whereJsonSupersetOf('users.courses_teaching', [expertise])
-              .orWhereJsonSupersetOf('users.topics_reviewing', [expertise])
+            queryBuilder = queryBuilder.where(builder =>
+              builder
+                .whereJsonSupersetOf('users.courses_teaching', [expertise])
+                .orWhereJsonSupersetOf('users.topics_reviewing', [expertise]),
+            )
           }
 
           queryBuilder = queryBuilder.where(params)
