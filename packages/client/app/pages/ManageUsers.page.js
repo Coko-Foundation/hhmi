@@ -1,5 +1,6 @@
+/* eslint-disable no-unsafe-optional-chaining */
 import React, { useState } from 'react'
-import { useCurrentUser } from '@coko/client'
+import { serverUrl, useCurrentUser } from '@coko/client'
 import { UserList, Result } from 'ui'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
@@ -9,8 +10,11 @@ import {
   DEACTIVATE_USERS,
   ACTIVATE_USERS,
   DELETE_RELATED_ITEMS,
+  DOWNLOAD_USERS_DATA,
 } from '../graphql'
-import { hasGlobalRole } from '../utilities'
+import { hasGlobalRole, useMetadata } from '../utilities'
+import { userRoleFilters } from '../ui/_helpers/searchFilters'
+import { Spin } from '../ui/common'
 
 const usersApiToUi = users => {
   if (!users) return []
@@ -28,7 +32,7 @@ const usersApiToUi = users => {
       id: user.id,
       displayName: user.displayName,
       email: user.defaultIdentity.email,
-      expertise: user.coursesTeaching,
+      expertise: isReviewer ? user.topicsReviewing : user.coursesTeaching,
       isReviewer,
       signUpDate: user.created,
     }
@@ -40,16 +44,25 @@ const PAGE_SIZE = 10
 const ManageUsers = () => {
   const [currentPage, setCurrentPage] = useState(0)
   const [selectedRows, setSelectedRows] = useState([])
-  const [search, setSearch] = useState('')
+  const [searchParams, setSearchParams] = useState('')
   const [showDeactivated, setShowDeactivated] = useState(false)
 
   const { currentUser } = useCurrentUser()
+  const { metadata } = useMetadata()
+
+  const expertiseOptions = metadata
+    ? [...metadata?.profileOptions.courses, ...metadata?.profileOptions.topics]
+        .filter((expertise, index, self) => {
+          return index === self.findIndex(v => v.value === expertise.value)
+        })
+        .sort((a, b) => a.label > b.label)
+    : []
 
   const { loading: usersLoading, data: usersData } = useQuery(FILTER_USERS, {
     variables: {
       params: {
         isActive: !showDeactivated,
-        search,
+        ...searchParams,
       },
       options: {
         page: currentPage,
@@ -130,6 +143,8 @@ const ManageUsers = () => {
     },
   })
 
+  const [downloadUsersDataMutation] = useMutation(DOWNLOAD_USERS_DATA)
+
   const handleDeleteUsers = async vars => {
     await deleteUsersRelatedItems(vars)
     await deleteUsersMutation(vars)
@@ -139,14 +154,29 @@ const ManageUsers = () => {
     setCurrentPage(page - 1)
   }
 
-  const handleSearch = query => {
+  const handleSearch = ({ role, searchQuery: search, expertise }) => {
     setCurrentPage(0)
-    setSearch(query)
+    setSearchParams({ role, search, expertise })
   }
 
   const handleShowDeactivatedChange = () => {
     setSelectedRows([])
     setShowDeactivated(!showDeactivated)
+  }
+
+  const handleUsersDataDownload = variables => {
+    downloadUsersDataMutation(variables)
+      .then(res => {
+        const filename = res.data.downloadUsersData
+        const url = `${serverUrl}/api/download/${filename}`
+        window.location.assign(url)
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject()
+        })
+      })
   }
 
   if (!hasGlobalRole(currentUser, 'admin')) {
@@ -161,15 +191,30 @@ const ManageUsers = () => {
     )
   }
 
+  if (!metadata) {
+    return <Spin />
+  }
+
+  const filters = [
+    ...userRoleFilters,
+    {
+      key: { label: 'Expertise', value: 'expertise' },
+      values: expertiseOptions,
+    },
+  ]
+
   return (
     <UserList
       currentPage={currentPage + 1}
       currentUserId={currentUser.id}
       data={usersApiToUi(usersData?.filterUsers.result)}
+      expertiseOptions={expertiseOptions}
+      filters={filters}
       loading={usersLoading}
       onBulkActivate={activateUsersMutation}
       onBulkDeactivate={deactivateUsersMutation}
       onBulkDelete={handleDeleteUsers}
+      onBulkDownload={handleUsersDataDownload}
       onClickShowDeactivated={handleShowDeactivatedChange}
       onPageChange={handlePageChange}
       onSearch={handleSearch}
@@ -178,6 +223,7 @@ const ManageUsers = () => {
       setSelectedRows={setSelectedRows}
       showDeactivated={showDeactivated}
       totalUserCount={usersData?.filterUsers.totalCount}
+      withFilters={hasGlobalRole(currentUser, 'admin')}
     />
   )
 }

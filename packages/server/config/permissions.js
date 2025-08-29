@@ -45,6 +45,22 @@ const isReviewer = rule()(async (_, __, ctx) => {
   return user.isActive && user.hasGlobalRole('reviewer')
 })
 
+const canSubmitReview = rule()(async (_, __, ctx) => {
+  if (!ctx.user) return false
+
+  const UserModel = ctx.connectors.User.model
+  const user = await UserModel.query().findById(ctx.user)
+
+  const isUserReviewer = await user.hasGlobalRole('reviewer')
+  const isUserEditor = await user.hasGlobalRole('editor')
+  const isUserHE = await user.hasGlobalRole('handlingEditor')
+  const isUserAdmin = await user.hasGlobalRole('admin')
+
+  return (
+    user.isActive && (isUserReviewer || isUserEditor || isUserHE || isUserAdmin)
+  )
+})
+
 const isAdmin = rule()(async (_, __, ctx) => {
   if (!ctx.user) return false
 
@@ -368,6 +384,7 @@ const permissions = {
     updatePassword: canUpdateProfile,
     deleteUsers: canDeleteOrDeactivateUsers,
     deactivateUsers: canDeleteOrDeactivateUsers,
+    downloadUsersData: isAdmin,
     deleteUsersRelatedItems: canDeleteOrDeactivateUsers,
     activateUsers: isAdmin,
     sendPasswordResetEmail: allow,
@@ -432,7 +449,7 @@ const permissions = {
     inviteReviewer: canMoveToReview, // editors and handling editors
     revokeInvitation: canMoveToReview, // editors and handling editors
     acceptOrRejectInvitation: isReviewer,
-    submitReview: isReviewer,
+    submitReview: canSubmitReview,
     // Chats
     sendMessage: isActive,
     editMessage: isActive,

@@ -172,7 +172,9 @@ const Wrapper = props => {
       const pathTitle = regexPaths.find(p => p.path.test(pathName))
 
       if (pathTitle) {
-        document.getElementById('page-announcement').innerHTML = pathTitle?.name
+        document
+          .getElementById('page-announcement')
+          .replaceChildren(pathTitle?.name)
 
         document.title = `${pathTitle?.name} - HHMI Assessment Builder`
       }

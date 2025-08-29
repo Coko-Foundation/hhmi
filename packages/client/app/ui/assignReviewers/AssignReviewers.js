@@ -1,9 +1,40 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { PaperClipOutlined } from '@ant-design/icons'
 // eslint-disable-next-line import/no-unresolved
 import UIAssignReviewers from '@coko/client/dist/ui/assignReviewers/AssignReviewers'
+import { grid, th } from '@coko/client'
 import { profileOptions } from '../../utilities'
+import ReviewerEditorUploadButton from '../question/ReviewerEditorUploadButton'
+
+const AttachmentsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  > :last-child:not(:first-child) {
+    margin-block-start: ${grid(2)};
+  }
+`
+
+const AttachmentItem = styled.a`
+  border: 1px solid white;
+  border-radius: 5px;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  gap: ${grid(1)};
+  max-inline-size: 200px;
+  overflow: hidden;
+  padding: ${grid(1)};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:focus {
+    outline: 2px solid ${th('colorPrimaryBorder')};
+    outline-offset: 1px;
+  }
+`
 
 const StyledAssignReviewers = styled(UIAssignReviewers)`
   div:nth-child(3) {
@@ -22,26 +53,6 @@ const StyledAssignReviewers = styled(UIAssignReviewers)`
     }
   }
 `
-
-const additionalReviewerColumns = [
-  {
-    title: 'Topics',
-    dataIndex: 'topics',
-  },
-  {
-    title: 'Assessment Training',
-    dataIndex: 'assessmentTraining',
-    render: val => (val ? 'Yes' : ''),
-    sorter: (a, b) =>
-      Number(a.assessmentTraining) - Number(b.assessmentTraining),
-  },
-  {
-    title: 'Language Training',
-    dataIndex: 'languageTraining',
-    render: val => (val ? 'Yes' : ''),
-    sorter: (a, b) => Number(a.languageTraining) - Number(b.languageTraining),
-  },
-]
 
 const additionalSearchFields = [
   {
@@ -72,9 +83,64 @@ const AssignReviewers = props => {
     onClickRevokeInvitation,
     onSearch,
     onTableChange,
+    onUploadReview,
     reviewerPool,
     searchPlaceholder,
+    showDialog,
   } = props
+
+  const additionalReviewerColumns = [
+    {
+      title: 'Submitted reviews',
+      dataIndex: 'submitted',
+      render: (val, record) =>
+        val ? (
+          <AttachmentsWrapper>
+            {val.map(att => (
+              <AttachmentItem
+                data-testid="message-attachment"
+                href={att.url}
+                key={att.name}
+                target="_blank"
+              >
+                <PaperClipOutlined />
+                {att.name}
+              </AttachmentItem>
+            ))}
+            <ReviewerEditorUploadButton
+              onSubmit={onUploadReview}
+              reviewerId={record.id}
+              showDialog={showDialog}
+            />
+          </AttachmentsWrapper>
+        ) : (
+          record.acceptedInvitation && (
+            <ReviewerEditorUploadButton
+              onSubmit={onUploadReview}
+              reviewerId={record.id}
+              showDialog={showDialog}
+            />
+          )
+        ),
+    },
+    {
+      title: 'Topics',
+      dataIndex: 'topics',
+    },
+    {
+      title: 'Assessment Training',
+      dataIndex: 'assessmentTraining',
+      render: val => (val ? 'Yes' : ''),
+      sorter: (a, b) =>
+        Number(a.assessmentTraining) - Number(b.assessmentTraining),
+    },
+    {
+      title: 'Language Training',
+      dataIndex: 'languageTraining',
+      render: val => (val ? 'Yes' : ''),
+      sorter: (a, b) => Number(a.languageTraining) - Number(b.languageTraining),
+    },
+  ]
 
   return (
     <StyledAssignReviewers
@@ -122,10 +188,14 @@ AssignReviewers.propTypes = {
     }),
   ).isRequired,
   searchPlaceholder: PropTypes.string,
+  onUploadReview: PropTypes.func,
+  showDialog: PropTypes.func,
 }
 
 AssignReviewers.defaultProps = {
   searchPlaceholder: '',
+  onUploadReview: null,
+  showDialog: null,
 }
 
 export default AssignReviewers

@@ -2,9 +2,12 @@ const { logger, useTransaction, uuid, createJWT } = require('@coko/server')
 const axios = require('axios').default
 const crypto = require('node:crypto')
 const qs = require('node:querystring')
+const path = require('path')
+const { writeFile } = require('fs').promises
 
 const { ChatThread, ChatMessage } = require('@coko/server/src/models')
 const { roles } = require('../constants')
+const { getProfileOptions } = require('./courseMetadata.controller')
 
 const {
   Team,
@@ -347,13 +350,77 @@ const deleteUsersRelatedItems = async (ids, options = {}) => {
   }
 }
 
-const getUserTeams = user => {
+const getUserTeams = async user => {
   try {
     const { id } = user
     return User.getTeams(id)
   } catch (e) {
     logger.error(`error getUserTeams: ${e.message}`)
     throw new Error(e)
+  }
+}
+
+const downloadUsersCSV = async userIds => {
+  const { courses, topics } = getProfileOptions()
+
+  const expertiseOptions = [...courses, ...topics].filter(
+    (expertise, index, self) => {
+      return index === self.findIndex(v => v.value === expertise.value)
+    },
+  )
+
+  const users = await Promise.all(
+    userIds.map(async userId => {
+      const user = await User.findById(userId)
+      const displayName = await getDisplayName(user)
+
+      const defaultIdentity = await Identity.findOne({
+        userId,
+        isDefault: true,
+      })
+
+      const teams = await getUserTeams(user)
+      const globalTeams = teams.filter(t => t.global)
+      const globalRoles = `"${globalTeams.map(t => t.displayName).join(', ')}"`
+
+      const expertiseSelection = globalRoles.includes('Reviewer')
+        ? user.topicsReviewing
+        : user.coursesTeaching
+
+      const expertise = `"${expertiseSelection
+        .map(course => expertiseOptions.find(c => c.value === course)?.label)
+        .join(', ')}"`
+
+      return {
+        displayName,
+        email: defaultIdentity?.email,
+        roles: globalRoles,
+        expertise,
+      }
+    }),
+  )
+
+  const dataCSV = users.reduce(
+    (accu, user, index) => {
+      // eslint-disable-next-line no-param-reassign
+      accu += `${index + 1}, ${user.displayName}, ${user.email}, ${
+        user.roles
+      }, ${user.expertise}\n`
+      return accu
+    },
+    ` , Name, Email, Roles, Expertise\n`, // column names for csv
+  )
+
+  const tempFolderPath = path.join(__dirname, '..', 'tmp')
+  const fileName = 'usersData.csv'
+
+  const downloadPath = path.join(tempFolderPath, fileName)
+
+  try {
+    await writeFile(downloadPath, dataCSV, 'utf8')
+    return fileName
+  } catch (error) {
+    throw new Error(error)
   }
 }
 
@@ -365,4 +432,5 @@ module.exports = {
   bioInteractiveLogin,
   deleteUsersRelatedItems,
   getUserTeams,
+  downloadUsersCSV,
 }

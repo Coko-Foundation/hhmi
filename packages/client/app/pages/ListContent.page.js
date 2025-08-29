@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
+import DOMPurify from 'dompurify'
 import { serverUrl } from '@coko/client'
 import { ListContent } from 'ui'
 import {
@@ -50,10 +51,11 @@ const ListContentPage = () => {
     },
     fetchPolicy: 'network-only',
     onCompleted: ({ list: { title: listTitle } = {} }) => {
-      document.title = `${listTitle}, list page - Assessment Builder`
+      const sanitizedTitle = DOMPurify.sanitize(listTitle)
+      document.title = `${sanitizedTitle}, list page - Assessment Builder`
       document.getElementById(
         'page-announcement',
-      ).innerHTML = `${listTitle}, list page`
+      ).innerHTML = `${sanitizedTitle}, list page`
     },
   })
 
@@ -283,7 +285,7 @@ const ListContentPage = () => {
           : []
       }
       questionsPerPage={PAGE_SIZE}
-      title={title}
+      title={DOMPurify.sanitize(title)}
       totalCount={totalCount}
     />
   )

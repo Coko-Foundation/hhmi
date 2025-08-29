@@ -13,6 +13,7 @@ const getMetadata = async () => {
       introToBioMeta,
       questionTypes: metadata.questionTypes,
       blooms: metadata.blooms,
+      profileOptions: getProfileOptions(),
     }
   } catch (error) {
     throw new Error(error)
@@ -81,6 +82,103 @@ const reorderCourseMetadata = async input => {
   }
 }
 
+const getProfileOptions = () => {
+  return {
+    courses: [
+      {
+        label: 'Biology',
+        value: 'biology',
+      },
+      {
+        label: 'Biochemistry',
+        value: 'biochemistry',
+      },
+      {
+        label: 'Molecular Biology',
+        value: 'molecularBiology',
+      },
+      {
+        label: 'Genetics',
+        value: 'genetics',
+      },
+      {
+        label: 'Cell Biology',
+        value: 'cellBiology',
+      },
+      {
+        label: 'Microbiology',
+        value: 'microbiology',
+      },
+      {
+        label: 'Anatomy & Physiology',
+        value: 'anatomyPhysiology',
+      },
+      {
+        label: 'Evolutionary Biology',
+        value: 'evolutionaryBiology',
+      },
+      {
+        label: 'Ecology',
+        value: 'ecology',
+      },
+      {
+        label: 'Environmental Science',
+        value: 'environmentalScience',
+      },
+      {
+        label: 'Earth Science',
+        value: 'earthScience',
+      },
+      {
+        label: 'Other',
+        value: 'other',
+      },
+    ],
+    topics: [
+      {
+        label: 'Biochemistry & Molecular Biology',
+        value: 'biochemistryMolecularBiology',
+      },
+      {
+        label: 'Genetics',
+        value: 'genetics',
+      },
+      {
+        label: 'Cell biology',
+        value: 'cellBiology',
+      },
+      {
+        label: 'Diversity of life',
+        value: 'diversityOfLife',
+      },
+      {
+        label: 'Anatomy & Physiology',
+        value: 'anatomyPhysiology',
+      },
+      {
+        label: 'Evolution',
+        value: 'evolution',
+      },
+      {
+        label: 'Ecology',
+        value: 'ecology',
+      },
+      {
+        label: 'Environmental science',
+        value: 'environmentalScience',
+      },
+      {
+        label: 'Earth science',
+        value: 'earthScience',
+      },
+      {
+        label: 'Science practices',
+        value: 'sciencePractices',
+      },
+    ],
+  }
+}
+
 module.exports = {
   getMetadata,
   disableCourseMetadata,
@@ -88,4 +186,5 @@ module.exports = {
   editCourseMetadata,
   addCourseMetadata,
   reorderCourseMetadata,
+  getProfileOptions,
 }

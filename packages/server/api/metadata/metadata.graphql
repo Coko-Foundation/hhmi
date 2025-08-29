@@ -9,6 +9,7 @@ type Metadata {
   introToBioMeta: [IntroductoryBioMetadata!]!
   blooms: BloomsType
   questionTypes: [QuestionTypes]!
+  profileOptions: ProfileOptions
 }
 
 type SimpleValueLabelPair {
@@ -188,6 +189,11 @@ type IntroductoryBioMetadata {
   # AAMC future physicians metadata
   concepts: [AAMCConcept!]
   categories: [AAMCCategory!]
+}
+
+type ProfileOptions {
+  courses: [SimpleValueLabelPair]!
+  topics: [SimpleValueLabelPair]!
 }
 
 input NewMetadataInput {

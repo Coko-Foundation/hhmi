@@ -85,6 +85,7 @@ exports[`MyList Matches snapshot 1`] = `
           <input
             className="ant-input css-dev-only-do-not-override-12jzuas"
             disabled={false}
+            filters={[]}
             hidden={null}
             onBlur={[Function]}
             onChange={[Function]}
@@ -201,7 +202,7 @@ exports[`MyList Matches snapshot 1`] = `
                             style={{}}
                           >
                             <label
-                              className="ant-checkbox-wrapper sc-cyRfQX aXdxs sc-hJtubf fJJtiF css-dev-only-do-not-override-12jzuas"
+                              className="ant-checkbox-wrapper sc-cyRfQX hiCCaO sc-hJtubf fJJtiF css-dev-only-do-not-override-12jzuas"
                             >
                               <span
                                 className="ant-checkbox css-dev-only-do-not-override-12jzuas"

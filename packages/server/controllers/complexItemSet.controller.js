@@ -1,6 +1,7 @@
 const { logger, useTransaction } = require('@coko/server')
 const path = require('path')
 const config = require('config')
+const sanitizeHtml = require('sanitize-html')
 
 const {
   ComplexItemSet,
@@ -62,7 +63,12 @@ const createComplexItemSet = async (userId, title, leadingContent) => {
     return useTransaction(async trx => {
       const complexItemSet = await ComplexItemSet.insert(
         {
-          title,
+          title:
+            sanitizeHtml(title, {
+              allowedTags: [],
+              allowedAttributes: {},
+              textFilter: text => text,
+            }) || '[invalid title]',
           leadingContent,
         },
         { trx },
@@ -99,7 +105,12 @@ const editComplexItemSet = async (id, title, leadingContent) => {
       const complexItemSet = await ComplexItemSet.patchAndFetchById(
         id,
         {
-          title,
+          title:
+            sanitizeHtml(title, {
+              allowedTags: [],
+              allowedAttributes: {},
+              textFilter: text => text,
+            }) || '[invalid title]',
           leadingContent,
         },
         { trx },

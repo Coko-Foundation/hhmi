@@ -70,8 +70,9 @@ const AssignHEButton = props => {
       .then(({ data: { assignHandlingEditors } }) => {
         assingHeForm.resetFields()
 
-        document.getElementById('he-update').innerHTML =
-          ' selected users assigned as handling editors'
+        document
+          .getElementById('he-update')
+          .replaceChildren(' selected users assigned as handling editors')
 
         const hasAssignedAuthor = assignHandlingEditors.some(
           assignHandlingEditor =>
@@ -135,9 +136,11 @@ const AssignHEButton = props => {
 
   const handleUnassignHE = user => {
     onUnassign(user.id).then(() => {
-      document.getElementById(
-        'he-update',
-      ).innerHTML = `${user.displayName} removed from this item's handling editors`
+      document
+        .getElementById('he-update')
+        .replaceChildren(
+          `${user.displayName} removed from this item's handling editors`,
+        )
     })
   }
 

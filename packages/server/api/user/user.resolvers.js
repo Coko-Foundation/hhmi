@@ -8,6 +8,7 @@ const {
   bioInteractiveLogin,
   deleteUsersRelatedItems,
   getUserTeams,
+  downloadUsersCSV,
 } = require('../../controllers/user.controllers')
 
 const updateUserProfileResolver = async (_, { input }, ctx) => {
@@ -48,12 +49,17 @@ const teamsResolver = async user => {
   return getUserTeams(user)
 }
 
+const downloadUsersDataResolver = async (_, { userIds }) => {
+  return downloadUsersCSV(userIds)
+}
+
 module.exports = {
   Mutation: {
     updateUserProfile: updateUserProfileResolver,
     submitQuestionnaire: submitQuestionnaireResolver,
     bioInteractiveLogin: bioInteractiveLoginResolver,
     deleteUsersRelatedItems: deleteUsersRelatedItemsResolver,
+    downloadUsersData: downloadUsersDataResolver,
   },
   Query: {
     filterUsers: filterUsersResolver,

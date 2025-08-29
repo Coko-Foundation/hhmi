@@ -17,6 +17,7 @@ export const checkboxStyles = css`
 `
 
 const StyledCheckbox = styled(AntCheckbox)`
+  align-items: center;
   ${checkboxStyles}
 `
 

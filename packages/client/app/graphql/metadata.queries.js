@@ -143,6 +143,16 @@ export const GET_METADATA = gql`
           enabled
         }
       }
+      profileOptions {
+        courses {
+          value
+          label
+        }
+        topics {
+          value
+          label
+        }
+      }
     }
   }
 `
