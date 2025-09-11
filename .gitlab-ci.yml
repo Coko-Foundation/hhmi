@@ -80,7 +80,7 @@ client lint:
     - yarn prettier --check .
     - yarn stylelint "**/*.js"
 
-.client unit test:
+client unit test:
   stage: Lint & Unit test
   needs:
     - client build development

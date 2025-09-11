@@ -46,6 +46,7 @@ const ManageUsers = () => {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
   const [selectedRows, setSelectedRows] = useState([])
   const [searchParams, setSearchParams] = useState('')
+  const [sortOptions, setSortOptions] = useState('')
   const [showDeactivated, setShowDeactivated] = useState(false)
 
   const { currentUser } = useCurrentUser()
@@ -68,6 +69,7 @@ const ManageUsers = () => {
       options: {
         page: currentPage,
         pageSize,
+        ...sortOptions,
       },
     },
   })
@@ -164,6 +166,13 @@ const ManageUsers = () => {
     setSearchParams({ role, search, expertise })
   }
 
+  const handleSortChange = (_, __, { columnKey, order }) => {
+    setSortOptions({
+      orderBy: columnKey,
+      ascending: order === 'ascend',
+    })
+  }
+
   const handleShowDeactivatedChange = () => {
     setSelectedRows([])
     setShowDeactivated(!showDeactivated)
@@ -224,6 +233,7 @@ const ManageUsers = () => {
       onClickShowDeactivated={handleShowDeactivatedChange}
       onPageChange={handlePageChange}
       onSearch={handleSearch}
+      onSortChange={handleSortChange}
       pageSize={pageSize}
       selectedRows={selectedRows}
       setSelectedRows={setSelectedRows}

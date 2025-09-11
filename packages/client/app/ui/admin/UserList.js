@@ -139,6 +139,7 @@ const UserList = ({
   filters,
   withFilters,
   expertiseOptions,
+  onSortChange,
 }) => {
   const [modal, contextHolder] = Modal.useModal()
   const { confirm, error } = modal
@@ -175,9 +176,11 @@ const UserList = ({
       title: 'Name',
       dataIndex: 'displayName',
       key: 'displayName',
+      showSorterTooltip: true,
       render: (displayName, user) => (
         <Link to={`/profile/${user.key}`}>{displayName}</Link>
       ),
+      sorter: (a, b) => a - b,
     },
     { title: 'Email', dataIndex: 'email', key: 'email' },
     {
@@ -205,12 +208,14 @@ const UserList = ({
     {
       title: 'Sign up Date',
       dataIndex: 'signUpDate',
-      key: 'signUpDate',
+      key: 'created',
+      showSorterTooltip: true,
       render: date => (
         <DateParser dateFormat="MMMM DD, YYYY" timestamp={date}>
           {timestamp => timestamp}
         </DateParser>
       ),
+      sorter: (a, b) => a - b,
     },
   ]
 
@@ -422,12 +427,19 @@ const UserList = ({
             filters={filters}
             loading={loading}
             locale={mergedLocale}
+            onChange={onSortChange}
+            //   (p, f, s) => {
+            //   console.log(p)
+            //   console.log(f)
+            //   console.log(s)
+            // }}
             onSearch={onSearch}
             pagination={pagination}
             rowSelection={rowSelection}
             searchLoading={searchLoading}
             searchPlaceholder="Search for users"
             showSearch
+            showSorterTooltip
             withFilters={withFilters}
           />
           <FooterActionsWrapper>
@@ -495,6 +507,7 @@ UserList.propTypes = {
   onChangePageSize: PropTypes.func,
   onPageChange: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
+  onSortChange: PropTypes.func,
   pageSize: PropTypes.number,
   selectedRows: PropTypes.arrayOf(PropTypes.string).isRequired,
   setSelectedRows: PropTypes.func.isRequired,
@@ -515,6 +528,7 @@ UserList.defaultProps = {
   filters: [],
   withFilters: false,
   onChangePageSize: () => {},
+  onSortChange: () => {},
   expertiseOptions: [],
 }
 
