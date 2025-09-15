@@ -203,6 +203,14 @@ input NewMetadataInput {
   unit: ID
   topic: ID
   learningObjective: ID
+  # Intro to bio specific fields
+  introBioSubcat: String
+  visionAndChangeSubCategories: String
+  coreConcept: ID
+  subdiscipline: ID
+  coreCompetence: ID
+  subcompetence: ID
+  concept: ID
 }
 
 input MetadataOrderInput {

@@ -411,6 +411,47 @@ class CourseMetadata extends BaseModel {
         columnName = 'learning_objective_id'
         columnValue = input.learningObjective
         break
+      case 'coreConcept':
+        columnName = 'meta_framework_id'
+        columnValue = await db.raw(
+          `select * from meta_framework where value='visionAndChange'`,
+        )
+        columnValue = columnValue.rows[0].id
+        break
+      case 'subdiscipline':
+        columnName = 'core_concept_id'
+        columnValue = input.coreConcept
+        break
+      case 'subdisciplineStatement':
+        columnName = 'subdiscipline_id'
+        columnValue = input.subdiscipline
+        break
+      case 'coreCompetence':
+        columnName = 'meta_framework_id'
+        columnValue = await db.raw(
+          `select * from meta_framework where value='visionAndChange'`,
+        )
+        columnValue = columnValue.rows[0].id
+        break
+      case 'subcompetence':
+        columnName = 'core_competence_id'
+        columnValue = input.coreCompetence
+        break
+      case 'subcompetenceStatement':
+        columnName = 'subcompetence_id'
+        columnValue = input.subcompetence
+        break
+      case 'concept':
+        columnName = 'meta_framework_id'
+        columnValue = await db.raw(
+          `select * from meta_framework where value='aamcFuturePhysicians'`,
+        )
+        columnValue = columnValue.rows[0].id
+        break
+      case 'category':
+        columnName = 'concept_id'
+        columnValue = input.concept
+        break
       default:
         break
     }

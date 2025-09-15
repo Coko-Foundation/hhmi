@@ -887,9 +887,8 @@ const CourseMetadataTable = props => {
       setDataSource(courseDataToUi(subdisciplines, 'subdiscipline'))
     } else if (type === 'subdiscipline') {
       const statements = introToBioMeta[0].subdisciplineStatements.filter(
-        statemenet =>
-          statemenet.subdiscipline === key &&
-          statemenet.coreConcept === navigation[navigation.length - 1].key,
+        statemenet => statemenet.subdiscipline === key,
+        // && statemenet.coreConcept === navigation[navigation.length - 1].key,
       )
 
       setDataSource(courseDataToUi(statements, 'subdisciplineStatement', true))
