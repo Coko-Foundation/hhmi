@@ -115,6 +115,7 @@ class QuestionVersion extends BaseModel {
       properties: {
         questionId: id,
         complexItemSetId: idNullable,
+        dependsOn: arrayOfIds,
 
         content: objectNullable,
         contentText: stringNullable,

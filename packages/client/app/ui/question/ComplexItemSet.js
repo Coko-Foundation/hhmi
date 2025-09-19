@@ -12,6 +12,7 @@ import {
   ButtonGroup,
   AddToListPopup,
   Popup,
+  Modal,
 } from '../common'
 import AssignAuthorButton from './AssignAuthorButton'
 import ComplexItemSetForm from './ComplexItemSetForm'
@@ -19,6 +20,10 @@ import Wax from '../wax/Wax'
 import { simpleConfig } from '../wax/config'
 import { LeadingContentLayout } from '../wax/layout'
 import ExportListToWordButton from '../myList/ExportModal'
+
+const ModalHeader = Modal.header
+const ModalFooter = Modal.footer
+const ModalContext = React.createContext(null)
 
 const StyledTabs = styled(Tabs)`
   height: 100%;
@@ -157,6 +162,7 @@ const ComplexItemSet = props => {
 
   const [activeKey, setActiveKey] = useState(activeTab)
   const [selectedQuestions, setSelectedQuestions] = useState([])
+  const [modal, contextHolder] = Modal.useModal()
 
   useEffect(() => {
     if (id && activeTab !== 'edit') setActiveKey('content')
@@ -167,11 +173,99 @@ const ComplexItemSet = props => {
     setSelectedQuestions(ids)
   }
 
+  const checkForMissingDependencies = () => {
+    return selectedQuestions
+      .map(qid => {
+        const question = questions.find(q => q.id === qid)
+
+        if (question.dependsOn?.length > 0) {
+          const missing = question.dependsOn.some(
+            d => !selectedQuestions.includes(d),
+          )
+
+          return missing
+        }
+
+        return false
+      })
+      .some(result => {
+        return !!result
+      })
+  }
+
   const handleWordExport = showFeedback => {
+    const missingDependencies = checkForMissingDependencies()
+
+    if (missingDependencies) {
+      return new Promise(resolve => {
+        const warningModal = modal.warning()
+
+        warningModal.update({
+          title: <ModalHeader>Missing dependencies</ModalHeader>,
+          content: (
+            <p>
+              One or more of the items selected for export depend on items that
+              are not included in the export list. Are you sure you want to
+              continue regardless?
+            </p>
+          ),
+          footer: [
+            <ModalFooter key="footer">
+              <Button onClick={warningModal.destroy}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  onWordExport(selectedQuestions, showFeedback)
+                  resolve()
+                  warningModal.destroy()
+                }}
+                type="primary"
+              >
+                Download anyway
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      })
+    }
+
     return onWordExport(selectedQuestions, showFeedback)
   }
 
   const handleQTIExport = () => {
+    const missingDependencies = checkForMissingDependencies()
+
+    if (missingDependencies) {
+      return new Promise(resolve => {
+        const warningModal = modal.warning()
+
+        warningModal.update({
+          title: <ModalHeader>Missing dependencies</ModalHeader>,
+          content: (
+            <p>
+              One or more of the items selected for export depend on items that
+              are not included in the export list. Are you sure you want to
+              continue regardless?
+            </p>
+          ),
+          footer: [
+            <ModalFooter key="footer">
+              <Button onClick={warningModal.destroy}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  onQTIExport(selectedQuestions)
+                  resolve()
+                  warningModal.destroy()
+                }}
+                type="primary"
+              >
+                Download anyway
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      })
+    }
+
     return onQTIExport(selectedQuestions)
   }
 
@@ -289,40 +383,41 @@ const ComplexItemSet = props => {
   ]
 
   return (
-    <StyledTabs
-      activeKey={activeKey}
-      destroyInactiveTabPane
-      items={tabItems}
-      onChange={setActiveKey}
-      tabBarExtraContent={
-        id ? (
-          <ButtonGroup>
-            {canAssignAuthor && (
-              <AssignAuthorButton
-                // aria-label="Add item to this set"
-                // onClick={onAssignAuthor}
-                authors={authors}
-                currentAuthor={currentAuthor}
-                loadAuthors={loadAuthors}
-                onAssignAuthor={onAssignAuthor}
-                refetchUser={refetchUser}
-                usecase="set"
+    <ModalContext.Provider value={null}>
+      <StyledTabs
+        activeKey={activeKey}
+        destroyInactiveTabPane
+        items={tabItems}
+        onChange={setActiveKey}
+        tabBarExtraContent={
+          id ? (
+            <ButtonGroup>
+              {canAssignAuthor && (
+                <AssignAuthorButton
+                  authors={authors}
+                  currentAuthor={currentAuthor}
+                  loadAuthors={loadAuthors}
+                  onAssignAuthor={onAssignAuthor}
+                  refetchUser={refetchUser}
+                  usecase="set"
+                >
+                  Assign author
+                </AssignAuthorButton>
+              )}
+              <StyledButton
+                icon={<PlusOutlined />}
+                onClick={onCreateQuestion}
+                title="Add item to this set"
+                type="primary"
               >
-                Assign author
-              </AssignAuthorButton>
-            )}
-            <StyledButton
-              icon={<PlusOutlined />}
-              onClick={onCreateQuestion}
-              title="Add item to this set"
-              type="primary"
-            >
-              Add item to this set
-            </StyledButton>
-          </ButtonGroup>
-        ) : null
-      }
-    />
+                Add item to this set
+              </StyledButton>
+            </ButtonGroup>
+          ) : null
+        }
+      />
+      {contextHolder}
+    </ModalContext.Provider>
   )
 }
 

@@ -488,6 +488,7 @@ const Question = props => {
     existingLists,
     loadingAddToList,
     loadingCreateList,
+    dependencyOptions,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -1762,6 +1763,7 @@ const Question = props => {
               <>
                 <StyledMetadata
                   complexItemSetOptions={complexItemSetOptions}
+                  dependencyOptions={dependencyOptions}
                   editorView={editorView}
                   initialValues={initialMetadataValues}
                   innerRef={formRef}
@@ -2333,6 +2335,12 @@ Question.propTypes = {
   existingLists: PropTypes.arrayOf(PropTypes.shape()),
   loadingAddToList: PropTypes.bool,
   loadingCreateList: PropTypes.bool,
+  dependencyOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
 }
 
 Question.defaultProps = {
@@ -2445,6 +2453,7 @@ Question.defaultProps = {
   existingLists: [],
   loadingAddToList: false,
   loadingCreateList: false,
+  dependencyOptions: [],
 }
 
 export default Question
