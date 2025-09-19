@@ -46,8 +46,10 @@ type QuestionVersion {
 
   questionType: String
   complexItemSetId: ID
+  dependsOn: [ID!]
   leadingContent: String
   lastEdit: DateTime
+  contentText: String
 
   amountOfReviewers: Int
   isReviewerAutomationOn: Boolean
@@ -107,6 +109,7 @@ input UpdateQuestionInput {
   content: String
 
   complexItemSetId: ID
+  dependsOn: [ID!]
   questionType: String
 
   topics: [TopicInput!]

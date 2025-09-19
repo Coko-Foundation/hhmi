@@ -1434,6 +1434,7 @@ const dashboardDataMapper = ({
       complexItemSetId,
       reviewerStatus,
       reviews,
+      dependsOn,
     } = latestVersion
 
     const parsedContent = extractDocumentText(content)
@@ -1499,6 +1500,7 @@ const dashboardDataMapper = ({
       courses,
       state: { relatedQuestionIds },
       complexItemSet,
+      dependsOn,
       ...(includeType ? { type: latestVersion.questionType } : {}),
     }
   })

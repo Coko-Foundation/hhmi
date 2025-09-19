@@ -61,6 +61,8 @@ const MetadataInfo = props => {
     complexItemSetOptions,
   )
 
+  const { dependsOn } = values
+
   return (
     <Wrapper tabIndex={0}>
       <VisuallyHiddenElement as="h2">Item Metadata</VisuallyHiddenElement>
@@ -72,6 +74,22 @@ const MetadataInfo = props => {
               <LinkOutlined /> {complexItemSet.label}
             </Link>
           </p>
+        </>
+      )}
+      {complexItemSet && dependsOn && (
+        <>
+          <MetadataHeading>Depends on</MetadataHeading>
+          {dependsOn?.map(d => (
+            <p>
+              <Link
+                rel="noopener noreferrer"
+                target="_blank"
+                to={`/question/${d}/test`}
+              >
+                <LinkOutlined /> Item {d}
+              </Link>
+            </p>
+          ))}
         </>
       )}
       <MetadataHeading>Item type</MetadataHeading>
@@ -442,6 +460,7 @@ MetadataInfo.propTypes = {
   values: PropTypes.shape({
     questionType: PropTypes.string,
     complexItemSetId: PropTypes.string,
+    dependsOn: PropTypes.arrayOf(PropTypes.string),
     topics: PropTypes.arrayOf(
       PropTypes.shape({
         topic: PropTypes.string,
