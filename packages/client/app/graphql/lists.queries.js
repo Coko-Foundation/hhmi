@@ -104,6 +104,7 @@ export const GET_LIST = gql`
             cognitiveLevel
             complexItemSetId
             questionType
+            dependsOn
           }
         }
         totalCount
