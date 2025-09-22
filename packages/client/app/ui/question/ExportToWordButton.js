@@ -1,21 +1,49 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { FileWordOutlined } from '@ant-design/icons'
+import styled from 'styled-components'
+import { th } from '@coko/client'
+import { FileWordOutlined, WarningFilled } from '@ant-design/icons'
 
 import { Button, Checkbox, Modal } from '../common'
+
+const StyledWarningFilled = styled(WarningFilled)`
+  svg {
+    fill: ${th('colorWarning')};
+  }
+`
 
 const ModalHeader = Modal.header
 const ModalFooter = Modal.footer
 const ModalContext = React.createContext(null)
 
 const ExportToWordButton = props => {
-  const { className, loading, onExport, showMetadataOption, isIconButton } =
-    props
+  const {
+    className,
+    loading,
+    onExport,
+    showMetadataOption,
+    isIconButton,
+    hasUnmetDependencies,
+  } = props
 
   const [showModal, setShowModal] = useState(false)
+  const [showDependenciesModal, setShowDependenciesModal] = useState(false)
   const [showFeedback, setShowFeedback] = useState(true)
   const [showMetadata, setShowMetadata] = useState(false)
   const [modal, contextHolder] = Modal.useModal()
+
+  const handleShowModal = () => {
+    if (hasUnmetDependencies) {
+      setShowDependenciesModal(true)
+    } else {
+      setShowModal(true)
+    }
+  }
+
+  const handleIgnoreDependencies = () => {
+    setShowDependenciesModal(false)
+    setShowModal(true)
+  }
 
   const handleOk = () => {
     // force metadata to false if the option if off
@@ -49,7 +77,7 @@ const ExportToWordButton = props => {
           icon={<FileWordOutlined />}
           id="exportToWord"
           loading={loading}
-          onClick={() => setShowModal(true)}
+          onClick={handleShowModal}
           title="Export to Word"
         />
       ) : (
@@ -57,7 +85,7 @@ const ExportToWordButton = props => {
           className={className}
           id="exportToWord"
           loading={loading}
-          onClick={() => setShowModal(true)}
+          onClick={handleShowModal}
         >
           Export to Word
         </Button>
@@ -98,6 +126,34 @@ const ExportToWordButton = props => {
           </div>
         )}
       </Modal>
+
+      <Modal
+        destroyOnClose
+        footer={[
+          <ModalFooter key="footer">
+            <Button onClick={() => setShowDependenciesModal(false)}>
+              Cancel
+            </Button>
+            <Button autoFocus onClick={handleIgnoreDependencies} type="primary">
+              Continue
+            </Button>
+          </ModalFooter>,
+        ]}
+        onCancel={() => setShowDependenciesModal(false)}
+        open={showDependenciesModal}
+        title={
+          <ModalHeader>
+            <StyledWarningFilled /> Export to Word
+          </ModalHeader>
+        }
+      >
+        <div>
+          <p>
+            This item is part of a set and depends on other items for context.
+            Are you sure you want to continue with the export?
+          </p>
+        </div>
+      </Modal>
       {contextHolder}
     </ModalContext.Provider>
   )
@@ -108,11 +164,13 @@ ExportToWordButton.propTypes = {
   loading: PropTypes.bool.isRequired,
   onExport: PropTypes.func.isRequired,
   showMetadataOption: PropTypes.bool,
+  hasUnmetDependencies: PropTypes.bool,
 }
 
 ExportToWordButton.defaultProps = {
   isIconButton: false,
   showMetadataOption: false,
+  hasUnmetDependencies: false,
 }
 
 export default ExportToWordButton
