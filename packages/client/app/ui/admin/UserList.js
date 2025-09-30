@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
+import { Tooltip } from 'antd'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { uuid, grid, th } from '@coko/client'
 import {
   Button,
@@ -204,6 +205,19 @@ const UserList = ({
       dataIndex: 'isReviewer',
       key: 'isReviewer',
       render: isReviewer => (isReviewer ? 'Yes' : 'No'),
+    },
+    {
+      title: (
+        <span style={{ whiteSpace: 'nowrap' }}>
+          Reviewer record{' '}
+          <Tooltip title="Whether the reviewer has submitted a review or hasn't been invited at all">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'isReviewer',
+      key: 'isReviewer',
+      render: (isReviewer, user) => (isReviewer ? user.reviewerStats : 'N/A'),
     },
     {
       title: 'Sign up Date',
