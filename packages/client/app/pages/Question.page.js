@@ -282,6 +282,9 @@ const QuestionPage = props => {
 
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
+    {
+      fetchPolicy: 'network-only',
+    },
   )
 
   const { data: { getResources } = {} } = useQuery(GET_RESOURCES)
@@ -591,6 +594,7 @@ const QuestionPage = props => {
         ascending: false,
       },
     },
+    fetchPolicy: 'network-only',
   })
 
   useEffect(() => {

@@ -228,6 +228,10 @@ const Metadata = React.forwardRef((props, ref) => {
     }
   }
 
+  const resetDependencies = () => {
+    form.setFieldValue('dependsOn', [])
+  }
+
   useEffect(() => {
     let sIndexes = [0]
     const formValuesClone = structuredClone(formValues)
@@ -323,6 +327,7 @@ const Metadata = React.forwardRef((props, ref) => {
                     <Select
                       data-testid="complexItemSet-select"
                       disabled={readOnly}
+                      onChange={resetDependencies}
                       optionFilterProp="label"
                       options={complexItemSetOptions}
                       showSearch
