@@ -72,6 +72,9 @@ const ManageUsers = () => {
         ...sortOptions,
       },
     },
+    onCompleted: () => {
+      setSelectedRows([])
+    },
   })
 
   const [deleteUsersMutation] = useMutation(DELETE_USERS, {
