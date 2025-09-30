@@ -33,6 +33,7 @@ extend type User {
 
   profileSubmitted: Boolean!
   role: String
+  reviewerStats: String
 }
 
 input UserProfileInput {

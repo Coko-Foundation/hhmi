@@ -9,6 +9,7 @@ const {
   deleteUsersRelatedItems,
   getUserTeams,
   downloadUsersCSV,
+  reviewerStats,
 } = require('../../controllers/user.controllers')
 
 const updateUserProfileResolver = async (_, { input }, ctx) => {
@@ -53,6 +54,10 @@ const downloadUsersDataResolver = async (_, { userIds }) => {
   return downloadUsersCSV(userIds)
 }
 
+const reviewerStatsResolver = async user => {
+  return reviewerStats(user)
+}
+
 module.exports = {
   Mutation: {
     updateUserProfile: updateUserProfileResolver,
@@ -67,5 +72,6 @@ module.exports = {
   User: {
     displayName: displayNameResolver,
     teams: teamsResolver,
+    reviewerStats: reviewerStatsResolver,
   },
 }

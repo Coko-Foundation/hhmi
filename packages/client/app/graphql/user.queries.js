@@ -101,6 +101,8 @@ export const FILTER_USERS = gql`
         teams {
           role
         }
+
+        reviewerStats
       }
       totalCount
     }

@@ -35,6 +35,7 @@ const usersApiToUi = users => {
       expertise: isReviewer ? user.topicsReviewing : user.coursesTeaching,
       isReviewer,
       signUpDate: user.created,
+      reviewerStats: user.reviewerStats,
     }
   })
 }
