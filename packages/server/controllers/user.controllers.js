@@ -4,6 +4,7 @@ const crypto = require('node:crypto')
 const qs = require('node:querystring')
 const path = require('path')
 const { writeFile } = require('fs').promises
+const config = require('config')
 
 const { ChatThread, ChatMessage } = require('@coko/server/src/models')
 const { roles } = require('../constants')
@@ -11,12 +12,15 @@ const { getProfileOptions } = require('./courseMetadata.controller')
 
 const {
   Team,
+  TeamMember,
   User,
   Identity,
   Question,
   QuestionVersion,
   Review,
 } = require('../models')
+
+const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
 
 const submitQuestionnaire = async (userId, profileData) => {
   const data = {
@@ -391,11 +395,18 @@ const downloadUsersCSV = async userIds => {
         .map(course => expertiseOptions.find(c => c.value === course)?.label)
         .join(', ')}"`
 
+      let reviewerRecord = 'N/A'
+
+      if (globalRoles.includes('Reviewer')) {
+        reviewerRecord = await reviewerStats(user)
+      }
+
       return {
         displayName,
         email: defaultIdentity?.email,
         roles: globalRoles,
         expertise,
+        reviewerRecord,
       }
     }),
   )
@@ -405,10 +416,10 @@ const downloadUsersCSV = async userIds => {
       // eslint-disable-next-line no-param-reassign
       accu += `${index + 1}, ${user.displayName}, ${user.email}, ${
         user.roles
-      }, ${user.expertise}\n`
+      }, ${user.expertise}, ${user.reviewerRecord}\n`
       return accu
     },
-    ` , Name, Email, Roles, Expertise\n`, // column names for csv
+    ` , Name, Email, Roles, Expertise, Reviewer record\n`, // column names for csv
   )
 
   const tempFolderPath = path.join(__dirname, '..', 'tmp')
@@ -424,6 +435,38 @@ const downloadUsersCSV = async userIds => {
   }
 }
 
+const reviewerStats = async user => {
+  return useTransaction(async tr => {
+    const reviewTeams = await Team.query(tr).where({
+      role: REVIEWER_TEAM.role,
+      global: false,
+    })
+
+    const userTeams = await TeamMember.query(tr)
+      .whereIn(
+        'teamId',
+        reviewTeams.map(({ id }) => id),
+      )
+      .where('userId', user.id)
+
+    const hasBeenInvited = userTeams
+      .map(({ status }) => status)
+      .some(t =>
+        ['invited', 'acceptedInvitation', 'rejectedInvitation'].includes(t),
+      )
+
+    const submittedReviews = await Review.query(tr).where('reviewerId', user.id)
+
+    const hasSubmitted = submittedReviews.some(
+      ({ status }) => status.submitted === true,
+    )
+
+    if (hasSubmitted) return 'Submitted'
+    if (hasBeenInvited) return 'Invited, not submitted'
+    return 'Not invited'
+  })
+}
+
 module.exports = {
   submitQuestionnaire,
   updateUserProfile,
@@ -433,4 +476,5 @@ module.exports = {
   deleteUsersRelatedItems,
   getUserTeams,
   downloadUsersCSV,
+  reviewerStats,
 }

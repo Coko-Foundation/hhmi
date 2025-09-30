@@ -6,7 +6,7 @@ const clearDb = require('../../models/__tests__/_clearDb')
 
 // gql queries
 const FILTER_USERS = `
-  query FilterUsers($params: UsersQueryParams, $options: PageInput) {
+  query FilterUsers($params: UsersQueryParams, $options: UserFilterOptions) {
     filterUsers(params: $params, options: $options) {
       result {
         id

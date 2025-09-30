@@ -60,7 +60,7 @@ const Pagination = React.forwardRef((props, forwardRef) => {
               .setAttribute('aria-current', 'page')
             label = `Page ${counter} , Current Page`
           } else {
-            page.querySelector(':scope > *').removeAttribute('aria-current')
+            page.querySelector(':scope > *')?.removeAttribute('aria-current')
           }
 
           page.querySelector(':scope > *').setAttribute('aria-label', label)
@@ -72,12 +72,12 @@ const Pagination = React.forwardRef((props, forwardRef) => {
           item.removeAttribute('tabindex')
 
           if (item.getAttribute('aria-disabled') === 'true') {
-            item.querySelector(':scope > *').removeAttribute('disabled')
+            item.querySelector(':scope > *')?.removeAttribute('disabled')
             item
               .querySelector(':scope > *')
               .setAttribute('aria-disabled', 'true')
           } else {
-            item.querySelector(':scope > *').removeAttribute('aria-disabled')
+            item.querySelector(':scope > *')?.removeAttribute('aria-disabled')
           }
         })
     }

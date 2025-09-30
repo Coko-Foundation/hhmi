@@ -33,6 +33,7 @@ extend type User {
 
   profileSubmitted: Boolean!
   role: String
+  reviewerStats: String
 }
 
 input UserProfileInput {
@@ -85,8 +86,15 @@ type UsersQuestionsResult {
   rejectedQuestions: [ID]!
 }
 
+input UserFilterOptions {
+  pageSize: Int!
+  page: Int!
+  orderBy: String
+  ascending: Boolean
+}
+
 extend type Query {
-  filterUsers(params: UsersQueryParams, options: PageInput): Users!
+  filterUsers(params: UsersQueryParams, options: UserFilterOptions): Users!
 }
 
 extend type Mutation {

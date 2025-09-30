@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-
+import { Tooltip } from 'antd'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { uuid, grid, th } from '@coko/client'
 import {
   Button,
@@ -51,6 +52,15 @@ const StyledSection = styled.section`
 const StyledTable = styled(Table)`
   .ant-table-content {
     overflow-x: auto;
+  }
+
+  ul.ant-pagination:has(.ant-pagination-total-text) {
+    display: flex;
+
+    .ant-pagination-total-text {
+      color: ${th('colorPrimary')};
+      margin-inline-end: auto;
+    }
   }
 `
 
@@ -117,6 +127,7 @@ const UserList = ({
   onBulkDeactivate,
   onBulkDelete,
   onBulkDownload,
+  onChangePageSize,
   onPageChange,
   onSearch,
   pageSize,
@@ -129,6 +140,7 @@ const UserList = ({
   filters,
   withFilters,
   expertiseOptions,
+  onSortChange,
 }) => {
   const [modal, contextHolder] = Modal.useModal()
   const { confirm, error } = modal
@@ -165,9 +177,11 @@ const UserList = ({
       title: 'Name',
       dataIndex: 'displayName',
       key: 'displayName',
+      showSorterTooltip: true,
       render: (displayName, user) => (
         <Link to={`/profile/${user.key}`}>{displayName}</Link>
       ),
+      sorter: (a, b) => a - b,
     },
     { title: 'Email', dataIndex: 'email', key: 'email' },
     {
@@ -193,14 +207,29 @@ const UserList = ({
       render: isReviewer => (isReviewer ? 'Yes' : 'No'),
     },
     {
+      title: (
+        <span style={{ whiteSpace: 'nowrap' }}>
+          Reviewer record{' '}
+          <Tooltip title="Whether the reviewer has submitted a review or hasn't been invited at all">
+            <InfoCircleOutlined />
+          </Tooltip>
+        </span>
+      ),
+      dataIndex: 'isReviewer',
+      key: 'isReviewer',
+      render: (isReviewer, user) => (isReviewer ? user.reviewerStats : 'N/A'),
+    },
+    {
       title: 'Sign up Date',
       dataIndex: 'signUpDate',
-      key: 'signUpDate',
+      key: 'created',
+      showSorterTooltip: true,
       render: date => (
         <DateParser dateFormat="MMMM DD, YYYY" timestamp={date}>
           {timestamp => timestamp}
         </DateParser>
       ),
+      sorter: (a, b) => a - b,
     },
   ]
 
@@ -232,12 +261,31 @@ const UserList = ({
       }),
   }
 
+  const calculateSizeOptions = () => {
+    const defaultSizes = [10, 20, 50]
+
+    const options = defaultSizes.filter(
+      threshold => totalUserCount >= threshold,
+    )
+
+    if (totalUserCount > 10 && !options.includes(totalUserCount)) {
+      options.push(totalUserCount)
+    }
+
+    return options
+  }
+
+  const pageSizeOptions = calculateSizeOptions()
+
   const pagination = {
     current: currentPage,
     onChange: handlePageChange,
+    onShowSizeChange: onChangePageSize,
     pageSize,
-    showSizeChanger: false,
+    pageSizeOptions,
+    showSizeChanger: pageSizeOptions.length > 0,
     total: totalUserCount,
+    showTotal: t => `Showing ${dataSource.length} users out of ${t}`,
   }
 
   // MODALS
@@ -393,12 +441,19 @@ const UserList = ({
             filters={filters}
             loading={loading}
             locale={mergedLocale}
+            onChange={onSortChange}
+            //   (p, f, s) => {
+            //   console.log(p)
+            //   console.log(f)
+            //   console.log(s)
+            // }}
             onSearch={onSearch}
             pagination={pagination}
             rowSelection={rowSelection}
             searchLoading={searchLoading}
             searchPlaceholder="Search for users"
             showSearch
+            showSorterTooltip
             withFilters={withFilters}
           />
           <FooterActionsWrapper>
@@ -463,8 +518,10 @@ UserList.propTypes = {
   onBulkDelete: PropTypes.func.isRequired,
   onBulkDownload: PropTypes.func.isRequired,
   onClickShowDeactivated: PropTypes.func.isRequired,
+  onChangePageSize: PropTypes.func,
   onPageChange: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
+  onSortChange: PropTypes.func,
   pageSize: PropTypes.number,
   selectedRows: PropTypes.arrayOf(PropTypes.string).isRequired,
   setSelectedRows: PropTypes.func.isRequired,
@@ -484,6 +541,8 @@ UserList.defaultProps = {
   totalUserCount: 0,
   filters: [],
   withFilters: false,
+  onChangePageSize: () => {},
+  onSortChange: () => {},
   expertiseOptions: [],
 }
 

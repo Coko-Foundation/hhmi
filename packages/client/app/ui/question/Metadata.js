@@ -54,6 +54,7 @@ const Metadata = React.forwardRef((props, ref) => {
     selectedQuestionType,
     showTopicAndSubtopicFields,
     showIBoptionalFields,
+    dependencyOptions,
   } = props
 
   const [formValues] = useState(initialValues)
@@ -227,6 +228,10 @@ const Metadata = React.forwardRef((props, ref) => {
     }
   }
 
+  const resetDependencies = () => {
+    form.setFieldValue('dependsOn', [])
+  }
+
   useEffect(() => {
     let sIndexes = [0]
     const formValuesClone = structuredClone(formValues)
@@ -255,6 +260,7 @@ const Metadata = React.forwardRef((props, ref) => {
         .filter(r => !!r)
 
     setCoursesIndexes(sIndexes)
+    formValuesClone.dependsOn = formValuesClone.dependsOn || []
 
     form.setFieldsValue(formValuesClone)
   }, [formValues])
@@ -321,10 +327,42 @@ const Metadata = React.forwardRef((props, ref) => {
                     <Select
                       data-testid="complexItemSet-select"
                       disabled={readOnly}
+                      onChange={resetDependencies}
                       optionFilterProp="label"
                       options={complexItemSetOptions}
                       showSearch
                     />
+                  </Form.Item>
+                )
+              }
+
+              return null
+            }}
+          </Form.Item>
+
+          <Form.Item
+            dependencies={['belongsToComplexItemSet, complexItemSetId']}
+            noStyle
+          >
+            {({ getFieldValue }) => {
+              if (
+                getFieldValue('complexItemSetId') &&
+                getFieldValue('belongsToComplexItemSet')
+              ) {
+                return (
+                  <Form.Item label="Depends on" name="dependsOn">
+                    <Select
+                      data-testid="dependsOn-select"
+                      disabled={readOnly}
+                      mode="multiple"
+                      optionFilterProp="label"
+                      options={dependencyOptions}
+                      showSearch
+                    />
+                    {/* <span>
+                      Specify one or more items from the selected set as a
+                      dependency for this item.
+                    </span> */}
                   </Form.Item>
                 )
               }
@@ -784,6 +822,12 @@ Metadata.propTypes = {
   selectedQuestionType: PropTypes.string,
   showTopicAndSubtopicFields: PropTypes.bool,
   showIBoptionalFields: PropTypes.bool,
+  dependencyOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
 }
 
 Metadata.defaultProps = {
@@ -797,6 +841,7 @@ Metadata.defaultProps = {
   selectedQuestionType: null,
   showTopicAndSubtopicFields: false,
   showIBoptionalFields: false,
+  dependencyOptions: [],
 }
 
 export default Metadata

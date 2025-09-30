@@ -85,7 +85,7 @@ export const UPDATE_PROFILE = gql`
 `
 
 export const FILTER_USERS = gql`
-  query FilterUsers($params: UsersQueryParams, $options: PageInput) {
+  query FilterUsers($params: UsersQueryParams, $options: UserFilterOptions) {
     filterUsers(params: $params, options: $options) {
       result {
         id
@@ -101,6 +101,8 @@ export const FILTER_USERS = gql`
         teams {
           role
         }
+
+        reviewerStats
       }
       totalCount
     }

@@ -115,7 +115,66 @@ const ListContent = ({
     query: '',
   })
 
+  const checkForMissingDependencies = () => {
+    return selectedQuestions
+      .map(qid => {
+        const question = questions.find(q => q.id === qid)
+
+        if (question.dependsOn?.length > 0) {
+          const missing = question.dependsOn.some(
+            d => !selectedQuestions.includes(d),
+          )
+
+          return missing
+        }
+
+        return false
+      })
+      .some(result => {
+        return !!result
+      })
+  }
+
   const handleExport = showFeedback => {
+    const missingDependencies = checkForMissingDependencies()
+
+    if (missingDependencies) {
+      return new Promise(resolve => {
+        const warningModal = modal.warning()
+
+        warningModal.update({
+          title: <ModalHeader>Missing dependencies</ModalHeader>,
+          content: (
+            <p>
+              One or more of the items selected for export depend on items that
+              are not included in the export list. Are you sure you want to
+              continue regardless?
+            </p>
+          ),
+          footer: [
+            <ModalFooter key="footer">
+              <Button onClick={warningModal.destroy}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  // onWordExport(selectedQuestions, showFeedback)
+                  onExport(
+                    selectedQuestions,
+                    searchParams.orderBy,
+                    showFeedback,
+                  )
+                  resolve()
+                  warningModal.destroy()
+                }}
+                type="primary"
+              >
+                Download anyway
+              </Button>
+            </ModalFooter>,
+          ],
+        })
+      })
+    }
+
     return onExport(selectedQuestions, searchParams.orderBy, showFeedback)
   }
 

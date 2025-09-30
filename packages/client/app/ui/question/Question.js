@@ -488,6 +488,7 @@ const Question = props => {
     existingLists,
     loadingAddToList,
     loadingCreateList,
+    dependencyOptions,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -1142,6 +1143,7 @@ const Question = props => {
     isSubmitted ? (
       <>
         <StyledWordExportButton
+          hasUnmetDependencies={initialMetadataValues.dependsOn}
           isIconButton={isMobile}
           loading={wordFileLoading}
           onExport={onClickExportToWord}
@@ -1169,6 +1171,7 @@ const Question = props => {
     ) : isMobile ? (
       <>
         <StyledWordExportButton
+          hasUnmetDependencies={initialMetadataValues.dependsOn}
           isIconButton
           loading={wordFileLoading}
           onExport={onClickExportToWord}
@@ -1189,6 +1192,7 @@ const Question = props => {
     ) : (
       <>
         <StyledWordExportButton
+          hasUnmetDependencies={initialMetadataValues.dependsOn}
           loading={wordFileLoading}
           onExport={onClickExportToWord}
           showMetadataOption={isUserLoggedIn}
@@ -1213,6 +1217,7 @@ const Question = props => {
   const editorActionsDropdownMenu = (
     <>
       <StyledWordExportButton
+        hasUnmetDependencies={initialMetadataValues.dependsOn}
         loading={wordFileLoading}
         onExport={onClickExportToWord}
         showMetadataOption
@@ -1333,6 +1338,7 @@ const Question = props => {
     <>
       <ActionsWrapper>
         <StyledWordExportButton
+          hasUnmetDependencies={initialMetadataValues.dependsOn}
           loading={wordFileLoading}
           onExport={onClickExportToWord}
           showMetadataOption
@@ -1484,6 +1490,7 @@ const Question = props => {
   const reviewerInviteActions = (
     <ReviewerActionsWrapper>
       <StyledWordExportButton
+        hasUnmetDependencies={initialMetadataValues.dependsOn}
         loading={wordFileLoading}
         onExport={onClickExportToWord}
         showMetadataOption={isUserLoggedIn}
@@ -1558,6 +1565,7 @@ const Question = props => {
   const publishedQuestionActions = (
     <>
       <StyledWordExportButton
+        hasUnmetDependencies={initialMetadataValues.dependsOn}
         loading={wordFileLoading}
         onExport={onClickExportToWord}
         showMetadataOption={isUserLoggedIn}
@@ -1628,6 +1636,7 @@ const Question = props => {
           >
             <PopupContentWrapper>
               <StyledWordExportButton
+                hasUnmetDependencies={initialMetadataValues.dependsOn}
                 loading={wordFileLoading}
                 onExport={onClickExportToWord}
                 showMetadataOption={isUserLoggedIn}
@@ -1762,6 +1771,7 @@ const Question = props => {
               <>
                 <StyledMetadata
                   complexItemSetOptions={complexItemSetOptions}
+                  dependencyOptions={dependencyOptions}
                   editorView={editorView}
                   initialValues={initialMetadataValues}
                   innerRef={formRef}
@@ -2272,6 +2282,7 @@ Question.propTypes = {
     affectiveLevel: PropTypes.string,
     psychomotorLevel: PropTypes.string,
     readingLevel: PropTypes.string,
+    dependsOn: PropTypes.arrayOf(PropTypes.string),
   }),
   updated: PropTypes.string,
   wordFileLoading: PropTypes.bool,
@@ -2333,6 +2344,12 @@ Question.propTypes = {
   existingLists: PropTypes.arrayOf(PropTypes.shape()),
   loadingAddToList: PropTypes.bool,
   loadingCreateList: PropTypes.bool,
+  dependencyOptions: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string,
+      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+    }),
+  ),
 }
 
 Question.defaultProps = {
@@ -2445,6 +2462,7 @@ Question.defaultProps = {
   existingLists: [],
   loadingAddToList: false,
   loadingCreateList: false,
+  dependencyOptions: [],
 }
 
 export default Question

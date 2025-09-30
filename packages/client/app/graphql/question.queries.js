@@ -461,6 +461,7 @@ export const QUESTION = gql`
         questionType
         complexItemSetId
         leadingContent
+        dependsOn
 
         reviewerStatus
         isReviewerAutomationOn

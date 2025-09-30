@@ -60,6 +60,7 @@ import {
   CREATE_LIST,
   GET_LISTS,
   GET_LISTS_OPTIONS,
+  GET_COMPLEX_ITEM_SET,
 } from '../graphql'
 import {
   useMetadata,
@@ -164,6 +165,7 @@ const metadataUiToApi = values => {
     literatureAttribution: values.literatureAttribution || null,
     questionType: values.questionType || null,
     complexItemSetId,
+    dependsOn: values.dependsOn,
   }
 
   return metadataToSave
@@ -280,6 +282,9 @@ const QuestionPage = props => {
 
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
+    {
+      fetchPolicy: 'network-only',
+    },
   )
 
   const { data: { getResources } = {} } = useQuery(GET_RESOURCES)
@@ -573,6 +578,24 @@ const QuestionPage = props => {
 
   const version = question?.versions[0]
   const selectedQuestionType = scanContentForQuestionType(version?.content)
+
+  const {
+    data: {
+      complexItemSet: { questions: { result: setQuestions } = {} } = {},
+    } = {},
+  } = useQuery(GET_COMPLEX_ITEM_SET, {
+    skip: !version?.complexItemSetId,
+    variables: {
+      id: version?.complexItemSetId,
+      questionsOptions: {
+        page: 0,
+        pageSize: 100, // needs discussion
+        orderBy: 'publication_date',
+        ascending: false,
+      },
+    },
+    fetchPolicy: 'network-only',
+  })
 
   useEffect(() => {
     if (version && metadata) {
@@ -1592,6 +1615,9 @@ const QuestionPage = props => {
         }
         currentHandlingEditors={currentHandlingEditors}
         defaultActiveKey={initialTabKey}
+        dependencyOptions={setQuestions
+          ?.filter(q => q.id !== id)
+          .map(q => ({ value: q.id, label: q.versions[0]?.contentText }))}
         editorContent={version && JSON.parse(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
         editorView={

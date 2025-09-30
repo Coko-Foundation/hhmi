@@ -35,16 +35,19 @@ const usersApiToUi = users => {
       expertise: isReviewer ? user.topicsReviewing : user.coursesTeaching,
       isReviewer,
       signUpDate: user.created,
+      reviewerStats: user.reviewerStats,
     }
   })
 }
 
-const PAGE_SIZE = 10
+const DEFAULT_PAGE_SIZE = 10
 
 const ManageUsers = () => {
   const [currentPage, setCurrentPage] = useState(0)
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE)
   const [selectedRows, setSelectedRows] = useState([])
   const [searchParams, setSearchParams] = useState('')
+  const [sortOptions, setSortOptions] = useState('')
   const [showDeactivated, setShowDeactivated] = useState(false)
 
   const { currentUser } = useCurrentUser()
@@ -66,8 +69,12 @@ const ManageUsers = () => {
       },
       options: {
         page: currentPage,
-        pageSize: PAGE_SIZE,
+        pageSize,
+        ...sortOptions,
       },
+    },
+    onCompleted: () => {
+      setSelectedRows([])
     },
   })
 
@@ -81,7 +88,7 @@ const ManageUsers = () => {
     },
     onCompleted({ deleteUsers }) {
       const total = usersData?.filterUsers.totalCount
-      const nrOfPages = Math.ceil(total / PAGE_SIZE)
+      const nrOfPages = Math.ceil(total / pageSize)
       const usersInCurrentPage = usersData?.filterUsers.result.length
 
       // if current page is the last page && you delete all users in that page, load currentPage - 1
@@ -106,7 +113,7 @@ const ManageUsers = () => {
     },
     onCompleted({ deactivateUsers }) {
       const total = usersData?.filterUsers.totalCount
-      const nrOfPages = Math.ceil(total / PAGE_SIZE)
+      const nrOfPages = Math.ceil(total / pageSize)
       const usersInCurrentPage = usersData?.filterUsers.result.length
 
       // if current page is the last page && you deactivate all users in that page, load currentPage - 1
@@ -129,7 +136,7 @@ const ManageUsers = () => {
     },
     onCompleted({ activateUsers }) {
       const total = usersData?.filterUsers.totalCount
-      const nrOfPages = Math.ceil(total / PAGE_SIZE)
+      const nrOfPages = Math.ceil(total / pageSize)
       const usersInCurrentPage = usersData?.filterUsers.result.length
 
       // if current page is the last page && you activate all users in that page, load currentPage - 1
@@ -154,9 +161,20 @@ const ManageUsers = () => {
     setCurrentPage(page - 1)
   }
 
+  const handleChangePageSize = (_, newPageSize) => {
+    setPageSize(newPageSize)
+  }
+
   const handleSearch = ({ role, searchQuery: search, expertise }) => {
     setCurrentPage(0)
     setSearchParams({ role, search, expertise })
+  }
+
+  const handleSortChange = (_, __, { columnKey, order }) => {
+    setSortOptions({
+      orderBy: columnKey,
+      ascending: order === 'ascend',
+    })
   }
 
   const handleShowDeactivatedChange = () => {
@@ -215,10 +233,12 @@ const ManageUsers = () => {
       onBulkDeactivate={deactivateUsersMutation}
       onBulkDelete={handleDeleteUsers}
       onBulkDownload={handleUsersDataDownload}
+      onChangePageSize={handleChangePageSize}
       onClickShowDeactivated={handleShowDeactivatedChange}
       onPageChange={handlePageChange}
       onSearch={handleSearch}
-      pageSize={PAGE_SIZE}
+      onSortChange={handleSortChange}
+      pageSize={pageSize}
       selectedRows={selectedRows}
       setSelectedRows={setSelectedRows}
       showDeactivated={showDeactivated}
