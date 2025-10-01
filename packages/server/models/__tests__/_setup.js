@@ -1,7 +1,5 @@
-/* eslint-disable import/no-extraneous-dependencies */
-
-const { migrate } = require('@coko/server')
+const { migrationManager } = require('@coko/server')
 
 module.exports = async jestConfig => {
-  await migrate()
+  await migrationManager.migrate()
 }

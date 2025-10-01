@@ -117,12 +117,12 @@ steps:
               - server
               - drupal
               - client/.environment
-              - client/platformsh-scripts
+              # - client/platformsh-scripts
 
   - label: ":capistrano: Deploy Server"
     key: "deploy-server"
     depends_on: deploy-client
-    timeout_in_minutes: 15
+    timeout_in_minutes: 25
     concurrency: 1
     concurrency_group: '$BUILDKITE_PIPELINE_SLUG/$BUILDKITE_BRANCH/deploy-server'
     branches:
@@ -161,9 +161,9 @@ steps:
             force-add:
               - server
             ignore:
-              - .platform/
+              - .platform
               - minio
               - client
               - drupal
               - server/.environment
-              - server/platformsh-scripts
+              # - server/platformsh-scripts

@@ -1,5 +1,8 @@
 # IMAGE FOR BUILDING
-FROM node:18.20.2-bullseye-slim
+FROM node:18-bookworm-slim
+
+# Copy the .platform directory to the root of the project
+# COPY .platform /.platform
 
 RUN apt-get update \ 
     && apt-get upgrade -y \
@@ -11,6 +14,7 @@ COPY package.json .
 COPY yarn.lock .
 
 RUN yarn install --frozen-lockfile --production
+RUN yarn install --production=false
 
 COPY . .
 
@@ -19,7 +23,7 @@ ENV CLIENT_PAGE_TITLE='HHMI Assessment Builder'
 ENV CLIENT_FAVICON_PATH='../static/favicon.ico'
 ENV CLIENT_LANGUAGE='en-US'
 
-RUN yarn coko-client-build
+RUN yarn coko-client-build-js
 
 ######################################################################
 ######################################################################

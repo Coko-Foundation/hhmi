@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
 export const CREATE_CHAT_THREAD = gql`
-  mutation CreateChatThread($input: CreateChatThreadInput!) {
+  mutation CreateChatThread($input: ChatChannelFilter!) {
     createChatThread(input: $input) {
       id
     }
@@ -10,7 +10,7 @@ export const CREATE_CHAT_THREAD = gql`
 
 export const GET_CHAT_THREAD = gql`
   query chatThread($id: ID!) {
-    chatThread(id: $id) {
+    chatChannel(id: $id) {
       id
       created
       updated
@@ -64,9 +64,9 @@ export const FILTER_CHAT_THREADS = gql`
 
 export const SEND_MESSAGE = gql`
   mutation SendMessage($input: SendChatMessageInput!) {
-    sendMessage(input: $input) {
+    sendChatMessage(input: $input) {
       id
-      chatThreadId
+      chatChannelId
       content
       isDeleted
       mentions
@@ -82,7 +82,7 @@ export const MESSAGE_CREATED_SUBSCRIPTION = gql`
   subscription MessageCreated($chatThreadId: ID!) {
     messageCreated(chatThreadId: $chatThreadId) {
       id
-      chatThreadId
+      chatChannelId
       content
       created
       user {

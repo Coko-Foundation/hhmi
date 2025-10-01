@@ -10,6 +10,7 @@ const MetadataProvider = props => {
 
   const [getMetadata] = useLazyQuery(GET_METADATA, {
     fetchPolicy: 'network-only',
+    // skip: !currentUser, ???
   })
 
   useEffect(() => {

@@ -3,11 +3,11 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
 import { CheckOutlined } from '@ant-design/icons'
+import { Divider } from '@coko/client/dist/ui'
 
 import Sidebar from './Sidebar'
 import {
   Collapse,
-  Divider,
   Input,
   QuestionList,
   VisuallyHiddenElement,

@@ -61,13 +61,17 @@ const markNotifications = async (read, notificationIds, options) => {
 
 const getNotificationRelatedQuestion = async notification => {
   const data = await Question.query()
-    .leftJoin('chat_threads', 'chat_threads.related_object_id', 'questions.id')
+    .leftJoin(
+      'chat_channels',
+      'chat_channels.related_object_id',
+      'questions.id',
+    )
     .leftJoin(
       'chat_messages',
-      'chat_messages.chat_thread_id',
-      'chat_threads.id',
+      'chat_messages.chat_channel_id',
+      'chat_channels.id',
     )
-    .select('questions.id as questionId', 'chat_threads.chat_type')
+    .select('questions.id as questionId', 'chat_channels.chat_type')
     .where('chat_messages.id', notification.objectId)
 
   return data[0] || {}

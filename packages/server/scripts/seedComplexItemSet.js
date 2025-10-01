@@ -65,7 +65,10 @@ const {
       default:
         throw new Error('Invalid operation')
     }
+
+    process.exit(0)
   } catch (err) {
     logger.error(err)
+    process.exit(1)
   }
 })()

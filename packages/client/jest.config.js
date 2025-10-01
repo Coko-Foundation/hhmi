@@ -8,7 +8,7 @@ module.exports = {
   },
   setupFiles: ['./test/defaultSetup'],
   transformIgnorePatterns: [
-    'node_modules/(?!@pubsweet/ui|y-protocols|lib0|wax-prosemirror-core|wax-prosemirror-services|wax-questions-service|wax-table-service)',
+    'node_modules/(?!y-protocols|lib0|wax-prosemirror-core|wax-prosemirror-services|wax-questions-service|wax-table-service)',
   ],
   transform: {
     '\\.[jt]sx?$': '<rootDir>/test/transformer.js',

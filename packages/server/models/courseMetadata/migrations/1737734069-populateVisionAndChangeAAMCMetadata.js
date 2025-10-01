@@ -1378,3 +1378,5 @@ exports.up = knex => {
     throw new Error(error)
   }
 }
+
+exports.down = () => {}

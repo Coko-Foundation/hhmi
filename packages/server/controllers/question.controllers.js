@@ -5,7 +5,7 @@ const {
   createFile,
   logger,
   useTransaction,
-  pubsubManager,
+  subscriptionManager,
   db,
 } = require('@coko/server')
 
@@ -33,14 +33,12 @@ const { getImageUrls, findImages } = require('./utils')
 const { inviteMaxReviewers } = require('./review.controller')
 const { actions } = require('./constants')
 
-const AUTHOR_TEAM = config.teams.nonGlobal.author
-const HE_TEAM = config.teams.nonGlobal.handlingEditor
-const EDITOR_TEAM = config.teams.nonGlobal.editor
-const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
+const AUTHOR_TEAM = config.teams.nonGlobal.find(t => t.role === 'author')
+const HE_TEAM = config.teams.nonGlobal.find(t => t.role === 'handlingEditor')
+const EDITOR_TEAM = config.teams.nonGlobal.find(t => t.role === 'editor')
+const REVIEWER_TEAM = config.teams.nonGlobal.find(t => t.role === 'reviewer')
+const PRODUCTION_TEAM = config.teams.global.find(t => t.role === 'production')
 const BASE_MESSAGE = `${labels.QUESTION_CONTROLLERS}:`
-const PRODUCTION_TEAM = config.teams.global.production
-
-const { getPubsub } = pubsubManager
 
 const getQuestion = async (questionId, options = {}) => {
   const { trx } = options
@@ -480,10 +478,12 @@ const submitQuestion = async (
   )
 
   const managingEditors = await Team.filterGlobalTeamMembers('editor')
-  const pubsub = await getPubsub()
 
   managingEditors.result.forEach(editor =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${editor.id}`,
+      'editor',
+    ),
   )
 
   if (resubmission) {
@@ -597,15 +597,23 @@ const moveQuestionVersionToReview = async (questionVersionId, options = {}) => {
 
   const managingEditors = await Team.filterGlobalTeamMembers('editor')
 
-  const pubsub = await getPubsub()
-  pubsub.publish(`${actions.DASHBOARD_UPDATED}.${author.id}`, 'author')
+  subscriptionManager.publish(
+    `${actions.DASHBOARD_UPDATED}.${author.id}`,
+    'author',
+  )
 
   handlingEditors.forEach(he =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${he.id}`, 'handlingEditor'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${he.id}`,
+      'handlingEditor',
+    ),
   )
 
   managingEditors.result.forEach(editor =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${editor.id}`,
+      'editor',
+    ),
   )
 
   return questionVersion
@@ -639,26 +647,37 @@ const moveQuestionVersionToProduction = async (
 
   const productionTeam = await Team.filterGlobalTeamMembers('production')
 
-  const pubsub = await getPubsub()
-  pubsub.publish(`${actions.DASHBOARD_UPDATED}.${author.id}`, 'author')
+  subscriptionManager.publish(
+    `${actions.DASHBOARD_UPDATED}.${author.id}`,
+    'author',
+  )
 
   handlingEditors.forEach(he =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${he.id}`, 'handlingEditor'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${he.id}`,
+      'handlingEditor',
+    ),
   )
 
   managingEditors.result.forEach(editor =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${editor.id}`,
+      'editor',
+    ),
   )
 
   reviewers.forEach(reviewer => {
-    pubsub.publish(
+    subscriptionManager.publish(
       `${actions.DASHBOARD_UPDATED}.${reviewer.userId}`,
       'reviewer',
     )
   })
 
   productionTeam.result.forEach(prod =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${prod.id}`, 'production'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${prod.id}`,
+      'production',
+    ),
   )
 
   return questionVersion
@@ -694,19 +713,30 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
 
   const productionTeam = await Team.filterGlobalTeamMembers('production')
 
-  const pubsub = await getPubsub()
-  pubsub.publish(`${actions.DASHBOARD_UPDATED}.${author.id}`, 'author')
+  subscriptionManager.publish(
+    `${actions.DASHBOARD_UPDATED}.${author.id}`,
+    'author',
+  )
 
   handlingEditors.forEach(he =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${he.id}`, 'handlingEditor'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${he.id}`,
+      'handlingEditor',
+    ),
   )
 
   managingEditors.result.forEach(editor =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${editor.id}`, 'editor'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${editor.id}`,
+      'editor',
+    ),
   )
 
   productionTeam.result.forEach(prod =>
-    pubsub.publish(`${actions.DASHBOARD_UPDATED}.${prod.id}`, 'production'),
+    subscriptionManager.publish(
+      `${actions.DASHBOARD_UPDATED}.${prod.id}`,
+      'production',
+    ),
   )
 
   return questionVersion
@@ -1116,9 +1146,8 @@ const assignHandlingEditors = async (questionIds, userIds, options = {}) => {
     }),
   )
 
-  const pubsub = await getPubsub()
   userIds.forEach(handlingEditorId =>
-    pubsub.publish(
+    subscriptionManager.publish(
       `${actions.DASHBOARD_UPDATED}.${handlingEditorId}`,
       'handlingEditor',
     ),
@@ -1154,9 +1183,7 @@ const unassignHandlingEditor = async (questionId, userId, options = {}) => {
           trx,
         })
 
-        const pubsub = await getPubsub()
-
-        pubsub.publish(
+        subscriptionManager.publish(
           `${actions.DASHBOARD_UPDATED}.${userId}`,
           'handlingEditor',
         )

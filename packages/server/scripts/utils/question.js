@@ -1,5 +1,9 @@
-const { logger, useTransaction } = require('@coko/server')
-const { ChatThread, ChatMessage } = require('@coko/server/src/models')
+const {
+  logger,
+  useTransaction,
+  ChatChannel,
+  ChatMessage,
+} = require('@coko/server')
 
 const {
   Question,
@@ -54,7 +58,7 @@ const EmptyQuestionVersions = async () => {
 const EmptyQuestions = async () => {
   try {
     await ChatMessage.query().delete()
-    await ChatThread.query().delete()
+    await ChatChannel.query().delete()
     await Question.query().delete()
     return true
   } catch (err) {
@@ -198,7 +202,7 @@ const updateStatus = async (id, status) => {
 
 const createChatThread = async relatedObjectId => {
   try {
-    await ChatThread.insert({ relatedObjectId, chatType: 'question' })
+    await ChatChannel.insert({ relatedObjectId, chatType: 'question' })
     return true
   } catch (err) {
     logger.error(err)

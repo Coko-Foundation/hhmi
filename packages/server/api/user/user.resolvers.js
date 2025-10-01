@@ -13,11 +13,11 @@ const {
 } = require('../../controllers/user.controllers')
 
 const updateUserProfileResolver = async (_, { input }, ctx) => {
-  return updateUserProfile(ctx.user, input)
+  return updateUserProfile(ctx.userId, input)
 }
 
 const submitQuestionnaireResolver = async (_, { input }, ctx) => {
-  return submitQuestionnaire(ctx.user, input)
+  return submitQuestionnaire(ctx.userId, input)
 }
 
 const filterUsersResolver = async (_, { params, options }, _ctx) => {

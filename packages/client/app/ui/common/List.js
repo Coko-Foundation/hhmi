@@ -10,12 +10,12 @@ import { List as AntList } from 'antd'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { grid, th } from '@coko/client'
+import { VisuallyHiddenElement } from '@coko/client/dist/ui'
 
 import UICheckBox, { SelectAllCheckbox } from './Checkbox'
 // import Search from './Search'
 import UISelect from './Select'
 import Pagination from './Pagination'
-import VisuallyHiddenElement from './VisuallyHiddenElement'
 import { Indicator } from './Spin'
 import Empty from './Empty'
 import Search from './Search'

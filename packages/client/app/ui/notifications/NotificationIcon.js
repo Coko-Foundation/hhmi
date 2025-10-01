@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { th } from '@coko/client'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import VisuallyHidden from '../common/VisuallyHiddenElement'
+import { VisuallyHiddenElement } from '@coko/client/dist/ui'
 
 const Wrapper = styled.div`
   align-items: center;
@@ -101,7 +101,7 @@ export const NotificationIcon = ({
         style={{ position: 'absolute' }}
         {...rest}
       >
-        <VisuallyHidden>{text}</VisuallyHidden>
+        <VisuallyHiddenElement>{text}</VisuallyHiddenElement>
       </StyledNotificationIcon>
     </CounterWrapper>
   )

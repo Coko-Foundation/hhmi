@@ -7,16 +7,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "resolutions": {
-    "pg": "8"
-  },
   "dependencies": {
-    "@coko/server": "3.13.2",
+    "@coko/server": "^4.17.1",
     "archiver": "^5.3.1",
     "axios": "^0.26.1",
     "config": "^3.3.6",
     "docx": "^7.3.0",
-    "graphql-subscriptions": "^2.0.0",
     "image-size": "^1.0.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
@@ -24,10 +20,10 @@
     "xml": "^1.0.1"
   },
   "devDependencies": {
-    "@coko/lint": "^2.0.0",
+    "@babel/eslint-parser": "^7.25.9",
+    "@babel/preset-react": "^7.25.9",
+    "@coko/lint": "^2.1.0",
     "faker": "^5.5.3",
-    "jest": "^27.5.1",
-    "node-wait-for-it": "^0.2.0",
-    "nodemon": "^2.0.13"
+    "jest": "^29.7.0"
   }
 }

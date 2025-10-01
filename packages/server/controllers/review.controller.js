@@ -7,8 +7,8 @@ const { REVIEWER_STATUSES } = require('./constants')
 const { getFileUrl } = require('./file.controllers')
 const CokoNotifier = require('../services/notify')
 
-const HE_TEAM = config.teams.nonGlobal.handlingEditor
-const EDITOR_TEAM = config.teams.global.editor
+const HE_TEAM = config.teams.nonGlobal.find(t => t.role === 'handlingEditor')
+const EDITOR_TEAM = config.teams.global.find(t => t.role === 'editor')
 
 const reviewSubmittedStatus = {
   pending: false,

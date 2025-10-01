@@ -44,6 +44,7 @@ typings/
 
 # env & config
 *.env*
+!.env.ci
 packages/server/config/local*
 
 # Storybook build outputs
@@ -68,8 +69,6 @@ packages/server/scripts/local
 # Container data
 data/
 minio/
-
-# Pubsweet
 uploads/
 
 # IDE
@@ -81,3 +80,6 @@ uploads/
 # Misc
 .cache/
 .DS_Store
+
+cypress/downloads
+cypress/screenshots

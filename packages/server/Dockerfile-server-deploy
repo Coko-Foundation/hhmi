@@ -10,14 +10,15 @@ RUN apt-get update \
 
 WORKDIR /home/node/hhmi
 
-COPY package.json .
-COPY yarn.lock .
-
 RUN chown -R node:node .
 USER node
 
-RUN yarn install --frozen-lockfile --production
+COPY package.json .
+COPY yarn.lock .
+
+RUN yarn install --frozen-lockfile
+RUN yarn cache clean
+
 COPY --chown=node:node . .
 
-ENTRYPOINT ["sh", "scripts/setupDevServer.sh"]
-CMD ["node", "startServer.js"]
+CMD ["yarn", "coko-server", "start"]

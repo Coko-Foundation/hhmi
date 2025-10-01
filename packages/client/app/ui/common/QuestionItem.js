@@ -4,8 +4,8 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 import { uuid, th, grid } from '@coko/client'
+import { DateParser } from '@coko/client/dist/ui'
 
-import { DateParser } from '@pubsweet/ui'
 import { LinkOutlined } from '@ant-design/icons'
 
 import WaxWrapper from '../wax/Wax'

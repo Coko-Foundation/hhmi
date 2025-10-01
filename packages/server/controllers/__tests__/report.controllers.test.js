@@ -11,7 +11,7 @@ const { createEmptyQuestion } = require('./__helpers__/questions')
 const { Team, Report } = require('../../models')
 const { reportIssue } = require('../report.controller')
 
-const ADMIN_TEAM = config.teams.global.admin
+const ADMIN_TEAM = config.get('teams.global').find(t => t.role === 'admin')
 
 describe('Report controller', () => {
   beforeEach(() => clearDb())
