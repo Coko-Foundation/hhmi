@@ -511,7 +511,7 @@ const Question = props => {
   const readOnly =
     (editorView &&
       isSubmitted &&
-      (isUnderReview || isPublished || isUnpublished)) ||
+      (!isAccepted || isUnderReview || isPublished || isUnpublished)) ||
     (!editorView && isSubmitted && !isEditing) ||
     isRejected
 
