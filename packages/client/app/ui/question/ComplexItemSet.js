@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { grid, th } from '@coko/client'
-import { PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import {
   QuestionList,
   TabsStyled as Tabs,
@@ -96,17 +96,22 @@ const StyledWaxLayout = styled(LeadingContentLayout)`
 `
 
 const StyledButton = styled(Button)`
-  > span:not([role='img']) {
+  > span:not(.ant-btn-icon) {
     display: none;
   }
 
+  > span.ant-btn-icon {
+    /* stylelint-disable-next-line declaration-no-important */
+    margin-inline-end: 0 !important;
+  }
+
   @media (min-width: ${th('mediaQueries.small')}) {
-    > span:not([role='img']) {
+    > span:not(.ant-btn-icon) {
       display: inline-block;
       margin-inline-start: 0;
     }
 
-    > span[role='img'] {
+    > span.ant-btn-icon {
       display: none;
     }
   }
@@ -155,6 +160,7 @@ const ComplexItemSet = props => {
     onQTIExport,
     onAddToList,
     onAddToNewList,
+    onDeleteSet,
     existingLists,
     loadingAddToList,
     loadingCreateList,
@@ -277,6 +283,36 @@ const ComplexItemSet = props => {
     return onAddToNewList(listName, selectedQuestions)
   }
 
+  const handleDeleteSet = () => {
+    const warningModal = modal.warning()
+    warningModal.update({
+      title: <ModalHeader>Delete set</ModalHeader>,
+      content: (
+        <p>
+          This action will permanently delete the context-dependent item set and
+          remove its reference from any items associated with this set. The
+          items themselves will not be deleted. Are you sure you want to
+          continue?
+        </p>
+      ),
+      footer: [
+        <ModalFooter key="footer">
+          <Button onClick={warningModal.destroy}>Cancel</Button>
+          <Button
+            onClick={() => {
+              onDeleteSet()
+              warningModal.destroy()
+            }}
+            status="danger"
+            type="primary"
+          >
+            Delete
+          </Button>
+        </ModalFooter>,
+      ],
+    })
+  }
+
   const tabItems = [
     // show Content tab with list of questions if complex item set exists
     id && {
@@ -393,16 +429,27 @@ const ComplexItemSet = props => {
           id ? (
             <ButtonGroup>
               {canAssignAuthor && (
-                <AssignAuthorButton
-                  authors={authors}
-                  currentAuthor={currentAuthor}
-                  loadAuthors={loadAuthors}
-                  onAssignAuthor={onAssignAuthor}
-                  refetchUser={refetchUser}
-                  usecase="set"
-                >
-                  Assign author
-                </AssignAuthorButton>
+                <>
+                  <StyledButton
+                    icon={<DeleteOutlined />}
+                    onClick={handleDeleteSet}
+                    status="danger"
+                    title="Delete set"
+                    type="primary"
+                  >
+                    Delete set
+                  </StyledButton>
+                  <AssignAuthorButton
+                    authors={authors}
+                    currentAuthor={currentAuthor}
+                    loadAuthors={loadAuthors}
+                    onAssignAuthor={onAssignAuthor}
+                    refetchUser={refetchUser}
+                    usecase="set"
+                  >
+                    Assign author
+                  </AssignAuthorButton>
+                </>
               )}
               <StyledButton
                 icon={<PlusOutlined />}
@@ -457,6 +504,7 @@ ComplexItemSet.propTypes = {
   onQTIExport: PropTypes.func,
   onAddToList: PropTypes.func,
   onAddToNewList: PropTypes.func,
+  onDeleteSet: PropTypes.func,
   existingLists: PropTypes.arrayOf(PropTypes.shape()),
   loadingAddToList: PropTypes.bool,
   loadingCreateList: PropTypes.bool,
@@ -493,6 +541,7 @@ ComplexItemSet.defaultProps = {
   onQTIExport: () => {},
   onAddToList: () => {},
   onAddToNewList: () => {},
+  onDeleteSet: () => {},
   existingLists: [],
   loadingAddToList: false,
   loadingCreateList: false,

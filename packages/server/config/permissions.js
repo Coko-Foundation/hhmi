@@ -437,7 +437,8 @@ const permissions = {
     // Sets
     createComplexItemSet: isActive,
     editComplexItemSet: isActive,
-    deleteComplexItemSet: isActive,
+    deleteComplexItemSet: isAdmin,
+    deleteComplexItemSets: isAdmin,
     assignSetAuthor: isAdmin,
     exportSets: isActive,
     exportSetQuestions: isActive,

@@ -163,3 +163,15 @@ export const EXPORT_SET_QUESTIONS_QTI = gql`
     exportSetQuestionsQTI(setId: $setId, questionIds: $questionIds)
   }
 `
+
+export const DELETE_SET = gql`
+  mutation DeleteSet($id: ID!) {
+    deleteComplexItemSet(id: $id)
+  }
+`
+
+export const DELETE_SETS = gql`
+  mutation DeleteSets($ids: [ID!]!) {
+    deleteComplexItemSets(ids: $ids)
+  }
+`

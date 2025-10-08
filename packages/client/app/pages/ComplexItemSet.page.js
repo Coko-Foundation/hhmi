@@ -27,6 +27,7 @@ import {
   CREATE_LIST,
   GET_LISTS_OPTIONS,
   GET_LISTS,
+  DELETE_SET,
 } from '../graphql'
 
 const NOTIFICATION_TIMEOUT = 5000
@@ -136,6 +137,7 @@ const ComplexItemSetPage = () => {
 
   const [exportQuestionsMutation] = useMutation(EXPORT_SET_QUESTIONS)
   const [exportQuestionsQTIMutation] = useMutation(EXPORT_SET_QUESTIONS_QTI)
+  const [deleteSetMutation] = useMutation(DELETE_SET)
 
   const [addToExistingListMutation, { loading: loadingAddToList }] =
     useMutation(ADD_TO_LIST)
@@ -302,6 +304,25 @@ const ComplexItemSetPage = () => {
       .catch(e => console.error(e))
   }
 
+  const handleDeleteSet = async () => {
+    const mutationData = {
+      variables: {
+        id,
+      },
+    }
+
+    return deleteSetMutation(mutationData)
+      .then(() => {
+        history.push('/sets')
+      })
+      .catch(e => {
+        console.error(e)
+        return new Promise((_resolve, reject) => {
+          reject()
+        })
+      })
+  }
+
   const handleAssignAuthor = authorIds => {
     const mutationData = {
       variables: {
@@ -456,6 +477,7 @@ const ComplexItemSetPage = () => {
       onAddToNewList={handleCreateList}
       onAssignAuthor={handleAssignAuthor}
       onCreateQuestion={handleCreateQuestion}
+      onDeleteSet={handleDeleteSet}
       onImageUpload={handleImageUpload}
       onQTIExport={handleQTIExport}
       onQuestionsPageChange={setQuestionsPage}

@@ -2,7 +2,12 @@ import React, { useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
 import { serverUrl } from '@coko/client'
 import { ComplexItemSetList } from 'ui'
-import { GET_COMPLEX_ITEM_SETS, EXPORT_SETS, EXPORT_SETS_QTI } from '../graphql'
+import {
+  GET_COMPLEX_ITEM_SETS,
+  EXPORT_SETS,
+  EXPORT_SETS_QTI,
+  DELETE_SETS,
+} from '../graphql'
 import { extractDocumentText } from '../utilities'
 
 const transform = data => {
@@ -87,6 +92,10 @@ const ComplexItemSetsListPage = () => {
   const [exportSetsMutation] = useMutation(EXPORT_SETS)
   const [exportSetsQTIMutation] = useMutation(EXPORT_SETS_QTI)
 
+  const [deleteSetsMutation] = useMutation(DELETE_SETS, {
+    refetchQueries: [GET_COMPLEX_ITEM_SETS],
+  })
+
   const handleSearchParamsChange = params => {
     setSearchParams({ ...searchParams, ...params })
   }
@@ -143,10 +152,21 @@ const ComplexItemSetsListPage = () => {
       })
   }
 
+  const handleDeleteSets = async setIds => {
+    const mutationData = {
+      variables: {
+        ids: setIds,
+      },
+    }
+
+    return deleteSetsMutation(mutationData)
+  }
+
   return (
     <ComplexItemSetList
       data={transform(complexItemSets)}
       loading={loadingSets}
+      onDeleteSets={handleDeleteSets}
       onQTIExport={handleQTIExport}
       onSearch={handleSearchParamsChange}
       onSortOptionChange={handleSortOptionChange}

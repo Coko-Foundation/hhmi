@@ -36,6 +36,7 @@ extend type Mutation {
     leadingContent: String
   ): ComplexItemSet!
   deleteComplexItemSet(id: ID!): ID!
+  deleteComplexItemSets(ids: [ID!]!): Boolean
   assignSetAuthor(setId: ID!, userIds: [ID!]!): Boolean
   exportSets(setIds: [ID!]!, options: GenerateWordFileOptionsInput): String!
   exportSetQuestions(

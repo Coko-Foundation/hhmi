@@ -12,6 +12,8 @@ const {
   exportSetQuestions,
   exportSetsQTI,
   exportSetQuestionsQTI,
+  deleteComplexItemSet,
+  deleteComplexItemSets,
 } = require('../../controllers/complexItemSet.controller')
 
 const { getImageUrls } = require('../../controllers/utils')
@@ -96,7 +98,13 @@ const containsSubmissionsResolver = async complexItemSet => {
   return containsSubmissions(complexItemSet)
 }
 
-const deleteComplexItemSetResolver = () => {}
+const deleteComplexItemSetResolver = async (_, { id }) => {
+  return deleteComplexItemSet(id)
+}
+
+const deleteComplexItemSetsResolver = async (_, { ids }) => {
+  return deleteComplexItemSets(ids)
+}
 
 module.exports = {
   Query: {
@@ -108,6 +116,7 @@ module.exports = {
     createComplexItemSet: createComplexItemSetResolver,
     editComplexItemSet: editComplexItemSetResolver,
     deleteComplexItemSet: deleteComplexItemSetResolver,
+    deleteComplexItemSets: deleteComplexItemSetsResolver,
     assignSetAuthor: assignSetAuthorResolver,
     exportSets: exportSetsResolver,
     exportSetQuestions: exportSetQuestionsResolver,
