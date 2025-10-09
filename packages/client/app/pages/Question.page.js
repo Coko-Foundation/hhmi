@@ -803,7 +803,7 @@ const QuestionPage = props => {
   const isSubmitted = version?.submitted || (isAdmin && isAuthor)
   const isEditing = version?.editing
   const isUnderReview = version?.underReview
-  const isInProduction = version?.inProduction
+  const isInProduction = version?.inProduction || (isAdmin && isAuthor)
   const isAccepted = version?.accepted
   const isPublished = version?.published
 
@@ -825,6 +825,7 @@ const QuestionPage = props => {
     (isEditor || isHandlingEditor || isAuthor || isAdmin)
 
   const showProductionChatTab =
+    version?.submitted &&
     isInProduction &&
     (isEditor || isHandlingEditor || isProductionMember || isAdmin)
 

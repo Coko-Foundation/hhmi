@@ -509,9 +509,9 @@ const Question = props => {
   const [imageLongDescs, setImageLongDescs] = useState([])
 
   const readOnly =
-    (editorView &&
-      isSubmitted &&
-      (!isAccepted || isUnderReview || isPublished || isUnpublished)) ||
+    (editorView && isSubmitted && !isInProduction && !isAccepted) /* &&
+      (isUnderReview || isPublished || isUnpublished) */ ||
+    (editorView && (isUnderReview || isPublished || isUnpublished)) ||
     (!editorView && isSubmitted && !isEditing) ||
     isRejected
 
