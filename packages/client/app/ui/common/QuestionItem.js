@@ -146,7 +146,7 @@ const renderMetadataValue = ({ type, value }) => {
     case 'badge':
       return value > 0 ? <NewChatsBadge>{value}</NewChatsBadge> : '-'
     default:
-      return value
+      return value || '-'
   }
 }
 

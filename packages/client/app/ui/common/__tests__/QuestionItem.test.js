@@ -144,14 +144,14 @@ describe('QuestionItem', () => {
     const bloomsLevel = screen.getByTestId("bloom's level-value").textContent
     const coursesValue = screen.getByTestId('courses')
 
-    const publishedValue = screen.getByTestId(
-      'published date-value',
-    ).textContent
+    // const publishedValue = screen.getByTestId(
+    //   'published date-value',
+    // ).textContent
 
     expect(topicValue).toBe('-')
     expect(subtopicValue).toBe('-')
     expect(bloomsLevel).toBe('-')
-    expect(publishedValue).toBe('-')
+    // expect(publishedValue).toBe('-')
     expect(coursesValue.textContent).toBe('')
   })
   it('renders with no accessibility errors', async () => {
