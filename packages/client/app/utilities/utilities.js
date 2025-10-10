@@ -1493,7 +1493,7 @@ const dashboardDataMapper = ({
             ]
           : [
               {
-                label: 'New messages',
+                label: 'Chat activity',
                 type: 'badge',
                 value: notificationsMapper(newMessages, id)?.length,
               },
