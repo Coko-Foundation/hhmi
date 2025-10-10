@@ -71,6 +71,7 @@ import {
   flattenReviewerPool,
   flattenReviewerSearchResults,
   useNotifications,
+  notificationsMapper,
 } from '../utilities'
 
 const AUTOSAVE_DELAY = 500
@@ -193,12 +194,6 @@ const messagesApiToUi = (messages, currentUser = null) => {
         },
       )
     : []
-}
-
-const notificationsApiResponse = (notifications, questionId) => {
-  return notifications
-    .map(n => ({ id: n.id, content: JSON.parse(n.content) }))
-    .filter(n => questionId === n.content.questionId)
 }
 // #endregion transformations
 
@@ -1767,7 +1762,7 @@ const QuestionPage = props => {
         showPreviewButton={isAuthor && !version?.submitted}
         showProductionChatTab={showProductionChatTab}
         showReviewerChatTab={showReviewerChatTab}
-        unreadMentions={notificationsApiResponse(unreadMentions, id)}
+        unreadMentions={notificationsMapper(unreadMentions, id)}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
       />

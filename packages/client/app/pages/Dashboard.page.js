@@ -32,6 +32,7 @@ import {
   dashboardDataMapper,
   useMetadata,
   callOn,
+  useNotifications,
 } from '../utilities'
 import {
   editorStatusFilters,
@@ -51,6 +52,8 @@ const DashboardPage = () => {
   // #region hooks
   const history = useHistory()
   const { setCurrentUser } = useCurrentUser()
+  const { unreadMentions } = useNotifications()
+
   const initialTabKey = localStorage.getItem('dashboardLastUsedTab') || 'author'
   const [currentTabKey, setCurrentTabKey] = useState(initialTabKey)
   const [currentPage, setCurrentPage] = useState(1)
@@ -259,6 +262,7 @@ const DashboardPage = () => {
           showStatusLabel: true,
           userId,
           isArchived: currentShowArchived,
+          newMessages: unreadMentions,
         })
       : []
 
@@ -271,6 +275,7 @@ const DashboardPage = () => {
           showStatus: true,
           userId,
           isArchived: currentShowArchived,
+          newMessages: unreadMentions,
         })
       : []
 
@@ -285,6 +290,7 @@ const DashboardPage = () => {
           showStatusLabel: true,
           userId,
           isArchived: currentShowArchived,
+          newMessages: unreadMentions,
         })
       : []
 
@@ -296,6 +302,7 @@ const DashboardPage = () => {
           complexItemSetOptions,
           showAuthor: true,
           userId,
+          newMessages: unreadMentions,
         })
       : []
 
@@ -308,6 +315,7 @@ const DashboardPage = () => {
           showStatus: true,
           showStatusLabel: true,
           userId,
+          newMessages: unreadMentions,
         })
       : []
 
