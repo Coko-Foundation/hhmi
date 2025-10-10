@@ -100,10 +100,6 @@ export const NotificationsProvider = ({ children }) => {
     ],
   })
 
-  const markAsRead = async data => {
-    await markMentionsAs(data)
-  }
-
   useSubscription(NOTIFICATION_SUBSCRIPTION, {
     skip: !currentUser?.id,
     onData: async ({
@@ -162,6 +158,10 @@ export const NotificationsProvider = ({ children }) => {
       })
     },
   })
+
+  const markAsRead = async data => {
+    await markMentionsAs(data)
+  }
 
   const values = useMemo(() => {
     return {
