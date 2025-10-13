@@ -1483,7 +1483,7 @@ const dashboardDataMapper = ({
               },
             ]
           : []),
-        ...(status === 'Published'
+        ...(latestVersion.published
           ? [
               {
                 label: 'published date',
@@ -1521,7 +1521,7 @@ const dashboardDataMapper = ({
 
 const notificationsMapper = (notifications, questionId) => {
   return notifications
-    .map(n => ({ id: n.id, content: JSON.parse(n.content) }))
+    ?.map(n => ({ id: n.id, content: JSON.parse(n.content) }))
     .filter(n => questionId === n.content.questionId)
 }
 
