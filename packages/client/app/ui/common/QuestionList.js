@@ -161,7 +161,11 @@ QuestionList.propTypes = {
       metadata: PropTypes.arrayOf(
         PropTypes.shape({
           label: PropTypes.string,
-          value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+          value: PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.shape(),
+            PropTypes.number,
+          ]),
         }),
       ),
       content: PropTypes.shape({

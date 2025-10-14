@@ -275,7 +275,11 @@ QuestionItem.propTypes = {
   metadata: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+      value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape(),
+        PropTypes.number,
+      ]),
     }),
   ).isRequired,
   content: PropTypes.shape({
