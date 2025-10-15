@@ -2,13 +2,13 @@
 import React, { useState, useEffect } from 'react'
 import { useLazyQuery } from '@apollo/client'
 import { MetadataContext } from './metadataContext'
-import { GET_METADATA } from '../graphql'
+import { GET_METADATA_OPTIMIZED } from '../graphql'
 
 const MetadataProvider = props => {
   const { children } = props
   const [metadata, setMetadata] = useState(null)
 
-  const [getMetadata] = useLazyQuery(GET_METADATA, {
+  const [getMetadataOptimized] = useLazyQuery(GET_METADATA_OPTIMIZED, {
     fetchPolicy: 'network-only',
   })
 
@@ -17,9 +17,9 @@ const MetadataProvider = props => {
   }, [])
 
   const resetMetadata = () => {
-    getMetadata().then(({ data }) => {
+    getMetadataOptimized().then(({ data }) => {
       if (data) {
-        setMetadata(data.getMetadata)
+        setMetadata(data.getMetadataOptimized)
       }
     })
   }

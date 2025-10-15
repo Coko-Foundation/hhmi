@@ -470,6 +470,7 @@ const permissions = {
     getLoginConfig: allow,
     getMetadata: allow,
     getMetadataOld: allow,
+    getMetadataOptimized: allow,
     getResources: allow,
     // Lists
     myLists: isActive,
