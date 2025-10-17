@@ -441,7 +441,8 @@ describe('Testing lists', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(4000)
       cy.contains('Select All').click()
-      cy.get('[data-testid="add-to-list-btn"]').click()
+      // cy.get('[data-testid="add-to-list-btn"]').click()
+      cy.get('[data-testid="export-btn"] ').click()
       cy.get('[id="exportToWord"]').click()
       cy.contains(
         '[class="ant-modal-footer"] button[type="button"]',
@@ -477,7 +478,8 @@ describe('Testing lists', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(4000)
       cy.contains('Select All').click()
-      cy.get('[data-testid="add-to-list-btn"]').click()
+      // cy.get('[data-testid="add-to-list-btn"]').click()
+      cy.get('[data-testid="export-btn"] ').click()
       cy.get('[id="exportToQTI"]').click()
 
       // [info]: triggering  a reload manually to avoid the page reload error

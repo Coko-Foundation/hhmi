@@ -35,9 +35,9 @@ client build development:
   stage: Build development
   image: docker:26
   rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    when: never
-  - when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
+    - when: always
   services:
     - docker:26-dind
   before_script:
@@ -51,9 +51,9 @@ server build development:
   stage: Build development
   image: docker:26
   rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    when: never
-  - when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
+    - when: always
   services:
     - docker:26-dind
   before_script:
@@ -68,12 +68,12 @@ server build development:
 client lint:
   stage: Lint & Unit test
   needs:
-    - client build development    
+    - client build development
   image: $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
   rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    when: never
-  - when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
+    - when: always
   script:
     - cd $WORKDIR_CLIENT
     - yarn eslint .
@@ -86,9 +86,9 @@ client unit test:
     - client build development
   image: $IMAGE_ORG/$IMAGE_NAME_CLIENT_DEVELOPMENT:$CI_COMMIT_SHA
   rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    when: never
-  - when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
+    - when: always
   script:
     - cd $WORKDIR_CLIENT
     - yarn jest
@@ -99,9 +99,9 @@ server lint:
     - server build development
   image: $IMAGE_ORG/$IMAGE_NAME_SERVER_DEVELOPMENT:$CI_COMMIT_SHA
   rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    when: never
-  - when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
+    - when: always
   script:
     - cd $WORKDIR_SERVER
     - yarn eslint .
@@ -113,9 +113,9 @@ server unit test:
     - server build development
   image: docker:23
   rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    when: never
-  - when: always
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
+    - when: always
   services:
     - docker:23-dind
   script:
@@ -137,9 +137,9 @@ build server:
   stage: Build production
   image: docker:26
   rules:
-  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    when: never
-  - if: $CI_COMMIT_BRANCH == 'staging'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: never
+    - when: always
   services:
     - docker:26-dind
   before_script:
@@ -158,7 +158,7 @@ build client:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: never
-    - if: $CI_COMMIT_BRANCH == 'staging'
+    - when: always
   services:
     - docker:26-dind
   before_script:
@@ -173,7 +173,7 @@ build client:
 
 # END TO END TEST
 
-.end to end tests:
+end to end tests:
   stage: End to end test
   image: cokoapps/hhmi-dnn
   needs:
@@ -278,10 +278,10 @@ bump version:
   image: node:20-bullseye
   rules:
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: always 
+      when: always
   variables:
     VERSION_BUMP_TYPE: "patch" # Default, can be overridden
-    HUSKY: "0"  # Disable Husky
+    HUSKY: "0" # Disable Husky
     npm_config_ignore_scripts: "true"
   before_script:
     - |
@@ -328,7 +328,7 @@ bump version:
 create_release:
   stage: Release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
-  needs: 
+  needs:
     - bump version
   rules:
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -338,7 +338,7 @@ create_release:
   script:
     - echo "Creating release for version ${NEW_VERSION}"
   release:
-    name: '${NEW_VERSION}'
-    description: 'Automatic release for version ${NEW_VERSION}'
-    tag_name: '${NEW_VERSION}'
-    ref: '$CI_COMMIT_SHA'
+    name: "${NEW_VERSION}"
+    description: "Automatic release for version ${NEW_VERSION}"
+    tag_name: "${NEW_VERSION}"
+    ref: "$CI_COMMIT_SHA"

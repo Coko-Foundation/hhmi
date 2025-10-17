@@ -345,7 +345,7 @@ const ComplexItemSet = props => {
                     popupPlacement="top"
                     toggle={
                       <Button
-                        data-testid="add-to-list-btn"
+                        data-testid="export-btn"
                         disabled={selectedQuestions.length === 0}
                         id="export-popup-toggle"
                         type="primary"

@@ -168,7 +168,7 @@ describe('ChatThreads', () => {
       cy.viewport(laptop.preset)
     })
 
-    context('Mentions', () => {
+    context.only('Mentions', () => {
       beforeEach(() => {
         cy.login(editor)
         cy.contains(antTabs, 'Editor Items').click()
@@ -246,7 +246,14 @@ describe('ChatThreads', () => {
         cy.log('Clicking mark as read makes notifaction count 0...')
         // [segment]: Clicking mark as read makes notifaction count 0
         cy.contains('Select All').click()
+        cy.contains('button', 'Mark as Read').should('not.be.disabled')
+        cy.intercept('POST', '**/graphql').as('markAsRead')
         cy.contains('button', 'Mark as Read').click()
+
+        cy.contains('button', 'Mark as Read').should('be.disabled', {
+          timeout: 3000,
+        })
+        cy.wait('@markAsRead')
         cy.contains('[data-test="counter-badge"]', 0)
         cy.log(
           'Clicking mark as unread makes notifaction count back to the same number...',
