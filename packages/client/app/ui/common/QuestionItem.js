@@ -115,6 +115,7 @@ const NewChatsBadge = styled.span`
   font-weight: 700;
   height: 18px;
   justify-content: center;
+  margin-inline-start: auto;
   padding: 0.1rem;
   text-align: center;
   text-rendering: geometricprecision;
@@ -179,7 +180,9 @@ const QuestionItem = props => {
                     display: flex;
                     flex: 1 1 0px;
                     flex-direction: column;
-  
+                    td > ${NewChatsBadge} {
+                      margin-inline-start: unset;
+                    }
                   }
                   tbody tr td:nth-child(2) {
                     text-align: left;
