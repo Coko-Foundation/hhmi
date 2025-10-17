@@ -1627,7 +1627,7 @@ const Question = props => {
             position="block-end"
             toggle={
               <Button
-                data-testid="add-to-list-btn"
+                data-testid="export-btn"
                 id="export-popup-toggle"
                 style={{ marginInlineEnd: '8px' }}
                 type="primary"

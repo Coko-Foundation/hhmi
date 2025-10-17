@@ -241,7 +241,7 @@ describe('Tests for user authentication', () => {
     })
     cy.contains('User Manager')
     cy.get(`input[aria-label="Select user ${editor.username}"]`).click()
-    cy.get("[data-testid='deactivate-btn']").click()
+    cy.get("[data-testid='deactivate-btn']").last().click()
     cy.contains('Deactivate User')
     cy.contains('Are you sure you want to deactivate the selected user?')
     cy.contains(buttonAntModalBody, 'Deactivate').click()
@@ -266,7 +266,7 @@ describe('Tests for user authentication', () => {
       'You cannot delete or deactivate the user you are currently logged in as. Please deselect your current user and try again',
     )
     cy.get(buttonAntModalBody).click()
-    cy.get('[data-testid="deactivate-btn"]').click()
+    cy.get('[data-testid="deactivate-btn"]').last().click()
     cy.contains(
       antModalConfirmTitle,
       'Cannot delete or deactivate current user',

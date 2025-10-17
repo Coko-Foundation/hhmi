@@ -55,8 +55,23 @@ describe('Context-dependent item set', () => {
     cy.get(anchorTags.sets).click({ force: true })
     cy.contains('button', 'Create Set').click()
     cy.contains('label', 'Context-Dependent Item Set Title')
-    cy.get('input[id="title"]').type(complexItemSet2.title)
-    cy.get(ProseMirror).type(complexItemSet2.leadingContent)
+
+    // cy.get('input[id="title"]').then($title => {
+    //   cy.wrap($title).type(complexItemSet2.title, { delay: 0 })
+    // })
+    cy.get('input[id="title"]')
+      .should('exist')
+      .then($el => {
+        cy.wrap($el).focus().type(complexItemSet2.title, { delay: 0 })
+      })
+
+    cy.contains(
+      'Create the content for the Context-Dependent Item Set leading text in the editor below',
+    ).should('exist')
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3000)
+    cy.get(ProseMirror).should('be.visible')
+    cy.get(ProseMirror).type(complexItemSet2.leadingContent, { delay: 50 })
     cy.contains('button[type="submit"]', 'Save').click()
     cy.wait('@GQLReq')
     cy.contains('Context-dependent item set was created successfully!')
