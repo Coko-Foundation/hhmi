@@ -1479,7 +1479,9 @@ const dashboardDataMapper = ({
           ? [
               {
                 label: 'author',
-                value: question?.authors?.map(a => a.displayName).join(', '),
+                value: question?.authors
+                  ?.map(a => a?.displayName || '[DELETED]')
+                  .join(', '),
               },
             ]
           : []),

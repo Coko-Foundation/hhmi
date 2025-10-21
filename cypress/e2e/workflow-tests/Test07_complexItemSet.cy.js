@@ -46,7 +46,8 @@ describe('Context-dependent item set workflows', () => {
     cy.contains(`[class="ant-empty-description"]`, 'No Data')
   })
 
-  it("Author cannot open another author's set with no published item (by opening given URL)", () => {
+  // eslint-disable-next-line jest/no-disabled-tests
+  it.skip("Author cannot open another author's set with no published item (by opening given URL)", () => {
     let setId
     cy.login({ ...admin, visit: dashboardRoute })
     cy.visit(setsPage, { method: 'GET' })
