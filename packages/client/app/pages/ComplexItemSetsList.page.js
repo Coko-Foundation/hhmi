@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-import { serverUrl } from '@coko/client'
+import { serverUrl, useCurrentUser } from '@coko/client'
 import { ComplexItemSetList } from 'ui'
 import {
   GET_COMPLEX_ITEM_SETS,
@@ -8,7 +8,7 @@ import {
   EXPORT_SETS_QTI,
   DELETE_SETS,
 } from '../graphql'
-import { extractDocumentText } from '../utilities'
+import { extractDocumentText, hasGlobalRole } from '../utilities'
 
 const transform = data => {
   if (!data) return []
@@ -67,6 +67,9 @@ const sortOptions = [
 ]
 
 const ComplexItemSetsListPage = () => {
+  const { currentUser } = useCurrentUser()
+  const isAdmin = hasGlobalRole(currentUser, 'admin')
+
   const [searchParams, setSearchParams] = useState({
     searchQuery: '',
     page: 1,
@@ -164,6 +167,7 @@ const ComplexItemSetsListPage = () => {
 
   return (
     <ComplexItemSetList
+      canDeleteSets={isAdmin}
       data={transform(complexItemSets)}
       loading={loadingSets}
       onDeleteSets={handleDeleteSets}

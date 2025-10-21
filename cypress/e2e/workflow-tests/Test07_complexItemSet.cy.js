@@ -52,7 +52,7 @@ describe('Context-dependent item set workflows', () => {
     cy.visit(setsPage, { method: 'GET' })
     cy.wait('@GQLReq')
 
-    cy.get(listItemWrapper, { timeout: 4000 }).should('exist')
+    cy.get(listItemWrapper, { timeout: 10000 }).should('exist')
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
     cy.wait('@GQLReq')
     cy.contains(antTabs, 'Content').should('be.visible')

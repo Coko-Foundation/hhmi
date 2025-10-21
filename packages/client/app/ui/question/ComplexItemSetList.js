@@ -70,6 +70,7 @@ const ComplexItemSetList = props => {
     onWordExport,
     onQTIExport,
     onDeleteSets,
+    canDeleteSets,
   } = props
 
   const history = useHistory()
@@ -157,13 +158,15 @@ const ComplexItemSetList = props => {
                 <Button onClick={handleQTIExport} type="primary">
                   Export QTI
                 </Button>
-                <Button
-                  onClick={handleDeleteSets}
-                  status="danger"
-                  type="primary"
-                >
-                  Delete
-                </Button>
+                {canDeleteSets && (
+                  <Button
+                    onClick={handleDeleteSets}
+                    status="danger"
+                    type="primary"
+                  >
+                    Delete
+                  </Button>
+                )}
               </BulkActionWrapper>
             ) : null
           }
@@ -214,6 +217,7 @@ ComplexItemSetList.propTypes = {
   onWordExport: PropTypes.func,
   onQTIExport: PropTypes.func,
   onDeleteSets: PropTypes.func,
+  canDeleteSets: PropTypes.bool,
 }
 ComplexItemSetList.defaultProps = {
   data: [],
@@ -227,6 +231,7 @@ ComplexItemSetList.defaultProps = {
   onWordExport: null,
   onQTIExport: null,
   onDeleteSets: null,
+  canDeleteSets: false,
 }
 
 export default ComplexItemSetList
