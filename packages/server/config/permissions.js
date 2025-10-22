@@ -49,8 +49,8 @@ const isReviewer = rule()(async (_, __, ctx) => {
 const canSubmitReview = rule()(async (_, __, ctx) => {
   if (!ctx.user) return false
 
-  const UserModel = ctx.connectors.User.model
-  const user = await UserModel.query().findById(ctx.user)
+  const { User } = require('@coko/server')
+  const user = await User.query().findById(ctx.user)
 
   const isUserReviewer = await user.hasGlobalRole('reviewer')
   const isUserEditor = await user.hasGlobalRole('editor')
@@ -222,12 +222,10 @@ const canCreateNewVersion = rule()(async (_, __, ctx) => {
 const canAcceptQuestion = rule()(async (_, { questionVersionId }, ctx) => {
   if (!ctx.user) return false
 
-  const UserModel = ctx.connectors.User.model
-  const user = await UserModel.query().findById(ctx.user)
+  const { User, QuestionVersion } = require('@coko/server')
+  const user = await User.query().findById(ctx.user)
 
-  const QuestionVersionModel = ctx.connectors.QuestionVersion.model
-
-  const questionVersion = await QuestionVersionModel.query().findById(
+  const questionVersion = await QuestionVersion.query().findById(
     questionVersionId,
   )
 
@@ -243,19 +241,17 @@ const canEditQuestion = rule()(
   async (_, { questionId, questionVersionId }, ctx) => {
     if (!ctx.user) return false
 
-    const UserModel = ctx.connectors.User.model
-    const user = await UserModel.query().findById(ctx.user)
+    const { User, QuestionVersion, Team } = require('@coko/server')
+    const user = await User.query().findById(ctx.user)
 
     if (!user.isActive) return false
 
-    const QuestionVersionModel = ctx.connectors.QuestionVersion.model
-
-    const questionVersion = await QuestionVersionModel.query().findById(
+    const questionVersion = await QuestionVersion.query().findById(
       questionVersionId,
     )
 
     return (
-      isQuestionAuthor(ctx.connectors.Team.model, ctx.user, questionId) &&
+      isQuestionAuthor(Team, ctx.user, questionId) &&
       !questionVersion.accepted
     )
   },
@@ -378,6 +374,7 @@ const permissions = {
     signUp: allow,
     verifyEmail: allow,
     resendVerificationEmail: allow,
+    resendVerificationEmailFromLogin: allow,
     resendVerificationEmailAfterLogin: isAuthenticated,
     resetPassword: allow,
     // Users
@@ -392,7 +389,9 @@ const permissions = {
     sendPasswordResetEmail: allow,
 
     // Teams
-    updateTeamMembership: isAdmin,
+    addTeamMember: isActive,
+    updateTeamMembership: isActive,
+    updateGlobalTeams: isAdmin,
 
     // Questions
     createQuestion: isActive,
@@ -484,7 +483,7 @@ const permissions = {
     filterUsers: isAdminOrEditor,
     user: isAdmin,
     // Teams
-    teams: isAdmin,
+    getGlobalTeams: isAdmin,
     getNonTeamMemberUsers: isAdmin,
     filterGlobalTeamMembers: isActive,
     searchForReviewers: isAdminOrEditorOrHE,
