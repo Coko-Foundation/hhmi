@@ -47,10 +47,10 @@ const isReviewer = rule()(async (_, __, ctx) => {
 })
 
 const canSubmitReview = rule()(async (_, __, ctx) => {
-  if (!ctx.user) return false
+  if (!ctx.userId) return false
 
   const { User } = require('@coko/server')
-  const user = await User.query().findById(ctx.user)
+  const user = await User.query().findById(ctx.userId)
 
   const isUserReviewer = await user.hasGlobalRole('reviewer')
   const isUserEditor = await user.hasGlobalRole('editor')
@@ -220,10 +220,10 @@ const canCreateNewVersion = rule()(async (_, __, ctx) => {
 
 // editors and handlingEditors can accept questions
 const canAcceptQuestion = rule()(async (_, { questionVersionId }, ctx) => {
-  if (!ctx.user) return false
+  if (!ctx.userId) return false
 
   const { User, QuestionVersion } = require('@coko/server')
-  const user = await User.query().findById(ctx.user)
+  const user = await User.query().findById(ctx.userId)
 
   const questionVersion = await QuestionVersion.query().findById(
     questionVersionId,
@@ -239,10 +239,10 @@ const canAcceptQuestion = rule()(async (_, { questionVersionId }, ctx) => {
 
 const canEditQuestion = rule()(
   async (_, { questionId, questionVersionId }, ctx) => {
-    if (!ctx.user) return false
+    if (!ctx.userId) return false
 
     const { User, QuestionVersion, Team } = require('@coko/server')
-    const user = await User.query().findById(ctx.user)
+    const user = await User.query().findById(ctx.userId)
 
     if (!user.isActive) return false
 
@@ -251,7 +251,8 @@ const canEditQuestion = rule()(
     )
 
     return (
-      isQuestionAuthor(Team, ctx.user, questionId) && !questionVersion.accepted
+      isQuestionAuthor(Team, ctx.userId, questionId) &&
+      !questionVersion.accepted
     )
   },
 )
