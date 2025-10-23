@@ -49,7 +49,7 @@ const NotificationPage = () => {
   const {
     tabKey,
     setTabKey,
-    setUnreadMentions,
+    setUnreadMentionsCount,
     updatedMentions,
     setUpdatedMentions,
   } = useNotifications()
@@ -124,7 +124,8 @@ const NotificationPage = () => {
   }, [])
 
   useEffect(() => {
-    unread && setUnreadMentions(unread?.getUnreadNotificationsCount[0]?.count)
+    unread &&
+      setUnreadMentionsCount(unread?.getUnreadNotificationsCount[0]?.count)
   }, [unread])
 
   useEffect(() => {

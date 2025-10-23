@@ -14,6 +14,17 @@ const ArchivedItem = require('./archivedItem/archivedItem.model')
 const Report = require('./report/report.model')
 const Resource = require('./resources/resources.model')
 const CourseMetadata = require('./courseMetadata/courseMetadata.model')
+// new models
+const Course = require('./courseMetadata/Course.model')
+// const Unit = require('./courseMetadata/Unit.model')
+// const Topic = require('./courseMetadata/Topic.model')
+// const LearningObjective = require('./courseMetadata/LearningObjective.model')
+// const EssentialKnowledge = require('./courseMetadata/EssentialKnowledge.model')
+// const Application = require('./courseMetadata/Application.model')
+// const Skill = require('./courseMetadata/Skill.model')
+// const Understanding = require('./courseMetadata/Understanding.model')
+// const MetaFramework = require('./courseMetadata/Metaframework.model')
+const MetaFramework = require('./courseMetadata/Metaframework.model')
 
 module.exports = {
   Question,
@@ -31,4 +42,13 @@ module.exports = {
   Report,
   Resource,
   CourseMetadata,
+  Course,
+  // Unit,
+  // Topic,
+  // LearningObjective,
+  // EssentialKnowledge,
+  // Application,
+  // Skill,
+  // Understanding,
+  MetaFramework,
 }

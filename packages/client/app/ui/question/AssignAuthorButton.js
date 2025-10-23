@@ -41,7 +41,7 @@ const AssignAuthorButton = props => {
     if (currentAuthor?.length) {
       assignAuthorForm.setFieldValue(
         'author',
-        currentAuthor?.map(a => a.id),
+        currentAuthor?.filter(a => a?.id).map(a => a.id),
       )
     }
   }, [currentAuthor])

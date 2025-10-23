@@ -1380,6 +1380,7 @@ const dashboardDataMapper = ({
   includeType,
   userId,
   isArchived,
+  newMessages,
 }) => {
   if (!questions) return null
 
@@ -1466,6 +1467,8 @@ const dashboardDataMapper = ({
       review => review.reviewerId === userId && review.status.submitted,
     )
 
+    const status = renderStatus({ ...latestVersion, rejected })
+
     return {
       metadata: [
         { label: 'topic', value: topics.topics },
@@ -1476,18 +1479,30 @@ const dashboardDataMapper = ({
           ? [
               {
                 label: 'author',
-                value: question?.authors?.map(a => a.displayName).join(', '),
+                value: question?.authors
+                  ?.map(a => a?.displayName || '[DELETED]')
+                  .join(', '),
               },
             ]
           : []),
-        {
-          label: 'published date',
-          type: 'date', // let the ui handle the format if type === 'date'
-          value: publicationDate,
-        },
+        ...(latestVersion.published
+          ? [
+              {
+                label: 'published date',
+                type: 'date', // let the ui handle the format if type === 'date'
+                value: publicationDate,
+              },
+            ]
+          : [
+              {
+                label: 'New messages',
+                type: 'badge',
+                value: notificationsMapper(newMessages, id)?.length,
+              },
+            ]),
       ],
       content: parsedContent,
-      status: renderStatus({ ...latestVersion, rejected }),
+      status,
       statusLabel: isArchived
         ? 'Archived'
         : showStatusLabel &&
@@ -1504,6 +1519,12 @@ const dashboardDataMapper = ({
       ...(includeType ? { type: latestVersion.questionType } : {}),
     }
   })
+}
+
+const notificationsMapper = (notifications, questionId) => {
+  return notifications
+    ?.map(n => ({ id: n.id, content: JSON.parse(n.content) }))
+    .filter(n => questionId === n.content.questionId)
 }
 
 const setSafeHTML = (selector, html, timeout) => {
@@ -1664,4 +1685,5 @@ export {
   flattenReviewerPool,
   flattenReviewerSearchResults,
   mapMetadataToSelectOptions,
+  notificationsMapper,
 }

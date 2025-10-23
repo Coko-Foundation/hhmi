@@ -105,6 +105,24 @@ const MetadataValue = styled.td`
   text-align: right;
 `
 
+const NewChatsBadge = styled.span`
+  align-items: center;
+  background-color: rgb(212 49 49);
+  border-radius: 50%;
+  color: rgb(255 255 255);
+  display: flex;
+  font-size: 11px;
+  font-weight: 700;
+  height: 18px;
+  justify-content: center;
+  margin-inline-start: auto;
+  padding: 0.1rem;
+  text-align: center;
+  text-rendering: geometricprecision;
+  transform: scale(1);
+  width: 18px;
+`
+
 const courseOrder = [
   'Introductory Biology for Majors',
   'AP Biology',
@@ -116,6 +134,22 @@ const courseOrder = [
 
 const sortFunction = (a, b) =>
   courseOrder.indexOf(a.course?.label) - courseOrder.indexOf(b.course?.label)
+
+const renderMetadataValue = ({ type, value }) => {
+  switch (type) {
+    case 'date':
+      return (
+        <DateParser dateFormat="MMMM DD, YYYY" timestamp={value}>
+          {timestamp => timestamp}
+        </DateParser>
+      )
+
+    case 'badge':
+      return value > 0 ? <NewChatsBadge>{value}</NewChatsBadge> : '-'
+    default:
+      return value || '-'
+  }
+}
 
 const QuestionItem = props => {
   const {
@@ -146,7 +180,9 @@ const QuestionItem = props => {
                     display: flex;
                     flex: 1 1 0px;
                     flex-direction: column;
-  
+                    td > ${NewChatsBadge} {
+                      margin-inline-start: unset;
+                    }
                   }
                   tbody tr td:nth-child(2) {
                     text-align: left;
@@ -218,7 +254,8 @@ const QuestionItem = props => {
                   <MetadataLabel>{item.label}</MetadataLabel>
                 </th>
                 <MetadataValue data-testid={`${item.label}-value`}>
-                  {item.value && item.type === 'date' ? (
+                  {renderMetadataValue(item)}
+                  {/* {item.value && item.type === 'date' ? (
                     <DateParser
                       dateFormat="MMMM DD, YYYY"
                       timestamp={item.value}
@@ -227,7 +264,7 @@ const QuestionItem = props => {
                     </DateParser>
                   ) : (
                     item.value || '-'
-                  )}
+                  )} */}
                 </MetadataValue>
               </tr>
             ))}
@@ -241,7 +278,11 @@ QuestionItem.propTypes = {
   metadata: PropTypes.arrayOf(
     PropTypes.shape({
       label: PropTypes.string.isRequired,
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
+      value: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.shape(),
+        PropTypes.number,
+      ]),
     }),
   ).isRequired,
   content: PropTypes.shape({

@@ -95,6 +95,7 @@ class ComplexItemSet extends BaseModel {
         title: stringNullable,
         leadingContent: objectNullable,
         contentText: stringNullable,
+        deletedAuthor: stringNullable,
         isPublished: boolean,
       },
     }

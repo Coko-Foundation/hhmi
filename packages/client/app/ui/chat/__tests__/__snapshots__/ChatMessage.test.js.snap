@@ -2,12 +2,12 @@
 
 exports[`ChatMessage matches snaphot 1`] = `
 <div
-  className="sc-fbUwh brmPCC"
+  className="sc-ciABCq gTHfUH"
   data-testid="participant-message"
   tabIndex={0}
 >
   <div
-    className="sc-ciABCq joyCGL"
+    className="sc-kGYcGX dVjVop"
   />
   <p
     className="sc-iVFRtF dSrVkR"
@@ -15,7 +15,7 @@ exports[`ChatMessage matches snaphot 1`] = `
     said
   </p>
   <div
-    className="sc-kGYcGX"
+    className="sc-hJtubf"
   >
     <div
       dangerouslySetInnerHTML={
@@ -26,7 +26,7 @@ exports[`ChatMessage matches snaphot 1`] = `
     />
   </div>
   <div
-    className="sc-hJtubf hylVsl"
+    className="sc-dQVSQq jMDzZO"
     data-testid="time-indicator"
   >
     <span>

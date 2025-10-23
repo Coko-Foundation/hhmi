@@ -19,7 +19,9 @@ exports[`QuestionItem matches snapshot 1`] = `
                     display: flex;
                     flex: 1 1 0px;
                     flex-direction: column;
-  
+                    td &gt; .sc-kKUyCS {
+                      margin-inline-start: unset;
+                    }
                   }
                   tbody tr td:nth-child(2) {
                     text-align: left;

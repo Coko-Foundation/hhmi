@@ -157,6 +157,163 @@ export const GET_METADATA = gql`
   }
 `
 
+export const GET_METADATA_OPTIMIZED = gql`
+  query GetMetadataOptimized {
+    getMetadataOptimized {
+      topics {
+        label
+        value
+        subtopics {
+          label
+          value
+        }
+      }
+      questionTypes {
+        label
+        options {
+          label
+          value
+        }
+      }
+      blooms {
+        cognitive {
+          label
+          options {
+            label
+            value
+          }
+        }
+        psychomotor {
+          label
+          value
+        }
+        affective {
+          label
+          value
+        }
+      }
+      frameworks {
+        label
+        value: id
+        textValue: value
+        enabled
+        units {
+          label
+          value: id
+          enabled
+        }
+        topics {
+          value: id
+          label
+          unit
+          enabled
+        }
+        learningObjectives {
+          label
+          value: id
+          unit
+          topic
+          enabled
+        }
+        essentialKnowledge {
+          label
+          value: id
+          unit
+          topic
+          learningObjective
+          enabled
+        }
+        applications {
+          label
+          value: id
+          unit
+          topic
+          enabled
+        }
+        skills {
+          label
+          value: id
+          unit
+          topic
+          enabled
+        }
+        understandings {
+          label
+          value: id
+          unit
+          topic
+          enabled
+        }
+      }
+      introToBioMeta {
+        value: id
+        textValue: value
+        label
+        coreConcepts {
+          value: id
+          label
+          explanatoryItems
+          enabled
+        }
+        subdisciplines {
+          value: id
+          label
+          coreConcept
+          enabled
+        }
+        subdisciplineStatements {
+          value: id
+          label
+          coreConcept
+          subdiscipline
+          enabled
+        }
+        coreCompetencies {
+          value: id
+          label
+          enabled
+        }
+        subcompetencies {
+          value: id
+          label
+          coreCompetence
+          explanation
+          enabled
+        }
+        subcompetenceStatements {
+          value: id
+          label
+          coreCompetence
+          subcompetence
+          enabled
+        }
+        concepts {
+          value: id
+          label
+          enabled
+        }
+        categories {
+          value: id
+          label
+          concept
+          explanation
+          enabled
+        }
+      }
+      profileOptions {
+        courses {
+          value
+          label
+        }
+        topics {
+          value
+          label
+        }
+      }
+    }
+  }
+`
+
 export const DISABLE_METADATA = gql`
   mutation DisableMetadata($id: ID!, $type: String!) {
     disableCourseMetadata(id: $id, type: $type)

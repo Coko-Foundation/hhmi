@@ -5,10 +5,10 @@ exports[`Signup matches snapshot 1`] = `
   className="sc-jPYHJC dPjPbv"
 >
   <div
-    className="sc-dOdWNU dsRyZU"
+    className="sc-jTtEpr jpHugm"
   >
     <h1
-      className="ant-typography sc-hGBxYJ grmPLY css-dev-only-do-not-override-12jzuas"
+      className="ant-typography sc-dOdWNU ApHQl css-dev-only-do-not-override-12jzuas"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,7 +18,7 @@ exports[`Signup matches snapshot 1`] = `
       Sign up
     </h1>
     <div
-      className="sc-fbUwh"
+      className="sc-ciABCq"
     >
       <div
         className="sc-irTswW dxKpil"
@@ -440,7 +440,7 @@ exports[`Signup matches snapshot 1`] = `
             </div>
           </div>
           <button
-            className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-dKfzgJ dSYqjz sc-ciABCq bhTEMN"
+            className="ant-btn css-dev-only-do-not-override-12jzuas ant-btn-primary sc-dKfzgJ dSYqjz sc-kGYcGX dGZQZr"
             disabled={false}
             onClick={[Function]}
             status={null}
@@ -454,10 +454,10 @@ exports[`Signup matches snapshot 1`] = `
         </form>
       </div>
       <div
-        className="sc-kGYcGX bTKQhn"
+        className="sc-hJtubf eOyEpR"
       >
         <div
-          className="sc-dQVSQq iIZubh"
+          className="sc-hGBxYJ bYnbUf"
         >
           <a
             className="sc-hMRyxU ftPaum"

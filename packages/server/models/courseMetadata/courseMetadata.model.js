@@ -4,6 +4,7 @@ const {
   db,
   logger,
   uuid,
+  useTransaction,
 } = require('@coko/server')
 
 class CourseMetadata extends BaseModel {
@@ -25,280 +26,322 @@ class CourseMetadata extends BaseModel {
   }
 
   static async getMetadata() {
-    const coursesRaw = await CourseMetadata.query().orderBy('order', 'asc')
+    logger.info('This method is obsolete, please use getMetadataOptimized')
 
-    const frameworks = await Promise.all(
-      coursesRaw.map(async course => {
-        const courseData = structuredClone(course)
-        courseData.units = []
-        courseData.topics = []
-        courseData.learningObjectives = []
-        courseData.essentialKnowledge = []
-        courseData.applications = []
-        courseData.skills = []
-        courseData.understandings = []
+    return useTransaction(async trx => {
+      const coursesRaw = await CourseMetadata.query(trx).orderBy('order', 'asc')
 
-        const unitsRaw = await db.raw(
-          `select * from unit where unit.course_id='${course.id}' order by unit.order asc`,
-        )
+      const frameworks = await Promise.all(
+        coursesRaw.map(async course => {
+          const courseData = structuredClone(course)
+          courseData.units = []
+          courseData.topics = []
+          courseData.learningObjectives = []
+          courseData.essentialKnowledge = []
+          courseData.applications = []
+          courseData.skills = []
+          courseData.understandings = []
 
-        courseData.units = await Promise.all(
-          unitsRaw.rows.map(async unit => {
-            const topicsRaw = await db.raw(
-              `select * from topic where topic.unit_id='${unit.id}' order by topic.order asc`,
+          const unitsRaw = await db
+            .raw(
+              `select * from unit where unit.course_id='${course.id}' order by unit.order asc`,
             )
+            .transacting(trx)
 
-            courseData.topics.push(
-              ...(await Promise.all(
-                topicsRaw.rows.map(async topic => {
-                  switch (course.value) {
-                    case 'apBiology':
-                    case 'apEnvironmentalScience':
-                      // eslint-disable-next-line no-case-declarations
-                      const learningObjectives = await db.raw(
-                        `select * from learning_objective where learning_objective.topic_id='${topic.id}' order by learning_objective.order asc`,
-                      )
+          courseData.units = await Promise.all(
+            unitsRaw.rows.map(async unit => {
+              const topicsRaw = await db
+                .raw(
+                  `select * from topic where topic.unit_id='${unit.id}' order by topic.order asc`,
+                )
+                .transacting(trx)
 
-                      courseData.learningObjectives.push(
-                        ...(await Promise.all(
-                          learningObjectives.rows.map(async lo => {
-                            const eks = await db.raw(
-                              `select * from essential_knowledge where essential_knowledge.learning_objective_id='${lo.id}' order by essential_knowledge.order asc`,
-                            )
-
-                            courseData.essentialKnowledge.push(
-                              ...eks.rows.map(ek => ({
-                                ...ek,
-                                learningObjective: lo.id,
-                                topic: topic.id,
-                                unit: unit.id,
-                              })),
-                            )
-
-                            return {
-                              ...lo,
-                              topic: topic.id,
-                              unit: unit.id,
-                            }
-                          }),
-                        )),
-                      )
-
-                      break
-
-                    case 'biBiology':
-                      courseData.applications.push(
-                        ...(
-                          await db.raw(
-                            `select * from application where application.topic_id='${topic.id}' order by application.order asc`,
-                          )
-                        ).rows.map(application => ({
-                          ...application,
-                          topic: topic.id,
-                        })),
-                      )
-                      courseData.skills.push(
-                        ...(
-                          await db.raw(
-                            `select * from skill where skill.topic_id='${topic.id}' order by skill.order asc`,
-                          )
-                        ).rows.map(skill => ({
-                          ...skill,
-                          topic: topic.id,
-                        })),
-                      )
-                      courseData.understandings.push(
-                        ...(
-                          await db.raw(
-                            `select * from understanding where understanding.topic_id='${topic.id}' order by understanding.order asc`,
-                          )
-                        ).rows.map(understanding => ({
-                          ...understanding,
-                          topic: topic.id,
-                        })),
-                      )
-                      break
-
-                    case 'biEnvironmentalScience':
-                      courseData.applications.push(
-                        ...(
-                          await db.raw(
-                            `select * from application where application.topic_id='${topic.id}' order by application.order asc`,
-                          )
-                        ).rows.map(application => ({
-                          ...application,
-                          topic: topic.id,
-                        })),
-                      )
-                      courseData.understandings.push(
-                        ...(
-                          await db.raw(
-                            `select * from understanding where understanding.topic_id='${topic.id}' order by understanding.order asc`,
-                          )
-                        ).rows.map(understanding => ({
-                          ...understanding,
-                          topic: topic.id,
-                        })),
-                      )
-                      break
-
-                    case 'introBioForMajors':
-                      courseData.learningObjectives.push(
-                        ...(
-                          await db.raw(
+              courseData.topics.push(
+                ...(await Promise.all(
+                  topicsRaw.rows.map(async topic => {
+                    switch (course.value) {
+                      case 'apBiology':
+                      case 'apEnvironmentalScience':
+                        // eslint-disable-next-line no-case-declarations
+                        const learningObjectives = await db
+                          .raw(
                             `select * from learning_objective where learning_objective.topic_id='${topic.id}' order by learning_objective.order asc`,
                           )
-                        ).rows.map(lo => ({
-                          ...lo,
-                          topic: topic.id,
+                          .transacting(trx)
+
+                        courseData.learningObjectives.push(
+                          ...(await Promise.all(
+                            learningObjectives.rows.map(async lo => {
+                              const eks = await db
+                                .raw(
+                                  `select * from essential_knowledge where essential_knowledge.learning_objective_id='${lo.id}' order by essential_knowledge.order asc`,
+                                )
+                                .transacting(trx)
+
+                              courseData.essentialKnowledge.push(
+                                ...eks.rows.map(ek => ({
+                                  ...ek,
+                                  learningObjective: lo.id,
+                                  topic: topic.id,
+                                  unit: unit.id,
+                                })),
+                              )
+
+                              return {
+                                ...lo,
+                                topic: topic.id,
+                                unit: unit.id,
+                              }
+                            }),
+                          )),
+                        )
+
+                        break
+
+                      case 'biBiology':
+                        courseData.applications.push(
+                          ...(
+                            await db
+                              .raw(
+                                `select * from application where application.topic_id='${topic.id}' order by application.order asc`,
+                              )
+                              .transacting(trx)
+                          ).rows.map(application => ({
+                            ...application,
+                            topic: topic.id,
+                          })),
+                        )
+                        courseData.skills.push(
+                          ...(
+                            await db
+                              .raw(
+                                `select * from skill where skill.topic_id='${topic.id}' order by skill.order asc`,
+                              )
+                              .transacting(trx)
+                          ).rows.map(skill => ({
+                            ...skill,
+                            topic: topic.id,
+                          })),
+                        )
+                        courseData.understandings.push(
+                          ...(
+                            await db
+                              .raw(
+                                `select * from understanding where understanding.topic_id='${topic.id}' order by understanding.order asc`,
+                              )
+                              .transacting(trx)
+                          ).rows.map(understanding => ({
+                            ...understanding,
+                            topic: topic.id,
+                          })),
+                        )
+                        break
+
+                      case 'biEnvironmentalScience':
+                        courseData.applications.push(
+                          ...(
+                            await db
+                              .raw(
+                                `select * from application where application.topic_id='${topic.id}' order by application.order asc`,
+                              )
+                              .transacting(trx)
+                          ).rows.map(application => ({
+                            ...application,
+                            topic: topic.id,
+                          })),
+                        )
+                        courseData.understandings.push(
+                          ...(
+                            await db
+                              .raw(
+                                `select * from understanding where understanding.topic_id='${topic.id}' order by understanding.order asc`,
+                              )
+                              .transacting(trx)
+                          ).rows.map(understanding => ({
+                            ...understanding,
+                            topic: topic.id,
+                          })),
+                        )
+                        break
+
+                      case 'introBioForMajors':
+                        courseData.learningObjectives.push(
+                          ...(
+                            await db
+                              .raw(
+                                `select * from learning_objective where learning_objective.topic_id='${topic.id}' order by learning_objective.order asc`,
+                              )
+                              .transacting(trx)
+                          ).rows.map(lo => ({
+                            ...lo,
+                            topic: topic.id,
+                          })),
+                        )
+                        break
+
+                      default:
+                        break
+                    }
+
+                    return {
+                      ...topic,
+                      unit: unit.id,
+                    }
+                  }),
+                )),
+              )
+
+              return unit
+            }),
+          )
+
+          return courseData
+        }),
+      )
+
+      const metaFrameworksRaw = await db
+        .raw(`select * from meta_framework`)
+        .transacting(trx)
+
+      const introToBioMeta = await Promise.all(
+        metaFrameworksRaw.rows.map(async meta => {
+          const frameworkData = structuredClone(meta)
+          frameworkData.coreConcepts = []
+          frameworkData.subdisciplines = []
+          frameworkData.subdisciplineStatements = []
+          frameworkData.coreCompetencies = []
+          frameworkData.subcompetencies = []
+          frameworkData.subcompetenceStatements = []
+          frameworkData.concepts = []
+          frameworkData.categories = []
+
+          if (frameworkData.value === 'visionAndChange') {
+            const coreConceptsRaw = await db
+              .raw(
+                `select * from core_concept where core_concept.meta_framework_id='${frameworkData.id}' order by core_concept.order asc`,
+              )
+              .transacting(trx)
+
+            frameworkData.coreConcepts = await Promise.all(
+              coreConceptsRaw.rows.map(async coreConcept => {
+                const { explanatory_items: explanatoryItems, ...rest } =
+                  coreConcept
+
+                const subdisciplinesRaw = await db
+                  .raw(
+                    `select * from subdiscipline where subdiscipline.core_concept_id='${coreConcept.id}' order by subdiscipline.order asc`,
+                  )
+                  .transacting(trx)
+
+                frameworkData.subdisciplines.push(
+                  ...(await Promise.all(
+                    subdisciplinesRaw.rows.map(async subdiscipline => {
+                      const statements = await db
+                        .raw(
+                          `select * from subdiscipline_statement where subdiscipline_statement.subdiscipline_id='${subdiscipline.id}' order by subdiscipline_statement.order asc`,
+                        )
+                        .transacting(trx)
+
+                      frameworkData.subdisciplineStatements.push(
+                        ...statements.rows.map(statement => ({
+                          ...statement,
+                          coreConcept: coreConcept.id,
+                          subdiscipline: subdiscipline.id,
                         })),
                       )
-                      break
 
-                    default:
-                      break
-                  }
+                      return {
+                        ...subdiscipline,
+                        coreConcept: coreConcept.id,
+                      }
+                    }),
+                  )),
+                )
 
-                  return {
-                    ...topic,
-                    unit: unit.id,
-                  }
-                }),
-              )),
+                return { ...rest, explanatoryItems }
+              }),
             )
 
-            return unit
-          }),
-        )
-
-        return courseData
-      }),
-    )
-
-    const metaFrameworksRaw = await db.raw(`select * from meta_framework`)
-
-    const introToBioMeta = await Promise.all(
-      metaFrameworksRaw.rows.map(async meta => {
-        const frameworkData = structuredClone(meta)
-        frameworkData.coreConcepts = []
-        frameworkData.subdisciplines = []
-        frameworkData.subdisciplineStatements = []
-        frameworkData.coreCompetencies = []
-        frameworkData.subcompetencies = []
-        frameworkData.subcompetenceStatements = []
-        frameworkData.concepts = []
-        frameworkData.categories = []
-
-        if (frameworkData.value === 'visionAndChange') {
-          const coreConceptsRaw = await db.raw(
-            `select * from core_concept where core_concept.meta_framework_id='${frameworkData.id}' order by core_concept.order asc`,
-          )
-
-          frameworkData.coreConcepts = await Promise.all(
-            coreConceptsRaw.rows.map(async coreConcept => {
-              const { explanatory_items: explanatoryItems, ...rest } =
-                coreConcept
-
-              const subdisciplinesRaw = await db.raw(
-                `select * from subdiscipline where subdiscipline.core_concept_id='${coreConcept.id}' order by subdiscipline.order asc`,
+            const coreCompetenceRaw = await db
+              .raw(
+                `select * from core_competence where core_competence.meta_framework_id='${frameworkData.id}' order by core_competence.order asc`,
               )
+              .transacting(trx)
 
-              frameworkData.subdisciplines.push(
-                ...(await Promise.all(
-                  subdisciplinesRaw.rows.map(async subdiscipline => {
-                    const statements = await db.raw(
-                      `select * from subdiscipline_statement where subdiscipline_statement.subdiscipline_id='${subdiscipline.id}' order by subdiscipline_statement.order asc`,
-                    )
+            frameworkData.coreCompetencies = await Promise.all(
+              coreCompetenceRaw.rows.map(async competence => {
+                const subcompetencesRaw = await db
+                  .raw(
+                    `select * from subcompetence where subcompetence.core_competence_id='${competence.id}' order by subcompetence.order asc`,
+                  )
+                  .transacting(trx)
 
-                    frameworkData.subdisciplineStatements.push(
-                      ...statements.rows.map(statement => ({
-                        ...statement,
-                        coreConcept: coreConcept.id,
-                        subdiscipline: subdiscipline.id,
-                      })),
-                    )
+                frameworkData.subcompetencies.push(
+                  ...(await Promise.all(
+                    subcompetencesRaw.rows.map(async subcompetence => {
+                      const statements = await db
+                        .raw(
+                          `select * from subcompetence_statement where subcompetence_statement.subcompetence_id='${subcompetence.id}' order by subcompetence_statement.order asc`,
+                        )
+                        .transacting(trx)
 
-                    return {
-                      ...subdiscipline,
-                      coreConcept: coreConcept.id,
-                    }
-                  }),
-                )),
-              )
+                      frameworkData.subcompetenceStatements.push(
+                        ...statements.rows.map(statement => ({
+                          ...statement,
+                          coreCompetence: competence.id,
+                          subcompetence: subcompetence.id,
+                        })),
+                      )
 
-              return { ...rest, explanatoryItems }
-            }),
-          )
-
-          const coreCompetenceRaw = await db.raw(
-            `select * from core_competence where core_competence.meta_framework_id='${frameworkData.id}' order by core_competence.order asc`,
-          )
-
-          frameworkData.coreCompetencies = await Promise.all(
-            coreCompetenceRaw.rows.map(async competence => {
-              const subcompetencesRaw = await db.raw(
-                `select * from subcompetence where subcompetence.core_competence_id='${competence.id}' order by subcompetence.order asc`,
-              )
-
-              frameworkData.subcompetencies.push(
-                ...(await Promise.all(
-                  subcompetencesRaw.rows.map(async subcompetence => {
-                    const statements = await db.raw(
-                      `select * from subcompetence_statement where subcompetence_statement.subcompetence_id='${subcompetence.id}' order by subcompetence_statement.order asc`,
-                    )
-
-                    frameworkData.subcompetenceStatements.push(
-                      ...statements.rows.map(statement => ({
-                        ...statement,
+                      return {
+                        ...subcompetence,
                         coreCompetence: competence.id,
-                        subcompetence: subcompetence.id,
-                      })),
-                    )
+                      }
+                    }),
+                  )),
+                )
 
+                return competence
+              }),
+            )
+          } else if (frameworkData.value === 'aamcFuturePhysicians') {
+            const conceptsRaw = await db
+              .raw(
+                `select * from concept where concept.meta_framework_id='${frameworkData.id}' order by concept.order asc`,
+              )
+              .transacting(trx)
+
+            frameworkData.concepts = await Promise.all(
+              conceptsRaw.rows.map(async concept => {
+                const categoriesRaw = await db
+                  .raw(
+                    `select * from category where category.concept_id='${concept.id}' order by category.order asc`,
+                  )
+                  .transacting(trx)
+
+                frameworkData.categories.push(
+                  ...categoriesRaw.rows.map(category => {
                     return {
-                      ...subcompetence,
-                      coreCompetence: competence.id,
+                      ...category,
+                      concept: concept.id,
                     }
                   }),
-                )),
-              )
+                )
 
-              return competence
-            }),
-          )
-        } else if (frameworkData.value === 'aamcFuturePhysicians') {
-          const conceptsRaw = await db.raw(
-            `select * from concept where concept.meta_framework_id='${frameworkData.id}' order by concept.order asc`,
-          )
+                return concept
+              }),
+            )
+          }
 
-          frameworkData.concepts = await Promise.all(
-            conceptsRaw.rows.map(async concept => {
-              const categoriesRaw = await db.raw(
-                `select * from category where category.concept_id='${concept.id}' order by category.order asc`,
-              )
+          return frameworkData
+        }),
+      )
 
-              frameworkData.categories.push(
-                ...categoriesRaw.rows.map(category => {
-                  return {
-                    ...category,
-                    concept: concept.id,
-                  }
-                }),
-              )
-
-              return concept
-            }),
-          )
-        }
-
-        return frameworkData
-      }),
-    )
-
-    return {
-      frameworks,
-      introToBioMeta,
-    }
+      return {
+        frameworks,
+        introToBioMeta,
+      }
+    })
   }
 
   static findTablenameByType = type => {

@@ -9,6 +9,7 @@ const {
   Team,
   TeamMember,
   User,
+  QuestionVersion,
 } = require('../models')
 
 const { labels } = require('./constants')
@@ -157,7 +158,9 @@ const getAuthorForComplexItemSet = async (complexItemSetId, options = {}) => {
 
     return Promise.all(
       authors.map(author => {
-        return User.findById(author.userId)
+        return author.userId
+          ? User.findById(author.userId)
+          : { displayName: '[DELETED]' }
       }),
     )
   } catch (e) {
@@ -457,6 +460,45 @@ const exportSetQuestionsQTI = async (setIds, questionIds) => {
   }
 }
 
+const deleteComplexItemSet = async setId => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} deleteComplexItemSet:`
+
+  logger.info(`${CONTROLLER_MESSAGE} delete set with id ${setId}`)
+
+  try {
+    return useTransaction(async trx => {
+      await QuestionVersion.query(trx)
+        .patch({ complexItemSetId: null })
+        .where('complexItemSetId', setId)
+
+      await ComplexItemSet.deleteById(setId, { trx })
+      return setId
+    })
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
+const deleteComplexItemSets = async setIds => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} deleteComplexItemSet:`
+  logger.info(`${CONTROLLER_MESSAGE} delete sets with ids ${setIds}`)
+
+  try {
+    return useTransaction(async trx => {
+      await QuestionVersion.query(trx)
+        .patch({ complexItemSetId: null })
+        .whereIn('complexItemSetId', setIds)
+
+      await ComplexItemSet.deleteByIds(setIds, { trx })
+      return true
+    })
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   getComplexItemSets,
   getComplexItemSet,
@@ -471,4 +513,6 @@ module.exports = {
   exportSetQuestions,
   exportSetsQTI,
   exportSetQuestionsQTI,
+  deleteComplexItemSet,
+  deleteComplexItemSets,
 }

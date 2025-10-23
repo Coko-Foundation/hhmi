@@ -649,7 +649,7 @@ const createHeaderLinksObject = ({
   onLogout,
   windowWidth,
   pendingTsks,
-  unreadMentions,
+  unreadMentionsCount,
 }) => {
   return {
     navigation: [
@@ -736,7 +736,7 @@ const createHeaderLinksObject = ({
         mediaBreak: windowWidth >= 1200,
         tasks: pendingTsks,
         renderIf: loggedin,
-        unreadMentions,
+        unreadMentionsCount,
         onClick,
       },
     ],
@@ -753,11 +753,11 @@ const Header = props => {
     displayName,
     links,
     onLogout,
-    unreadMentions,
+    unreadMentionsCount,
     ...rest
   } = props
 
-  const notificationsTotal = unreadMentions
+  const notificationsTotal = unreadMentionsCount
   const { width: windowWidth } = useWindowSize()
 
   const [userMenuIsOpen, setUserMenuOpen] = useState(false)
@@ -943,7 +943,7 @@ Header.propTypes = {
   displayName: PropTypes.string,
   links: PropTypes.objectOf(PropTypes.string),
   onLogout: PropTypes.func,
-  unreadMentions: PropTypes.number,
+  unreadMentionsCount: PropTypes.number,
 }
 
 Header.defaultProps = {
@@ -967,7 +967,7 @@ Header.defaultProps = {
     profile: '#',
     login: '#',
   },
-  unreadMentions: 0,
+  unreadMentionsCount: 0,
 }
 
 LinksList.propTypes = {

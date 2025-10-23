@@ -5,12 +5,17 @@ const {
   editCourseMetadata,
   addCourseMetadata,
   reorderCourseMetadata,
+  getMetadataOptimized,
 } = require('../../controllers/courseMetadata.controller')
 
 const { metadataResolver } = require('../../controllers/question.controllers')
 
 const getMetadataResolver = async () => {
   return getMetadata()
+}
+
+const getMetadataOptimizedResolver = async () => {
+  return getMetadataOptimized()
 }
 
 const disableCourseMetadataResolver = async (_, { id, type }) => {
@@ -40,6 +45,7 @@ module.exports = {
   Query: {
     getMetadataOld: metadataResolver,
     getMetadata: getMetadataResolver,
+    getMetadataOptimized: getMetadataOptimizedResolver,
   },
   Mutation: {
     disableCourseMetadata: disableCourseMetadataResolver,

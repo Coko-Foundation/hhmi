@@ -226,6 +226,7 @@ input SortMetadataInput {
 extend type Query {
   getMetadataOld: Metadata!
   getMetadata: Metadata!
+  getMetadataOptimized: Metadata!
 }
 
 extend type Mutation {

@@ -18,7 +18,7 @@ const Wrapper = styled.span`
 `
 
 export const UserNotificationsUI = props => {
-  const { to, onClick, unreadMentions, ...rest } = props
+  const { to, onClick, unreadMentionsCount, ...rest } = props
 
   const [mentionsLink] = to // pass an array of links in case we add Links to Task Notifications or any other userlink
   return (
@@ -27,7 +27,7 @@ export const UserNotificationsUI = props => {
       <span style={{ display: 'flex' }}>
         <NotificationIcon
           iconSrc={messagesIcon}
-          pending={unreadMentions}
+          pending={unreadMentionsCount}
           text="Messages"
           to={mentionsLink}
         />
@@ -45,13 +45,13 @@ export const UserNotificationsUI = props => {
 UserNotificationsUI.propTypes = {
   to: PropTypes.arrayOf(PropTypes.string),
   onClick: PropTypes.func,
-  unreadMentions: PropTypes.number,
+  unreadMentionsCount: PropTypes.number,
 }
 
 UserNotificationsUI.defaultProps = {
   to: ['/notifications'],
   onClick: null,
-  unreadMentions: 0,
+  unreadMentionsCount: 0,
 }
 
 export default UserNotificationsUI

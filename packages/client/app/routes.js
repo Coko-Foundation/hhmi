@@ -286,7 +286,7 @@ const SiteHeader = () => {
   }
 
   const { currentUser, setCurrentUser } = useCurrentUser()
-  const { unreadMentions } = useNotifications()
+  const { unreadMentionsCount } = useNotifications()
   const client = useApolloClient()
   const history = useHistory()
   const [currentPath, setCurrentPath] = useState(history.location.pathname)
@@ -351,7 +351,7 @@ const SiteHeader = () => {
       links={headerLinks}
       loggedin={!!currentUser}
       onLogout={logout}
-      unreadMentions={unreadMentions}
+      unreadMentionsCount={unreadMentionsCount}
     />
   )
 }

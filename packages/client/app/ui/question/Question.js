@@ -489,6 +489,8 @@ const Question = props => {
     loadingAddToList,
     loadingCreateList,
     dependencyOptions,
+    unreadMentions,
+    onMarkAsRead,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -509,9 +511,9 @@ const Question = props => {
   const [imageLongDescs, setImageLongDescs] = useState([])
 
   const readOnly =
-    (editorView &&
-      isSubmitted &&
-      (isUnderReview || isPublished || isUnpublished)) ||
+    (editorView && isSubmitted && !isInProduction && !isAccepted) /* &&
+      (isUnderReview || isPublished || isUnpublished) */ ||
+    (editorView && (isUnderReview || isPublished || isUnpublished)) ||
     (!editorView && isSubmitted && !isEditing) ||
     isRejected
 
@@ -1252,7 +1254,7 @@ const Question = props => {
           </StyledButton>
         </>
       )}
-      {canPublish && isInProduction && (
+      {canPublish && isInProduction && !isPublished && (
         <StyledButton
           data-testid="publish-question-btn"
           onClick={handlePublish}
@@ -1434,7 +1436,7 @@ const Question = props => {
             searchLoading={searchHELoading}
           />
         )}
-        {canPublish && isInProduction && (
+        {canPublish && isInProduction && !isPublished && (
           <StyledButton
             data-testid="publish-question-btn"
             onClick={handlePublish}
@@ -1625,7 +1627,7 @@ const Question = props => {
             position="block-end"
             toggle={
               <Button
-                data-testid="add-to-list-btn"
+                data-testid="export-btn"
                 id="export-popup-toggle"
                 style={{ marginInlineEnd: '8px' }}
                 type="primary"
@@ -1920,6 +1922,24 @@ const Question = props => {
     showReviewerChatTab,
     showAssignReviewers,
   ])
+
+  useEffect(() => {
+    let toMarkAsRead
+
+    switch (activeKey) {
+      case 'authorChat':
+      case 'productionChat':
+      case 'reviewerChat':
+        toMarkAsRead = unreadMentions
+          .filter(({ content }) => content.chatType === activeKey)
+          .map(({ id }) => id)
+
+        onMarkAsRead(toMarkAsRead)
+        break
+      default:
+        break
+    }
+  }, [activeKey])
 
   return (
     <ModalContext.Provider value={contextValue}>
@@ -2350,6 +2370,8 @@ Question.propTypes = {
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.shape()]),
     }),
   ),
+  unreadMentions: PropTypes.arrayOf(PropTypes.shape()),
+  onMarkAsRead: PropTypes.func,
 }
 
 Question.defaultProps = {
@@ -2463,6 +2485,8 @@ Question.defaultProps = {
   loadingAddToList: false,
   loadingCreateList: false,
   dependencyOptions: [],
+  unreadMentions: [],
+  onMarkAsRead: null,
 }
 
 export default Question

@@ -25,6 +25,7 @@ const {
   Question,
   QuestionVersion,
   Review,
+  ComplexItemSet,
 } = require('../models')
 
 const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
@@ -342,6 +343,28 @@ const deleteUsersRelatedItems = async (ids, options = {}) => {
                 }
               }),
             )
+          }),
+        )
+
+        await Promise.all(
+          ids.map(async id => {
+            const userData = await User.findById(id)
+            const authorDisplayName = await User.getDisplayName(userData)
+            const userTeams = await User.getTeams(id)
+
+            const authoredSetsIds = userTeams
+              .filter(
+                team =>
+                  team.role === 'author' &&
+                  team.objectType === 'complexItemSet',
+              )
+              .map(team => team.objectId)
+
+            const authoredSets = await ComplexItemSet.query(trx)
+              .update({ deletedAuthor: `${authorDisplayName} (deleted)` })
+              .whereIn('id', authoredSetsIds)
+
+            return authoredSets
           }),
         )
 

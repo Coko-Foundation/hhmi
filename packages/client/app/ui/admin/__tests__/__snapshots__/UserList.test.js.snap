@@ -2,13 +2,13 @@
 
 exports[`UserList matches snapshot 1`] = `
 <div
-  className="sc-fbUwh cRsTlh"
+  className="sc-ciABCq cwwDDY"
 >
   <section
-    className="sc-kGYcGX gmtfoZ"
+    className="sc-hJtubf cDFpgT"
   >
     <h1
-      className="ant-typography sc-ciABCq eEeYzF css-dev-only-do-not-override-12jzuas"
+      className="ant-typography sc-kGYcGX fgVgZL css-dev-only-do-not-override-12jzuas"
       style={
         {
           "WebkitLineClamp": undefined,
@@ -18,10 +18,10 @@ exports[`UserList matches snapshot 1`] = `
       User Manager
     </h1>
     <div
-      className="sc-cKuNTH bhDZyZ sc-hJtubf foRxcy"
+      className="sc-khsWhO kqyJCm sc-dQVSQq iMXDZB"
     >
       <div
-        className="sc-khsWhO gKQzIt"
+        className="sc-ikalHA jCvMLP"
       >
         <span
           className="ant-input-group-wrapper ant-input-search sc-kZGvTt byJBQE css-dev-only-do-not-override-12jzuas"
@@ -142,7 +142,7 @@ exports[`UserList matches snapshot 1`] = `
                               style={{}}
                             >
                               <label
-                                className="ant-checkbox-wrapper sc-cyRfQX hiCCaO sc-dQVSQq SPHnK css-dev-only-do-not-override-12jzuas"
+                                className="ant-checkbox-wrapper sc-cyRfQX hiCCaO sc-hGBxYJ fyXtwM css-dev-only-do-not-override-12jzuas"
                               >
                                 <span
                                   className="ant-checkbox css-dev-only-do-not-override-12jzuas"
@@ -702,7 +702,7 @@ exports[`UserList matches snapshot 1`] = `
       </div>
       <nav
         aria-label="Pagination"
-        className="sc-cbelXg bbVBzc sc-ikalHA gMYzVW"
+        className="sc-cbelXg bbVBzc sc-jgxgnB eXYCvW"
         role="navigation"
       >
         <ul
@@ -858,7 +858,7 @@ exports[`UserList matches snapshot 1`] = `
       </nav>
     </div>
     <div
-      className="sc-hGBxYJ eXWnmJ"
+      className="sc-dOdWNU fJnGCw"
     >
       <label
         className="ant-checkbox-wrapper sc-cyRfQX hiCCaO css-dev-only-do-not-override-12jzuas"

@@ -43,12 +43,13 @@ describe('Context-dependent item set workflows', () => {
     cy.contains(`[class="ant-empty-description"]`, 'No Data')
   })
 
-  /* eslint-disable-next-line jest/no-disabled-tests */
+  // eslint-disable-next-line jest/no-disabled-tests
   it.skip("Author cannot open another author's set with no published item (by opening given URL)", () => {
     let setId
     cy.login({ ...admin, visit: dashboardRoute })
     cy.visit(setsPage, { method: 'GET' })
 
+    cy.get(listItemWrapper, { timeout: 10000 }).should('exist')
     cy.get(listItemWrapper).eq(0).contains('h2', complexItemSet1.title).click()
     cy.contains(antTabs, 'Content').should('be.visible')
     cy.contains('h2', complexItemSet1.title).should('be.visible')
@@ -211,7 +212,7 @@ describe('Context-dependent item set workflows', () => {
     })
 
     cy.get(anchorTags.discover).click({ force: true })
-    cy.get('[data-testid="complex-item-set-select"]').click()
+    cy.get('[data-testid="complex-item-set-select"]').first().click()
     cy.contains(
       '[class="ant-select-item-option-content"]',
       complexItemSet2.title,

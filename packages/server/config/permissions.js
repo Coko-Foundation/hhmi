@@ -47,10 +47,10 @@ const isReviewer = rule()(async (_, __, ctx) => {
 })
 
 const canSubmitReview = rule()(async (_, __, ctx) => {
-  if (!ctx.user) return false
+  if (!ctx.userId) return false
 
-  const UserModel = ctx.connectors.User.model
-  const user = await UserModel.query().findById(ctx.user)
+  const { User } = require('@coko/server')
+  const user = await User.query().findById(ctx.userId)
 
   const isUserReviewer = await user.hasGlobalRole('reviewer')
   const isUserEditor = await user.hasGlobalRole('editor')
@@ -220,14 +220,12 @@ const canCreateNewVersion = rule()(async (_, __, ctx) => {
 
 // editors and handlingEditors can accept questions
 const canAcceptQuestion = rule()(async (_, { questionVersionId }, ctx) => {
-  if (!ctx.user) return false
+  if (!ctx.userId) return false
 
-  const UserModel = ctx.connectors.User.model
-  const user = await UserModel.query().findById(ctx.user)
+  const { User, QuestionVersion } = require('@coko/server')
+  const user = await User.query().findById(ctx.userId)
 
-  const QuestionVersionModel = ctx.connectors.QuestionVersion.model
-
-  const questionVersion = await QuestionVersionModel.query().findById(
+  const questionVersion = await QuestionVersion.query().findById(
     questionVersionId,
   )
 
@@ -241,21 +239,19 @@ const canAcceptQuestion = rule()(async (_, { questionVersionId }, ctx) => {
 
 const canEditQuestion = rule()(
   async (_, { questionId, questionVersionId }, ctx) => {
-    if (!ctx.user) return false
+    if (!ctx.userId) return false
 
-    const UserModel = ctx.connectors.User.model
-    const user = await UserModel.query().findById(ctx.user)
+    const { User, QuestionVersion, Team } = require('@coko/server')
+    const user = await User.query().findById(ctx.userId)
 
     if (!user.isActive) return false
 
-    const QuestionVersionModel = ctx.connectors.QuestionVersion.model
-
-    const questionVersion = await QuestionVersionModel.query().findById(
+    const questionVersion = await QuestionVersion.query().findById(
       questionVersionId,
     )
 
     return (
-      isQuestionAuthor(ctx.connectors.Team.model, ctx.user, questionId) &&
+      isQuestionAuthor(Team, ctx.userId, questionId) &&
       !questionVersion.accepted
     )
   },
@@ -437,7 +433,8 @@ const permissions = {
     // Sets
     createComplexItemSet: isActive,
     editComplexItemSet: isActive,
-    deleteComplexItemSet: isActive,
+    deleteComplexItemSet: isAdmin,
+    deleteComplexItemSets: isAdmin,
     assignSetAuthor: isAdmin,
     exportSets: isActive,
     exportSetQuestions: isActive,
@@ -473,6 +470,7 @@ const permissions = {
     getLoginConfig: allow,
     getMetadata: allow,
     getMetadataOld: allow,
+    getMetadataOptimized: allow,
     getResources: allow,
     // Lists
     myLists: isActive,

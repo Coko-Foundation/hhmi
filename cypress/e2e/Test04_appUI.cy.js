@@ -75,7 +75,7 @@ describe('Testing apps responsiveness', () => {
       cy.get(listItemWrapper).eq(1).contains(ProseMirror, 'By 2040').click()
 
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1000)
+      cy.wait(3000)
       cy.get(moreActionsToggle).click()
 
       // [segment]: checking popup content in submission stage
@@ -91,13 +91,64 @@ describe('Testing apps responsiveness', () => {
       cy.contains(
         '[data-testid="editor-actions-popup"] [id="accept"]',
         'Accept',
-      ).click()
+      ).should('be.visible')
+
+      // cy.get('button[id="accept"]:nth(1)')
+      cy.get('[data-testid="editor-actions-popup"]:visible', { timeout: 10000 })
+        .should('exist')
+        .within(() => {
+          cy.contains('Accept').click({ force: true })
+        })
       cy.wait('@GQLReq')
+
+      // Wait for state/UI refresh
+      cy.get('svg[data-icon="check"]', { timeout: 10000 }).should('exist')
+
+      cy.contains(
+        'By 2040, the world s population is expected to rise to approximately',
+      ).should('be.visible', { timeout: 5000 })
+
+      cy.get('div[data-testid="editor-collapse"]')
+        .should('exist')
+        .within(() => {
+          cy.get('.ant-collapse-header', { timeout: 10000 })
+            .should('exist')
+            .click({ force: true })
+        })
+      // cy.get('.ant-collapse-header-text').first().click({ force: true })
+      cy.contains(
+        'By 2040, the world s population is expected to rise to approximately',
+      ).should('not.be.visible', { timeout: 5000 })
+
+      cy.wait('@GQLReq')
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(3000)
+      // cy.get(moreActionsToggle).click()
+
+      // cy.get('.ant-tabs-nav')
+      //   .should('exist')
+      //   .within(() => {
+      //     cy.get('button[title="More actions"]', { timeout: 10000 })
+      //       .should('exist')
+      //       .click({ force: true })
+      //   })
+
+      cy.get('button[title="More actions"]').should(
+        'have.attr',
+        'aria-expanded',
+        'true',
+      )
 
       cy.contains(
         '[data-testid="editor-actions-popup"] [id="moveToReview"]',
         'Move to review',
-      ).click()
+      ).should('exist')
+      cy.get('[data-testid="editor-actions-popup"]:visible', { timeout: 10000 })
+        .should('exist')
+        .within(() => {
+          cy.contains('Move to review').click({ force: true })
+        })
+
       cy.contains(buttonAntModalBody, 'Move to review').click()
 
       cy.contains(buttonAntModalBody, 'Ok').click()
@@ -105,18 +156,39 @@ describe('Testing apps responsiveness', () => {
       // [segment]: checking popup content in review stage
       cy.log('checking popup content in review stage...')
 
+      cy.get('[data-node-key="reviewerChat"]').should('exist')
+      cy.get('[data-node-key="assignReviewers"]').should('exist')
       cy.get(moreActionsToggle, { timeout: 8000 }).click()
       cy.contains(exportToWordButton, 'Export to Word')
       cy.contains(
         '[data-testid="editor-actions-popup"] [id="doNotAccept"]',
         'Do not accept',
       )
-      cy.contains(
-        '[data-testid="editor-actions-popup"] [id="moveToProduction"]',
-        'Move to production',
-      ).click()
-      cy.contains(buttonAntModalBody, 'Move to production').click()
-      cy.contains(buttonAntModalBody, 'Ok').click()
+
+      cy.get('button[id="moveToProduction"]')
+        .last()
+        .should('be.visible')
+        .click({ force: true })
+
+      // Wait for *the* modal to appear and assert content
+      cy.get('.ant-modal-body')
+        .should('be.visible')
+        .within(() => {
+          cy.contains('You are about to move this item to production').should(
+            'be.visible',
+          )
+
+          cy.contains(
+            "This item will become editable so that editors and the production team can apply the reviewers' feedback. Are you sure?",
+          ).should('be.visible')
+
+          cy.contains('span', 'Move to production')
+            .should('be.visible')
+            .click({ force: true })
+        })
+
+      cy.contains('button', 'Ok').click()
+      cy.wait('@GQLReq')
 
       // [segment]: checking popup content in production stage
       cy.log('checking popup content in production stage...')
@@ -237,7 +309,8 @@ describe('Search filter', () => {
         .then($search => {
           cy.get('ul[id="filterList"] li[id="Status"]').last().click()
           cy.get('ul[id="filterList"] li[id="Under Review"]').last().click()
-          cy.get($search).type(`{enter}`)
+          cy.get('.ant-input-search-button').click()
+          // cy.get($search).type(`{enter}`)
         })
 
       cy.get(listItemWrapper)

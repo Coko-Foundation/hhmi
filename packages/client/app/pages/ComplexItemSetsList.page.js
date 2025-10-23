@@ -1,9 +1,14 @@
 import React, { useState } from 'react'
 import { useMutation, useQuery } from '@apollo/client'
-import { serverUrl } from '@coko/client'
+import { serverUrl, useCurrentUser } from '@coko/client'
 import { ComplexItemSetList } from 'ui'
-import { GET_COMPLEX_ITEM_SETS, EXPORT_SETS, EXPORT_SETS_QTI } from '../graphql'
-import { extractDocumentText } from '../utilities'
+import {
+  GET_COMPLEX_ITEM_SETS,
+  EXPORT_SETS,
+  EXPORT_SETS_QTI,
+  DELETE_SETS,
+} from '../graphql'
+import { extractDocumentText, hasGlobalRole } from '../utilities'
 
 const transform = data => {
   if (!data) return []
@@ -12,10 +17,18 @@ const transform = data => {
   return result.map(set => {
     const leadingContent = extractDocumentText(set.leadingContent)
 
+    const authors = set.authors
+      ?.map(a =>
+        a.displayName !== '[DELETED]'
+          ? a.displayName
+          : set.deletedAuthor || a.displayName,
+      )
+      .join(', ')
+
     const metadata = [
       {
         label: 'author',
-        value: set.authors?.map(a => a.displayName).join(', '),
+        value: authors,
       },
       {
         label: 'created at',
@@ -54,6 +67,9 @@ const sortOptions = [
 ]
 
 const ComplexItemSetsListPage = () => {
+  const { currentUser } = useCurrentUser()
+  const isAdmin = hasGlobalRole(currentUser, 'admin')
+
   const [searchParams, setSearchParams] = useState({
     searchQuery: '',
     page: 1,
@@ -78,6 +94,10 @@ const ComplexItemSetsListPage = () => {
 
   const [exportSetsMutation] = useMutation(EXPORT_SETS)
   const [exportSetsQTIMutation] = useMutation(EXPORT_SETS_QTI)
+
+  const [deleteSetsMutation] = useMutation(DELETE_SETS, {
+    refetchQueries: [GET_COMPLEX_ITEM_SETS],
+  })
 
   const handleSearchParamsChange = params => {
     setSearchParams({ ...searchParams, ...params })
@@ -135,10 +155,22 @@ const ComplexItemSetsListPage = () => {
       })
   }
 
+  const handleDeleteSets = async setIds => {
+    const mutationData = {
+      variables: {
+        ids: setIds,
+      },
+    }
+
+    return deleteSetsMutation(mutationData)
+  }
+
   return (
     <ComplexItemSetList
+      canDeleteSets={isAdmin}
       data={transform(complexItemSets)}
       loading={loadingSets}
+      onDeleteSets={handleDeleteSets}
       onQTIExport={handleQTIExport}
       onSearch={handleSearchParamsChange}
       onSortOptionChange={handleSortOptionChange}
