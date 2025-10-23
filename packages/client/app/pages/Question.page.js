@@ -846,7 +846,9 @@ const QuestionPage = props => {
   const showProductionChatTab =
     version?.submitted &&
     isInProduction &&
-    (isEditor || isHandlingEditor || isProductionMember || isAdmin)
+    (isEditor || isHandlingEditor || isProductionMember || isAdmin) &&
+    !isPublished &&
+    !version?.unpublished
 
   const showReviewerChatTab =
     version?.underReview &&

@@ -1254,7 +1254,7 @@ const Question = props => {
           </StyledButton>
         </>
       )}
-      {canPublish && isInProduction && (
+      {canPublish && isInProduction && !isPublished && (
         <StyledButton
           data-testid="publish-question-btn"
           onClick={handlePublish}
@@ -1436,7 +1436,7 @@ const Question = props => {
             searchLoading={searchHELoading}
           />
         )}
-        {canPublish && isInProduction && (
+        {canPublish && isInProduction && !isPublished && (
           <StyledButton
             data-testid="publish-question-btn"
             onClick={handlePublish}
