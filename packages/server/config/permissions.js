@@ -251,8 +251,7 @@ const canEditQuestion = rule()(
     )
 
     return (
-      isQuestionAuthor(Team, ctx.user, questionId) &&
-      !questionVersion.accepted
+      isQuestionAuthor(Team, ctx.user, questionId) && !questionVersion.accepted
     )
   },
 )
@@ -389,9 +388,7 @@ const permissions = {
     sendPasswordResetEmail: allow,
 
     // Teams
-    addTeamMember: isActive,
-    updateTeamMembership: isActive,
-    updateGlobalTeams: isAdmin,
+    updateTeamMembership: isAdmin,
 
     // Questions
     createQuestion: isActive,
@@ -483,7 +480,7 @@ const permissions = {
     filterUsers: isAdminOrEditor,
     user: isAdmin,
     // Teams
-    getGlobalTeams: isAdmin,
+    teams: isAdmin,
     getNonTeamMemberUsers: isAdmin,
     filterGlobalTeamMembers: isActive,
     searchForReviewers: isAdminOrEditorOrHE,
