@@ -104,3 +104,7 @@ extend type Mutation {
   deleteUsersRelatedItems(ids: [ID!]!): Boolean!
   downloadUsersData(userIds: [ID!]!): String
 }
+
+extend type Subscription {
+  userDeleted(userId: ID): ID
+}

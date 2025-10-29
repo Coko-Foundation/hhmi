@@ -35,8 +35,8 @@ export const GET_CHAT_THREAD = gql`
 `
 
 export const FILTER_CHAT_THREADS = gql`
-  query ChatThreads($where: CreateChatThreadInput) {
-    chatThreads(where: $where) {
+  query ChatThreads($filter: ChatChannelFilter) {
+    chatChannels(filter: $filter) {
       result {
         id
         created

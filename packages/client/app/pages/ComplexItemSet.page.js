@@ -495,6 +495,7 @@ const ComplexItemSetPage = () => {
               relatedQuestionIds:
                 data?.complexItemSet.questions.relatedQuestionsIds,
               testMode: true,
+              showPublishedDate: true,
             })
           : []
       }

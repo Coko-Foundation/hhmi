@@ -77,8 +77,10 @@ export const NotificationsProvider = ({ children }) => {
       },
     },
     onCompleted: ({ userNotifications }) => {
-      setUnreadMentionsCount(userNotifications?.result.length)
-      setUnreadMentions(userNotifications?.result)
+      const unreadNotifs = userNotifications?.result.filter(n => !n.read)
+
+      setUnreadMentionsCount(unreadNotifs?.length)
+      setUnreadMentions(unreadNotifs)
     },
   })
 

@@ -1145,7 +1145,7 @@ const Question = props => {
     isSubmitted ? (
       <>
         <StyledWordExportButton
-          hasUnmetDependencies={initialMetadataValues.dependsOn}
+          hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
           isIconButton={isMobile}
           loading={wordFileLoading}
           onExport={onClickExportToWord}
@@ -1160,8 +1160,6 @@ const Question = props => {
         {isEditing && (
           <Button
             aria-label="Submit"
-            // onClick={handleSubmitButtonClick}
-
             onClick={handleSubmit}
             title="Submit"
             type="primary"
@@ -1173,7 +1171,7 @@ const Question = props => {
     ) : isMobile ? (
       <>
         <StyledWordExportButton
-          hasUnmetDependencies={initialMetadataValues.dependsOn}
+          hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
           isIconButton
           loading={wordFileLoading}
           onExport={onClickExportToWord}
@@ -1194,7 +1192,7 @@ const Question = props => {
     ) : (
       <>
         <StyledWordExportButton
-          hasUnmetDependencies={initialMetadataValues.dependsOn}
+          hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
           loading={wordFileLoading}
           onExport={onClickExportToWord}
           showMetadataOption={isUserLoggedIn}
@@ -1219,7 +1217,7 @@ const Question = props => {
   const editorActionsDropdownMenu = (
     <>
       <StyledWordExportButton
-        hasUnmetDependencies={initialMetadataValues.dependsOn}
+        hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
         loading={wordFileLoading}
         onExport={onClickExportToWord}
         showMetadataOption
@@ -1340,7 +1338,7 @@ const Question = props => {
     <>
       <ActionsWrapper>
         <StyledWordExportButton
-          hasUnmetDependencies={initialMetadataValues.dependsOn}
+          hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
           loading={wordFileLoading}
           onExport={onClickExportToWord}
           showMetadataOption
@@ -1492,7 +1490,7 @@ const Question = props => {
   const reviewerInviteActions = (
     <ReviewerActionsWrapper>
       <StyledWordExportButton
-        hasUnmetDependencies={initialMetadataValues.dependsOn}
+        hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
         loading={wordFileLoading}
         onExport={onClickExportToWord}
         showMetadataOption={isUserLoggedIn}
@@ -1567,7 +1565,7 @@ const Question = props => {
   const publishedQuestionActions = (
     <>
       <StyledWordExportButton
-        hasUnmetDependencies={initialMetadataValues.dependsOn}
+        hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
         loading={wordFileLoading}
         onExport={onClickExportToWord}
         showMetadataOption={isUserLoggedIn}
@@ -1638,7 +1636,7 @@ const Question = props => {
           >
             <PopupContentWrapper>
               <StyledWordExportButton
-                hasUnmetDependencies={initialMetadataValues.dependsOn}
+                hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
                 loading={wordFileLoading}
                 onExport={onClickExportToWord}
                 showMetadataOption={isUserLoggedIn}

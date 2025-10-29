@@ -65,7 +65,7 @@ const assignSetAuthorResolver = async (_, { setId, userIds }) => {
 }
 
 const exportSetsResolver = async (_, { setIds, options }, ctx) => {
-  return exportSets(setIds, ctx.user, options)
+  return exportSets(setIds, ctx.userId, options)
 }
 
 const exportSetQuestionsResolver = async (
@@ -76,7 +76,7 @@ const exportSetQuestionsResolver = async (
 }
 
 const exportSetsQTIResolver = async (_, { setIds, options }, ctx) => {
-  return exportSetsQTI(setIds, ctx.user, options)
+  return exportSetsQTI(setIds, ctx.userId, options)
 }
 
 const exportSetQuestionsQTIResolver = async (

@@ -67,11 +67,11 @@ const ListContentPage = () => {
   const [removeFromListMutation] = useMutation(REMOVE_FROM_LIST, {
     onCompleted: ({ deleteFromList }) => {
       const nrOfPages = Math.ceil(totalCount / searchParams.pageSize)
-      const usersInCurrentPage = questions.length
+      const itemsInCurrentPage = questions.length
 
       if (
         searchParams.page === nrOfPages &&
-        usersInCurrentPage === deleteFromList.length
+        itemsInCurrentPage === deleteFromList
       ) {
         setSearchParams(currentQuery => ({
           ...currentQuery,
@@ -137,7 +137,7 @@ const ListContentPage = () => {
     return removeFromListMutation(mutationData)
   }
 
-  const handleExport = (questionIds, orderBy, showFeedback) => {
+  const handleExport = async (questionIds, orderBy, showFeedback) => {
     const mutationData = {
       variables: {
         listId: id,
@@ -162,7 +162,7 @@ const ListContentPage = () => {
       })
   }
 
-  const handleExportToQTI = (questionIds, orderBy) => {
+  const handleExportToQTI = async (questionIds, orderBy) => {
     const mutationData = {
       variables: {
         listId: id,
@@ -281,6 +281,7 @@ const ListContentPage = () => {
               relatedQuestionsIds,
               testMode: true,
               includeType: true,
+              showPublishedDate: true,
             })
           : []
       }

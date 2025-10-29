@@ -138,10 +138,12 @@ const sortFunction = (a, b) =>
 const renderMetadataValue = ({ type, value }) => {
   switch (type) {
     case 'date':
-      return (
+      return value ? (
         <DateParser dateFormat="MMMM DD, YYYY" timestamp={value}>
           {timestamp => timestamp}
         </DateParser>
+      ) : (
+        'Not published yet'
       )
 
     case 'badge':

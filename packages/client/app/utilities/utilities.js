@@ -1381,6 +1381,7 @@ const dashboardDataMapper = ({
   userId,
   isArchived,
   newMessages,
+  showPublishedDate,
 }) => {
   if (!questions) return null
 
@@ -1485,7 +1486,7 @@ const dashboardDataMapper = ({
               },
             ]
           : []),
-        ...(latestVersion.published
+        ...(latestVersion.published || showPublishedDate
           ? [
               {
                 label: 'published date',

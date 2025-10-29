@@ -64,6 +64,7 @@ const LoginPage = () => {
   }
 
   if (currentUser) return <Redirect to={redirectUrl} />
+  if (currentUser === null) localStorage.removeItem('profileSubmitted')
 
   let errorMessage = 'Something went wrong!'
 

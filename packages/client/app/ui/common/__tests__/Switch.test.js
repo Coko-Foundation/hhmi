@@ -1,6 +1,6 @@
 import React from 'react'
 import { renderer, render, axe, screen, fireEvent } from '../../../testUtils'
-import Switch from '../Switch'
+import Switch from '../index'
 
 const MockSwitch = ({ ...props }) => {
   return (

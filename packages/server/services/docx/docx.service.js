@@ -534,7 +534,6 @@ class WaxToDocxConverter {
 
       const buffer = await Packer.toBuffer(parsed)
       fs.writeFileSync(path, buffer)
-      return
     } catch (e) {
       this.error(e)
     }

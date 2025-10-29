@@ -1324,7 +1324,11 @@ const QuestionPage = props => {
     // this query doesn't work as expected, needs to be fixed in coko server
     const threads = await getReviewerChatThread({ variables })
 
-    const reviewerChat = threads?.data.chatThreads.result[0]
+    const reviewerChat = threads?.data.chatChannels.result.find(
+      c =>
+        c.chatType === `reviewerChat-${reviewerId}` &&
+        c.relatedObjectId === question?.id,
+    )
 
     setReviewerChatMessages(reviewerChat?.messages)
     setReviewerChatThread(reviewerChat)

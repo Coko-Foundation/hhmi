@@ -222,7 +222,8 @@ const canCreateNewVersion = rule()(async (_, __, ctx) => {
 const canAcceptQuestion = rule()(async (_, { questionVersionId }, ctx) => {
   if (!ctx.userId) return false
 
-  const { User, QuestionVersion } = require('@coko/server')
+  const { User } = require('@coko/server')
+  const { QuestionVersion } = require('../models')
   const user = await User.query().findById(ctx.userId)
 
   const questionVersion = await QuestionVersion.query().findById(
@@ -241,7 +242,8 @@ const canEditQuestion = rule()(
   async (_, { questionId, questionVersionId }, ctx) => {
     if (!ctx.userId) return false
 
-    const { User, QuestionVersion, Team } = require('@coko/server')
+    const { User, Team } = require('@coko/server')
+    const { QuestionVersion } = require('../models')
     const user = await User.query().findById(ctx.userId)
 
     if (!user.isActive) return false

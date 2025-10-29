@@ -53,7 +53,7 @@ const sendMessageResolver = async (_, { input }, ctx) => {
     // send notification to all mentioned users
     await notifyMentionees(message, mentions)
     // send notification to admins
-    await notifyAdmins(message, mentions, ctx.user)
+    await notifyAdmins(message, mentions, ctx.userId)
 
     return message
   } catch (e) {

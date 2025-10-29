@@ -8,7 +8,7 @@ const submitReviewResolver = async (_, { input }, ctx) => {
   return submitReview(
     questionVersionId,
     content,
-    reviewerId || ctx.user,
+    reviewerId || ctx.userId,
     attachments,
   )
 }

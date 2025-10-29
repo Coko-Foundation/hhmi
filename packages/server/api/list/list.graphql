@@ -39,7 +39,7 @@ extend type Mutation {
   editList(id: ID!, title: String): List!
   deleteLists(ids: [ID!]!): Int
   addToList(listId: ID!, questionIds: [ID!]!): [ListMember!]!
-  deleteFromList(listId: ID!, questionIds: [ID!]!): [ID!]!
+  deleteFromList(listId: ID!, questionIds: [ID!]!): Int!
   exportQuestions(
     listId: ID!
     questionIds: [ID!]!

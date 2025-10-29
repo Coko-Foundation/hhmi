@@ -5,7 +5,7 @@ const { User, TeamMember } = require('../models')
 const { getFileUrl } = require('./file.controllers')
 const CokoNotifier = require('../services/notify')
 
-const ADMIN_TEAM = config.teams.global.admin
+const ADMIN_TEAM = config.get('teams.global').find(t => t.role === 'admin')
 const BASE_MESSAGE = '[CHAT CONTROLLER]'
 
 const globalTimeouts = {}

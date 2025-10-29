@@ -536,6 +536,7 @@ export const UPDATE_QUESTION = gql`
         unpublished
         leadingContent
         complexItemSetId
+        dependsOn
         questionType
 
         topics {

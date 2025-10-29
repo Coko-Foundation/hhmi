@@ -28,7 +28,7 @@ const {
   ComplexItemSet,
 } = require('../models')
 
-const REVIEWER_TEAM = config.teams.nonGlobal.reviewer
+const REVIEWER_TEAM = config.teams.nonGlobal.find(t => t.role === 'reviewer')
 
 const submitQuestionnaire = async (userId, profileData) => {
   const data = {
@@ -497,6 +497,48 @@ const reviewerStats = async user => {
   })
 }
 
+const deactivateUsers = async (ids, options = {}) => {
+  const USER_CONTROLLER = `[USER CONTROLLER] -`
+
+  try {
+    const { trx } = options
+    return useTransaction(
+      async tr => {
+        logger.info(
+          `${USER_CONTROLLER} deactivateUsers: deactivating users with id ${ids}`,
+        )
+        return User.deactivateUsers(ids, { trx: tr })
+      },
+      { trx, passedTrxOnly: true },
+    )
+  } catch (e) {
+    logger.error(`${USER_CONTROLLER} deactivateUsers: ${e.message}`)
+    throw new Error(e)
+  }
+}
+
+const deleteUsers = async (ids, options = {}) => {
+  return User.deleteByIds(ids)
+}
+
+const getUser = async (id, options = {}) => {
+  const USER_CONTROLLER = `[USER CONTROLLER] -`
+
+  try {
+    const { trx, ...restOptions } = options
+    return useTransaction(
+      async tr => {
+        logger.info(`${USER_CONTROLLER} getUser: fetching user with id ${id}`)
+        return User.findById(id, { trx: tr, ...restOptions })
+      },
+      { trx, passedTrxOnly: true },
+    )
+  } catch (e) {
+    logger.error(`${USER_CONTROLLER} getUser: ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   submitQuestionnaire,
   updateUserProfile,
@@ -507,4 +549,7 @@ module.exports = {
   getUserTeams,
   downloadUsersCSV,
   reviewerStats,
+  deleteUsers,
+  deactivateUsers,
+  getUser,
 }

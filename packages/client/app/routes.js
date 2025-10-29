@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription, useLazyQuery } from '@apollo/client'
 import {
   Route,
   Switch,
@@ -59,7 +59,7 @@ import {
   ManageMetadata,
 } from './pages'
 
-import { CURRENT_USER } from './graphql'
+import { CURRENT_USER, DELETED_SUBSCRIPTION } from './graphql'
 
 const LayoutWrapper = styled.div`
   display: flex;
@@ -157,7 +157,13 @@ const regexPaths = [
 const Wrapper = props => {
   const { children } = props
 
+  const { currentUser, setCurrentUser } = useCurrentUser()
+
   const history = useHistory()
+
+  const [refetchCurrentUser] = useLazyQuery(CURRENT_USER, {
+    fetchPolicy: 'network-only',
+  })
 
   useEffect(() => {
     const path = history.location.pathname
@@ -231,6 +237,34 @@ const Wrapper = props => {
 
     return document.removeEventListener('kaydown', keyDownListener)
   }, [])
+
+  useEffect(() => {
+    if (
+      currentUser?.profileSubmitted &&
+      !localStorage.getItem('profileSubmitted')
+    ) {
+      localStorage.setItem('profileSubmitted', 'true')
+    }
+
+    if (
+      currentUser &&
+      !Object.prototype.hasOwnProperty.call(currentUser, 'profileSubmitted')
+    ) {
+      refetchCurrentUser().then(({ data }) => {
+        setCurrentUser(data.currentUser)
+      })
+    }
+  }, [currentUser])
+
+  useSubscription(DELETED_SUBSCRIPTION, {
+    onData: ({
+      data: {
+        data: { userDeleted },
+      },
+    }) => {
+      if (userDeleted === currentUser.id) window.location.href = '/'
+    },
+  })
 
   return (
     <LayoutWrapper>
@@ -335,6 +369,7 @@ const SiteHeader = () => {
 
     localStorage.removeItem('token')
     localStorage.removeItem('dashboardLastUsedTab')
+    localStorage.removeItem('profileSubmitted')
 
     history.push('/login')
   }
@@ -376,7 +411,11 @@ const RequireProfile = ({ children }) => {
     return <Redirect to="/deactivated-user" />
   }
 
-  if (pathname !== '/signup-profile' && !currentUser.profileSubmitted) {
+  if (
+    pathname !== '/signup-profile' &&
+    !currentUser.profileSubmitted &&
+    !localStorage.getItem('profileSubmitted')
+  ) {
     return <Redirect to="/signup-profile" />
   }
 
