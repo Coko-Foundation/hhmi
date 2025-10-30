@@ -1,8 +1,8 @@
 const path = require('path')
-
 const components = require('./components')
 const permissions = require('./permissions')
 const productionChatActivityNotification = require('../services/chatActivityNotifications')
+const emptyTempFolder = require('../services/emptyTemp')
 
 module.exports = {
   passwordReset: {
@@ -89,6 +89,12 @@ module.exports = {
       teamSize: 1,
       teamConcurrency: 1,
       schedule: '0 8 * * *', // a valid cron pattern
+      scheduleTimezone: 'America/New_York', // optional, what timezone should be followed
+    },
+    {
+      name: 'empty-tmp-folder',
+      handler: emptyTempFolder,
+      schedule: '0 3 * * *', // a valid cron pattern
       scheduleTimezone: 'America/New_York', // optional, what timezone should be followed
     },
   ],
