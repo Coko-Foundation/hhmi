@@ -724,6 +724,30 @@ const QuestionPage = props => {
           },
           fetchPolicy: 'network-only',
         },
+        {
+          query: GET_AUTHOR_CHAT_PARTICIPANTS,
+          variables: {
+            id,
+          },
+        },
+        {
+          query: GET_PRODUCTION_CHAT_PARTICIPANTS,
+          skip: !question?.versions[0]?.inProduction,
+          variables: {
+            id,
+          },
+        },
+        {
+          query: GET_REVIEWER_CHAT_PARTICIPANTS,
+          skip:
+            !question?.versions[0]?.underReview ||
+            !selectedReviewerId ||
+            testMode,
+          variables: {
+            questionId: id,
+            reviewerId: selectedReviewerId,
+          },
+        },
       ],
     },
   )
@@ -736,6 +760,30 @@ const QuestionPage = props => {
           questionId: id,
         },
         fetchPolicy: 'network-only',
+      },
+      {
+        query: GET_AUTHOR_CHAT_PARTICIPANTS,
+        variables: {
+          id,
+        },
+      },
+      {
+        query: GET_PRODUCTION_CHAT_PARTICIPANTS,
+        skip: !question?.versions[0]?.inProduction,
+        variables: {
+          id,
+        },
+      },
+      {
+        query: GET_REVIEWER_CHAT_PARTICIPANTS,
+        skip:
+          !question?.versions[0]?.underReview ||
+          !selectedReviewerId ||
+          testMode,
+        variables: {
+          questionId: id,
+          reviewerId: selectedReviewerId,
+        },
       },
     ],
   })
