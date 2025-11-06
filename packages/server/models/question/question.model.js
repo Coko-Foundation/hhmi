@@ -836,7 +836,12 @@ class Question extends BaseModel {
       .leftJoin('teams', 'question_versions.id', 'teams.object_id')
       .leftJoin('team_members', 'team_members.team_id', 'teams.id')
 
-    const selectFields = ['questions.*', 'teams.role', 'team_members.user_id']
+    const selectFields = [
+      'questions.*',
+      'teams.role',
+      'team_members.user_id',
+      'team_members.status',
+    ]
 
     // if (status || searchQuery) {
     query
@@ -861,7 +866,12 @@ class Question extends BaseModel {
     query.select(selectFields)
 
     // user filter
-    query.where({ 'teams.role': role, 'team_members.user_id': userId })
+    query
+      .where({ 'teams.role': role, 'team_members.user_id': userId })
+      .whereIn('team_members.status', [
+        REVIEWER_STATUSES.invited,
+        REVIEWER_STATUSES.accepted,
+      ])
 
     // status filter
     if (status) {

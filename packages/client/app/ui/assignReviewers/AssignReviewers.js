@@ -7,6 +7,7 @@ import UIAssignReviewers from '@coko/client/dist/ui/assignReviewers/AssignReview
 import { grid, th } from '@coko/client'
 import { profileOptions } from '../../utilities'
 import ReviewerEditorUploadButton from '../question/ReviewerEditorUploadButton'
+import { Modal, Button } from '../common'
 
 const AttachmentsWrapper = styled.div`
   display: flex;
@@ -70,6 +71,10 @@ const additionalSearchFields = [
   },
 ]
 
+const ModalContext = React.createContext(null)
+const ModalHeader = Modal.header
+const ModalFooter = Modal.footer
+
 const AssignReviewers = props => {
   const {
     amountOfReviewers,
@@ -88,6 +93,44 @@ const AssignReviewers = props => {
     searchPlaceholder,
     showDialog,
   } = props
+
+  const [modal, contextHolder] = Modal.useModal()
+
+  const handleClickRemoveRow = id => {
+    const reviewerToRemove = reviewerPool.find(r => r.id === id)
+
+    if (reviewerToRemove.acceptedInvitation) {
+      const warningModal = modal.warning()
+      warningModal.update({
+        title: <ModalHeader>Remove reviewer?</ModalHeader>,
+        content: (
+          <p>
+            This reviewer has already accepted the invitation. Are you sure you
+            want to delete them from the pool?
+          </p>
+        ),
+        footer: [
+          <ModalFooter key="footer">
+            <Button key="cancel" onClick={() => warningModal.destroy()}>
+              Cancel
+            </Button>
+            <Button
+              autoFocus
+              onClick={() => {
+                onClickRemoveRow(id)
+                warningModal.destroy()
+              }}
+              type="primary"
+            >
+              Remove
+            </Button>
+          </ModalFooter>,
+        ],
+      })
+    } else {
+      onClickRemoveRow(id)
+    }
+  }
 
   const additionalReviewerColumns = [
     {
@@ -143,24 +186,28 @@ const AssignReviewers = props => {
   ]
 
   return (
-    <StyledAssignReviewers
-      additionalReviewerColumns={additionalReviewerColumns}
-      additionalSearchFields={additionalSearchFields}
-      amountOfReviewers={amountOfReviewers}
-      automate={automate}
-      canInviteMore={canInviteMore}
-      onAddReviewers={onAddReviewers}
-      onAmountOfReviewersChange={onAmountOfReviewersChange}
-      onAutomationChange={onAutomationChange}
-      onClickInvite={onClickInvite}
-      onClickRemoveRow={onClickRemoveRow}
-      onClickRevokeInvitation={onClickRevokeInvitation}
-      onSearch={onSearch}
-      onTableChange={onTableChange}
-      reviewerPool={reviewerPool}
-      searchPlaceholder={searchPlaceholder}
-      useShowEmail
-    />
+    <ModalContext.Provider value={null}>
+      <StyledAssignReviewers
+        additionalReviewerColumns={additionalReviewerColumns}
+        additionalSearchFields={additionalSearchFields}
+        amountOfReviewers={amountOfReviewers}
+        automate={automate}
+        canDismissReviewer
+        canInviteMore={canInviteMore}
+        onAddReviewers={onAddReviewers}
+        onAmountOfReviewersChange={onAmountOfReviewersChange}
+        onAutomationChange={onAutomationChange}
+        onClickInvite={onClickInvite}
+        onClickRemoveRow={handleClickRemoveRow}
+        onClickRevokeInvitation={onClickRevokeInvitation}
+        onSearch={onSearch}
+        onTableChange={onTableChange}
+        reviewerPool={reviewerPool}
+        searchPlaceholder={searchPlaceholder}
+        useShowEmail
+      />
+      {contextHolder}
+    </ModalContext.Provider>
   )
 }
 
