@@ -26,7 +26,7 @@ const getMetadataOptimized = async () => {
   try {
     let frameworks = await Course.query()
       .withGraphFetched(
-        'units.topics.[learningObjectives.essentialKnowledges, applications, skills, understandings]',
+        '[units.topics.[learningObjectives.essentialKnowledges, applications, skills, understandings], practices, crosscuttingConcepts, disciplinaryCoreIdeas]',
       )
       .orderBy([{ column: 'order', order: 'asc' }])
 

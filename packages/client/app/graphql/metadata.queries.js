@@ -244,6 +244,21 @@ export const GET_METADATA_OPTIMIZED = gql`
           topic
           enabled
         }
+        practices {
+          label
+          value: id
+          enabled
+        }
+        crosscuttingConcepts {
+          label
+          value: id
+          enabled
+        }
+        disciplinaryCoreIdeas {
+          label
+          value: id
+          enabled
+        }
       }
       introToBioMeta {
         value: id

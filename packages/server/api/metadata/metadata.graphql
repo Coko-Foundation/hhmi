@@ -46,6 +46,9 @@ type FrameworksMetadata {
   applications: [Application!]
   skills: [Skill!]
   understandings: [Understanding!]
+  practices: [NGSSMetadata!]!
+  crosscuttingConcepts: [NGSSMetadata!]!
+  disciplinaryCoreIdeas: [NGSSMetadata!]!
 }
 
 type CourseUnit {
@@ -191,6 +194,13 @@ type IntroductoryBioMetadata {
   categories: [AAMCCategory!]
 }
 
+type NGSSMetadata {
+  id: ID
+  label: String
+  value: String
+  enabled: Boolean
+}
+
 type ProfileOptions {
   courses: [SimpleValueLabelPair]!
   topics: [SimpleValueLabelPair]!
@@ -211,6 +221,8 @@ input NewMetadataInput {
   coreCompetence: ID
   subcompetence: ID
   concept: ID
+  # ngss
+  ngss: String
 }
 
 input MetadataOrderInput {

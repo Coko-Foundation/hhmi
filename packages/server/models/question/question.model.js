@@ -223,6 +223,9 @@ class Question extends BaseModel {
         'subcompetenceStatement',
         'concept',
         'category',
+        'practice',
+        'crosscuttingConcept',
+        'coreIdea',
       ]
 
       // choose only applied metafilters

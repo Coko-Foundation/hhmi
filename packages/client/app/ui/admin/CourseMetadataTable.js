@@ -127,6 +127,7 @@ const uneditableTypes = [
   'biSubtopic',
   'introBioSubcat',
   'visionAndChangeSubCategories',
+  'ngss',
 ]
 
 const newButtonsConfigs = {
@@ -193,6 +194,18 @@ const newButtonsConfigs = {
   category: {
     label: 'Add category',
     key: 'category',
+  },
+  practice: {
+    label: 'Add practice',
+    key: 'practice',
+  },
+  crosscuttingConcept: {
+    label: 'Add crosscutting concept',
+    key: 'crosscuttingConcept',
+  },
+  disciplinaryCoreIdea: {
+    label: 'Add disciplinary core idea',
+    key: 'disciplinaryCoreIdea',
   },
 }
 
@@ -348,6 +361,8 @@ const CourseMetadataTable = props => {
       case 'course':
         if (lastNavItem.textValue === 'introBioForMajors') {
           firstColumn.title = 'Introductory Biology for Majors'
+        } else if (lastNavItem.textValue === 'ngss') {
+          firstColumn.title = 'Next Generation Science Standards'
         } else {
           firstColumn.title = 'Unit'
           setNewButtonAttrs(newButtonsConfigs.unit)
@@ -421,6 +436,18 @@ const CourseMetadataTable = props => {
       case 'concept':
         firstColumn.title = 'Category'
         setNewButtonAttrs(newButtonsConfigs.category)
+        break
+      case 'ngss':
+        if (lastNavItem.key === 'practice') {
+          firstColumn.title = 'By Practice'
+          setNewButtonAttrs(newButtonsConfigs.practice)
+        } else if (lastNavItem.key === 'crosscuttingConcept') {
+          firstColumn.title = 'Crosscutting Concept'
+          setNewButtonAttrs(newButtonsConfigs.crosscuttingConcept)
+        } else if (lastNavItem.key === 'disciplinaryCoreIdea') {
+          firstColumn.title = 'Disciplinary Core Idea'
+          setNewButtonAttrs(newButtonsConfigs.disciplinaryCoreIdea)
+        }
         break
       default:
         firstColumn.title = 'Course'
@@ -735,7 +762,7 @@ const CourseMetadataTable = props => {
                   enabled: true,
                 },
                 {
-                  label: 'AAMC Future Physicians',
+                  label: 'AAMC Future Physicianszzz',
                   value: 'aamc',
                   course: textValue,
                   enabled: true,
@@ -746,6 +773,34 @@ const CourseMetadataTable = props => {
           )
 
           break
+        case 'ngss':
+          setDataSource(
+            courseDataToUi(
+              [
+                {
+                  label: 'By Practice',
+                  value: 'practice',
+                  course: textValue,
+                  enabled: true,
+                },
+                {
+                  label: 'Crosscutting Concept',
+                  value: 'crosscuttingConcept',
+                  course: textValue,
+                  enabled: true,
+                },
+                {
+                  label: 'Disciplinary Core Idea',
+                  value: 'disciplinaryCoreIdea',
+                  course: textValue,
+                  enabled: true,
+                },
+              ],
+              'ngss',
+            ),
+          )
+          break
+
         default:
           setDataSource(
             courseDataToUi(courses.find(c => c.value === key).units, 'unit'),
@@ -910,6 +965,34 @@ const CourseMetadataTable = props => {
       )
 
       setDataSource(courseDataToUi(categories, 'category', true))
+    } else if (type === 'ngss') {
+      if (key === 'practice') {
+        setDataSource(
+          courseDataToUi(
+            courses.find(c => c.value === navigation[1].key).practices,
+            'practice',
+            true,
+          ),
+        )
+      } else if (key === 'crosscuttingConcept') {
+        setDataSource(
+          courseDataToUi(
+            courses.find(c => c.value === navigation[1].key)
+              .crosscuttingConcepts,
+            'crosscuttingConcept',
+            true,
+          ),
+        )
+      } else if (key === 'disciplinaryCoreIdea') {
+        setDataSource(
+          courseDataToUi(
+            courses.find(c => c.value === navigation[1].key)
+              .disciplinaryCoreIdeas,
+            'disciplinaryCoreIdea',
+            true,
+          ),
+        )
+      }
     }
 
     setNavigation(() => {
@@ -951,7 +1034,8 @@ const CourseMetadataTable = props => {
       )) ||
     (navigation[1].textValue === 'introBioForMajors' &&
       (navigation.length === 2 ||
-        navigation[navigation.length - 1].key === 'visionAndChange'))
+        navigation[navigation.length - 1].key === 'visionAndChange')) ||
+    (navigation[1].textValue === 'ngss' && navigation.length === 2)
 
   return (
     <ModalContext.Provider>

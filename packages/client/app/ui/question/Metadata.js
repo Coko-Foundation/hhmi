@@ -21,6 +21,7 @@ import {
 } from '../metadataFields'
 import Resources from './Resources'
 import MetadataInfo from './MetadataInfo'
+import NGSSCourseMetadata from '../metadataFields/NGSSCourseMetadata'
 
 const Wrapper = styled.section`
   padding: ${grid(4)};
@@ -45,6 +46,7 @@ const RemoveButton = styled(Button)`
 const apCourses = ['apBiology', 'apEnvironmentalScience']
 const ibCourses = ['biBiology', 'biEnvironmentalScience']
 const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
+const ngss = 'ngss'
 
 const ModalContext = React.createContext(null)
 const { footer: ModalFooter, header: ModalHeader } = Modal
@@ -144,6 +146,19 @@ const Metadata = React.forwardRef((props, ref) => {
           getFieldValue={getFieldValue}
           index={index}
           introToBioMeta={metadata.introToBioMeta}
+          isRequired
+          readOnly={readOnly}
+          setFieldsValue={form.setFieldsValue}
+          supplementaryKey={key}
+        />
+      )
+    }
+
+    if (courseMetadata?.textValue === ngss) {
+      return (
+        <NGSSCourseMetadata
+          courseData={courseMetadata}
+          index={index}
           isRequired
           readOnly={readOnly}
           setFieldsValue={form.setFieldsValue}

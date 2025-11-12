@@ -10,6 +10,7 @@ import {
   extractAPCourseMetadata,
   extractIBCourseMetadata,
   extractIntroBioCourseMetadata,
+  extractNGSSCourseMetadata,
 } from '../../utilities'
 import { Link, VisuallyHiddenElement } from '../common'
 
@@ -156,6 +157,23 @@ const MetadataInfo = props => {
                     courseObject,
                     metadata.introToBioMeta,
                   ).map(cm => {
+                    return (
+                      cm.value && (
+                        <div key={JSON.stringify(cm)}>
+                          <p>
+                            <strong>{cm.label}</strong>
+                          </p>
+                          <p>{cm.value}</p>
+                        </div>
+                      )
+                    )
+                  })}
+                </li>
+              )
+            case 'ngss':
+              return (
+                <li key={`${JSON.stringify(unitData)}`}>
+                  {extractNGSSCourseMetadata(unitData, courseObject).map(cm => {
                     return (
                       cm.value && (
                         <div key={JSON.stringify(cm)}>
