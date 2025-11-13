@@ -5,17 +5,14 @@ import { useMutation, useQuery } from '@apollo/client'
 import { useCurrentUser } from '@coko/client'
 
 import { Profile, SignupQuestionnaire, VisuallyHiddenElement } from 'ui'
-import {
-  profileOptions,
-  getCountries,
-  getStatesByCountry,
-  hasGlobalRole,
-} from '../utilities'
+import { profileOptions, hasGlobalRole } from '../utilities'
 import {
   SUBMIT_QUESTIONNAIRE,
   UPDATE_PROFILE,
   UPDATE_PASSWORD,
   GET_USER_DATA,
+  GET_COUNTRIES_OPTIONS,
+  GET_STATES_OPTIONS,
 } from '../graphql'
 
 const profileApiToUi = (user, signup) => {
@@ -87,8 +84,7 @@ const profileUiToApi = formData => {
 const UserProfile = props => {
   const { signup } = props
 
-  const [countryOptions, setCountryOptions] = useState([])
-  const [statesOptions, setStatesOptions] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState()
   const [message, setMessage] = useState('')
   const [submissionStatus, setSubmissionStatus] = useState(null)
   const [submitted, setSubmitted] = useState(false)
@@ -108,6 +104,17 @@ const UserProfile = props => {
       id: userId,
     },
   })
+
+  const { data: { getCountriesForUserProfile: countryOptions } = {} } =
+    useQuery(GET_COUNTRIES_OPTIONS)
+
+  const { data: { getStatesByCountryForUserProfile: statesOptions } = {} } =
+    useQuery(GET_STATES_OPTIONS, {
+      variables: {
+        skip: !currentUser || !selectedCountry,
+        country: selectedCountry,
+      },
+    })
 
   const [updateProfileMutation, { loading: updateProfileLoading }] =
     useMutation(UPDATE_PROFILE, {
@@ -133,19 +140,12 @@ const UserProfile = props => {
     useMutation(UPDATE_PASSWORD)
 
   useEffect(async () => {
-    const countries = await getCountries()
-    setCountryOptions(countries)
-
-    if (!currentUser) return
-    const states = (await getStatesByCountry(currentUser.country || 'US')) || []
-    setStatesOptions(states)
-
     setSubmitted(signup && currentUser?.profileSubmitted)
+    setSelectedCountry(currentUser?.country || 'US')
   }, [currentUser])
 
-  const onCountryChange = async selectedCountry => {
-    const states = (await getStatesByCountry(selectedCountry)) || []
-    setStatesOptions(states)
+  const onCountryChange = async country => {
+    setSelectedCountry(country)
   }
 
   const handleProfileSubmit = async formData => {
@@ -216,8 +216,6 @@ const UserProfile = props => {
       }, 3000)
     }
   }
-
-  if (!(countryOptions && statesOptions)) return null
 
   const initialValues = userId
     ? profileApiToUi(userData?.user)
