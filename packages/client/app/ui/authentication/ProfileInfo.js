@@ -59,7 +59,7 @@ const ProfileInfo = props => {
   const [showStates, setShowStates] = useState(false)
 
   useEffect(() => {
-    if (states.length > 0) {
+    if (states?.length > 0) {
       setShowStates(true)
     } else {
       setShowStates(false)

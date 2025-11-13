@@ -13,6 +13,8 @@ const {
   deleteUsers,
   deactivateUsers,
   getUser,
+  getCountriesForUserProfile,
+  getStatesByCountryForUserProfile,
 } = require('../../controllers/user.controllers')
 
 const broadcastUserUpdated = async userId => {
@@ -41,6 +43,24 @@ const filterUsersResolver = async (_, { params, options }, _ctx) => {
   } catch (e) {
     logger.error(`search resolver error: ${e.message}`)
     throw new Error(e)
+  }
+}
+
+const getCountriesForUserProfileResolver = async () => {
+  try {
+    return getCountriesForUserProfile()
+  } catch (error) {
+    logger.error(`getCountriesForUserProfileResolver error: ${error}`)
+    throw new Error(error)
+  }
+}
+
+const getStatesByCountryForUserProfileResolver = async (_, { country }) => {
+  try {
+    return getStatesByCountryForUserProfile(country)
+  } catch (error) {
+    logger.error(`getStatesByCountryForUserProfileResolver error: ${error}`)
+    throw new Error(error)
   }
 }
 
@@ -125,6 +145,8 @@ module.exports = {
   },
   Query: {
     filterUsers: filterUsersResolver,
+    getCountriesForUserProfile: getCountriesForUserProfileResolver,
+    getStatesByCountryForUserProfile: getStatesByCountryForUserProfileResolver,
   },
   User: {
     displayName: displayNameResolver,

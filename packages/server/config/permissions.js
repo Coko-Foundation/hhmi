@@ -478,6 +478,8 @@ const permissions = {
     currentUser: isActive,
     filterUsers: isAdminOrEditor,
     user: isAdmin,
+    getCountriesForUserProfile: isActive,
+    getStatesByCountryForUserProfile: isActive,
     // Teams
     teams: isAdmin,
     getNonTeamMemberUsers: isAdmin,

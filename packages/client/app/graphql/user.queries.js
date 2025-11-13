@@ -174,3 +174,21 @@ export const DELETED_SUBSCRIPTION = gql`
     userDeleted
   }
 `
+
+export const GET_COUNTRIES_OPTIONS = gql`
+  query GetCountriesOptions {
+    getCountriesForUserProfile {
+      label
+      value
+    }
+  }
+`
+
+export const GET_STATES_OPTIONS = gql`
+  query GetStatesOptions($country: String!) {
+    getStatesByCountryForUserProfile(country: $country) {
+      label
+      value
+    }
+  }
+`
