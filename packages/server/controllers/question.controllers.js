@@ -694,6 +694,7 @@ const publishQuestionVersion = async (questionVersionId, options = {}) => {
     {
       // set submitted to true in case it was not set before (fast published by admins); needed to retrieve question with editor query
       submitted: true,
+      editing: false,
       inProduction: false,
       published: true,
       unpublished: false,
@@ -1473,7 +1474,7 @@ const editQuestion = async (questionVersionId, options = {}) => {
   try {
     const questionVersion = await modifyQuestionVersion(
       questionVersionId,
-      { editing: true },
+      { editing: true, submitted: false },
       { trx: options.trx },
     )
 
