@@ -159,7 +159,6 @@ const Metadata = React.forwardRef((props, ref) => {
         <NGSSCourseMetadata
           courseData={courseMetadata}
           index={index}
-          isRequired
           readOnly={readOnly}
           setFieldsValue={form.setFieldsValue}
           supplementaryKey={key}
