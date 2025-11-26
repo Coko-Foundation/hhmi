@@ -25,7 +25,11 @@
     "webpack-dev-middleware": "^4.1.0",
     "webpack-virtual-modules": "^0.4.2",
     "prettier": "2.6.0",
-    "antd": "5.6.1"
+    "antd": "5.6.1",
+    "wax-prosemirror-core": "0.9.112",
+    "wax-prosemirror-services": "0.9.112",
+    "wax-questions-service": "0.9.112",
+    "wax-table-service": "0.9.112"
   },
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
