@@ -554,20 +554,25 @@ class WaxToQTIConverter {
 
   #essayQuestionHandler = (content, options) => {
     const { essayGroupId } = options
-    return {
-      extendedTextInteraction: [
-        {
-          _attr: {
-            identifier: essayGroupId,
-            expectedLength: 0,
-            expectedLines: 0,
+
+    return [
+      {
+        prompt: this.#contentParser(content.content),
+      },
+      {
+        extendedTextInteraction: [
+          {
+            _attr: {
+              identifier: essayGroupId,
+              expectedLength: 800,
+              expectedLines: 15,
+              class: 'essay-response',
+            },
           },
-        },
-        {
-          prompt: this.#contentParser(content.content),
-        },
-      ],
-    }
+        ],
+      },
+      {},
+    ]
   }
 
   #essayFeedbackHandler = (content, options) => {
