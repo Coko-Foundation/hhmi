@@ -202,6 +202,11 @@ const Metadata = React.forwardRef((props, ref) => {
     }
   }
 
+  const canAddAnotherCourse = courses => {
+    // editors can add indefinite curricula references, authors max 2 (of the same course)
+    return editorView ? true : courses.length < 2
+  }
+
   // need to reset fields when course choice changes, because it enter a recursive loop when done inside metadata components
   const resetCourseFields = (value, index, key, remove) => {
     const cloned = [...form.getFieldValue(key)]
@@ -435,7 +440,7 @@ const Metadata = React.forwardRef((props, ref) => {
                     <div key={`supplementaryFields-${index}`}>
                       {index === 1 && !editorView && <p>Second reference</p>}
                       <Form.Item
-                        hidden={index === 1 && !editorView}
+                        hidden={index > 0 && !editorView}
                         {...initialValueSecondCourse(index)}
                         label="Course"
                         name={[index, 'course']}
@@ -485,7 +490,7 @@ const Metadata = React.forwardRef((props, ref) => {
                   ),
                 )}
 
-                {!readOnly && coursesIndexes.indexOf(-1) === -1 && (
+                {!readOnly && canAddAnotherCourse(coursesIndexes) && (
                   <Button
                     disabled={readOnly}
                     onClick={() => {
