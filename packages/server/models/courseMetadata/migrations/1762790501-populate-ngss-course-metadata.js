@@ -64,7 +64,7 @@ const ngss = {
       label: 'PS1A: Structure and Properties of Matter',
     },
     {
-      label: 'PS18: Chemical Reactions',
+      label: 'PS1B: Chemical Reactions',
     },
     {
       label: 'PS1C: Nuclear Processes',
@@ -109,7 +109,7 @@ const ngss = {
       label: 'LS1D: Information Processing',
     },
     {
-      label: 'LSA: Interdependent Relationships in Ecosystems',
+      label: 'LS2A: Interdependent Relationships in Ecosystems',
     },
     {
       label: 'LS2B: Cycles of Matter and Energy Transfer in Ecosystems',
@@ -121,22 +121,22 @@ const ngss = {
       label: 'LS2D: Social Interactions and Group Behavior',
     },
     {
-      label: 'LSA: Inheritance of Traits',
+      label: 'LS3A: Inheritance of Traits',
     },
     {
       label: 'LS3B: Variation of Traits',
     },
     {
-      label: 'LSA: Evidence of Common Ancestry and Diversity',
+      label: 'LS4A: Evidence of Common Ancestry and Diversity',
     },
     {
       label: 'LS4B: Natural Selection',
     },
     {
-      label: 'LSAC: Adaptation',
+      label: 'LS4C: Adaptation',
     },
     {
-      label: 'LSD: Biodiversity and Humans',
+      label: 'LS4D: Biodiversity and Humans',
     },
     {
       label: 'ESS1A: The Universe and its Stars',
