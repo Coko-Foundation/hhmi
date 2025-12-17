@@ -1152,7 +1152,7 @@ const Question = props => {
           showMetadataOption={isUserLoggedIn}
         />
 
-        {!isEditing && !isAccepted && (
+        {!isEditing && !isAccepted && !isPublished && (
           <Button onClick={handleEdit} type="primary">
             Edit
           </Button>

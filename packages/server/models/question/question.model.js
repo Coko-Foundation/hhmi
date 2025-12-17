@@ -153,6 +153,7 @@ class Question extends BaseModel {
           questionType,
           contentText,
           inProduction: true,
+          accepted: true,
           unpublished: false,
         },
         { trx: options.trx },
