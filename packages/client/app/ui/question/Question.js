@@ -482,7 +482,6 @@ const Question = props => {
     reviewerId,
     authorsCurrent,
     onAuthorEdit,
-    isEditing,
     onAddToList,
     onAddToNewList,
     existingLists,
@@ -491,6 +490,8 @@ const Question = props => {
     dependencyOptions,
     unreadMentions,
     onMarkAsRead,
+    stage,
+    stages,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -511,10 +512,8 @@ const Question = props => {
   const [imageLongDescs, setImageLongDescs] = useState([])
 
   const readOnly =
-    (editorView && isSubmitted && !isInProduction && !isAccepted) /* &&
-      (isUnderReview || isPublished || isUnpublished) */ ||
-    (editorView && (isUnderReview || isPublished || isUnpublished)) ||
-    (!editorView && isSubmitted && !isEditing) ||
+    (editorView && stage !== stages.ACCEPTED && stage !== stages.PRODUCTION) ||
+    (!editorView && stage !== stages.UNSUBMITTED && stage !== stages.EDITING) ||
     isRejected
 
   // need to reset showMetadata, in case user loads after the page is rendered
@@ -1140,79 +1139,34 @@ const Question = props => {
 
   const isMobile = useBreakpoint('(max-width: 900px)')
 
-  const RightAreaAuthor =
-    // eslint-disable-next-line no-nested-ternary
-    isSubmitted ? (
-      <>
-        <StyledWordExportButton
-          hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
-          isIconButton={isMobile}
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption={isUserLoggedIn}
-        />
+  let RightAreaAuthor
 
-        {!isEditing && !isAccepted && !isPublished && (
-          <Button onClick={handleEdit} type="primary">
-            Edit
-          </Button>
-        )}
-        {isEditing && (
-          <Button
-            aria-label="Submit"
-            onClick={handleSubmit}
-            title="Submit"
-            type="primary"
-          >
-            Submit
-          </Button>
-        )}
-      </>
-    ) : isMobile ? (
-      <>
-        <StyledWordExportButton
-          hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
-          isIconButton
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption={isUserLoggedIn}
-        />
-
+  switch (stage) {
+    case stages.UNSUBMITTED:
+    case stages.EDITING:
+      RightAreaAuthor = (
         <Button
           aria-label="Submit"
           // onClick={handleSubmitButtonClick}
-
+          disabled={submitting}
           onClick={handleSubmit}
           title="Submit"
           type="primary"
         >
           Submit
         </Button>
-      </>
-    ) : (
-      <>
-        <StyledWordExportButton
-          hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption={isUserLoggedIn}
-        />
-
-        <SubmitButton
-          data-testid="submit-question-btn"
-          disabled={
-            // !formRef.current.isFieldsTouched(true) ||
-            submitting
-            // formRef.current.getFieldsError().filter(({ errors }) => errors.length)
-            //   .length > 0 ||
-          }
-          onClick={handleSubmit}
-          type="primary"
-        >
-          Submit
-        </SubmitButton>
-      </>
-    )
+      )
+      break
+    case stages.SUBMITTED:
+      RightAreaAuthor = (
+        <Button onClick={handleEdit} type="primary">
+          Edit
+        </Button>
+      )
+      break
+    default:
+      break
+  }
 
   const editorActionsDropdownMenu = (
     <>
@@ -1551,6 +1505,13 @@ const Question = props => {
           {!preview ? 'Preview' : 'Continue editing'}
         </StyledButton>
       )}
+      <StyledWordExportButton
+        hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
+        isIconButton={isMobile}
+        loading={wordFileLoading}
+        onExport={onClickExportToWord}
+        showMetadataOption={isUserLoggedIn}
+      />
       {!isRejected &&
         !reviewerView &&
         (editorView && isSubmitted ? RightAreaEditor : RightAreaAuthor)}
@@ -2356,7 +2317,6 @@ Question.propTypes = {
   reviewerId: PropTypes.string,
   authorsCurrent: PropTypes.arrayOf(PropTypes.shape()),
   onAuthorEdit: PropTypes.func,
-  isEditing: PropTypes.bool,
   onAddToList: PropTypes.func,
   onAddToNewList: PropTypes.func,
   existingLists: PropTypes.arrayOf(PropTypes.shape()),
@@ -2370,6 +2330,8 @@ Question.propTypes = {
   ),
   unreadMentions: PropTypes.arrayOf(PropTypes.shape()),
   onMarkAsRead: PropTypes.func,
+  stage: PropTypes.string,
+  stages: PropTypes.arrayOf(PropTypes.string),
 }
 
 Question.defaultProps = {
@@ -2476,7 +2438,6 @@ Question.defaultProps = {
   reviewerId: null,
   authorsCurrent: [],
   onAuthorEdit: null,
-  isEditing: false,
   onAddToList: null,
   onAddToNewList: null,
   existingLists: [],
@@ -2485,6 +2446,8 @@ Question.defaultProps = {
   dependencyOptions: [],
   unreadMentions: [],
   onMarkAsRead: null,
+  stage: 'UNSUBMITTED',
+  stages: [],
 }
 
 export default Question
