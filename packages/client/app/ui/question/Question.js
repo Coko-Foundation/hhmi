@@ -93,7 +93,11 @@ const Wrapper = styled.div`
 `
 
 const StyledButton = styled(Button)`
-  margin-right: ${grid(2)};
+  ${({ hidden }) =>
+    hidden &&
+    `
+    display: none;
+  `}
   width: 100%;
 
   @media (min-width: ${th('mediaQueries.mediumPlus')}) {
@@ -111,12 +115,7 @@ const Details = styled.details`
 `
 
 const StyledAssignAuthorButton = styled(AssignAuthorButton)`
-  margin-right: ${grid(2)};
   width: 100%;
-`
-
-const SubmitButton = styled(StyledButton)`
-  width: auto;
 `
 
 const StyledPrevNextButton = styled(StyledButton)`
@@ -132,7 +131,6 @@ const StyledPrevNextButton = styled(StyledButton)`
 `
 
 const StyledWordExportButton = styled(ExportToWordButton)`
-  margin-right: ${grid(2)};
   width: auto;
 `
 
@@ -142,7 +140,6 @@ const StyledScormExportButton = styled(ExportToScormButton)`
 `
 
 const StyledAssignHEButton = styled(AssignHEButton)`
-  margin-right: ${grid(2)};
   width: 100%;
 `
 
@@ -162,6 +159,7 @@ const StyledSubmitReviewButton = styled(ReviewerSubmitButton)`
 const RightAreaWrapper = styled.div`
   align-items: center;
   display: flex;
+  gap: ${grid(2)};
   text-transform: initial;
 `
 
@@ -247,6 +245,7 @@ const ActionsWrapper = styled.div`
 
   @media (min-width: ${th('mediaQueries.mediumPlus')}) {
     display: flex;
+    gap: ${grid(2)};
   }
 `
 
@@ -401,13 +400,13 @@ const Question = props => {
     onClickExportToQti,
     onSubmitReport,
     initialMetadataValues,
-    isAccepted,
+    // isAccepted,
     isArchived,
     isUserLoggedIn,
     isPublished,
     isRejected,
     isSubmitted,
-    isUnderReview,
+    // isUnderReview,
     isInProduction,
     isUnpublished,
     canUnpublish,
@@ -458,7 +457,6 @@ const Question = props => {
     showAssignHEButton,
     showPreviewButton,
     canAssignAuthor,
-    showNextQuestionLink,
     submitting,
     updated,
     wordFileLoading,
@@ -790,7 +788,7 @@ const Question = props => {
   }
 
   const handlePublish = () => {
-    if (isEmptyEditor()) return
+    if (isEmptyEditor() || !canPublish) return
 
     // validate form fields
     formRef?.current
@@ -1032,37 +1030,39 @@ const Question = props => {
   }
 
   const showNewVersionModal = () => {
-    const confirmNewVersion = confirm()
-    confirmNewVersion.update({
-      title: <ModalHeader>Edit unpublished item</ModalHeader>,
-      content: `This item is unpublished. You will need to publish this item again 
+    if (canCreateNewVersion && !hasDeletedAuthor) {
+      const confirmNewVersion = confirm()
+      confirmNewVersion.update({
+        title: <ModalHeader>Edit unpublished item</ModalHeader>,
+        content: `This item is unpublished. You will need to publish this item again 
       for the changes to be reflected in the Browse Items page.
       After the item is edited, the previous version will not be available. 
       Do you wish to continue?`,
-      footer: [
-        <ModalFooter key="footer">
-          <Button onClick={() => confirmNewVersion.destroy()}>Cancel</Button>
-          <Button
-            autoFocus
-            onClick={() => {
-              confirmNewVersion.destroy()
-              onCreateNewVersion()
-                .then()
-                .catch(() =>
-                  showDialog(
-                    'error',
-                    'Problem updating this item',
-                    'Item cannot be updated',
-                  ),
-                )
-            }}
-            status="danger"
-          >
-            Edit
-          </Button>
-        </ModalFooter>,
-      ],
-    })
+        footer: [
+          <ModalFooter key="footer">
+            <Button onClick={() => confirmNewVersion.destroy()}>Cancel</Button>
+            <Button
+              autoFocus
+              onClick={() => {
+                confirmNewVersion.destroy()
+                onCreateNewVersion()
+                  .then()
+                  .catch(() =>
+                    showDialog(
+                      'error',
+                      'Problem updating this item',
+                      'Item cannot be updated',
+                    ),
+                  )
+              }}
+              status="danger"
+            >
+              Edit
+            </Button>
+          </ModalFooter>,
+        ],
+      })
+    }
   }
   // #endregion handlers
 
@@ -1168,25 +1168,131 @@ const Question = props => {
       break
   }
 
-  const editorActionsDropdownMenu = (
-    <>
-      <StyledWordExportButton
-        hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
-        loading={wordFileLoading}
-        onExport={onClickExportToWord}
-        showMetadataOption
-      />
-      {((canAssignAuthor && isPublished) ||
-        (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
-        <StyledAssignAuthorButton
-          authors={authors}
-          currentAuthor={authorsCurrent}
-          loadAuthors={loadAuthors}
-          onAssignAuthor={onAssignAuthor}
-          refetchUser={refetchUser}
-        />
-      )}
-      {isUnderReview && (
+  // const editorActionsDropdownMenu = (
+  //   <>
+  //     <StyledWordExportButton
+  //       hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
+  //       loading={wordFileLoading}
+  //       onExport={onClickExportToWord}
+  //       showMetadataOption
+  //     />
+  //     {((canAssignAuthor && isPublished) ||
+  //       (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
+  //       <StyledAssignAuthorButton
+  //         authors={authors}
+  //         currentAuthor={authorsCurrent}
+  //         loadAuthors={loadAuthors}
+  //         onAssignAuthor={onAssignAuthor}
+  //         refetchUser={refetchUser}
+  //       />
+  //     )}
+  //     {isUnderReview && (
+  //       <>
+  //         <StyledButton
+  //           id="doNotAccept"
+  //           onClick={handleReject}
+  //           status="danger"
+  //           type="primary"
+  //         >
+  //           Do not accept
+  //         </StyledButton>
+
+  //         <StyledButton
+  //           id="moveToProduction"
+  //           onClick={handleMoveToProduction}
+  //           type="primary"
+  //         >
+  //           Move to production
+  //         </StyledButton>
+  //       </>
+  //     )}
+  //     {canPublish && isInProduction && !isPublished && (
+  //       <StyledButton
+  //         data-testid="publish-question-btn"
+  //         onClick={handlePublish}
+  //         type="primary"
+  //       >
+  //         Publish
+  //       </StyledButton>
+  //     )}
+  //     {isSubmitted &&
+  //       !isAccepted &&
+  //       !isUnderReview &&
+  //       !isInProduction &&
+  //       !isPublished && (
+  //         <>
+  //           <StyledButton
+  //             id="doNotAccept"
+  //             onClick={handleReject}
+  //             status="danger"
+  //             type="primary"
+  //           >
+  //             Do not accept
+  //           </StyledButton>
+  //           <StyledButton id="accept" onClick={onAcceptQuestion} type="primary">
+  //             Accept
+  //           </StyledButton>
+  //         </>
+  //       )}
+  //     {isAccepted &&
+  //       !isUnderReview &&
+  //       !isInProduction &&
+  //       !isPublished &&
+  //       !isUnpublished && (
+  //         <>
+  //           <StyledButton
+  //             id="doNotAccept"
+  //             onClick={handleReject}
+  //             status="danger"
+  //             type="primary"
+  //           >
+  //             Do not accept
+  //           </StyledButton>
+  //           <StyledButton
+  //             id="moveToReview"
+  //             onClick={handleMoveToReview}
+  //             type="primary"
+  //           >
+  //             Move to review
+  //           </StyledButton>
+  //         </>
+  //       )}
+  //     {showAssignHEButton && (
+  //       <StyledAssignHEButton
+  //         currentHandlingEditors={currentHandlingEditors}
+  //         handlingEditors={handlingEditors}
+  //         loadAssignedHEs={loadAssignedHEs}
+  //         loading={assignHELoading}
+  //         onAssign={onClickAssignHE}
+  //         onSearchHE={onSearchHE}
+  //         onUnassign={onUnassignHandlingEditor}
+  //         searchLoading={searchHELoading}
+  //       />
+  //     )}
+  //     {isPublished && canUnpublish && (
+  //       <StyledButton onClick={showUnpublishModal} type="primary">
+  //         Unpublish
+  //       </StyledButton>
+  //     )}
+  //     {isUnpublished && canCreateNewVersion && !hasDeletedAuthor && (
+  //       <StyledButton onClick={showNewVersionModal} type="primary">
+  //         Edit item
+  //       </StyledButton>
+  //     )}
+  //     {showNextQuestionLink && NextQuestion}
+  //   </>
+  // )
+
+  const viewAsOptions = [
+    { value: true, label: 'Educator' },
+    { value: false, label: 'Learner' },
+  ]
+
+  let RightAreaEditor
+
+  switch (stage) {
+    case stages.SUBMITTED:
+      RightAreaEditor = (
         <>
           <StyledButton
             id="doNotAccept"
@@ -1196,7 +1302,44 @@ const Question = props => {
           >
             Do not accept
           </StyledButton>
-
+          <StyledButton id="accept" onClick={onAcceptQuestion} type="primary">
+            Accept
+          </StyledButton>
+        </>
+      )
+      break
+    case stages.ACCEPTED:
+      RightAreaEditor = (
+        <>
+          <StyledButton
+            id="doNotAccept"
+            onClick={handleReject}
+            status="danger"
+            type="primary"
+          >
+            Do not accept
+          </StyledButton>
+          <StyledButton
+            id="moveToReview"
+            onClick={handleMoveToReview}
+            type="primary"
+          >
+            Move to review
+          </StyledButton>
+        </>
+      )
+      break
+    case stages.REVIEW:
+      RightAreaEditor = (
+        <>
+          <StyledButton
+            id="doNotAccept"
+            onClick={handleReject}
+            status="danger"
+            type="primary"
+          >
+            Do not accept
+          </StyledButton>
           <StyledButton
             id="moveToProduction"
             onClick={handleMoveToProduction}
@@ -1205,228 +1348,45 @@ const Question = props => {
             Move to production
           </StyledButton>
         </>
-      )}
-      {canPublish && isInProduction && !isPublished && (
+      )
+      break
+    case stages.PRODUCTION:
+      RightAreaEditor = (
         <StyledButton
           data-testid="publish-question-btn"
+          hidden={!canPublish}
           onClick={handlePublish}
           type="primary"
         >
           Publish
         </StyledButton>
-      )}
-      {isSubmitted &&
-        !isAccepted &&
-        !isUnderReview &&
-        !isInProduction &&
-        !isPublished && (
-          <>
-            <StyledButton
-              id="doNotAccept"
-              onClick={handleReject}
-              status="danger"
-              type="primary"
-            >
-              Do not accept
-            </StyledButton>
-            <StyledButton id="accept" onClick={onAcceptQuestion} type="primary">
-              Accept
-            </StyledButton>
-          </>
-        )}
-      {isAccepted &&
-        !isUnderReview &&
-        !isInProduction &&
-        !isPublished &&
-        !isUnpublished && (
-          <>
-            <StyledButton
-              id="doNotAccept"
-              onClick={handleReject}
-              status="danger"
-              type="primary"
-            >
-              Do not accept
-            </StyledButton>
-            <StyledButton
-              id="moveToReview"
-              onClick={handleMoveToReview}
-              type="primary"
-            >
-              Move to review
-            </StyledButton>
-          </>
-        )}
-      {showAssignHEButton && (
-        <StyledAssignHEButton
-          currentHandlingEditors={currentHandlingEditors}
-          handlingEditors={handlingEditors}
-          loadAssignedHEs={loadAssignedHEs}
-          loading={assignHELoading}
-          onAssign={onClickAssignHE}
-          onSearchHE={onSearchHE}
-          onUnassign={onUnassignHandlingEditor}
-          searchLoading={searchHELoading}
-        />
-      )}
-      {isPublished && canUnpublish && (
-        <StyledButton onClick={showUnpublishModal} type="primary">
+      )
+      break
+    case stages.PUBLISHED:
+      RightAreaEditor = (
+        <StyledButton
+          hidden={!canUnpublish}
+          onClick={showUnpublishModal}
+          type="primary"
+        >
           Unpublish
         </StyledButton>
-      )}
-      {isUnpublished && canCreateNewVersion && !hasDeletedAuthor && (
-        <StyledButton onClick={showNewVersionModal} type="primary">
+      )
+      break
+    case stages.UNPUBLISHED:
+      RightAreaEditor = (
+        <StyledButton
+          hidden={!canCreateNewVersion || hasDeletedAuthor}
+          onClick={showNewVersionModal}
+          type="primary"
+        >
           Edit item
         </StyledButton>
-      )}
-      {showNextQuestionLink && NextQuestion}
-    </>
-  )
-
-  const viewAsOptions = [
-    { value: true, label: 'Educator' },
-    { value: false, label: 'Learner' },
-  ]
-
-  const RightAreaEditor = (
-    <>
-      <ActionsWrapper>
-        <StyledWordExportButton
-          hasUnmetDependencies={initialMetadataValues.dependsOn?.length}
-          loading={wordFileLoading}
-          onExport={onClickExportToWord}
-          showMetadataOption
-        />
-        {((canAssignAuthor && isPublished) ||
-          (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
-          <StyledAssignAuthorButton
-            authors={authors}
-            authorsCurrent={authorsCurrent}
-            currentAuthor={authorsCurrent}
-            loadAuthors={loadAuthors}
-            onAssignAuthor={onAssignAuthor}
-            refetchUser={refetchUser}
-          />
-        )}
-
-        {isUnderReview && (
-          <>
-            <StyledButton
-              id="doNotAccept"
-              onClick={handleReject}
-              status="danger"
-              type="primary"
-            >
-              Do not accept
-            </StyledButton>
-
-            <StyledButton
-              id="moveToProduction"
-              onClick={handleMoveToProduction}
-              type="primary"
-            >
-              Move to production
-            </StyledButton>
-          </>
-        )}
-        {isSubmitted &&
-          !isAccepted &&
-          !isUnderReview &&
-          !isInProduction &&
-          !isPublished &&
-          !isUnpublished && (
-            <>
-              <StyledButton
-                id="doNotAccept"
-                onClick={handleReject}
-                status="danger"
-                type="primary"
-              >
-                Do not accept
-              </StyledButton>
-              <StyledButton
-                id="accept"
-                onClick={onAcceptQuestion}
-                type="primary"
-              >
-                Accept
-              </StyledButton>
-            </>
-          )}
-        {isAccepted &&
-          !isUnderReview &&
-          !isInProduction &&
-          !isPublished &&
-          !isUnpublished && (
-            <>
-              <StyledButton
-                id="doNotAccept"
-                onClick={handleReject}
-                status="danger"
-                type="primary"
-              >
-                Do not accept
-              </StyledButton>
-              <StyledButton
-                id="moveToReview"
-                onClick={handleMoveToReview}
-                type="primary"
-              >
-                Move to review
-              </StyledButton>
-            </>
-          )}
-        {showAssignHEButton && (
-          <StyledAssignHEButton
-            currentHandlingEditors={currentHandlingEditors}
-            handlingEditors={handlingEditors}
-            loadAssignedHEs={loadAssignedHEs}
-            loading={assignHELoading}
-            onAssign={onClickAssignHE}
-            onSearchHE={onSearchHE}
-            onUnassign={onUnassignHandlingEditor}
-            searchLoading={searchHELoading}
-          />
-        )}
-        {canPublish && isInProduction && !isPublished && (
-          <StyledButton
-            data-testid="publish-question-btn"
-            onClick={handlePublish}
-            type="primary"
-          >
-            Publish
-          </StyledButton>
-        )}
-        {isPublished && canUnpublish && (
-          <StyledButton onClick={showUnpublishModal} type="primary">
-            Unpublish
-          </StyledButton>
-        )}
-        {isUnpublished && canCreateNewVersion && !hasDeletedAuthor && (
-          <StyledButton onClick={showNewVersionModal} type="primary">
-            Edit item
-          </StyledButton>
-        )}
-
-        {showNextQuestionLink && NextQuestion}
-      </ActionsWrapper>
-      <Popup
-        alignment="end"
-        data-testid="editor-actions-popup"
-        position="block-end"
-        toggle={
-          <PopupToggle
-            aria-label="More actions"
-            icon={<EllipsisOutlined />}
-            title="More actions"
-            type="primary"
-          />
-        }
-      >
-        <PopupContentWrapper>{editorActionsDropdownMenu}</PopupContentWrapper>
-      </Popup>
-    </>
-  )
+      )
+      break
+    default:
+      break
+  }
 
   const ViewAsContent = (
     <>
@@ -1514,7 +1474,36 @@ const Question = props => {
       />
       {!isRejected &&
         !reviewerView &&
-        (editorView && isSubmitted ? RightAreaEditor : RightAreaAuthor)}
+        (editorView && isSubmitted ? (
+          <ActionsWrapper>
+            {((canAssignAuthor && isPublished) ||
+              (isUnpublished && hasDeletedAuthor && canUnpublish)) && (
+              <StyledAssignAuthorButton
+                authors={authors}
+                authorsCurrent={authorsCurrent}
+                currentAuthor={authorsCurrent}
+                loadAuthors={loadAuthors}
+                onAssignAuthor={onAssignAuthor}
+                refetchUser={refetchUser}
+              />
+            )}
+            {showAssignHEButton && (
+              <StyledAssignHEButton
+                currentHandlingEditors={currentHandlingEditors}
+                handlingEditors={handlingEditors}
+                loadAssignedHEs={loadAssignedHEs}
+                loading={assignHELoading}
+                onAssign={onClickAssignHE}
+                onSearchHE={onSearchHE}
+                onUnassign={onUnassignHandlingEditor}
+                searchLoading={searchHELoading}
+              />
+            )}
+            {RightAreaEditor}
+          </ActionsWrapper>
+        ) : (
+          RightAreaAuthor
+        ))}
       {reviewerView &&
         !isRejected &&
         (reviewInviteStatus === REVIEWER_STATUSES.invited ||
@@ -2016,7 +2005,6 @@ Question.propTypes = {
   ),
   showAssignHEButton: PropTypes.bool,
   showPreviewButton: PropTypes.bool,
-  showNextQuestionLink: PropTypes.bool,
   facultyView: PropTypes.bool,
   metadata: PropTypes.shape({
     topics: PropTypes.arrayOf(
@@ -2331,7 +2319,7 @@ Question.propTypes = {
   unreadMentions: PropTypes.arrayOf(PropTypes.shape()),
   onMarkAsRead: PropTypes.func,
   stage: PropTypes.string,
-  stages: PropTypes.arrayOf(PropTypes.string),
+  stages: PropTypes.shape(),
 }
 
 Question.defaultProps = {
@@ -2398,7 +2386,7 @@ Question.defaultProps = {
   canAssignAuthor: false,
   showAssignHEButton: true,
   showPreviewButton: false,
-  showNextQuestionLink: false,
+
   facultyView: false,
   refetchUser: () => {},
   resources: [],
