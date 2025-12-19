@@ -1708,6 +1708,49 @@ const mapMetadataToSelectOptions = (metadata, showDisabled) => {
   )
 }
 
+const STAGES = {
+  UNSUBMITTED: 'UNSUBMITTED',
+  SUBMITTED: 'SUBMITTED',
+  EDITING: 'EDITING',
+  ACCEPTED: 'ACCEPTED',
+  REVIEW: 'REVIEW',
+  PRODUCTION: 'PRODUCTION',
+  PUBLISHED: 'PUBLISHED',
+  UNPUBLISHED: 'UNPUBLISHED',
+}
+
+const calculateStage = version => {
+  if (version?.published) {
+    return STAGES.PUBLISHED
+  }
+
+  if (version?.unpublished) {
+    return STAGES.UNPUBLISHED
+  }
+
+  if (version?.inProduction) {
+    return STAGES.PRODUCTION
+  }
+
+  if (version?.underReview) {
+    return STAGES.REVIEW
+  }
+
+  if (version?.accepted) {
+    return STAGES.ACCEPTED
+  }
+
+  if (version?.editing) {
+    return STAGES.EDITING
+  }
+
+  if (!version?.submitted) {
+    return STAGES.UNSUBMITTED
+  }
+
+  return STAGES.SUBMITTED
+}
+
 export {
   extractDocumentText,
   extractTopicsAndSubtopics,
@@ -1743,4 +1786,6 @@ export {
   flattenReviewerSearchResults,
   mapMetadataToSelectOptions,
   notificationsMapper,
+  calculateStage,
+  STAGES,
 }
