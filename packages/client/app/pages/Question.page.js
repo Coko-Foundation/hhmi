@@ -876,6 +876,7 @@ const QuestionPage = props => {
   const isInProduction = version?.inProduction || (isAdmin && isAuthor)
   const isAccepted = version?.accepted
   const isPublished = version?.published
+  const stage = calculateStage(version)
 
   const isArchived = question?.isArchived && !testMode
 
@@ -1835,7 +1836,7 @@ const QuestionPage = props => {
         showPreviewButton={isAuthor && !version?.submitted}
         showProductionChatTab={showProductionChatTab}
         showReviewerChatTab={showReviewerChatTab}
-        stage={calculateStage()}
+        stage={stage}
         stages={STAGES}
         unreadMentions={unread}
         updated={version?.lastEdit}
