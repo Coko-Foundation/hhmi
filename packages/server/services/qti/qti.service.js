@@ -162,7 +162,16 @@ class WaxToQTIConverter {
 
   #tableHandler = content => {
     return {
-      table: this.#contentParser(content.content),
+      div: [
+        {
+          _attr: {
+            role: 'table',
+            style:
+              'display:table;width:100%;border-collapse:collapse;margin:15px 0;',
+          },
+        },
+        ...this.#contentParser(content.content),
+      ],
     }
   }
 
@@ -174,17 +183,26 @@ class WaxToQTIConverter {
 
   #tableBodyHandler = content => {
     return {
-      tbody: this.#contentParser(content.content),
+      div: [
+        {
+          _attr: {
+            role: 'rowgroup',
+          },
+        },
+        ...this.#contentParser(content.content),
+      ],
     }
   }
 
   #tableCellHandler = content => {
     return {
-      td: [
+      div: [
         {
           _attr: {
+            role: 'cell',
             // hard code border styles to show on qti import
-            style: 'border: 1px solid black',
+            style:
+              'display:table-cell;padding:10px;vertical-align:middle;border: 1px solid black',
           },
         },
         ...this.#contentParser(content.content),
@@ -195,7 +213,15 @@ class WaxToQTIConverter {
 
   #tableRowHandler = content => {
     return {
-      tr: this.#contentParser(content.content),
+      div: [
+        {
+          _attr: {
+            role: 'row',
+            style: 'display:table-row',
+          },
+        },
+        ...this.#contentParser(content.content),
+      ],
     }
   }
 
