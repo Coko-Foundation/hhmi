@@ -162,7 +162,6 @@ const canUpdateQuestion = rule()(
 // editors or handling editors can move to review
 const canMoveToReview = rule()(async (_, __, ctx) => {
   if (!ctx.userId) return false
-  if (!ctx.userId) return false
 
   const { User } = require('@coko/server')
   const user = await User.query().findById(ctx.userId)
@@ -177,7 +176,6 @@ const canMoveToReview = rule()(async (_, __, ctx) => {
 // editors or handling editors (aslo reviewers?) can move to production
 const canMoveToProduction = rule()(async (_, __, ctx) => {
   if (!ctx.userId) return false
-  if (!ctx.userId) return false
 
   const { User } = require('@coko/server')
   const user = await User.query().findById(ctx.userId)
@@ -191,7 +189,6 @@ const canMoveToProduction = rule()(async (_, __, ctx) => {
 
 // editors, handling editors, and admins (also production team?) can publish
 const canPublish = rule()(async (_, __, ctx) => {
-  if (!ctx.userId) return false
   if (!ctx.userId) return false
 
   const { User } = require('@coko/server')
@@ -481,6 +478,8 @@ const permissions = {
     currentUser: isActive,
     filterUsers: isAdminOrEditor,
     user: isAdmin,
+    getCountriesForUserProfile: isActive,
+    getStatesByCountryForUserProfile: isActive,
     // Teams
     teams: isAdmin,
     getNonTeamMemberUsers: isAdmin,

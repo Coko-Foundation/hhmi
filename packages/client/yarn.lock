@@ -1581,10 +1581,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@coko/client@1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@coko/client/-/client-1.0.6.tgz#e88927d5daa27ef28d763b9f16183e9c44cc8248"
-  integrity sha512-VfUZpfxrahc6sNXf3fOjT2c/Bbc0mra6V76yIgs2cFRnnpJHRvxoNacIR5ctuLUgiXaZCVQJkQHHxVwRs21N+Q==
+"@coko/client@1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@coko/client/-/client-1.1.1.tgz#0529790126cc3b953b4a68d5cf1df4655174eb86"
+  integrity sha512-DxN1yhxsREswQdMkRKZ9kB9NbiCWnC7wCQR1nfHA9p7x7PEbuGhmxvH8FM4FpCLVQr1UTGYR0V/kLX3c5vYc3Q==
   dependencies:
     "@ant-design/icons" "^5.1.4"
     "@babel/cli" "^7.13.14"

@@ -88,6 +88,10 @@ type Unit {
   # aamc
   concept: String
   category: String
+  # ngss
+  practice: String
+  crosscuttingConcept: String
+  coreIdea: String
 }
 
 type QuestionsResponse {
@@ -155,6 +159,10 @@ input UnitInput {
   # aamc
   concept: String
   category: String
+  # ngss
+  practice: String
+  crosscuttingConcept: String
+  coreIdea: String
 }
 
 input SidebarFilters {
@@ -180,6 +188,10 @@ input SidebarFilters {
 
   concept: String
   category: String
+
+  practice: String
+  crosscuttingConcept: String
+  coreIdea: String
 
   cognitiveLevel: [String]
   questionType: [String]

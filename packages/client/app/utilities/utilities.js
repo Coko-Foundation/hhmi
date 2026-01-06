@@ -324,6 +324,18 @@ const extractCourseAndObjectives = (courses, frameworksMetadata) =>
             : null,
         )
         break
+      case 'ngss':
+        result.label = 'disciplinary core idea'
+        result.objectives = c.units.map(unit =>
+          unit.coreIdea
+            ? {
+                label: courseInValues?.disciplinaryCoreIdeas?.find(
+                  idea => idea.value === unit.coreIdea,
+                )?.label,
+              }
+            : null,
+        )
+        break
       default:
         break
     }
@@ -466,6 +478,26 @@ const extractIntroBioCourseMetadata = (
     // aamc
     { label: 'Concept', value: concept },
     { label: 'Category', value: category },
+  ]
+}
+
+const extractNGSSCourseMetadata = (unitData, courseMetadata) => {
+  const practice = courseMetadata.practices.find(
+    p => p.value === unitData.practice,
+  )?.label
+
+  const concept = courseMetadata.crosscuttingConcepts.find(
+    p => p.value === unitData.crosscuttingConcept,
+  )?.label
+
+  const coreIdea = courseMetadata.disciplinaryCoreIdeas.find(
+    c => c.value === unitData.coreIdea,
+  )?.label
+
+  return [
+    { label: 'By Practice', value: practice },
+    { label: 'Crosscutting Concept', value: concept },
+    { label: 'Disciplinary Core Idea', value: coreIdea },
   ]
 }
 
@@ -1662,6 +1694,7 @@ export {
   extractAPCourseMetadata,
   extractIBCourseMetadata,
   extractIntroBioCourseMetadata,
+  extractNGSSCourseMetadata,
   flatAAMCMetadata,
   flatAPCoursesMetadata,
   flatIBCourseMetadata,

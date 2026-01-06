@@ -95,6 +95,8 @@ input UserFilterOptions {
 
 extend type Query {
   filterUsers(params: UserFilter, options: UserFilterOptions): Users!
+  getCountriesForUserProfile: [SimpleValueLabelPair!]!
+  getStatesByCountryForUserProfile(country: String!): [SimpleValueLabelPair]
 }
 
 extend type Mutation {

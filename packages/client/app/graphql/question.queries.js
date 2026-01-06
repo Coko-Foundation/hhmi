@@ -49,6 +49,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
               skill
               understanding
               # unit
+              coreIdea
             }
           }
 
@@ -114,6 +115,7 @@ export const GET_EDITOR_DASHBOARD = gql`
               skill
               understanding
               # unit
+              coreIdea
             }
           }
 
@@ -178,6 +180,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
               skill
               understanding
               # unit
+              coreIdea
             }
           }
 
@@ -237,6 +240,7 @@ export const GET_REVIEWER_DASHBOARD = gql`
               skill
               understanding
               # unit
+              coreIdea
             }
           }
 
@@ -308,6 +312,7 @@ export const GET_PRODUCTION_DASHBOARD = gql`
               skill
               understanding
               # unit
+              coreIdea
             }
           }
 
@@ -446,6 +451,10 @@ export const QUESTION = gql`
             # aamc
             concept
             category
+            # ngss
+            practice
+            crosscuttingConcept
+            coreIdea
           }
         }
 
@@ -736,6 +745,7 @@ export const GET_PUBLISHED_QUESTIONS = gql`
               learningObjective
               skill
               understanding
+              coreIdea
             }
           }
 

@@ -356,6 +356,7 @@ class CourseMetadata extends BaseModel {
       case 'application': // extra
       case 'skill': // extra
       case 'understanding': // extra
+      case 'practice':
         return type
       case 'learningObjective':
         return 'learning_objective'
@@ -377,6 +378,10 @@ class CourseMetadata extends BaseModel {
         return 'subcompetence_statement'
       case 'courseTopic': // extra
         return 'topic'
+      case 'crosscuttingConcept':
+        return 'crosscutting_concept'
+      case 'disciplinaryCoreIdea':
+        return 'disciplinary_core_idea'
       default:
         return null
     }
@@ -436,6 +441,9 @@ class CourseMetadata extends BaseModel {
 
     switch (tableName) {
       case 'unit':
+      case 'practice':
+      case 'crosscuttingConcept':
+      case 'disciplinaryCoreIdea':
         columnName = 'course_id'
         columnValue = input.course
         break

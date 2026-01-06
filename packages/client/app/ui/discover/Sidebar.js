@@ -9,6 +9,7 @@ import {
   APCourseMetadata,
   IBCourseMetadata,
   IntroToBioCourseMetadata,
+  NGSSCourseMetadata,
 } from '../metadataFields'
 
 const Wrapper = styled.aside`
@@ -48,6 +49,7 @@ const Footer = styled.div`
 const apCourses = ['apBiology', 'apEnvironmentalScience']
 const ibCourses = ['biBiology', 'biEnvironmentalScience']
 const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
+const ngss = 'ngss'
 
 const Sidebar = props => {
   const {
@@ -115,6 +117,16 @@ const Sidebar = props => {
           filterMode
           getFieldValue={getFieldValue}
           introToBioMeta={metadata.introToBioMeta}
+          setFieldsValue={form.setFieldsValue}
+        />
+      )
+    }
+
+    if (courseMetadata?.textValue === ngss) {
+      return (
+        <NGSSCourseMetadata
+          courseData={courseMetadata}
+          filterMode
           setFieldsValue={form.setFieldsValue}
         />
       )

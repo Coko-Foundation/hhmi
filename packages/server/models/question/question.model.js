@@ -153,6 +153,7 @@ class Question extends BaseModel {
           questionType,
           contentText,
           inProduction: true,
+          accepted: true,
           unpublished: false,
         },
         { trx: options.trx },
@@ -223,6 +224,9 @@ class Question extends BaseModel {
         'subcompetenceStatement',
         'concept',
         'category',
+        'practice',
+        'crosscuttingConcept',
+        'coreIdea',
       ]
 
       // choose only applied metafilters
@@ -314,7 +318,6 @@ class Question extends BaseModel {
           'users.display_name as author',
           'users.given_names as author_name',
           'users.surname as author_surname',
-          'question_versions.complex_item_set_id',
           'question_versions.complex_item_set_id',
           'question_versions.biointeractive_resources',
         )
@@ -836,7 +839,12 @@ class Question extends BaseModel {
       .leftJoin('teams', 'question_versions.id', 'teams.object_id')
       .leftJoin('team_members', 'team_members.team_id', 'teams.id')
 
-    const selectFields = ['questions.*', 'teams.role', 'team_members.user_id']
+    const selectFields = [
+      'questions.*',
+      'teams.role',
+      'team_members.user_id',
+      'team_members.status',
+    ]
 
     // if (status || searchQuery) {
     query
@@ -861,7 +869,12 @@ class Question extends BaseModel {
     query.select(selectFields)
 
     // user filter
-    query.where({ 'teams.role': role, 'team_members.user_id': userId })
+    query
+      .where({ 'teams.role': role, 'team_members.user_id': userId })
+      .whereIn('team_members.status', [
+        REVIEWER_STATUSES.invited,
+        REVIEWER_STATUSES.accepted,
+      ])
 
     // status filter
     if (status) {

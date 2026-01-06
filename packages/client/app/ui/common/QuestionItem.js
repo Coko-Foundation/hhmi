@@ -130,6 +130,7 @@ const courseOrder = [
   'IB Biology',
   'AP Environmental Science',
   'IB Environmental Science',
+  'Next Generation Science Standards',
 ]
 
 const sortFunction = (a, b) =>

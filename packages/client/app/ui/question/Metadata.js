@@ -2,7 +2,7 @@ import React, { useState, useImperativeHandle, useEffect } from 'react'
 import { dropRight } from 'lodash'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { grid } from '@coko/client'
+import { grid, th } from '@coko/client'
 import { mapMetadataToSelectOptions } from '../../utilities'
 import {
   Select,
@@ -21,6 +21,7 @@ import {
 } from '../metadataFields'
 import Resources from './Resources'
 import MetadataInfo from './MetadataInfo'
+import NGSSCourseMetadata from '../metadataFields/NGSSCourseMetadata'
 
 const Wrapper = styled.section`
   padding: ${grid(4)};
@@ -28,11 +29,24 @@ const Wrapper = styled.section`
 
 const StyledSupplementaryFieldsContainer = styled.div`
   margin-bottom: ${grid(6)};
+
+  > div:not(:last-of-type) {
+    border-block-end: 1px solid ${th('colorBorder')};
+  }
+
+  > div:not(:first-of-type) {
+    margin-block-start: ${grid(3)};
+  }
+`
+
+const RemoveButton = styled(Button)`
+  margin-block-end: ${grid(3)};
 `
 
 const apCourses = ['apBiology', 'apEnvironmentalScience']
 const ibCourses = ['biBiology', 'biEnvironmentalScience']
 const introBioCourses = ['introBioForNonMajors', 'introBioForMajors']
+const ngss = 'ngss'
 
 const ModalContext = React.createContext(null)
 const { footer: ModalFooter, header: ModalHeader } = Modal
@@ -140,6 +154,18 @@ const Metadata = React.forwardRef((props, ref) => {
       )
     }
 
+    if (courseMetadata?.textValue === ngss) {
+      return (
+        <NGSSCourseMetadata
+          courseData={courseMetadata}
+          index={index}
+          readOnly={readOnly}
+          setFieldsValue={form.setFieldsValue}
+          supplementaryKey={key}
+        />
+      )
+    }
+
     return null
   }
 
@@ -165,16 +191,20 @@ const Metadata = React.forwardRef((props, ref) => {
     add()
   }
 
-  const handleSupplementaryRemove = (remove, key) => {
+  const handleSupplementaryRemove = (remove, key, index) => {
     if (key === topicsKey) {
       const last = topicsIndexes.length - 1
       remove(last)
       setTopicsIndexes(dropRight([...topicsIndexes]))
     } else if (key === coursesKey) {
-      const last = coursesIndexes.length - 1
-      remove(last)
+      remove(index)
       setCoursesIndexes(dropRight([...coursesIndexes]))
     }
+  }
+
+  const canAddAnotherCourse = courses => {
+    // editors can add indefinite curricula references, authors max 2 (of the same course)
+    return editorView ? true : courses.length < 2
   }
 
   // need to reset fields when course choice changes, because it enter a recursive loop when done inside metadata components
@@ -410,7 +440,7 @@ const Metadata = React.forwardRef((props, ref) => {
                     <div key={`supplementaryFields-${index}`}>
                       {index === 1 && !editorView && <p>Second reference</p>}
                       <Form.Item
-                        hidden={index === 1 && !editorView}
+                        hidden={index > 0 && !editorView}
                         {...initialValueSecondCourse(index)}
                         label="Course"
                         name={[index, 'course']}
@@ -440,6 +470,18 @@ const Metadata = React.forwardRef((props, ref) => {
                           )
                         }
                       </Form.Item>
+                      {coursesIndexes.length > 1 && (
+                        <RemoveButton
+                          disabled={readOnly}
+                          onClick={() => {
+                            handleSupplementaryRemove(remove, coursesKey, index)
+                          }}
+                          status="danger"
+                          type="primary"
+                        >
+                          Remove curricula reference
+                        </RemoveButton>
+                      )}
                     </div>
                   ) : (
                     <p key={`supplementaryFields-${index}`}>
@@ -448,37 +490,16 @@ const Metadata = React.forwardRef((props, ref) => {
                   ),
                 )}
 
-                {!readOnly && coursesIndexes.indexOf(-1) === -1 && (
-                  <>
-                    {(coursesIndexes.length < 2 || editorView) && (
-                      <Button
-                        disabled={readOnly}
-                        onClick={() => {
-                          handleSupplementaryAdd(add, coursesKey)
-                        }}
-                        type="primary"
-                      >
-                        {editorView
-                          ? 'Add related course'
-                          : 'Add a second curricula reference'}
-                      </Button>
-                    )}
-                    {((coursesIndexes.length > 1 && !editorView) ||
-                      (editorView && coursesIndexes.length > 1)) && ( // transformedInitialValues.courses.length
-                      <Button
-                        disabled={readOnly}
-                        onClick={() => {
-                          handleSupplementaryRemove(remove, coursesKey)
-                        }}
-                        status="danger"
-                        type="primary"
-                      >
-                        {editorView
-                          ? 'Remove last course'
-                          : 'Remove second curricula reference'}
-                      </Button>
-                    )}
-                  </>
+                {!readOnly && canAddAnotherCourse(coursesIndexes) && (
+                  <Button
+                    disabled={readOnly}
+                    onClick={() => {
+                      handleSupplementaryAdd(add, coursesKey)
+                    }}
+                    type="primary"
+                  >
+                    Add related curricula reference
+                  </Button>
                 )}
               </StyledSupplementaryFieldsContainer>
             )}
