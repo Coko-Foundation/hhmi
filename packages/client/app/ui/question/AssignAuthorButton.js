@@ -59,7 +59,7 @@ const AssignAuthorButton = props => {
             .map(auth => auth.label)
             .join(', ')} ${
             author.length > 1 ? 'have' : 'has'
-          } been assgined author of this ${
+          } been assigned author of this ${
             usecase === 'item' ? 'item' : 'leader text'
           }.`,
           footer: [
