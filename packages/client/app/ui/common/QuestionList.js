@@ -95,6 +95,7 @@ const QuestionList = props => {
     withFilters,
     filters,
     defaultSearch,
+    showSizeChanger,
   } = props
 
   const itemSelection = showRowCheckboxes
@@ -103,16 +104,30 @@ const QuestionList = props => {
       }
     : null
 
+  const calculateSizeOptions = () => {
+    const defaultSizes = [10, 20, 50]
+
+    const options = defaultSizes.filter(threshold => totalCount >= threshold)
+
+    if (totalCount > 10 && !options.includes(totalCount)) {
+      options.push(totalCount)
+    }
+
+    return options
+  }
+
   const pagination = () => {
     const paginationConfig = {}
     paginationConfig.pageSize = questionsPerPage
+    const pageSizeOptions = calculateSizeOptions()
+    paginationConfig.pageSizeOptions = pageSizeOptions
 
     if (totalCount > questions.length) {
       paginationConfig.onChange = onPageChange
     }
 
     paginationConfig.current = currentPage
-    paginationConfig.showSizeChanger = false
+    paginationConfig.showSizeChanger = showSizeChanger
 
     return paginationConfig
   }
@@ -218,6 +233,7 @@ QuestionList.propTypes = {
   ),
   withFilters: PropTypes.bool,
   defaultSearch: PropTypes.string,
+  showSizeChanger: PropTypes.bool,
 }
 
 QuestionList.defaultProps = {
@@ -249,6 +265,7 @@ QuestionList.defaultProps = {
   filters: [],
   withFilters: false,
   defaultSearch: '',
+  showSizeChanger: false,
 }
 
 export default QuestionList
