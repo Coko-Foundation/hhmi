@@ -129,7 +129,7 @@ const checkDataType = (validData, dataType) => {
             },
           ]
 
-          createQuestion(
+          await createQuestion(
             username,
             date,
             metadata[validDataType[typeIndex]],

@@ -97,7 +97,12 @@ const ExportToWordButton = props => {
         footer={[
           <ModalFooter key="footer">
             <Button onClick={() => setShowModal(false)}>Cancel</Button>
-            <Button autoFocus onClick={handleOk} type="primary">
+            <Button
+              autoFocus
+              data-testid="modal-export-btn"
+              onClick={handleOk}
+              type="primary"
+            >
               Export
             </Button>
           </ModalFooter>,

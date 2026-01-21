@@ -137,6 +137,7 @@ describe('ChatThreads', () => {
   describe('Author chat', () => {
     before(() => {
       cy.viewport(laptop.preset)
+      cy.intercept('POST', '**/graphql').as('mentionQuery')
       cy.deleteAllQuestions(disableScripts)
       cy.seedQuestion(
         disableScripts,
@@ -179,6 +180,7 @@ describe('ChatThreads', () => {
           .click()
         cy.contains(antTabs, 'Author chat').click()
         cy.reload()
+        cy.intercept('POST', '**/graphql').as('mentionQuery')
       })
 
       it('displays correct participants', () => {
@@ -188,7 +190,8 @@ describe('ChatThreads', () => {
       })
 
       it('highlights only participant usernames', () => {
-        cy.get('[placeholder="Write a message"]').type('@')
+        cy.get('[placeholder="Write a message"]').type('@', { delay: 600 })
+        cy.wait('@mentionQuery')
         cy.contains('[role="option"]', user2.username).click()
         cy.get('[placeholder="Write a message"]').type('@user{enter}')
         cy.contains(
