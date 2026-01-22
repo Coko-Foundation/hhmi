@@ -13,7 +13,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "sh clean.sh",
-    "cz": "git cz",
+    "cz": "./node_modules/.bin/lint-staged && ./node_modules/.bin/git-cz",
     "storybook": "docker-compose -f docker-compose.storybook.yml up",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"
