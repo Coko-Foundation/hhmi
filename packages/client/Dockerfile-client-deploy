@@ -1,27 +1,42 @@
 # IMAGE FOR BUILDING
-FROM node:18-bookworm-slim
+# FROM node:18-bookworm-slim
+FROM cokoapps/base:20
 
 # Copy the .platform directory to the root of the project
 # COPY .platform /.platform
 
-RUN apt-get update \ 
-    && apt-get upgrade -y \
-    && apt-get install -y
+# RUN apt-get update \ 
+#     && apt-get upgrade -y \
+#     && apt-get install -y
 
 WORKDIR /home/node/app
+# RUN corepack enable
 
+COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn install --frozen-lockfile --production
-RUN yarn install --production=false
+# RUN yarn install --frozen-lockfile --production
+# RUN yarn install --production=false
+RUN yarn workspaces focus --production && yarn cache clean && rm -rf ~/.npm
 
-COPY . .
+COPY app app
+COPY static static
+
+ARG server_url
+ARG show_email_login
+ARG oauth_client_id
+ARG oauth_redirect_uri
 
 ENV NODE_ENV='production'
 ENV CLIENT_PAGE_TITLE='HHMI Assessment Builder'
 ENV CLIENT_FAVICON_PATH='../static/favicon.ico'
 ENV CLIENT_LANGUAGE='en-US'
+
+ENV SERVER_URL=$server_url
+ENV CLIENT_SHOW_EMAIL_LOGIN_OPTION=$show_email_login
+ENV CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID=$oauth_client_id
+ENV CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI=$oauth_redirect_uri
 
 RUN yarn coko-client-build-js
 
@@ -30,18 +45,13 @@ RUN yarn coko-client-build-js
 
 # IMAGE FOR RUNNING
 
-FROM node:18.20.2-bullseye-slim
+FROM nginx:alpine
 
-RUN apt-get update && apt-get install -y
-RUN npm install --global serve
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./env.sh /usr/share/nginx/html
 
-WORKDIR /home/node/app
+COPY --from=0 /home/node/ketida/_build /usr/share/nginx/html
 
-COPY --from=0 /home/node/app/_build ./_build
-COPY --from=0 /home/node/app/node_modules/@coko/client/scripts/env.sh ./env.sh
-
-RUN chown -R node:node .
-USER node
-
+WORKDIR /usr/share/nginx/html
 ENTRYPOINT ["sh", "./env.sh"]
-CMD ["npx", "serve", "-p", "8080", "--single", "./_build"]
+CMD ["nginx", "-g", "daemon off;"]

@@ -130,7 +130,7 @@ server unit test:
 
 # BUILD PRODUCTION
 
-build server:
+.build server:
   stage: Build production
   image: docker:26
   rules:
@@ -149,7 +149,7 @@ build server:
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:latest
 
-build client:
+.build client:
   stage: Build production
   image: docker:26
   rules:
