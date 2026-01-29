@@ -6,7 +6,6 @@ const {
   logger,
   useTransaction,
   subscriptionManager,
-  db,
 } = require('@coko/server')
 
 const {
@@ -19,7 +18,6 @@ const {
   Review,
   ArchivedItem,
   Identity,
-  CourseMetadata,
 } = require('../models')
 
 const CokoNotifier = require('../services/notify')
@@ -29,7 +27,14 @@ const { labels, REVIEWER_STATUSES } = require('./constants')
 const WaxToScormConverter = require('../services/scorm/scorm.service')
 const WaxToQTIConverter = require('../services/qti/qti.service')
 const metadataResolver = require('./metadataHandler')
-const { getImageUrls, findImages } = require('./utils')
+
+const {
+  getImageUrls,
+  findImages,
+  formatDate,
+  extractCourseLabels,
+} = require('./utils')
+
 const { inviteMaxReviewers } = require('./review.controller')
 const { actions } = require('./constants')
 
@@ -932,16 +937,6 @@ const createNewQuestionVersion = async (questionId, options = {}) => {
 //   }
 // }
 
-const formatDate = date => {
-  if (!date) return 'N/A'
-
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
-
 const generateWordFile = async (questionVersionId, options = {}) => {
   const CONTROLLER_MESSAGE = `${BASE_MESSAGE} generateWordFile:`
   logger.info(
@@ -955,56 +950,8 @@ const generateWordFile = async (questionVersionId, options = {}) => {
 
     const { showFeedback, showMetadata } = options
 
-    const version = await QuestionVersion.findById(questionVersionId)
-
-    version.courses = await Promise.all(
-      version.courses.map(async course => {
-        const units = await Promise.all(
-          course.units.map(async unit => {
-            // remove null values
-            let validMetadata = Object.entries(unit).filter(
-              ([_, value]) => value !== null,
-            )
-
-            // find labels from id values
-            validMetadata = await Promise.all(
-              validMetadata.map(async ([key, value]) => {
-                if (value) {
-                  const tableName = await CourseMetadata.findTablenameByType(
-                    key,
-                  )
-
-                  if (tableName) {
-                    const res = await db(`${tableName}`)
-                      .select('label')
-                      .where('id', value)
-
-                    return [key, res[0].label]
-                  }
-
-                  return [key, null]
-                }
-
-                return [key, null]
-              }),
-            )
-
-            // recreate object
-            return Object.fromEntries(validMetadata)
-          }),
-        )
-
-        // find course label from id
-        const res = await db(`course`)
-          .select('label')
-          .where('id', course.course)
-
-        return {
-          course: res[0].label,
-          units,
-        }
-      }),
-    )
+    let version = await QuestionVersion.findById(questionVersionId)
+    version = await extractCourseLabels(version)
 
     const tempFolderPath = path.join(__dirname, '..', 'tmp')
 

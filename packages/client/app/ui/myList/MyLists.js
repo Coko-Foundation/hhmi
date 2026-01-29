@@ -267,8 +267,8 @@ const MyLists = props => {
     setSelectedRows(selectedRowKey)
   }
 
-  const handleExportList = showFeedback => {
-    return onExport(selectedRows[0], showFeedback)
+  const handleExportList = (showFeedback, showMetadata) => {
+    return onExport(selectedRows[0], showFeedback, showMetadata)
   }
 
   const handleExportListQTI = () => {

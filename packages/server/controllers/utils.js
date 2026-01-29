@@ -1,7 +1,8 @@
 const path = require('path')
 const fs = require('fs').promises
 const cloneDeep = require('lodash/cloneDeep')
-const { logger, fileStorage, File, uuid } = require('@coko/server')
+const { logger, fileStorage, File, uuid, db } = require('@coko/server')
+const { CourseMetadata } = require('../models')
 
 // Populates a wax document with valid image urls
 const getImageUrls = async document => {
@@ -96,4 +97,64 @@ const findImages = async (n, imageData, tempFolderPath) => {
   )
 }
 
-module.exports = { getImageUrls, findImages }
+const formatDate = date => {
+  if (!date) return 'N/A'
+
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
+
+const extractCourseLabels = async v => {
+  const version = v
+  version.courses = await Promise.all(
+    version.courses.map(async course => {
+      const units = await Promise.all(
+        course.units.map(async unit => {
+          // remove null values
+          let validMetadata = Object.entries(unit).filter(
+            ([_, value]) => value !== null,
+          )
+
+          // find labels from id values
+          validMetadata = await Promise.all(
+            validMetadata.map(async ([key, value]) => {
+              if (value) {
+                const tableName = await CourseMetadata.findTablenameByType(key)
+
+                if (tableName) {
+                  const res = await db(`${tableName}`)
+                    .select('label')
+                    .where('id', value)
+
+                  return [key, res[0].label]
+                }
+
+                return [key, null]
+              }
+
+              return [key, null]
+            }),
+          )
+
+          // recreate object
+          return Object.fromEntries(validMetadata)
+        }),
+      )
+
+      // find course label from id
+      const res = await db(`course`).select('label').where('id', course.course)
+
+      return {
+        course: res[0].label,
+        units,
+      }
+    }),
+  )
+
+  return version
+}
+
+module.exports = { getImageUrls, findImages, formatDate, extractCourseLabels }

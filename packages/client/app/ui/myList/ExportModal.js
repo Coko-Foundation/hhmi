@@ -20,11 +20,12 @@ const ExportListToWordButton = props => {
 
   const [showModal, setShowModal] = useState(false)
   const [showFeedback, setShowFeedback] = useState(true)
+  const [showMetadata, setShowMetadata] = useState(false)
   const [modal, contextHolder] = Modal.useModal()
 
   const handleOk = () => {
     setShowModal(false)
-    onExport(showFeedback)
+    onExport(showFeedback, showMetadata)
       .then()
       .catch(error => {
         const conversionErrorModal = modal.error()
@@ -81,12 +82,22 @@ const ExportListToWordButton = props => {
               ? text
               : 'Questions belonging to one context-dependent item set will be grouped together in the exported word doc. Otherwise, the order will be same as currently specified'}
           </p>
-          <Checkbox
-            checked={showFeedback}
-            onClick={() => setShowFeedback(!showFeedback)}
-          >
-            Include solutions & feedback
-          </Checkbox>
+          <div>
+            <Checkbox
+              checked={showFeedback}
+              onClick={() => setShowFeedback(!showFeedback)}
+            >
+              Include solutions & feedback
+            </Checkbox>
+          </div>
+          <div>
+            <Checkbox
+              checked={showMetadata}
+              onClick={() => setShowMetadata(!showMetadata)}
+            >
+              Include metadata
+            </Checkbox>
+          </div>
         </div>
       </Modal>
       {contextHolder}

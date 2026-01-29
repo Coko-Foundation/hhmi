@@ -33,7 +33,7 @@ let labels
 class HHMIWaxToDocxConverter extends WaxToDocxConverter {
   constructor(doc, imageData, metadata, options = {}) {
     super(doc, imageData, options)
-    this.metadata = metadata
+    this.metadata = metadata.constructor === Object ? [metadata] : metadata
 
     // IIAFE
     ;(async () => {
@@ -115,21 +115,38 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       numerical_answer_container: this.numericalAnswerContainerHandler,
     }
 
-    this.config.styles.paragraphStyles.push({
-      id: 'questionCounter',
-      name: 'Question Counter',
-      run: {
-        font: this.fontFamily,
-        size: 20,
-        bold: true,
-      },
-      paragraph: {
-        alignment: AlignmentType.LEFT,
-        spacing: {
-          after: this.paragraphSpacingAfter,
+    this.config.styles.paragraphStyles.push(
+      {
+        id: 'bold20',
+        name: 'Bold 20',
+        run: {
+          font: this.fontFamily,
+          size: 20,
+          bold: true,
+        },
+        paragraph: {
+          alignment: AlignmentType.LEFT,
+          spacing: {
+            after: this.paragraphSpacingAfter,
+          },
         },
       },
-    })
+      {
+        id: 'normal20',
+        name: 'Normal 20',
+        run: {
+          font: this.fontFamily,
+          size: 20,
+          bold: false,
+        },
+        paragraph: {
+          alignment: AlignmentType.LEFT,
+          spacing: {
+            after: this.paragraphSpacingAfter,
+          },
+        },
+      },
+    )
 
     this.typeToHandlerMap = {
       ...this.typeToHandlerMap,
@@ -725,7 +742,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
                 text: `Question ${index + 1}`,
               }),
             ],
-            style: 'questionCounter',
+            style: 'bold20',
           }),
         )
       }
@@ -1092,6 +1109,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         level,
         instance: this.listInstance,
       },
+      style: 'normal20',
     })
   }
 
@@ -1104,6 +1122,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           bold: true,
         }),
       ],
+      style: 'normal20',
     })
   }
 
@@ -1161,6 +1180,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           this.metadataSpacing,
           ...items,
         ],
+        style: 'normal20',
       }),
     )
   }
@@ -1186,6 +1206,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
           text: labels[value] || value,
         }),
       ],
+      style: 'normal20',
     })
   }
 
@@ -1305,44 +1326,72 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
       }),
     ]
 
-    Object.keys(this.metadata).forEach(key => {
-      const value = this.metadata[key]
+    this.metadata.forEach((meta, index) => {
+      this.metadata.length > 1 &&
+        content.push(
+          new Paragraph({
+            children: [
+              new TextRun({ text: `Metadata for question ${index + 1}` }),
+            ],
+            style: 'bold20',
+          }),
+        )
 
-      if (key === 'topics') {
-        this.metadataTopicsParser(content, key, value)
-        return
-      }
+      Object.keys(meta).forEach(key => {
+        const value = meta[key]
 
-      if (key === 'courses') {
-        this.metadataCoursesParser(content, key, value)
-        return
-      }
-
-      if (key === 'biointeractiveResources') {
-        if (value.length) {
-          this.metadataArrayOfStringsAsBulletListParser(content, key, value)
+        if (key === 'topics') {
+          this.metadataTopicsParser(content, key, value)
+          return
         }
 
-        return
-      }
-
-      if (key === 'keywords') {
-        if (value.length) {
-          this.metadataValueParser(content, key, value)
+        if (key === 'courses') {
+          this.metadataCoursesParser(content, key, value)
+          return
         }
 
-        return
-      }
+        if (key === 'biointeractiveResources') {
+          if (value.length) {
+            this.metadataArrayOfStringsAsBulletListParser(content, key, value)
+          }
 
-      if (key === 'literatureAttribution') {
-        if (value && value.trim().length) {
-          this.metadataCitationParser(content, key, value.trim())
+          return
         }
 
-        return
-      }
+        if (key === 'keywords') {
+          if (value.length) {
+            this.metadataValueParser(content, key, value)
+          }
 
-      this.metadataValueParser(content, key, value)
+          return
+        }
+
+        if (key === 'literatureAttribution') {
+          if (value && value.trim().length) {
+            this.metadataCitationParser(content, key, value.trim())
+          }
+
+          return
+        }
+
+        this.metadataValueParser(content, key, value)
+      })
+
+      this.metadata.length > 1 &&
+        index < this.metadata.length - 1 &&
+        content.push(
+          new Paragraph({
+            children: [],
+            border: {
+              bottom: {
+                color: 'auto',
+                space: 1,
+                style: BorderStyle.SINGLE,
+                size: 1,
+              },
+            },
+          }),
+        )
     })
 
     return content
@@ -1398,7 +1447,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
     return [
       new Paragraph({
         children: [new TextRun({ text: `Question ${index}` })],
-        style: 'questionCounter',
+        style: 'bold20',
       }),
       ...this.contentParser(question.content),
       new Paragraph({

@@ -135,7 +135,7 @@ const ListContent = ({
       })
   }
 
-  const handleExport = showFeedback => {
+  const handleExport = (showFeedback, showMetadata) => {
     const missingDependencies = checkForMissingDependencies()
 
     if (missingDependencies) {
@@ -175,7 +175,10 @@ const ListContent = ({
       })
     }
 
-    return onExport(selectedQuestions, searchParams.orderBy, showFeedback)
+    return onExport(selectedQuestions, searchParams.orderBy, {
+      showFeedback,
+      showMetadata,
+    })
   }
 
   const handleExportQTI = () => {
