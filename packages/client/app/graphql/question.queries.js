@@ -440,6 +440,7 @@ export const QUESTION = gql`
             # AP courses
             learningObjective
             essentialKnowledge
+            sciencePractice
             # IB courses
             application
             skill
@@ -563,6 +564,7 @@ export const UPDATE_QUESTION = gql`
             courseTopic
             essentialKnowledge
             learningObjective
+            sciencePractice
             skill
             understanding
             unit
@@ -687,6 +689,7 @@ export const CREATE_NEW_VERSION = gql`
             courseTopic
             essentialKnowledge
             learningObjective
+            sciencePractice
             skill
             understanding
             unit

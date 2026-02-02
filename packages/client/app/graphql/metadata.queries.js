@@ -223,6 +223,11 @@ export const GET_METADATA_OPTIMIZED = gql`
           learningObjective
           enabled
         }
+        sciencePractices {
+          label
+          value: id
+          enabled
+        }
         applications {
           label
           value: id

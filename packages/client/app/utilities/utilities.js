@@ -1691,13 +1691,16 @@ const flattenReviewerSearchResults = searchResults => {
 }
 
 const mapMetadataToSelectOptions = (metadata, showDisabled) => {
-  return metadata
-    .map(m => ({
-      label: m.label,
-      value: m.value,
-      enabled: m.enabled,
-    }))
-    .filter(m => (showDisabled ? true : m.enabled))
+  return (
+    metadata &&
+    metadata
+      .map(m => ({
+        label: m.label,
+        value: m.value,
+        enabled: m.enabled,
+      }))
+      .filter(m => (showDisabled ? true : m.enabled))
+  )
 }
 
 export {

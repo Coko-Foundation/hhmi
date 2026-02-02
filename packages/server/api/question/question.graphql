@@ -75,6 +75,7 @@ type Unit {
   # AP courses
   learningObjective: String
   essentialKnowledge: String
+  sciencePractice: String
   # IB courses
   application: String
   skill: String
@@ -146,6 +147,7 @@ input UnitInput {
   # AP courses
   learningObjective: String
   essentialKnowledge: String
+  sciencePractice: String
   # IB courses
   application: String
   skill: String
@@ -175,6 +177,7 @@ input SidebarFilters {
   courseTopic: String
   learningObjective: String
   essentialKnowledge: String
+  sciencePractice: String
 
   application: String
   skill: String

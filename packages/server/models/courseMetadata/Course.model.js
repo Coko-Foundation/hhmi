@@ -7,6 +7,7 @@ const Unit = require('./Unit.model')
 const Practice = require('./Practice.model')
 const CrosscuttingConcept = require('./CrosscuttingConcept.model')
 const CoreIdea = require('./DisciplinaryCoreIdea.model')
+const SciencePractice = require('./SciencePractice.model')
 
 class Course extends BaseModel {
   static get tableName() {
@@ -66,6 +67,17 @@ class Course extends BaseModel {
         },
         modify: query => {
           query.orderBy('disciplinary_core_idea.order', 'asc')
+        },
+      },
+      sciencePractices: {
+        relation: BaseModel.HasManyRelation,
+        modelClass: SciencePractice,
+        join: {
+          from: 'course.id',
+          to: 'science_practice.courseId',
+        },
+        modify: query => {
+          query.orderBy('science_practice.order', 'asc')
         },
       },
     }
