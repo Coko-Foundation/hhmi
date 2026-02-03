@@ -208,6 +208,7 @@ export const Discover = props => {
     setSearchParams({
       filters,
       page: 1,
+      pageSize: globalFilters?.pageSize || defaultPageSize,
       query: '',
       orderBy: searchParams.orderBy,
     })
