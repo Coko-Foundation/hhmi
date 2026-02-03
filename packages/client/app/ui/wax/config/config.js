@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   InlineAnnotationsService,
-  // ImageService,
+  ImageService,
   LinkService,
   ListsService,
   BaseService,
@@ -37,7 +37,7 @@ export default {
         },
         'SpecialCharacters',
         { name: 'Lists', exclude: ['BlockQuote'] },
-        // 'Images',
+        'Images',
         'Tables',
         // 'QuestionsDropDown',
         'FullScreen',
@@ -57,7 +57,11 @@ export default {
   SpecialCharactersService: charactersList,
   PmPlugins: [tableEditing()],
 
-  // ImageService: { showAlt: true },
+  ImageService: {
+    showAlt: true,
+    showLongDesc: true,
+    handleAddedRemovedImages: () => {},
+  },
 
   services: [
     new QuestionsService(),
@@ -65,7 +69,7 @@ export default {
     new ListsService(),
     new LinkService(),
     new InlineAnnotationsService(),
-    // new ImageService(),
+    new ImageService(),
     new TablesService(),
     new BaseService(),
     new MathService(),

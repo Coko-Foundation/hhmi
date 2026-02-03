@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   InlineAnnotationsService,
-  // ImageService,
+  ImageService,
   LinkService,
   ListsService,
   BaseService,
@@ -35,13 +35,17 @@ export default {
   SchemaService: DefaultSchema,
   PmPlugins: [tableEditing()],
 
-  // ImageService: { showAlt: true, showLongDesc: true },
+  ImageService: {
+    showAlt: true,
+    showLongDesc: true,
+    handleAddedRemovedImages: () => {},
+  },
 
   services: [
     new ListsService(),
     new LinkService(),
     new InlineAnnotationsService(),
-    // new ImageService(),
+    new ImageService(),
     new TablesService(),
     new BaseService(),
     new MathService(),
