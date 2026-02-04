@@ -438,7 +438,12 @@ describe('Question Workflows', () => {
       )
       cy.login({ ...admin })
       cy.get(listItemWrapper).eq(0).get('.ProseMirror').click()
+
+      // Adding a new author to the author team
       cy.get('[id="assignAuthor"]').first().click()
+      cy.get('.ant-modal-content').contains(
+        'Select one or more authors for this item',
+      )
       cy.get('[data-testid="author-select"]').type(user2.username)
       cy.contains('.ant-select-dropdown', user2.username).click()
       cy.contains(
@@ -448,8 +453,14 @@ describe('Question Workflows', () => {
       cy.get('.ant-modal-confirm-title').contains('Author assigned')
       cy.contains(
         '[class="ant-modal-body"]',
-        'Users galenosalexandra, scarlettphoebe have been assigned author of this item.',
+        `Users ${admin.username}, ${user2.username} have been assigned author of this item.`,
       )
+      cy.contains(
+        '[class="ant-modal-content"] button[type="button"]',
+        'Ok',
+      ).click()
+      cy.get('.ant-modal-content').should('not.exist')
+
       // cy.contains('Ok').click()
       // cy.contains(
       //   '[class="ant-modal-footer"] button[type="button"]',
@@ -460,17 +471,40 @@ describe('Question Workflows', () => {
       //   '[class="ant-modal-confirm-content"]',
       //   `User ${user2.username} has been assigned author of this item`,
       // )
+
+      // Removing admin from the Author team
+      cy.get('[id="assignAuthor"]').first().click()
+      cy.get(`[title="${admin.username}"]`)
+        .find('.ant-select-selection-item-remove')
+        .click()
+      cy.contains(
+        '[class="ant-modal-footer"] button[type="button"]',
+        'Assign',
+      ).click({ force: true })
+      cy.get('.ant-modal-confirm-title').contains('Author assigned')
+      cy.contains(
+        '[class="ant-modal-body"]',
+        `User ${user2.username} has been assigned author of this item.`,
+      )
       cy.contains(
         '[class="ant-modal-content"] button[type="button"]',
         'Ok',
       ).click()
       cy.get('.ant-modal-content').should('not.exist')
+
       cy.logout()
       cy.login({ ...user2 })
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')
         .contains(ProseMirror, 'Energy: carbohydrates')
+
+      // User verifies the name of the author in the Browse Items page
+      cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
+      cy.get('[data-testid="author-value"]').should(
+        'have.text',
+        'scarlettphoebe',
+      )
     })
     it('Should be able to edit published questions', () => {
       cy.deleteAllQuestions()
