@@ -259,6 +259,11 @@ describe('Testing questions', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000)
       cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
+      // Checking pagination options
+      cy.get('.ant-pagination-options')
+        .find('[aria-label="Page Size"]')
+        .should('contain', '10 / page')
+
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')

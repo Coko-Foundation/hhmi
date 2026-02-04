@@ -461,17 +461,6 @@ describe('Question Workflows', () => {
       ).click()
       cy.get('.ant-modal-content').should('not.exist')
 
-      // cy.contains('Ok').click()
-      // cy.contains(
-      //   '[class="ant-modal-footer"] button[type="button"]',
-      //   'Yes, assign author',
-      // ).click()
-      // cy.wait('@GQLReq')
-      // cy.contains(
-      //   '[class="ant-modal-confirm-content"]',
-      //   `User ${user2.username} has been assigned author of this item`,
-      // )
-
       // Removing admin from the Author team
       cy.get('[id="assignAuthor"]').first().click()
       cy.get(`[title="${admin.username}"]`)
@@ -503,7 +492,7 @@ describe('Question Workflows', () => {
       cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
       cy.get('[data-testid="author-value"]').should(
         'have.text',
-        'scarlettphoebe',
+        `${user2.username}`,
       )
     })
     it('Should be able to edit published questions', () => {
