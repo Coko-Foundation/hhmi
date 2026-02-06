@@ -199,7 +199,7 @@ const ComplexItemSet = props => {
       })
   }
 
-  const handleWordExport = showFeedback => {
+  const handleWordExport = (showFeedback, showMetadata) => {
     const missingDependencies = checkForMissingDependencies()
 
     if (missingDependencies) {
@@ -234,7 +234,7 @@ const ComplexItemSet = props => {
       })
     }
 
-    return onWordExport(selectedQuestions, showFeedback)
+    return onWordExport(selectedQuestions, showFeedback, showMetadata)
   }
 
   const handleQTIExport = () => {

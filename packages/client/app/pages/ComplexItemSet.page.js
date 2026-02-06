@@ -334,14 +334,14 @@ const ComplexItemSetPage = () => {
     return assignAuthor(mutationData)
   }
 
-  const handleWordExport = async (questionIds, showFeedback) => {
+  const handleWordExport = async (questionIds, showFeedback, showMetadata) => {
     const mutationData = {
       variables: {
         setId: id,
         questionIds,
         orderBy: 'publication_date',
         ascending: sortAscending,
-        options: { showFeedback },
+        options: { showFeedback, showMetadata },
       },
     }
 
