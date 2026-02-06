@@ -605,9 +605,10 @@ const QuestionPage = props => {
     if (version && metadata) {
       // udpate title for published questions
       if (testMode) {
-        const questionType = metadata?.questionTypes.find(
-          type => type.value === version.questionType,
-        )
+        const questionType = metadata?.questionTypes
+          .map(e => e.options)
+          .flat()
+          .find(type => type.value === version.questionType)
 
         const courses = version.courses.map(c => c.course)
 
@@ -615,9 +616,9 @@ const QuestionPage = props => {
           .filter(framework => courses.indexOf(framework.value) !== -1)
           .map(c => c.label)
 
-        const title = `${courseNames.join(', ')} question, ${
-          questionType?.label
-        }`
+        const title = `${questionType?.label} question - ${courseNames.join(
+          ', ',
+        )}`
 
         setPageTitle(title)
         document.title = title
