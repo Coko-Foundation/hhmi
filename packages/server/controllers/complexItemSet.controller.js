@@ -13,7 +13,7 @@ const {
 } = require('../models')
 
 const { labels } = require('./constants')
-const { findImages } = require('./utils')
+const { findImages, formatDate, extractCourseLabels } = require('./utils')
 const { clearTempImageFiles } = require('./helpers')
 const WaxToDocxConverter = require('../services/docx/hhmiDocx.service')
 const WaxToQTIConverter = require('../services/qti/qti.service')
@@ -271,8 +271,7 @@ const exportSetQuestions = async (setIds, questionIds, options) => {
   const tempFolderPath = path.join(__dirname, '..', 'tmp')
 
   try {
-    const { showFeedback } = options
-
+    const { showFeedback, showMetadata } = options
     const setIdsArray = typeof setIds === 'object' ? setIds : [setIds]
 
     const leadingContent = await Promise.all(
@@ -344,28 +343,50 @@ const exportSetQuestions = async (setIds, questionIds, options) => {
       ],
     }
 
-    versionsSorted.forEach((version, i) => {
-      if (version.type === 'complexItemSet') {
-        fullContent.content[0].content.push({
-          type: 'leading_content',
-          content: [...version.content.content],
-        })
-      } else {
-        fullContent.content[0].content.push({
-          type: 'question',
-          content: [...version.content.content],
-        })
-      }
-    })
+    const metadata = []
 
-    const converter = new WaxToDocxConverter(
-      fullContent,
-      imageData,
-      {},
-      {
-        showFeedback,
-      },
+    await Promise.all(
+      versionsSorted.map(async version => {
+        if (version.type === 'complexItemSet') {
+          fullContent.content[0].content.push({
+            type: 'leading_content',
+            content: [...version.content.content],
+          })
+        } else {
+          fullContent.content[0].content.push({
+            type: 'question',
+            content: [...version.content.content],
+          })
+
+          const versionWithLabels = await extractCourseLabels(version)
+
+          metadata.push({
+            questionType: versionWithLabels.questionType,
+
+            topics: versionWithLabels.topics,
+            courses: versionWithLabels.courses,
+
+            keywords: versionWithLabels.keywords,
+            biointeractiveResources: versionWithLabels.biointeractiveResources,
+
+            cognitiveLevel: versionWithLabels.cognitiveLevel,
+            affectiveLevel: versionWithLabels.affectiveLevel,
+            psychomotorLevel: versionWithLabels.psychomotorLevel,
+            readingLevel: versionWithLabels.readingLevel,
+            literatureAttribution: versionWithLabels.literatureAttribution,
+
+            publicationDate:
+              versionWithLabels.publicationDate &&
+              formatDate(versionWithLabels.publicationDate),
+          })
+        }
+      }),
     )
+
+    const converter = new WaxToDocxConverter(fullContent, imageData, metadata, {
+      showFeedback,
+      showMetadata,
+    })
 
     const filename =
       setIdsArray.lengh > 1 ? `sets-export.docx` : `${setIdsArray[0]}.docx`
