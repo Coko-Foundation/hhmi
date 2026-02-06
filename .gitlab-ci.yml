@@ -130,7 +130,7 @@ server unit test:
 
 # BUILD PRODUCTION
 
-.build server:
+build server:
   stage: Build production
   image: docker:26
   rules:
@@ -149,7 +149,7 @@ server unit test:
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:$CI_COMMIT_SHA
     - docker push $IMAGE_ORG/$IMAGE_NAME_SERVER_PREPRODUCTION:latest
 
-.build client:
+build client:
   stage: Build production
   image: docker:26
   rules:
@@ -280,9 +280,9 @@ bump version:
     - if: $CI_PIPELINE_SOURCE == "web" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: always
   variables:
-    VERSION_BUMP_TYPE: "patch" # Default, can be overridden
-    HUSKY: "0" # Disable Husky
-    npm_config_ignore_scripts: "true"
+    VERSION_BUMP_TYPE: 'patch' # Default, can be overridden
+    HUSKY: '0' # Disable Husky
+    npm_config_ignore_scripts: 'true'
   before_script:
     - |
       rm -rf .husky || true
@@ -338,7 +338,7 @@ create_release:
   script:
     - echo "Creating release for version ${NEW_VERSION}"
   release:
-    name: "${NEW_VERSION}"
-    description: "Automatic release for version ${NEW_VERSION}"
-    tag_name: "${NEW_VERSION}"
-    ref: "$CI_COMMIT_SHA"
+    name: '${NEW_VERSION}'
+    description: 'Automatic release for version ${NEW_VERSION}'
+    tag_name: '${NEW_VERSION}'
+    ref: '$CI_COMMIT_SHA'
