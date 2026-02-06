@@ -70,9 +70,9 @@ const exportSetsResolver = async (_, { setIds, options }, ctx) => {
 
 const exportSetQuestionsResolver = async (
   _,
-  { setId, questionIds, orderBy, ascending, options },
+  { setId, questionIds, options }, // orderBy, ascending,
 ) => {
-  return exportSetQuestions(setId, questionIds, orderBy, ascending, options)
+  return exportSetQuestions(setId, questionIds, options)
 }
 
 const exportSetsQTIResolver = async (_, { setIds, options }, ctx) => {
