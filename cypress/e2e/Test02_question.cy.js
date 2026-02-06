@@ -134,6 +134,20 @@ describe('Testing questions', () => {
       // ).padStart(2, 0)}`
       // cy.contains('span', time)
 
+      // Verifying that "Learning Objective" and "Essential Knowledge" fields are not required
+      cy.get('input[id="courses_0_courseTopic"]').should(
+        'have.attr',
+        'aria-required',
+      )
+      cy.get('input[id="courses_0_learningObjective"]').should(
+        'not.have.attr',
+        'aria-required',
+      )
+      cy.get('input[id="courses_0_essentialKnowledge"]').should(
+        'not.have.attr',
+        'aria-required',
+      )
+
       // [segment]: checking if the Export to word is present
       cy.log('checking if the Export to word is present')
       cy.get('[id="question-actions"] [id="exportToWord"]').should('be.visible')
