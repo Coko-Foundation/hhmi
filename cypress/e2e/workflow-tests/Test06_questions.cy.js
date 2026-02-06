@@ -515,6 +515,13 @@ describe('Question Workflows', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(500)
       cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
+      cy.get(listItemWrapper).eq(0).contains('published date').should('exist')
+      cy.get(listItemWrapper)
+        .eq(0)
+        .find('[data-testid="published date-value"]')
+        .invoke('text')
+        .should('not.be.empty')
+
       cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
       cy.contains(basicButton, 'Unpublish').should('not.exist')
       cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
@@ -538,6 +545,8 @@ describe('Question Workflows', () => {
     it('Question in production stage available for editing', () => {
       cy.login(productionMember1)
       cy.contains(antTabs, 'Production Items').click()
+      // Production team cannot see submitted date
+      cy.contains('submitted on').should('not.exist')
       cy.get(listItemWrapper).eq(0).contains(ProseMirror, 'By 2040').click()
       cy.get('[data-testid="topic-select"]').scrollIntoView().click()
       cy.contains('Ecology').click({ force: true })

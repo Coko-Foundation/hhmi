@@ -161,15 +161,21 @@ describe('Testing questions', () => {
       // [segment]: Checking  dashboardRoute
       cy.log('checking in the dashboard...')
       cy.contains('.ProseMirror p.paragraph', 'Question 1')
+
       // cy.contains('[data-testid="topic-value"]', mainTopic.topic.value)
       // cy.contains('[data-testid="subtopic-value"]', mainTopic.subtopic.value)
       cy.contains(`[data-testid="bloom's level-value"]`, cognitiveLevel.value)
       cy.contains('[data-testid="question-status"]', 'Submitted')
+      cy.contains('submitted on').should('exist')
+      cy.get('[data-testid="submitted on-value"]')
+        .invoke('text')
+        .should('not.be.empty')
       cy.get('[data-testid="wax-container"]')
         .invoke('attr', 'href')
         .then(href => {
           cy.visit(href)
         })
+
       // [segment]: checking the question
       cy.log('checking the question...')
 
