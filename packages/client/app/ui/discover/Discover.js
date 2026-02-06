@@ -699,7 +699,7 @@ Discover.propTypes = {
     query: PropTypes.string,
     page: PropTypes.number,
     pageSize: PropTypes.number,
-    filters: PropTypes.string,
+    filters: PropTypes.shape({}),
     orderBy: PropTypes.string,
     ascending: PropTypes.bool,
   }),

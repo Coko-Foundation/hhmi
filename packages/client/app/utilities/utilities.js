@@ -369,11 +369,16 @@ const extractAPCourseMetadata = (unitData, courseMetadata) => {
     e => e.value === unitData.essentialKnowledge,
   )?.label
 
+  const sciencePractice = courseMetadata.sciencePractices.find(
+    e => e.value === unitData.sciencePractice,
+  )?.label
+
   return [
     { label: 'Unit', value: unit },
     { label: 'Topic', value: courseTopic },
     { label: 'Learning objective', value: learningObjective },
     { label: 'Essential knowledge', value: essentialKnowledge },
+    { label: 'Science practice', value: sciencePractice },
   ]
 }
 

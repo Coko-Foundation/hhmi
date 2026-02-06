@@ -55,6 +55,7 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         courseTopic: 'Course Topic',
         learningObjective: 'Learning objective',
         essentialKnowledge: 'Essential knowledge',
+        sciencePractice: 'Science practice',
         application: 'Application',
         coreCompetence: 'Core competence',
         coreConcept: 'Core concept',
@@ -1263,9 +1264,14 @@ class HHMIWaxToDocxConverter extends WaxToDocxConverter {
         const { unit, ...rest } = u
         content.push(this.metadataBulletFactory(labels.unit, unit, 1))
 
-        Object.keys(rest).forEach(i => {
-          content.push(this.metadataBulletFactory(labels[i], u[i], 2))
-        })
+        Object.keys(rest)
+          .sort(
+            (a, b) =>
+              Object.keys(labels).indexOf(a) - Object.keys(labels).indexOf(b),
+          )
+          .forEach(i => {
+            content.push(this.metadataBulletFactory(labels[i], u[i], 2))
+          })
       })
     })
 
