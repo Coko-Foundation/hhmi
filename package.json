@@ -8,11 +8,12 @@
     "url": "git@gitlab.coko.foundation:hhmi/hhmi.git"
   },
   "license": "MIT",
+  "packageManager": "yarn@4.9.2",
   "author": "Yannis Barlas",
   "main": "index.js",
   "scripts": {
     "clean": "sh clean.sh",
-    "cz": "git cz",
+    "cz": "./node_modules/.bin/lint-staged && ./node_modules/.bin/git-cz",
     "storybook": "docker-compose -f docker-compose.storybook.yml up",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky install"
@@ -27,6 +28,5 @@
     "any-text": "^1.2.0",
     "cypress": "^13.15.0",
     "lodash": "^4.17.21"
-  },
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+  }
 }
