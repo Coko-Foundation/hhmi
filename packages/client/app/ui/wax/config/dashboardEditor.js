@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import {
   InlineAnnotationsService,
-  // ImageService,
+  ImageService,
   LinkService,
   ListsService,
   BaseService,
@@ -22,7 +22,7 @@ export default {
     new ListsService(),
     new LinkService(),
     new InlineAnnotationsService(),
-    // new ImageService(),
+    new ImageService(),
     new TablesService(),
     new BaseService(),
     new MathService(),
