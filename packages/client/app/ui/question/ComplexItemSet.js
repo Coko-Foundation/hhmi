@@ -220,7 +220,7 @@ const ComplexItemSet = props => {
               <Button onClick={warningModal.destroy}>Cancel</Button>
               <Button
                 onClick={() => {
-                  onWordExport(selectedQuestions, showFeedback)
+                  onWordExport(selectedQuestions, showFeedback, showMetadata)
                   resolve()
                   warningModal.destroy()
                 }}
