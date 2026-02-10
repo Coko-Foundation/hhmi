@@ -448,7 +448,7 @@ describe('Question Workflows', () => {
       cy.get('.ant-modal-confirm-title').contains('Author assigned')
       cy.contains(
         '[class="ant-modal-body"]',
-        'Users galenosalexandra, scarlettphoebe have been assgined author of this item.',
+        'Users galenosalexandra, scarlettphoebe have been assigned author of this item.',
       )
       // cy.contains('Ok').click()
       // cy.contains(
@@ -458,7 +458,7 @@ describe('Question Workflows', () => {
       // cy.wait('@GQLReq')
       // cy.contains(
       //   '[class="ant-modal-confirm-content"]',
-      //   `User ${user2.username} has been assgined author of this item`,
+      //   `User ${user2.username} has been assigned author of this item`,
       // )
       cy.contains(
         '[class="ant-modal-content"] button[type="button"]',

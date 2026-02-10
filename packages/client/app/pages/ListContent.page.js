@@ -137,14 +137,18 @@ const ListContentPage = () => {
     return removeFromListMutation(mutationData)
   }
 
-  const handleExport = async (questionIds, orderBy, showFeedback) => {
+  const handleExport = async (
+    questionIds,
+    orderBy,
+    { showFeedback, showMetadata },
+  ) => {
     const mutationData = {
       variables: {
         listId: id,
         questionIds,
         orderBy: orderBy === 'custom' ? 'custom' : 'publicationDate',
         ascending: orderBy !== 'date-desc',
-        options: { showFeedback },
+        options: { showFeedback, showMetadata },
       },
     }
 

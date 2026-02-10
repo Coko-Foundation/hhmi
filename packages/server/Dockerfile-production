@@ -1,4 +1,4 @@
-FROM node:18.20.2-bullseye-slim as server
+FROM cokoapps/base:20 as server
 
 RUN apt-get update \ 
     && apt-get upgrade -y \
@@ -9,15 +9,16 @@ RUN apt-get update \
     python3
 
 WORKDIR /home/node/hhmi
+ENV NODE_ENV=production
 
+COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
 
 RUN chown -R node:node .
 USER node
 
-RUN yarn install --frozen-lockfile --production
-RUN yarn cache clean
+RUN yarn workspaces focus --production && yarn cache clean && rm -rf ~/.npm
 
 COPY --chown=node:node . .
 

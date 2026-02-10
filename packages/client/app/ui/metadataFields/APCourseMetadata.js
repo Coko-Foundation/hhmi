@@ -16,6 +16,7 @@ const APCourseMetadata = props => {
     topicKey,
     learningObjectiveKey,
     essentialKnowledgeKey,
+    sciencePracticeKey,
     supplementaryKey,
     setFieldsValue,
   } = props
@@ -49,6 +50,10 @@ const APCourseMetadata = props => {
   const essentialKnowledgeField = supplementaryKey
     ? [supplementaryKey, index, essentialKnowledgeKey]
     : essentialKnowledgeKey
+
+  const sciencePracticeName = supplementaryKey
+    ? [index, sciencePracticeKey]
+    : sciencePracticeKey
 
   useEffect(() => {
     if (!supplementaryKey) {
@@ -191,6 +196,10 @@ const APCourseMetadata = props => {
     return metadataMapper(courseData.essentialKnowledge)
   }
 
+  const filterCourseSciencePracticeOptions = () => {
+    return metadataMapper(courseData.sciencePractices)
+  }
+
   return (
     <>
       {!filterMode && <p>{courseData.label}: College Board Framework</p>}
@@ -244,11 +253,11 @@ const APCourseMetadata = props => {
           <Form.Item
             label="Learning Objective"
             name={learningObjectiveName}
-            rules={[
-              isRequired
-                ? { required: true, message: 'Learning objective is required' }
-                : {},
-            ]}
+            // rules={[
+            //   isRequired
+            //     ? { required: true, message: 'Learning objective is required' }
+            //     : {},
+            // ]}
           >
             <Select
               allowClear={filterMode}
@@ -272,11 +281,11 @@ const APCourseMetadata = props => {
           <Form.Item
             label="Essential Knowledge"
             name={essentialKnowledgeName}
-            rules={[
-              isRequired
-                ? { required: true, message: 'Essential Knowledge is required' }
-                : {},
-            ]}
+            // rules={[
+            //   isRequired
+            //     ? { required: true, message: 'Essential Knowledge is required' }
+            //     : {},
+            // ]}
           >
             <Select
               allowClear={filterMode}
@@ -292,6 +301,18 @@ const APCourseMetadata = props => {
             />
           </Form.Item>
         )}
+      </Form.Item>
+
+      <Form.Item label="Science Practice" name={sciencePracticeName}>
+        <Select
+          allowClear={filterMode}
+          data-testid="science-practice-select"
+          disabled={readOnly}
+          optionFilterProp="label"
+          options={filterCourseSciencePracticeOptions()}
+          showSearch
+          wrapOptionText
+        />
       </Form.Item>
     </>
   )
@@ -309,6 +330,7 @@ APCourseMetadata.propTypes = {
   topicKey: PropTypes.string,
   learningObjectiveKey: PropTypes.string,
   essentialKnowledgeKey: PropTypes.string,
+  sciencePracticeKey: PropTypes.string,
   supplementaryKey: PropTypes.string,
 }
 
@@ -321,6 +343,7 @@ APCourseMetadata.defaultProps = {
   topicKey: 'courseTopic',
   learningObjectiveKey: 'learningObjective',
   essentialKnowledgeKey: 'essentialKnowledge',
+  sciencePracticeKey: 'sciencePractice',
   supplementaryKey: '',
 }
 export default APCourseMetadata

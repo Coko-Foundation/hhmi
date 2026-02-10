@@ -369,11 +369,16 @@ const extractAPCourseMetadata = (unitData, courseMetadata) => {
     e => e.value === unitData.essentialKnowledge,
   )?.label
 
+  const sciencePractice = courseMetadata.sciencePractices.find(
+    e => e.value === unitData.sciencePractice,
+  )?.label
+
   return [
     { label: 'Unit', value: unit },
     { label: 'Topic', value: courseTopic },
     { label: 'Learning objective', value: learningObjective },
     { label: 'Essential knowledge', value: essentialKnowledge },
+    { label: 'Science practice', value: sciencePractice },
   ]
 }
 
@@ -1469,6 +1474,9 @@ const dashboardDataMapper = ({
       reviewerStatus,
       reviews,
       dependsOn,
+      submittedOn,
+      submitted,
+      published,
     } = latestVersion
 
     const parsedContent = extractDocumentText(content)
@@ -1518,7 +1526,16 @@ const dashboardDataMapper = ({
               },
             ]
           : []),
-        ...(latestVersion.published || showPublishedDate
+        ...(submitted && submittedOn && !published
+          ? [
+              {
+                label: 'submitted on',
+                value: submittedOn,
+                type: 'date', // let the ui handle the format if type === 'date'
+              },
+            ]
+          : []),
+        ...(published || showPublishedDate
           ? [
               {
                 label: 'published date',
@@ -1526,13 +1543,16 @@ const dashboardDataMapper = ({
                 value: publicationDate,
               },
             ]
-          : [
+          : []),
+        ...(notificationsMapper(newMessages, id)?.length
+          ? [
               {
                 label: 'New messages',
                 type: 'badge',
                 value: notificationsMapper(newMessages, id)?.length,
               },
-            ]),
+            ]
+          : []),
       ],
       content: parsedContent,
       status,
@@ -1676,13 +1696,16 @@ const flattenReviewerSearchResults = searchResults => {
 }
 
 const mapMetadataToSelectOptions = (metadata, showDisabled) => {
-  return metadata
-    .map(m => ({
-      label: m.label,
-      value: m.value,
-      enabled: m.enabled,
-    }))
-    .filter(m => (showDisabled ? true : m.enabled))
+  return (
+    metadata &&
+    metadata
+      .map(m => ({
+        label: m.label,
+        value: m.value,
+        enabled: m.enabled,
+      }))
+      .filter(m => (showDisabled ? true : m.enabled))
+  )
 }
 
 export {

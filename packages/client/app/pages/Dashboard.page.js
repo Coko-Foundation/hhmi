@@ -8,7 +8,7 @@ import {
 import { useHistory } from 'react-router-dom'
 
 import { Dashboard, VisuallyHiddenElement } from 'ui'
-import { useCurrentUser } from '@coko/client'
+// import { useCurrentUser } from '@coko/client'
 import {
   ASSING_HANDLING_EDITORS,
   GET_AUTHOR_DASHBOARD,
@@ -51,7 +51,7 @@ const defaultSearchOptions = {
 const DashboardPage = () => {
   // #region hooks
   const history = useHistory()
-  const { setCurrentUser } = useCurrentUser()
+  // const { setCurrentUser } = useCurrentUser()
   const { unreadMentions } = useNotifications()
 
   const initialTabKey = localStorage.getItem('dashboardLastUsedTab') || 'author'
@@ -189,8 +189,10 @@ const DashboardPage = () => {
       updateSearchResultAnnounce(data, 'getReviewerDashboard')
 
       if (currentTabKey === 'reviewer') {
-        getUser().then(({ data: { currentUser } = {} }) => {
-          setCurrentUser(currentUser)
+        getUser().then(({ data: { _currentUser } = {} }) => {
+          // eslint-disable-next-line no-console
+          console.log('Refresh reviewer user teams!')
+          // setCurrentUser(currentUser)
         })
       }
     },

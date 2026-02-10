@@ -164,7 +164,7 @@ ExportToWordButton.propTypes = {
   loading: PropTypes.bool.isRequired,
   onExport: PropTypes.func.isRequired,
   showMetadataOption: PropTypes.bool,
-  hasUnmetDependencies: PropTypes.bool,
+  hasUnmetDependencies: PropTypes.number,
 }
 
 ExportToWordButton.defaultProps = {

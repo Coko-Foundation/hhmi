@@ -34,7 +34,7 @@ const sortOptions = [
 
 const sidebarText = 'Explore items by applying one or more of the filters below'
 
-const PAGE_SIZE = 10
+const DEFAULT_PAGE_SIZE = 10
 
 const DiscoverPage = () => {
   const { filters, setFilters } = useFilters()
@@ -42,6 +42,7 @@ const DiscoverPage = () => {
   const [searchParams, setSearchParams] = useState({
     query: filters?.query || '',
     page: filters?.page || 1,
+    pageSize: filters?.pageSize || DEFAULT_PAGE_SIZE,
     filters: filters?.filters || {},
     orderBy: filters?.orderBy || 'publication_date',
     ascending: filters?.ascending || false,
@@ -74,7 +75,7 @@ const DiscoverPage = () => {
         orderBy: searchParams.orderBy,
         ascending: searchParams.ascending,
         page: searchParams.page - 1,
-        pageSize: PAGE_SIZE,
+        pageSize: searchParams.pageSize,
       },
     },
     onCompleted: data => {
@@ -202,6 +203,7 @@ const DiscoverPage = () => {
       <Discover
         biointeractiveResources={biointeractiveResources}
         complexItemSetOptions={complexItemSetOptions}
+        defaultPageSize={DEFAULT_PAGE_SIZE}
         existingListsOptions={existingLists}
         globalFilters={filters}
         isUserLoggedIn={!!currentUser}
@@ -213,7 +215,6 @@ const DiscoverPage = () => {
         onCreateList={handleCreateList}
         onDuplicate={handleDuplicateQuestion}
         onSearch={handleSearch}
-        pageSize={PAGE_SIZE}
         questions={
           questionsData && metadata && complexItemSetOptions
             ? dashboardDataMapper({

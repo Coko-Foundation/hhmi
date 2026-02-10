@@ -32,6 +32,7 @@ export const GET_AUTHOR_DASHBOARD = gql`
           published
           unpublished
           publicationDate
+          submittedOn
 
           complexItemSetId
           topics {
@@ -98,6 +99,7 @@ export const GET_EDITOR_DASHBOARD = gql`
           published
           unpublished
           publicationDate
+          submittedOn
 
           complexItemSetId
           topics {
@@ -163,6 +165,7 @@ export const GET_HANDLING_EDITOR_DASHBOARD = gql`
           published
           unpublished
           publicationDate
+          submittedOn
 
           complexItemSetId
           topics {
@@ -437,6 +440,7 @@ export const QUESTION = gql`
             # AP courses
             learningObjective
             essentialKnowledge
+            sciencePractice
             # IB courses
             application
             skill
@@ -560,6 +564,7 @@ export const UPDATE_QUESTION = gql`
             courseTopic
             essentialKnowledge
             learningObjective
+            sciencePractice
             skill
             understanding
             unit
@@ -684,6 +689,7 @@ export const CREATE_NEW_VERSION = gql`
             courseTopic
             essentialKnowledge
             learningObjective
+            sciencePractice
             skill
             understanding
             unit

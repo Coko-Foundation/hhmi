@@ -213,6 +213,7 @@ class Question extends BaseModel {
         'courseTopic',
         'learningObjective',
         'essentialKnowledge',
+        'sciencePractice',
         'application',
         'skill',
         'understanding',
