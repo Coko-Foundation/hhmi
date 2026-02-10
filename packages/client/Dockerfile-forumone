@@ -1,39 +1,41 @@
 # IMAGE FOR BUILDING
-FROM node:18.20.2-bullseye-slim AS client-build
+FROM cokoapps/base:20 AS client-build
 ENV NODE_ENV=production
 
-RUN apt-get update \
-    && apt-get upgrade -y \
-    && apt-get install -y
-
 WORKDIR /home/node/app
+RUN corepack enable
 
+COPY .yarnrc.yml .
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn install --frozen-lockfile --production
-RUN yarn install --production=false
+RUN yarn install --immutable && yarn cache clean && rm -rf ~/.npm
 
 COPY . .
 
-ARG SERVER_URL
+ARG server_url
+ARG show_email_login
+ARG oauth_client_id
+ARG oauth_redirect_uri
 
 ENV NODE_ENV='production'
 ENV CLIENT_PAGE_TITLE='HHMI Assessment Builder'
 ENV CLIENT_FAVICON_PATH='../static/favicon.ico'
 ENV CLIENT_LANGUAGE='en-US'
 
-ENV SERVER_URL=${SERVER_URL}
+ENV SERVER_URL=$server_url
+ENV CLIENT_SHOW_EMAIL_LOGIN_OPTION=$show_email_login
+ENV CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID=$oauth_client_id
+ENV CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI=$oauth_redirect_uri
 
 RUN yarn coko-client-build-js
 
-FROM node:18.20.2-bullseye-slim AS client-serve
+FROM cokoapps/base:20 AS client-serve
 
 RUN apt-get update && apt-get install -y
 RUN npm install --global serve
 
 USER node
 
-#COPY --from=0 /home/node/app/_build ./_build
 RUN mkdir client
 RUN cp -rf . client

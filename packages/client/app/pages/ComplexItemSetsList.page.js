@@ -110,12 +110,13 @@ const ComplexItemSetsListPage = () => {
     setSearchParams({ ...searchParams, ascending: sortBy === 'date-asc' })
   }
 
-  const handleWordExport = async (setIds, showFeedback) => {
+  const handleWordExport = async (setIds, showFeedback, showMetadata) => {
     const mutationData = {
       variables: {
         setIds,
         options: {
           showFeedback,
+          showMetadata,
         },
       },
     }

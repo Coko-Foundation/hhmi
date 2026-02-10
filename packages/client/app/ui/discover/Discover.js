@@ -135,7 +135,7 @@ export const Discover = props => {
     onCreateList,
     onDuplicate,
     onSearch,
-    pageSize,
+    defaultPageSize,
     sidebarMetadata,
     complexItemSetOptions,
     biointeractiveResources,
@@ -189,12 +189,14 @@ export const Discover = props => {
   const [searchParams, setSearchParams] = useState({
     query: globalFilters?.query || '',
     page: globalFilters?.page || 1,
+    pageSize: globalFilters?.pageSize || defaultPageSize,
     filters: globalFilters?.filters || {},
     orderBy: globalFilters?.orderBy || 'date-desc',
+    ascending: false,
   })
 
-  const setSearchPage = page => {
-    setSearchParams({ ...searchParams, page })
+  const setSearchPage = (page, pageSize) => {
+    setSearchParams({ ...searchParams, page, pageSize })
   }
 
   const setSearchQuery = query => {
@@ -206,6 +208,7 @@ export const Discover = props => {
     setSearchParams({
       filters,
       page: 1,
+      pageSize: globalFilters?.pageSize || defaultPageSize,
       query: '',
       orderBy: searchParams.orderBy,
     })
@@ -435,8 +438,9 @@ export const Discover = props => {
             onSearch={setSearchQuery}
             onSortOptionChange={setSortOption}
             questions={questions}
-            questionsPerPage={pageSize}
+            questionsPerPage={searchParams.pageSize}
             showRowCheckboxes={isUserLoggedIn}
+            showSizeChanger
             showSort={showSort}
             sortOptions={sortOptions}
             totalCount={totalCount}
@@ -466,7 +470,7 @@ Discover.propTypes = {
   onCreateList: PropTypes.func.isRequired,
   onDuplicate: PropTypes.func.isRequired,
   onSearch: PropTypes.func.isRequired,
-  pageSize: PropTypes.number,
+  defaultPageSize: PropTypes.number,
   /** list of search result to render */
   questions: PropTypes.arrayOf(
     PropTypes.shape({
@@ -694,7 +698,8 @@ Discover.propTypes = {
   globalFilters: PropTypes.shape({
     query: PropTypes.string,
     page: PropTypes.number,
-    filters: PropTypes.string,
+    pageSize: PropTypes.number,
+    filters: PropTypes.shape({}),
     orderBy: PropTypes.string,
     ascending: PropTypes.bool,
   }),
@@ -708,7 +713,7 @@ Discover.defaultProps = {
   loadingCreateList: false,
   loadingDuplicateQuestion: false,
   locale: null,
-  pageSize: 10,
+  defaultPageSize: 10,
   questions: [],
   complexItemSetOptions: [],
   sidebarMetadata: null,
@@ -716,7 +721,14 @@ Discover.defaultProps = {
   totalCount: 0,
   sortOptions: [],
   showSort: false,
-  globalFilters: null,
+  globalFilters: {
+    query: '',
+    page: 1,
+    pageSize: 10,
+    filters: {},
+    orderBy: 'publication_date',
+    ascending: false,
+  },
   biointeractiveResources: [],
 }
 

@@ -128,6 +128,7 @@ const uneditableTypes = [
   'introBioSubcat',
   'visionAndChangeSubCategories',
   'ngss',
+  'apSubcat',
 ]
 
 const newButtonsConfigs = {
@@ -146,6 +147,10 @@ const newButtonsConfigs = {
   essentialKnowledge: {
     label: 'Add essential knowledge',
     key: 'essential_knowledge',
+  },
+  sciencePractice: {
+    label: 'Add science practice',
+    key: 'science_practice',
   },
   application: {
     label: 'Add application',
@@ -363,6 +368,11 @@ const CourseMetadataTable = props => {
           firstColumn.title = 'Introductory Biology for Majors'
         } else if (lastNavItem.textValue === 'ngss') {
           firstColumn.title = 'Next Generation Science Standards'
+        } else if (
+          lastNavItem.textValue === 'apBiology' ||
+          lastNavItem.textValue === 'apEnvironmentalScience'
+        ) {
+          firstColumn.title = lastNavItem.label
         } else {
           firstColumn.title = 'Unit'
           setNewButtonAttrs(newButtonsConfigs.unit)
@@ -379,6 +389,15 @@ const CourseMetadataTable = props => {
       case 'learningObjective':
         firstColumn.title = 'Essential knowledge'
         setNewButtonAttrs(newButtonsConfigs.essentialKnowledge)
+        break
+      case 'apSubcat':
+        if (lastNavItem.key === 'units') {
+          firstColumn.title = 'Unit'
+          setNewButtonAttrs(newButtonsConfigs.unit)
+        } else if (lastNavItem.key === 'sciencePractice') {
+          firstColumn.title = 'Science practice'
+          setNewButtonAttrs(newButtonsConfigs.sciencePractice)
+        }
         break
       case 'biSubtopic':
         if (lastNavItem.key === 'applications') {
@@ -659,7 +678,7 @@ const CourseMetadataTable = props => {
     newMetadataForm
       .validateFields()
       .then(v => {
-        const { biSubtopic, ...rest } = v
+        const { biSubtopic, apSubcat, ...rest } = v
         onMetadataAdd(rest).then(() => {
           dialog.destroy()
         })
@@ -801,6 +820,28 @@ const CourseMetadataTable = props => {
           )
           break
 
+        case 'apBiology':
+        case 'apEnvironmentalScience':
+          setDataSource(
+            courseDataToUi(
+              [
+                {
+                  label: 'Units',
+                  value: 'units',
+                  course: textValue,
+                  enabled: true,
+                },
+                {
+                  label: 'Science Practice',
+                  value: 'sciencePractice',
+                  course: textValue,
+                  enabled: true,
+                },
+              ],
+              'apSubcat',
+            ),
+          )
+          break
         default:
           setDataSource(
             courseDataToUi(courses.find(c => c.value === key).units, 'unit'),
@@ -993,6 +1034,23 @@ const CourseMetadataTable = props => {
           ),
         )
       }
+    } else if (type === 'apSubcat') {
+      if (key === 'units') {
+        setDataSource(
+          courseDataToUi(
+            courses.find(c => c.value === navigation[1].key).units,
+            'unit',
+          ),
+        )
+      } else if (key === 'sciencePractice') {
+        setDataSource(
+          courseDataToUi(
+            courses.find(c => c.value === navigation[1].key).sciencePractices,
+            'sciencePractice',
+            true,
+          ),
+        )
+      }
     }
 
     setNavigation(() => {
@@ -1035,7 +1093,11 @@ const CourseMetadataTable = props => {
     (navigation[1].textValue === 'introBioForMajors' &&
       (navigation.length === 2 ||
         navigation[navigation.length - 1].key === 'visionAndChange')) ||
-    (navigation[1].textValue === 'ngss' && navigation.length === 2)
+    (navigation[1].textValue === 'ngss' && navigation.length === 2) ||
+    (['apBiology', 'apEnvironmentalScience'].includes(
+      navigation[1].textValue,
+    ) &&
+      navigation.length === 2)
 
   return (
     <ModalContext.Provider>

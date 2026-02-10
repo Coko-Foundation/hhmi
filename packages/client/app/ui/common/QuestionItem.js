@@ -173,7 +173,7 @@ const QuestionItem = props => {
       {/* inject a style tag with @container rule, not yet supported by our current version of styled-components */}
       <style type="text/css">
         {`
-              @container question-item (inline-size > 600px) {
+              @container question-item (inline-size > 700px) {
                 tbody {
                   display: flex;
                   flex-direction: row;

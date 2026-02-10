@@ -85,13 +85,14 @@ const ListsPage = () => {
     setOrder({ orderBy, ascending })
   }
 
-  const handleExport = (listId, showFeedback) => {
+  const handleExport = async (listId, showFeedback, showMetadata) => {
     const mutationData = {
       variables: {
         listId,
         orderBy: 'custom',
         options: {
           showFeedback,
+          showMetadata,
         },
       },
     }

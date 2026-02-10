@@ -130,6 +130,7 @@ class QuestionVersion extends BaseModel {
         unpublished: boolean,
 
         publicationDate: dateNullable,
+        submittedOn: dateNullable,
 
         topics: {
           type: 'array',

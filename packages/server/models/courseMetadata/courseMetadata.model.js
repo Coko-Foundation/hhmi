@@ -362,6 +362,8 @@ class CourseMetadata extends BaseModel {
         return 'learning_objective'
       case 'essentialKnowledge':
         return 'essential_knowledge'
+      case 'sciencePractice': // ap subcat
+        return 'science_practice'
       case 'applications':
         return 'application'
       case 'skills':
@@ -444,6 +446,7 @@ class CourseMetadata extends BaseModel {
       case 'practice':
       case 'crosscuttingConcept':
       case 'disciplinaryCoreIdea':
+      case 'science_practice':
         columnName = 'course_id'
         columnValue = input.course
         break
