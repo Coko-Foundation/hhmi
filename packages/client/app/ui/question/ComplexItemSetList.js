@@ -93,8 +93,8 @@ const ComplexItemSetList = props => {
     setSelectedSets(ids)
   }
 
-  const handleWordExport = showFeedback => {
-    return onWordExport(selectedSets, showFeedback)
+  const handleWordExport = (showFeedback, showMetadata) => {
+    return onWordExport(selectedSets, showFeedback, showMetadata)
   }
 
   const handleQTIExport = () => {
