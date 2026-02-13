@@ -182,7 +182,8 @@ const containsSubmissions = async complexItemSet => {
         )
         .select(
           'questions.*',
-          'question_versions.submitted',
+          'question_versions.accepted',
+          'question_versions.published',
           'question_versions.complex_item_set_id',
         )
         .distinctOn('questions.id')
@@ -194,7 +195,7 @@ const containsSubmissions = async complexItemSet => {
           { column: 'question_versions.created', order: 'desc' },
         ])
 
-      return questions.some(q => q.submitted)
+      return questions.some(q => q.accepted || q.published)
     })
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
