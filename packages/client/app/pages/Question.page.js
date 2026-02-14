@@ -72,6 +72,8 @@ import {
   flattenReviewerSearchResults,
   useNotifications,
   notificationsMapper,
+  STAGES,
+  calculateStage,
 } from '../utilities'
 
 const AUTOSAVE_DELAY = 500
@@ -874,6 +876,7 @@ const QuestionPage = props => {
   const isInProduction = version?.inProduction || (isAdmin && isAuthor)
   const isAccepted = version?.accepted
   const isPublished = version?.published
+  const stage = calculateStage(version)
 
   const isArchived = question?.isArchived && !testMode
 
@@ -1053,7 +1056,7 @@ const QuestionPage = props => {
     return unassignHandlingEditor(mutationData)
   }
 
-  const handleGetQuestionButton = which => {
+  const handleGetQuestionButton = async which => {
     if (relatedQuestionIds) {
       const hasNextQuestion = navigateToNextQuestion(which, relatedQuestionIds)
       return new Promise((resolve, reject) => {
@@ -1139,7 +1142,7 @@ const QuestionPage = props => {
     return acceptQuestionVersion(mutationData)
   }
 
-  const handleEditQuestion = () => {
+  const handleEditQuestion = async () => {
     const mutationData = {
       variables: {
         questionId: question.id,
@@ -1197,7 +1200,7 @@ const QuestionPage = props => {
     return rejectQuestionMutation()
   }
 
-  const handleExportToQti = () => {
+  const handleExportToQti = async () => {
     const mutationVariables = {
       questionVersionId: version.id,
     }
@@ -1216,7 +1219,7 @@ const QuestionPage = props => {
       })
   }
 
-  const handleExportToWord = options => {
+  const handleExportToWord = async options => {
     const { showFeedback, showMetadata } = options
 
     const mutationVariables = {
@@ -1833,6 +1836,8 @@ const QuestionPage = props => {
         showPreviewButton={isAuthor && !version?.submitted}
         showProductionChatTab={showProductionChatTab}
         showReviewerChatTab={showReviewerChatTab}
+        stage={stage}
+        stages={STAGES}
         unreadMentions={unread}
         updated={version?.lastEdit}
         wordFileLoading={generateWordFileLoading}
