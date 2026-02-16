@@ -69,6 +69,7 @@ export const GET_COMPLEX_ITEM_SET = gql`
             publicationDate
 
             submitted
+            accepted
             underReview
             inProduction
             published
