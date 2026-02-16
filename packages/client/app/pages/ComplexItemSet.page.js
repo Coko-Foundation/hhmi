@@ -456,7 +456,7 @@ const ComplexItemSetPage = () => {
       canCreate={!!currentUser}
       canEdit={
         isEditor ||
-        (isAuthor && !data?.complexItemSet?.containsSubmissions) ||
+        (isAuthor && !data?.complexItemSet?.containsAcceptedItems) ||
         state?.created
       }
       currentAuthor={data?.complexItemSet?.authors}

@@ -78,16 +78,16 @@ const isAuthor = rule()(async (_, { questionId }, ctx) => {
 
   if (!user.isActive) return false
 
-  return isQuestionAuthor(Team, ctx.userId, questionId)
+  return isObjectAuthor(Team, ctx.userId, questionId)
 })
 
-const isQuestionAuthor = async (teamModel, user, questionId) => {
+const isObjectAuthor = async (teamModel, user, objectId) => {
   const questionAuthor = await teamModel
     .query()
     .leftJoin('team_members', 'team_members.team_id', 'teams.id')
     .select('teams.role')
     .findOne({
-      'teams.object_id': questionId,
+      'teams.object_id': objectId,
       'team_members.user_id': user,
       'teams.role': 'author',
     })
@@ -133,7 +133,7 @@ const canUpdateQuestion = rule()(
 
     if (!question.submitted || question.editing) {
       // needs to be the author
-      return isQuestionAuthor(Team, ctx.userId, questionId)
+      return isObjectAuthor(Team, ctx.userId, questionId)
     }
 
     if (question.accepted) {
@@ -250,8 +250,7 @@ const canEditQuestion = rule()(
     )
 
     return (
-      isQuestionAuthor(Team, ctx.userId, questionId) &&
-      !questionVersion.accepted
+      isObjectAuthor(Team, ctx.userId, questionId) && !questionVersion.accepted
     )
   },
 )
@@ -315,7 +314,7 @@ const canArchiveQuestions = rule()(async (_, { questionIds }, ctx) => {
   }
 
   const result = await Promise.all(
-    questionIds.map(qId => isQuestionAuthor(Team, ctx.userId, qId)),
+    questionIds.map(qId => isObjectAuthor(Team, ctx.userId, qId)),
   )
 
   return result.every(r => r)
@@ -362,6 +361,51 @@ const canDeleteOrDeactivateUsers = rule()(async (_, { ids }, ctx) => {
     user.hasGlobalRole('admin') &&
     ids.indexOf(ctx.userId) === -1
   )
+})
+
+const canEditSet = rule()(async (_, { id }, ctx) => {
+  if (!ctx.userId) return false
+
+  const { User, Team } = require('@coko/server')
+  const { Question } = require('../models')
+  const user = await User.query().findById(ctx.userId)
+  const userIsEditor = await user.hasGlobalRole('editor')
+
+  if (user.isActive && userIsEditor) {
+    return true
+  }
+
+  // if not admin or editor, check if user is the author and set doesn't contains accepted or published items
+  const setAuthor = await isObjectAuthor(Team, ctx.userId, id)
+
+  if (!setAuthor) {
+    return false
+  }
+
+  const questions = await Question.query()
+    .leftJoin(
+      'question_versions',
+      'questions.id',
+      'question_versions.question_id',
+    )
+    .select(
+      'questions.*',
+      'question_versions.accepted',
+      'question_versions.published',
+      'question_versions.complex_item_set_id',
+    )
+    .distinctOn('questions.id')
+    .where({
+      complex_item_set_id: id,
+    })
+    .orderBy([
+      'questions.id',
+      { column: 'question_versions.created', order: 'desc' },
+    ])
+
+  const containsAccepted = questions.some(q => q.accepted || q.published)
+
+  return !containsAccepted
 })
 
 const permissions = {
@@ -431,7 +475,7 @@ const permissions = {
     reorderList: isActive,
     // Sets
     createComplexItemSet: isActive,
-    editComplexItemSet: isActive,
+    editComplexItemSet: canEditSet,
     deleteComplexItemSet: isAdmin,
     deleteComplexItemSets: isAdmin,
     assignSetAuthor: isAdmin,
