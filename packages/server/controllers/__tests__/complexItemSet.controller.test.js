@@ -3,7 +3,7 @@ const {
   editComplexItemSet,
   getAuthorForComplexItemSet,
   getQuestionForComplexItemSet,
-  containsSubmissions,
+  containsAcceptedItems,
 } = require('../complexItemSet.controller')
 
 const { exampleQuestionVersion } = require('./__helpers__/questions')
@@ -153,17 +153,17 @@ describe('ComplexItemSet controller', () => {
     expect(fetchedIds.includes(question3.id)).toBe(true)
   })
 
-  test('containsSubmissions checks if there are submitted questions in a set', async () => {
+  test('containsAcceptedItems checks if there are submitted questions in a set', async () => {
     const user = await User.insert({})
     const question = await Question.insert({})
     const complexItem = await createComplexItemSet(user.id, 'set 1', null)
     await QuestionVersion.insert({
       questionId: question.id,
-      submitted: true,
+      accepted: true,
       complexItemSetId: complexItem.id,
     })
 
-    const hasSubmissions = await containsSubmissions(complexItem)
+    const hasSubmissions = await containsAcceptedItems(complexItem)
 
     expect(hasSubmissions).toBe(true)
   })
