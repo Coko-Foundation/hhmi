@@ -6,7 +6,7 @@ const {
   editComplexItemSet,
   getQuestionForComplexItemSet,
   getAuthorForComplexItemSet,
-  containsSubmissions,
+  containsAcceptedItems,
   assignAuthorForComplexItemSet,
   exportSets,
   exportSetQuestions,
@@ -94,8 +94,8 @@ const leadingContentResolver = async complexItemSet => {
   return JSON.stringify(withImageUrls)
 }
 
-const containsSubmissionsResolver = async complexItemSet => {
-  return containsSubmissions(complexItemSet)
+const containsAcceptedItemsResolver = async complexItemSet => {
+  return containsAcceptedItems(complexItemSet)
 }
 
 const deleteComplexItemSetResolver = async (_, { id }) => {
@@ -127,6 +127,6 @@ module.exports = {
     questions: complexItemSetQuestionsResolver,
     authors: authorResolver,
     leadingContent: leadingContentResolver,
-    containsSubmissions: containsSubmissionsResolver,
+    containsAcceptedItems: containsAcceptedItemsResolver,
   },
 }

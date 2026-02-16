@@ -169,8 +169,8 @@ const getAuthorForComplexItemSet = async (complexItemSetId, options = {}) => {
   }
 }
 
-const containsSubmissions = async complexItemSet => {
-  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} containsSubmissions:`
+const containsAcceptedItems = async complexItemSet => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} containsAcceptedItems:`
 
   try {
     return useTransaction(async trx => {
@@ -529,7 +529,7 @@ module.exports = {
   editComplexItemSet,
   getQuestionForComplexItemSet,
   getAuthorForComplexItemSet,
-  containsSubmissions,
+  containsAcceptedItems,
   assignAuthorForComplexItemSet,
   exportSets,
   exportSetQuestions,
