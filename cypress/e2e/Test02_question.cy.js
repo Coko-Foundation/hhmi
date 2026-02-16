@@ -254,6 +254,7 @@ describe('Testing questions', () => {
       cy.get('[contenteditable="true"]', {
         force: true,
       })
+        .first()
         .clear()
         .type('Edited')
       cy.contains('[type="button"]', 'Publish').click()
