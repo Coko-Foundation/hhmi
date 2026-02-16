@@ -169,8 +169,8 @@ const getAuthorForComplexItemSet = async (complexItemSetId, options = {}) => {
   }
 }
 
-const containsSubmissions = async complexItemSet => {
-  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} containsSubmissions:`
+const containsAcceptedItems = async complexItemSet => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} containsAcceptedItems:`
 
   try {
     return useTransaction(async trx => {
@@ -182,7 +182,8 @@ const containsSubmissions = async complexItemSet => {
         )
         .select(
           'questions.*',
-          'question_versions.submitted',
+          'question_versions.accepted',
+          'question_versions.published',
           'question_versions.complex_item_set_id',
         )
         .distinctOn('questions.id')
@@ -194,7 +195,7 @@ const containsSubmissions = async complexItemSet => {
           { column: 'question_versions.created', order: 'desc' },
         ])
 
-      return questions.some(q => q.submitted)
+      return questions.some(q => q.accepted || q.published)
     })
   } catch (e) {
     logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
@@ -528,7 +529,7 @@ module.exports = {
   editComplexItemSet,
   getQuestionForComplexItemSet,
   getAuthorForComplexItemSet,
-  containsSubmissions,
+  containsAcceptedItems,
   assignAuthorForComplexItemSet,
   exportSets,
   exportSetQuestions,
