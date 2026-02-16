@@ -6,7 +6,7 @@ type ComplexItemSet {
   authors: [User]
   created: DateTime
   updated: DateTime
-  containsSubmissions: Boolean
+  containsAcceptedItems: Boolean
   deletedAuthor: String
 }
 
