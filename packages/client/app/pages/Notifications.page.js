@@ -14,7 +14,7 @@ import {
 } from '../graphql/notification.queries'
 import { boolOrNull, useNotifications } from '../utilities'
 
-const PAGE_SIZE = 5
+const PAGE_SIZE = 10
 
 // if we pass a single item it will return the shaped item if we pass an array it will return the array of shaped items
 const mentionsShape = arr => {
@@ -98,17 +98,13 @@ const NotificationPage = () => {
   const [markMentionsAs] = useMutation(MARK_AS, {
     refetchQueries: [
       {
-        query: GET_USER_NOTIFICATIONS,
-        variables: mentionsQueryVariables(pageSize),
-        onCompleted: () =>
-          updateMentions({
-            variables: mentionsQueryVariables(pageSize),
-          }),
-      },
-      {
         query: GET_UNREAD_NOTIFICATIONS_COUNT,
       },
     ],
+    onCompleted: () =>
+      updateMentions({
+        variables: mentionsQueryVariables(pageSize),
+      }),
   })
 
   const markAs = async variables => {
