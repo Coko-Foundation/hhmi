@@ -18,7 +18,7 @@ import {
   antTabs,
   ProseMirror,
 } from '../support/selectors'
-import { discover as discoverPage } from '../support/routes'
+import { discover as discoverPage, graphqlEndpoint } from '../support/routes'
 
 const disableScripts = false
 describe('Testing apps responsiveness', () => {
@@ -38,6 +38,7 @@ describe('Testing apps responsiveness', () => {
   describe('mobile view', () => {
     beforeEach(() => {
       cy.viewport(mobile.preset)
+      cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     })
 
     it('navigation bar', () => {
