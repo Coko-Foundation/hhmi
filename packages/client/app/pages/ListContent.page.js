@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useQuery, useMutation } from '@apollo/client'
+import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import DOMPurify from 'dompurify'
 import { serverUrl, useCurrentUser } from '@coko/client'
 import { ListContent } from 'ui'
@@ -33,12 +33,7 @@ const ListContentPage = () => {
     key: 0,
   })
 
-  const {
-    data: {
-      list: { title, questions: { totalCount, relatedQuestionsIds } = {} } = {},
-    } = {},
-    loading,
-  } = useQuery(GET_LIST, {
+  const [getList, { data: { list } = {}, loading }] = useLazyQuery(GET_LIST, {
     variables: {
       id,
       questionsQuery: searchParams.query,
@@ -62,6 +57,10 @@ const ListContentPage = () => {
     },
   })
 
+  useEffect(() => {
+    getList()
+  }, [])
+
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
     { variables: { publishedOnly: true } },
@@ -69,10 +68,14 @@ const ListContentPage = () => {
 
   const [removeFromListMutation] = useMutation(REMOVE_FROM_LIST, {
     onCompleted: ({ deleteFromList }) => {
-      const nrOfPages = Math.ceil(totalCount / searchParams.pageSize)
+      const nrOfPages = Math.ceil(
+        list.questions.totalCount / searchParams.pageSize,
+      )
+
       const itemsInCurrentPage = questions.length
 
       if (
+        searchParams.page > 1 &&
         searchParams.page === nrOfPages &&
         itemsInCurrentPage === deleteFromList
       ) {
@@ -80,23 +83,10 @@ const ListContentPage = () => {
           ...currentQuery,
           page: searchParams.page - 1,
         }))
+      } else {
+        getList()
       }
     },
-    refetchQueries: [
-      {
-        query: GET_LIST,
-        variables: {
-          id,
-          questionsQuery: searchParams.query,
-          questionsOptions: {
-            page: searchParams.page - 1,
-            pageSize: searchParams.pageSize,
-            orderBy: searchParams.orderBy,
-            ascending: searchParams.ascending,
-          },
-        },
-      },
-    ],
   })
 
   const [exportQuestionsMutation] = useMutation(EXPORT_QUESTIONS)
@@ -104,21 +94,9 @@ const ListContentPage = () => {
   const [exportQuestionsToQTIMutation] = useMutation(EXPORT_QUESTIONS_QTI)
 
   const [reorderListMutation] = useMutation(REORDER_LIST, {
-    refetchQueries: [
-      {
-        query: GET_LIST,
-        variables: {
-          id,
-          questionsQuery: searchParams.query,
-          questionsOptions: {
-            page: searchParams.page - 1,
-            pageSize: searchParams.pageSize,
-            orderBy: searchParams.orderBy,
-            ascending: searchParams.ascending,
-          },
-        },
-      },
-    ],
+    onCompleted() {
+      getList()
+    },
   })
 
   const handleSearch = params => {
@@ -288,7 +266,7 @@ const ListContentPage = () => {
               complexItemSetOptions,
               showStatus: false,
               showAuthor: false,
-              relatedQuestionsIds,
+              relatedQuestionsIds: list?.questions?.relatedQuestionsIds,
               testMode: true,
               includeType: true,
               showPublishedDate: true,
@@ -296,8 +274,8 @@ const ListContentPage = () => {
           : []
       }
       questionsPerPage={PAGE_SIZE}
-      title={DOMPurify.sanitize(title)}
-      totalCount={totalCount}
+      title={DOMPurify.sanitize(list?.title)}
+      totalCount={list?.questions?.totalCount}
     />
   )
 }
