@@ -81,8 +81,19 @@ const isAuthor = rule()(async (_, { questionId }, ctx) => {
   return isObjectAuthor(Team, ctx.userId, questionId)
 })
 
+const isListAuthor = rule()(async (_, { listId }, ctx) => {
+  if (!ctx.userId) return false
+
+  const { User, Team } = require('@coko/server')
+  const user = await User.query().findById(ctx.userId)
+
+  if (!user.isActive) return false
+
+  return isObjectAuthor(Team, ctx.userId, listId)
+})
+
 const isObjectAuthor = async (teamModel, user, objectId) => {
-  const questionAuthor = await teamModel
+  const objectAuthor = await teamModel
     .query()
     .leftJoin('team_members', 'team_members.team_id', 'teams.id')
     .select('teams.role')
@@ -92,7 +103,7 @@ const isObjectAuthor = async (teamModel, user, objectId) => {
       'teams.role': 'author',
     })
 
-  return !!questionAuthor
+  return !!objectAuthor
 }
 
 const canUpdateQuestion = rule()(
@@ -464,10 +475,10 @@ const permissions = {
 
     // lists
     createList: isActive,
-    editList: isActive,
+    editList: isListAuthor,
     deleteLists: isActive,
-    addToList: isActive,
-    deleteFromList: isActive,
+    addToList: isListAuthor,
+    deleteFromList: isListAuthor,
     exportQuestions: isActive,
     exportList: isActive,
     exportQuestionsQTI: isActive,
