@@ -22,6 +22,7 @@ const ListContentPage = () => {
   const { metadata } = useMetadata()
   const { currentUser } = useCurrentUser()
   const isAuthor = hasRole(currentUser, 'author', id)
+  const [questions, setQuetions] = useState([])
 
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -34,10 +35,7 @@ const ListContentPage = () => {
 
   const {
     data: {
-      list: {
-        title,
-        questions: { result: questions, totalCount, relatedQuestionsIds } = {},
-      } = {},
+      list: { title, questions: { totalCount, relatedQuestionsIds } = {} } = {},
     } = {},
     loading,
   } = useQuery(GET_LIST, {
@@ -52,7 +50,10 @@ const ListContentPage = () => {
       },
     },
     fetchPolicy: 'network-only',
-    onCompleted: ({ list: { title: listTitle } = {} }) => {
+    onCompleted: ({
+      list: { title: listTitle, questions: listQuestions } = {},
+    }) => {
+      setQuetions(listQuestions?.result)
       const sanitizedTitle = DOMPurify.sanitize(listTitle)
       document.title = `${sanitizedTitle}, list page - Assessment Builder`
       document.getElementById(
@@ -248,10 +249,12 @@ const ListContentPage = () => {
 
     if (!hasErrors) {
       // sort questions so that they appear in the new order visually
-      questions.sort(
+      const questionsCopy = [...questions]
+      questionsCopy.sort(
         (a, b) =>
           orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
       )
+      setQuetions(questionsCopy)
 
       // prepare mutation data and execute mutation to persist new order
       const mutationData = {
