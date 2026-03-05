@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery, useMutation } from '@apollo/client'
 import DOMPurify from 'dompurify'
-import { serverUrl } from '@coko/client'
+import { serverUrl, useCurrentUser } from '@coko/client'
 import { ListContent } from 'ui'
 import {
   GET_LIST,
@@ -12,7 +12,7 @@ import {
   REORDER_LIST,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
 } from '../graphql'
-import { useMetadata, dashboardDataMapper } from '../utilities'
+import { useMetadata, dashboardDataMapper, hasRole } from '../utilities'
 
 const PAGE_SIZE = 10
 
@@ -20,6 +20,8 @@ const ListContentPage = () => {
   const { id } = useParams()
 
   const { metadata } = useMetadata()
+  const { currentUser } = useCurrentUser()
+  const isAuthor = hasRole(currentUser, 'author', id)
 
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -268,6 +270,7 @@ const ListContentPage = () => {
 
   return (
     <ListContent
+      isAuthor={isAuthor}
       loading={loading}
       onDragEnd={handleDragEnd}
       onExport={handleExport}

@@ -100,6 +100,7 @@ const ListContent = ({
   questionsPerPage,
   showRowCheckboxes,
   locale,
+  isAuthor,
   ...rest
 }) => {
   const [modal, contextHolder] = Modal.useModal()
@@ -348,13 +349,16 @@ const ListContent = ({
           </Button>
         </PopupContentWrapper>
       </Popup>
-      <Button
-        disabled={selectedQuestions.length === 0}
-        onClick={confirmDelete}
-        type="primary"
-      >
-        Remove from list
-      </Button>
+      {isAuthor ? (
+        <Button
+          disabled={selectedQuestions.length === 0}
+          onClick={confirmDelete}
+          type="primary"
+        >
+          Remove from list
+        </Button>
+      ) : null}
+
       {selectedQuestions.length ? (
         <SelectionIndicator>
           {selectedQuestions.length} questions selected
@@ -474,6 +478,7 @@ ListContent.propTypes = {
   questionsPerPage: PropTypes.number,
   totalCount: PropTypes.number,
   locale: PropTypes.shape(),
+  isAuthor: PropTypes.bool,
 }
 
 ListContent.defaultProps = {
@@ -489,6 +494,7 @@ ListContent.defaultProps = {
   questionsPerPage: 10,
   totalCount: 0,
   locale: null,
+  isAuthor: false,
 }
 
 export default ListContent
