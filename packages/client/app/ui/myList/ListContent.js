@@ -459,6 +459,9 @@ const ListContent = ({
             ),
           },
         ]}
+        tabBarExtraContent={{
+          right: <Button type="primary">Save a copy</Button>,
+        }}
       />
       {contextHolder}
     </ModalContext.Provider>

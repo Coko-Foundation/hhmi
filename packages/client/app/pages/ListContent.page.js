@@ -227,12 +227,12 @@ const ListContentPage = () => {
 
     if (!hasErrors) {
       // sort questions so that they appear in the new order visually
-      const questionsCopy = [...questions]
-      questionsCopy.sort(
-        (a, b) =>
-          orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
+      setQuetions(
+        [...questions].sort(
+          (a, b) =>
+            orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
+        ),
       )
-      setQuetions(questionsCopy)
 
       // prepare mutation data and execute mutation to persist new order
       const mutationData = {
