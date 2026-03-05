@@ -107,7 +107,7 @@ const ListContent = ({
   const { confirm, error, warning } = modal
 
   const [selectedQuestions, setSelectedQuestions] = useState([])
-  const [draggable, setDraggable] = useState(true)
+  const [draggable, setDraggable] = useState(isAuthor)
 
   const [searchParams, setSearchParams] = useState({
     page: 1,
@@ -369,7 +369,7 @@ const ListContent = ({
 
   const handleSortOptionChange = op => {
     if (op === 'custom') {
-      setDraggable(true)
+      setDraggable(isAuthor && true)
       setSearchParams({
         page: 1,
         orderBy: op,
