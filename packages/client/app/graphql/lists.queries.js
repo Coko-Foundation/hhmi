@@ -129,6 +129,14 @@ export const REMOVE_FROM_LIST = gql`
   }
 `
 
+export const COPY_LIST = gql`
+  mutation CopyList($id: ID!, $title: String!) {
+    copyList(id: $id, title: $title) {
+      id
+    }
+  }
+`
+
 export const EXPORT_QUESTIONS = gql`
   mutation ExportQuestions(
     $listId: ID!

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory } from 'react-router-dom'
 import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import DOMPurify from 'dompurify'
-import { serverUrl, useCurrentUser } from '@coko/client'
+import { serverUrl } from '@coko/client'
 import { ListContent } from 'ui'
 import {
   GET_LIST,
@@ -11,6 +11,8 @@ import {
   EXPORT_QUESTIONS_QTI,
   REORDER_LIST,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
+  COPY_LIST,
+  CURRENT_USER,
 } from '../graphql'
 import { useMetadata, dashboardDataMapper, hasRole } from '../utilities'
 
@@ -18,11 +20,11 @@ const PAGE_SIZE = 10
 
 const ListContentPage = () => {
   const { id } = useParams()
-
+  const history = useHistory()
   const { metadata } = useMetadata()
-  const { currentUser } = useCurrentUser()
-  const isAuthor = hasRole(currentUser, 'author', id)
   const [questions, setQuetions] = useState([])
+  const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
+  const isAuthor = hasRole(currentUser, 'author', id)
 
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -89,6 +91,13 @@ const ListContentPage = () => {
     },
   })
 
+  const [copyListMutation] = useMutation(COPY_LIST, {
+    onCompleted({ copyList: { id: newListId } = {} }) {
+      history.push(`/list/${newListId}`)
+    },
+    refetchQueries: [{ query: CURRENT_USER }],
+  })
+
   const [exportQuestionsMutation] = useMutation(EXPORT_QUESTIONS)
 
   const [exportQuestionsToQTIMutation] = useMutation(EXPORT_QUESTIONS_QTI)
@@ -116,6 +125,15 @@ const ListContentPage = () => {
     }
 
     return removeFromListMutation(mutationData)
+  }
+
+  const handleCopyList = listTitle => {
+    const variables = {
+      id,
+      title: listTitle,
+    }
+
+    return copyListMutation({ variables })
   }
 
   const handleExport = async (
@@ -253,6 +271,7 @@ const ListContentPage = () => {
     <ListContent
       isAuthor={isAuthor}
       loading={loading}
+      onCopyList={handleCopyList}
       onDragEnd={handleDragEnd}
       onExport={handleExport}
       onExportQTI={handleExportToQTI}
