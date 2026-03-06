@@ -555,6 +555,32 @@ const reorderList = async (listId, customOrder, options = {}) => {
   }
 }
 
+const copyList = async (id, title, userId, options = {}) => {
+  const CONTROLLER_MESSAGE = `${BASE_MESSAGE} copyList: copying list with id ${id} into a new list with title ${title}`
+
+  try {
+    return useTransaction(
+      async trx => {
+        const newList = await createList(userId, title)
+        const listQuestions = await List.findListQuestions(id)
+
+        await addToList(
+          newList.id,
+          listQuestions?.result.map(q => q.id),
+        )
+
+        return newList
+      },
+      {
+        trx: options.trx,
+      },
+    )
+  } catch (e) {
+    logger.error(`${CONTROLLER_MESSAGE} ${e.message}`)
+    throw new Error(e)
+  }
+}
+
 module.exports = {
   getList,
   getListQuestions,
@@ -569,4 +595,5 @@ module.exports = {
   exportQuestionsToQti,
   exportListToQti,
   reorderList,
+  copyList,
 }

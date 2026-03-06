@@ -61,4 +61,5 @@ extend type Mutation {
   ): String!
   exportListQTI(listId: ID!, orderBy: String, ascending: Boolean): String!
   reorderList(listId: ID!, customOrder: [ID!]!): List!
+  copyList(id: ID!, title: String!): List!
 }

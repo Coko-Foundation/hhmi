@@ -12,6 +12,7 @@ const {
   reorderList,
   exportQuestionsToQti,
   exportListToQti,
+  copyList,
 } = require('../../controllers/list.controllers')
 
 const listResolver = async (
@@ -90,6 +91,10 @@ const listQuestionsResolver = async list => {
   return getListQuestions(list)
 }
 
+const copyListResolver = async (_, { id, title }, ctx) => {
+  return copyList(id, title, ctx.userId)
+}
+
 module.exports = {
   Query: {
     list: listResolver,
@@ -106,6 +111,7 @@ module.exports = {
     reorderList: reorderListResolver,
     exportQuestionsQTI: exportQuestionsQTIResolver,
     exportListQTI: exportListQTIResolver,
+    copyList: copyListResolver,
   },
   List: {
     questions: listQuestionsResolver,
