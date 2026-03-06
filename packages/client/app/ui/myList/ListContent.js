@@ -111,7 +111,11 @@ const ListContent = ({
   const [copyListForm] = Form.useForm()
 
   const [selectedQuestions, setSelectedQuestions] = useState([])
-  const [draggable, setDraggable] = useState(isAuthor)
+  const [draggable, setDraggable] = useState()
+
+  useEffect(() => {
+    setDraggable(isAuthor)
+  }, [isAuthor])
 
   const [searchParams, setSearchParams] = useState({
     page: 1,
