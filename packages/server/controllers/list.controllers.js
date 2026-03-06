@@ -96,6 +96,9 @@ const editList = async (listId, title, options = {}) => {
   try {
     return useTransaction(
       async trx => {
+        logger.info(
+          `${CONTROLLER_MESSAGE} settting title to "${title}" for list with id ${listId}`,
+        )
         return List.patchAndFetchById(
           listId,
           {

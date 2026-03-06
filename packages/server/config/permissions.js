@@ -475,6 +475,7 @@ const permissions = {
 
     // lists
     createList: isActive,
+    copyList: isActive,
     editList: isListAuthor,
     deleteLists: isActive,
     addToList: isListAuthor,
@@ -483,7 +484,7 @@ const permissions = {
     exportList: isActive,
     exportQuestionsQTI: isActive,
     exportListQTI: isActive,
-    reorderList: isActive,
+    reorderList: isListAuthor,
     // Sets
     createComplexItemSet: isActive,
     editComplexItemSet: canEditSet,

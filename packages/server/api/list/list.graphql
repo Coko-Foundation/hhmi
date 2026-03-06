@@ -36,7 +36,7 @@ extend type Query {
 
 extend type Mutation {
   createList(title: String!, questions: [ID!]): List!
-  editList(id: ID!, title: String): List!
+  editList(listId: ID!, title: String): List!
   deleteLists(ids: [ID!]!): Int
   addToList(listId: ID!, questionIds: [ID!]!): [ListMember!]!
   deleteFromList(listId: ID!, questionIds: [ID!]!): Int!

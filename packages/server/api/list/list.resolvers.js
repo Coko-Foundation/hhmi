@@ -34,8 +34,8 @@ const createListResolver = async (_, { title, questions }, ctx) => {
   return createList(ctx.userId, title, questions)
 }
 
-const editListResolver = async (_, { id, title }, ctx) => {
-  return editList(id, title)
+const editListResolver = async (_, { listId, title }, ctx) => {
+  return editList(listId, title)
 }
 
 const deleteListsResolver = async (_, { ids }, ctx) => {
