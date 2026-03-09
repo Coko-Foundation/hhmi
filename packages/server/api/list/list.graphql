@@ -36,7 +36,7 @@ extend type Query {
 
 extend type Mutation {
   createList(title: String!, questions: [ID!]): List!
-  editList(id: ID!, title: String): List!
+  editList(listId: ID!, title: String): List!
   deleteLists(ids: [ID!]!): Int
   addToList(listId: ID!, questionIds: [ID!]!): [ListMember!]!
   deleteFromList(listId: ID!, questionIds: [ID!]!): Int!
@@ -61,4 +61,5 @@ extend type Mutation {
   ): String!
   exportListQTI(listId: ID!, orderBy: String, ascending: Boolean): String!
   reorderList(listId: ID!, customOrder: [ID!]!): List!
+  copyList(id: ID!, title: String!): List!
 }

@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useQuery, useMutation } from '@apollo/client'
+import React, { useEffect, useState } from 'react'
+import { useParams, useHistory } from 'react-router-dom'
+import { useQuery, useLazyQuery, useMutation } from '@apollo/client'
 import DOMPurify from 'dompurify'
 import { serverUrl } from '@coko/client'
 import { ListContent } from 'ui'
@@ -11,15 +11,20 @@ import {
   EXPORT_QUESTIONS_QTI,
   REORDER_LIST,
   GET_COMPLEX_ITEM_SETS_OPTIONS,
+  COPY_LIST,
+  CURRENT_USER,
 } from '../graphql'
-import { useMetadata, dashboardDataMapper } from '../utilities'
+import { useMetadata, dashboardDataMapper, hasRole } from '../utilities'
 
 const PAGE_SIZE = 10
 
 const ListContentPage = () => {
   const { id } = useParams()
-
+  const history = useHistory()
   const { metadata } = useMetadata()
+  const [questions, setQuetions] = useState([])
+  const { data: { currentUser } = {} } = useQuery(CURRENT_USER)
+  const isAuthor = hasRole(currentUser, 'author', id)
 
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -30,15 +35,7 @@ const ListContentPage = () => {
     key: 0,
   })
 
-  const {
-    data: {
-      list: {
-        title,
-        questions: { result: questions, totalCount, relatedQuestionsIds } = {},
-      } = {},
-    } = {},
-    loading,
-  } = useQuery(GET_LIST, {
+  const [getList, { data: { list } = {}, loading }] = useLazyQuery(GET_LIST, {
     variables: {
       id,
       questionsQuery: searchParams.query,
@@ -50,7 +47,10 @@ const ListContentPage = () => {
       },
     },
     fetchPolicy: 'network-only',
-    onCompleted: ({ list: { title: listTitle } = {} }) => {
+    onCompleted: ({
+      list: { title: listTitle, questions: listQuestions } = {},
+    }) => {
+      setQuetions(listQuestions?.result)
       const sanitizedTitle = DOMPurify.sanitize(listTitle)
       document.title = `${sanitizedTitle}, list page - Assessment Builder`
       document.getElementById(
@@ -59,6 +59,10 @@ const ListContentPage = () => {
     },
   })
 
+  useEffect(() => {
+    getList()
+  }, [])
+
   const { data: { getAvailableSets: complexItemSetOptions } = {} } = useQuery(
     GET_COMPLEX_ITEM_SETS_OPTIONS,
     { variables: { publishedOnly: true } },
@@ -66,10 +70,14 @@ const ListContentPage = () => {
 
   const [removeFromListMutation] = useMutation(REMOVE_FROM_LIST, {
     onCompleted: ({ deleteFromList }) => {
-      const nrOfPages = Math.ceil(totalCount / searchParams.pageSize)
+      const nrOfPages = Math.ceil(
+        list.questions.totalCount / searchParams.pageSize,
+      )
+
       const itemsInCurrentPage = questions.length
 
       if (
+        searchParams.page > 1 &&
         searchParams.page === nrOfPages &&
         itemsInCurrentPage === deleteFromList
       ) {
@@ -77,23 +85,17 @@ const ListContentPage = () => {
           ...currentQuery,
           page: searchParams.page - 1,
         }))
+      } else {
+        getList()
       }
     },
-    refetchQueries: [
-      {
-        query: GET_LIST,
-        variables: {
-          id,
-          questionsQuery: searchParams.query,
-          questionsOptions: {
-            page: searchParams.page - 1,
-            pageSize: searchParams.pageSize,
-            orderBy: searchParams.orderBy,
-            ascending: searchParams.ascending,
-          },
-        },
-      },
-    ],
+  })
+
+  const [copyListMutation] = useMutation(COPY_LIST, {
+    onCompleted({ copyList: { id: newListId } = {} }) {
+      history.push(`/list/${newListId}`)
+    },
+    refetchQueries: [{ query: CURRENT_USER }],
   })
 
   const [exportQuestionsMutation] = useMutation(EXPORT_QUESTIONS)
@@ -101,21 +103,9 @@ const ListContentPage = () => {
   const [exportQuestionsToQTIMutation] = useMutation(EXPORT_QUESTIONS_QTI)
 
   const [reorderListMutation] = useMutation(REORDER_LIST, {
-    refetchQueries: [
-      {
-        query: GET_LIST,
-        variables: {
-          id,
-          questionsQuery: searchParams.query,
-          questionsOptions: {
-            page: searchParams.page - 1,
-            pageSize: searchParams.pageSize,
-            orderBy: searchParams.orderBy,
-            ascending: searchParams.ascending,
-          },
-        },
-      },
-    ],
+    onCompleted() {
+      getList()
+    },
   })
 
   const handleSearch = params => {
@@ -135,6 +125,15 @@ const ListContentPage = () => {
     }
 
     return removeFromListMutation(mutationData)
+  }
+
+  const handleCopyList = listTitle => {
+    const variables = {
+      id,
+      title: listTitle,
+    }
+
+    return copyListMutation({ variables })
   }
 
   const handleExport = async (
@@ -246,9 +245,11 @@ const ListContentPage = () => {
 
     if (!hasErrors) {
       // sort questions so that they appear in the new order visually
-      questions.sort(
-        (a, b) =>
-          orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
+      setQuetions(
+        [...questions].sort(
+          (a, b) =>
+            orderedQuestionIds.indexOf(a.id) - orderedQuestionIds.indexOf(b.id),
+        ),
       )
 
       // prepare mutation data and execute mutation to persist new order
@@ -268,7 +269,9 @@ const ListContentPage = () => {
 
   return (
     <ListContent
+      isAuthor={isAuthor}
       loading={loading}
+      onCopyList={handleCopyList}
       onDragEnd={handleDragEnd}
       onExport={handleExport}
       onExportQTI={handleExportToQTI}
@@ -282,7 +285,7 @@ const ListContentPage = () => {
               complexItemSetOptions,
               showStatus: false,
               showAuthor: false,
-              relatedQuestionsIds,
+              relatedQuestionsIds: list?.questions?.relatedQuestionsIds,
               testMode: true,
               includeType: true,
               showPublishedDate: true,
@@ -290,8 +293,8 @@ const ListContentPage = () => {
           : []
       }
       questionsPerPage={PAGE_SIZE}
-      title={DOMPurify.sanitize(title)}
-      totalCount={totalCount}
+      title={DOMPurify.sanitize(list?.title)}
+      totalCount={list?.questions?.totalCount}
     />
   )
 }

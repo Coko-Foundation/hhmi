@@ -8,6 +8,8 @@ import {
   QuestionList,
   Button,
   Empty,
+  Form,
+  Input,
   Modal,
   Popup,
 } from '../common'
@@ -100,13 +102,20 @@ const ListContent = ({
   questionsPerPage,
   showRowCheckboxes,
   locale,
+  isAuthor,
+  onCopyList,
   ...rest
 }) => {
   const [modal, contextHolder] = Modal.useModal()
   const { confirm, error, warning } = modal
+  const [copyListForm] = Form.useForm()
 
   const [selectedQuestions, setSelectedQuestions] = useState([])
-  const [draggable, setDraggable] = useState(true)
+  const [draggable, setDraggable] = useState()
+
+  useEffect(() => {
+    setDraggable(isAuthor)
+  }, [isAuthor])
 
   const [searchParams, setSearchParams] = useState({
     page: 1,
@@ -348,13 +357,16 @@ const ListContent = ({
           </Button>
         </PopupContentWrapper>
       </Popup>
-      <Button
-        disabled={selectedQuestions.length === 0}
-        onClick={confirmDelete}
-        type="primary"
-      >
-        Remove from list
-      </Button>
+      {isAuthor ? (
+        <Button
+          disabled={selectedQuestions.length === 0}
+          onClick={confirmDelete}
+          type="primary"
+        >
+          Remove from list
+        </Button>
+      ) : null}
+
       {selectedQuestions.length ? (
         <SelectionIndicator>
           {selectedQuestions.length} questions selected
@@ -365,7 +377,7 @@ const ListContent = ({
 
   const handleSortOptionChange = op => {
     if (op === 'custom') {
-      setDraggable(true)
+      setDraggable(isAuthor && true)
       setSearchParams({
         page: 1,
         orderBy: op,
@@ -406,6 +418,62 @@ const ListContent = ({
         ],
       })
     }
+  }
+
+  const handleCopyList = () => {
+    const confirmDialog = confirm()
+    confirmDialog.update({
+      title: 'Copy list into "My Lists"',
+      content: (
+        <div>
+          <p>
+            This action will create a copy of the current list with all its
+            items. You will be able to find and edit the new list under the "My
+            Lists" page.
+          </p>
+          <Form
+            form={copyListForm}
+            layout="vertical"
+            onFinish={({ listTitle }) => {
+              onCopyList(listTitle).then(() => {
+                confirmDialog.destroy()
+              })
+            }}
+          >
+            <Form.Item
+              initialValue={title}
+              label="Title of the new list"
+              name="listTitle"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input />
+            </Form.Item>
+          </Form>
+        </div>
+      ),
+      footer: [
+        <ModalFooter key="footer">
+          <Button key="cancel" onClick={() => confirmDialog.destroy()}>
+            Cancel
+          </Button>
+          <Button
+            autoFocus
+            data-testid="confirm-delete-btn"
+            key="delete"
+            onClick={() => {
+              copyListForm.submit()
+            }}
+            type="primary"
+          >
+            Copy list
+          </Button>
+        </ModalFooter>,
+      ],
+    })
   }
 
   useEffect(() => {
@@ -455,6 +523,13 @@ const ListContent = ({
             ),
           },
         ]}
+        tabBarExtraContent={{
+          right: (
+            <Button onClick={handleCopyList} type="primary">
+              Save a copy
+            </Button>
+          ),
+        }}
       />
       {contextHolder}
     </ModalContext.Provider>
@@ -474,6 +549,8 @@ ListContent.propTypes = {
   questionsPerPage: PropTypes.number,
   totalCount: PropTypes.number,
   locale: PropTypes.shape(),
+  isAuthor: PropTypes.bool,
+  onCopyList: PropTypes.func,
 }
 
 ListContent.defaultProps = {
@@ -489,6 +566,8 @@ ListContent.defaultProps = {
   questionsPerPage: 10,
   totalCount: 0,
   locale: null,
+  isAuthor: false,
+  onCopyList: () => {},
 }
 
 export default ListContent
