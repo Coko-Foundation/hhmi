@@ -10,6 +10,7 @@ const {
   deleteLists,
   deleteFromList,
   reorderList,
+  copyList,
 } = require('../list.controllers')
 
 const { createEmptyQuestion } = require('./__helpers__/questions')
@@ -110,5 +111,22 @@ describe('list controllers', () => {
     const fetchedList = await List.findById(list.id)
     expect(fetchedList.customOrder.length).toBeGreaterThan(0)
     expect(fetchedList.customOrder).toEqual(customOrder)
+  })
+
+  it('copyList', async () => {
+    const user = await User.insert({})
+    const list = await List.insert({ title: 'list6' })
+    const question1 = await createEmptyQuestion()
+    const question2 = await createEmptyQuestion()
+    const questionsIds = [question1.id, question2.id]
+    await addToList(list.id, questionsIds)
+    const newList = await copyList(list.id, 'New title', user.id)
+    const listMembers = await ListMember.find({ listId: newList.id })
+    const members = listMembers.result.map(member => member.questionId)
+    const userList = await getUserLists(user.id)
+    expect(newList.title).toEqual('New title')
+    expect(members.length).toEqual(2)
+    expect(members).toContain(question1.id, question2.id)
+    expect(userList.result[0].id).toBe(newList.id)
   })
 })
