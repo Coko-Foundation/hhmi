@@ -67,42 +67,44 @@ class QuestionVersion extends BaseModel {
 
           const modifiedNode = cloneDeep(node)
 
-          modifiedNode.content = node.content.map(item => {
-            if (item.type === 'figure') {
-              const clonedItem = cloneDeep(item)
+          modifiedNode.content = node.content
+            .map(item => {
+              if (item.type === 'figure') {
+                const clonedItem = cloneDeep(item)
 
-              // when figure lacks content (not proprely deleted from user) ignore it
-              if (!clonedItem.content) {
-                return null
-              }
+                // when figure lacks content (not proprely deleted from user) ignore it
+                if (!clonedItem.content) {
+                  return null
+                }
 
-              const { src } = clonedItem.content[0].attrs
+                const { src } = clonedItem.content[0].attrs
 
-              if (src) {
-                // make sure non-url existing images are not deleted
-                if (src.startsWith('data:image')) return item
+                if (src) {
+                  // make sure non-url existing images are not deleted
+                  if (src.startsWith('data:image')) return item
 
-                clonedItem.content[0].attrs.src = null
-                return clonedItem
-              }
+                  clonedItem.content[0].attrs.src = null
+                  return clonedItem
+                }
 
-              // if image is missing a src replace it with empty paragraph
-              return {
-                type: 'paragraph',
-                attrs: {
-                  class: 'paragraph',
-                },
-                content: [
-                  {
-                    text: ' ',
-                    type: 'text',
+                // if image is missing a src replace it with empty paragraph
+                return {
+                  type: 'paragraph',
+                  attrs: {
+                    class: 'paragraph',
                   },
-                ],
+                  content: [
+                    {
+                      text: ' ',
+                      type: 'text',
+                    },
+                  ],
+                }
               }
-            }
 
-            return cleanUpUrls(item)
-          })
+              return cleanUpUrls(item)
+            })
+            .filter(item => !!item)
 
           return modifiedNode
         }
