@@ -70,6 +70,12 @@ class QuestionVersion extends BaseModel {
           modifiedNode.content = node.content.map(item => {
             if (item.type === 'figure') {
               const clonedItem = cloneDeep(item)
+
+              // when figure lacks content (not proprely deleted from user) ignore it
+              if (!clonedItem.content) {
+                return null
+              }
+
               const { src } = clonedItem.content[0].attrs
 
               if (src) {
