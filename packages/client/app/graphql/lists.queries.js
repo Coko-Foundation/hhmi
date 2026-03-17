@@ -60,8 +60,8 @@ export const DELETE_LISTS = gql`
 `
 
 export const EDIT_LIST = gql`
-  mutation RenameList($id: ID!, $title: String!) {
-    editList(id: $id, title: $title) {
+  mutation RenameList($listId: ID!, $title: String!) {
+    editList(listId: $listId, title: $title) {
       id
     }
   }
@@ -126,6 +126,14 @@ export const ADD_TO_LIST = gql`
 export const REMOVE_FROM_LIST = gql`
   mutation RemoveFromList($listId: ID!, $questionIds: [ID!]!) {
     deleteFromList(listId: $listId, questionIds: $questionIds)
+  }
+`
+
+export const COPY_LIST = gql`
+  mutation CopyList($id: ID!, $title: String!) {
+    copyList(id: $id, title: $title) {
+      id
+    }
   }
 `
 

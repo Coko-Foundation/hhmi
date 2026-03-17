@@ -60,10 +60,10 @@ const ListsPage = () => {
     return createNewList(mutationData)
   }
 
-  const handleRenameList = (id, title) => {
+  const handleRenameList = (listId, title) => {
     const mutationData = {
       variables: {
-        id,
+        listId,
         title,
       },
     }

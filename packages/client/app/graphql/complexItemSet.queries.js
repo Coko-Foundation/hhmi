@@ -52,7 +52,7 @@ export const GET_COMPLEX_ITEM_SET = gql`
       id
       title
       leadingContent
-      containsSubmissions
+      containsAcceptedItems
       authors {
         id
         displayName
@@ -69,6 +69,7 @@ export const GET_COMPLEX_ITEM_SET = gql`
             publicationDate
 
             submitted
+            accepted
             underReview
             inProduction
             published
