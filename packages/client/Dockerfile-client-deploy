@@ -29,18 +29,3 @@ ENV CLIENT_BIOINTERACTIVE_OAUTH_CLIENT_ID=$oauth_client_id
 ENV CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI=$oauth_redirect_uri
 
 RUN yarn coko-client-build-js
-
-######################################################################
-######################################################################
-
-# IMAGE FOR RUNNING
-FROM cokoapps/base:20 AS client-serve
-
-RUN apt-get update && apt-get install -y
-RUN npm install --global serve
-
-RUN mkdir client
-RUN cp -rf . client
-
-USER node
-
