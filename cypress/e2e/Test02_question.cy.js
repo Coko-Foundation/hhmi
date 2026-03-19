@@ -134,6 +134,20 @@ describe('Testing questions', () => {
       // ).padStart(2, 0)}`
       // cy.contains('span', time)
 
+      // Verifying that "Learning Objective" and "Essential Knowledge" fields are not required
+      cy.get('input[id="courses_0_courseTopic"]').should(
+        'have.attr',
+        'aria-required',
+      )
+      cy.get('input[id="courses_0_learningObjective"]').should(
+        'not.have.attr',
+        'aria-required',
+      )
+      cy.get('input[id="courses_0_essentialKnowledge"]').should(
+        'not.have.attr',
+        'aria-required',
+      )
+
       // [segment]: checking if the Export to word is present
       cy.log('checking if the Export to word is present')
       cy.get('[id="question-actions"] [id="exportToWord"]').should('be.visible')
@@ -161,15 +175,21 @@ describe('Testing questions', () => {
       // [segment]: Checking  dashboardRoute
       cy.log('checking in the dashboard...')
       cy.contains('.ProseMirror p.paragraph', 'Question 1')
+
       // cy.contains('[data-testid="topic-value"]', mainTopic.topic.value)
       // cy.contains('[data-testid="subtopic-value"]', mainTopic.subtopic.value)
       cy.contains(`[data-testid="bloom's level-value"]`, cognitiveLevel.value)
       cy.contains('[data-testid="question-status"]', 'Submitted')
+      cy.contains('submitted on').should('exist')
+      cy.get('[data-testid="submitted on-value"]')
+        .invoke('text')
+        .should('not.be.empty')
       cy.get('[data-testid="wax-container"]')
         .invoke('attr', 'href')
         .then(href => {
           cy.visit(href)
         })
+
       // [segment]: checking the question
       cy.log('checking the question...')
 
@@ -234,6 +254,7 @@ describe('Testing questions', () => {
       cy.get('[contenteditable="true"]', {
         force: true,
       })
+        .first()
         .clear()
         .type('Edited')
       cy.contains('[type="button"]', 'Publish').click()
@@ -259,6 +280,11 @@ describe('Testing questions', () => {
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(2000)
       cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
+      // Checking pagination options
+      cy.get('.ant-pagination-options')
+        .find('[aria-label="Page Size"]')
+        .should('contain', '10 / page')
+
       cy.get(listItemWrapper)
         .eq(0)
         .should('be.visible')

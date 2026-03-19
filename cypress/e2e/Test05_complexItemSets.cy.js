@@ -14,6 +14,8 @@ import {
   ProseMirror,
 } from '../support/selectors'
 
+import { graphqlEndpoint } from '../support/routes'
+
 const disableScripts = false
 
 describe('Context-dependent item set', () => {
@@ -31,6 +33,7 @@ describe('Context-dependent item set', () => {
   })
   beforeEach(() => {
     cy.viewport(laptop.preset)
+    cy.intercept('POST', graphqlEndpoint).as('GQLReq')
     cy.login({ ...user2 })
   })
 

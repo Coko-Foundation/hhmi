@@ -201,16 +201,17 @@ describe('Discover page tests', () => {
         .should('be.visible')
         .click()
 
-      cy.get('.ant-modal-content')
-        .should('be.visible')
-        .contains('Export to Word')
-      cy.contains(
-        'This item is part of a set and depends on other items for context. Are you sure you want to continue with the export?',
-      ).should('exist')
+      cy.get('.ant-modal-content').should('exist').contains('Export to Word')
+
+      // THIS IS NOT PART OF A SET ANYMORE!
+      // cy.contains(
+      //   'This item is part of a set and depends on other items for context. Are you sure you want to continue with the export?',
+      // ).should('exist')
 
       cy.contains('button', 'Cancel').should('exist')
-      cy.contains('button', 'Continue').should('exist').click()
       cy.get('[type="checkbox"]').last().click()
+      cy.contains('button', 'Export').should('exist')
+      cy.get('[data-testid="modal-export-btn"]').click()
 
       // [info]: triggering  a reload manually to avoid the page reload error
       cy.window()

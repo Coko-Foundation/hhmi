@@ -1,0 +1,39 @@
+name: End to End Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches-ignore:
+      - main
+      - master
+
+jobs:
+  e2e-tests:
+    name: End to End Tests
+    runs-on: ubuntu-latest
+
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Start services with Docker Compose
+        run: |
+          # Build and start all services
+          GITHUB_SHA=${{ github.sha }} docker compose -f docker-compose.cypress-ci.yml up -d --build
+
+          # Show running containers (useful for debugging)
+          docker compose -f docker-compose.cypress-ci.yml ps
+
+      - name: Wait for services to be ready
+        run: |
+          # Using docker compose health checks
+          echo "Waiting for all services to be healthy..."
+          for service in server client db; do
+            echo "Checking $service..."
+            timeout 60 bash -c "until docker compose -f docker-compose.cypress-ci.yml ps $service | grep 'healthy' > /dev/null; do echo 'Waiting for $service...'; sleep 5; done"
+          done
