@@ -6,18 +6,18 @@ services:
       dockerfile: Dockerfile-client-deploy
       args:
         - server_url=${SERVER_URL:-http://localhost:3000}
-    command: ["npx", "serve", "-p", "4000", "--single", "./_build"]
+    command: ['npx', 'serve', '-p', '4000', '--single', './_build']
     ports:
       - ${CLIENT_PORT:-4000}:4000
 
   server:
     build:
       context: ./packages/server
-      dockerfile: ./Dockerfile-client-deploy
+      dockerfile: ./Dockerfile-server-deploy
     depends_on:
       - db
       - createbucket
-    command: ["yarn", "coko-server", "start"]
+    command: ['yarn', 'coko-server', 'start']
     ports:
       - ${SERVER_PORT:-3000}:3000
     environment:
@@ -72,7 +72,7 @@ services:
       - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-superSecretAdminPassword}
     command: server --console-address ":${MINIO_CONSOLE_PORT:-9001}" /data
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       interval: 30s
       timeout: 20s
       retries: 3
