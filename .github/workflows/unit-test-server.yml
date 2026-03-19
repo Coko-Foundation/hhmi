@@ -6,17 +6,13 @@ on:
     branches-ignore:
       - main
       - master
-  push:
-    branches-ignore:
-      - main
-      - master
 
 jobs:
   server-unit-test:
     name: Server Unit Test
     runs-on: ubuntu-latest
 
-    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' && github.event.pull_request.draft == false
 
     services:
       docker:
