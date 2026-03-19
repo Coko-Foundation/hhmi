@@ -31,7 +31,7 @@ jobs:
           cd ./packages/server
           docker build \
             --tag server-prod:${{ github.sha }} \
-            --file Dockerfile-production \
+            --file Dockerfile-server-deploy \
             .
 
       - name: Build client production image
@@ -39,7 +39,7 @@ jobs:
           cd ./packages/client
           docker build \
             --tag client-prod:${{ github.sha }} \
-            --file Dockerfile-production \
+            --file Dockerfile-client-deploy \
             .
 
       - name: Set up Docker Compose
