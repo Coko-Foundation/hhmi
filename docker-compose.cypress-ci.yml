@@ -3,7 +3,7 @@ services:
     # image: cokoapps/hhmi-client-ci-production:$CI_COMMIT_SHA
     build:
       context: ./packages/client
-      dockerfile: Dockerfile-client-deploy
+      dockerfile: Dockerfile-production
     ports:
       - ${CLIENT_PORT:-4000}:8080
     environment:
@@ -17,7 +17,7 @@ services:
     # image: cokoapps/hhmi-server-ci-production:$CI_COMMIT_SHA
     build:
       context: ./packages/server
-      dockerfile: Dockerfile-server-deploy
+      dockerfile: Dockerfile-production
     depends_on:
       - db
       - createbucket
