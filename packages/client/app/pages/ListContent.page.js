@@ -13,6 +13,7 @@ import {
   GET_COMPLEX_ITEM_SETS_OPTIONS,
   COPY_LIST,
   CURRENT_USER,
+  GET_LISTS,
 } from '../graphql'
 import { useMetadata, dashboardDataMapper, hasRole } from '../utilities'
 
@@ -95,7 +96,19 @@ const ListContentPage = () => {
     onCompleted({ copyList: { id: newListId } = {} }) {
       history.push(`/list/${newListId}`)
     },
-    refetchQueries: [{ query: CURRENT_USER }],
+    refetchQueries: [
+      { query: CURRENT_USER },
+      {
+        query: GET_LISTS,
+        variables: {
+          page: 0,
+          pageSize: 10,
+          searchQuery: '',
+          orderBy: 'created',
+          ascending: true,
+        },
+      },
+    ],
   })
 
   const [exportQuestionsMutation] = useMutation(EXPORT_QUESTIONS)

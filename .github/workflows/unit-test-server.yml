@@ -1,0 +1,64 @@
+name: Server Unit Test
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches-ignore:
+      - main
+      - master
+
+jobs:
+  server-unit-test:
+    name: Server Unit Test
+    runs-on: ubuntu-latest
+
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master' && github.event.pull_request.draft == false
+
+    services:
+      docker:
+        image: docker:26-dind
+        options: --privileged
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install docker-compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+          docker-compose --version
+
+      - name: Copy CI environment file
+        run: cp .env.ci .env
+
+      - name: Start services with Docker Compose
+        run: docker-compose up -d server db
+
+      - name: Build development image
+        run: |
+          docker build \
+            --tag test-server:${{ github.sha }} \
+            ./packages/server \
+            -f packages/server/Dockerfile-development
+
+      - name: Run tests on built image
+        run: |
+          docker run \
+            --network hhmi_default \
+            -e POSTGRES_HOST=db \
+            -e POSTGRES_PORT=5432 \
+            -e POSTGRES_DB=hhmi_dev \
+            -e POSTGRES_USER=hhmi_dev_user \
+            -e POSTGRES_PASSWORD=hhmi_dev_user_password \
+            -e BIOINTERACTIVE_OAUTH_API_USER_URI=bio.int/api \
+            -e BIOINTERACTIVE_OAUTH_TOKEN_URI=bio.int/token \
+            -e BIOINTERACTIVE_OAUTH_CLIENT_ID=123 \
+            -e BIOINTERACTIVE_OAUTH_CLIENT_SECRET=321 \
+            -e BIOINTERACTIVE_OAUTH_REDIRECT_URI=hhmi.co/biointeractive-oauth \
+            -e SECRET=superSecretThing \
+            test-server:${{ github.sha }} \
+            yarn jest --verbose --forceExit

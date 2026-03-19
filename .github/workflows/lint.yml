@@ -1,0 +1,30 @@
+name: Lint client and server
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  lint:
+    name: Lint
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          corepack enable
+          yarn install
+          cd ./packages/client
+          yarn install
+          cd ../server
+          yarn install
+
+      - name: Lint
+        run: |
+          cd ./packages/client
+          yarn coko-lint run
+          cd ../server
+          yarn coko-lint run --skip-stylelint
