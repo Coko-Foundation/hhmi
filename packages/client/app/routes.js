@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { Suspense, useState, useEffect } from 'react'
 import { useApolloClient, useSubscription, useLazyQuery } from '@apollo/client'
 import {
   Route,
@@ -33,33 +33,42 @@ import {
   useNotifications,
 } from './utilities'
 
-import {
-  Login,
-  Signup,
-  VerifyEmail,
-  RequestPasswordReset,
-  ResetPassword,
-  VerifyCheck,
-  Dashboard,
-  Discover,
-  Question,
-  ManageUsers,
-  TeamManager,
-  UserProfile,
-  DeactivatedUser,
-  Lists,
-  ListContent,
-  BioInteractiveOauth,
-  External,
-  PageNotFound,
-  ComplexItemSet,
-  ComplexItemSetsList,
-  Notifications,
-  ManageResources,
-  ManageMetadata,
-} from './pages'
-
 import { CURRENT_USER, DELETED_SUBSCRIPTION } from './graphql'
+
+const Dashboard = React.lazy(() => import('./pages/Dashboard.page'))
+const ManageMetadata = React.lazy(() => import('./pages/ManageMetadata.page'))
+const ManageResources = React.lazy(() => import('./pages/ManageResources.page'))
+const Notifications = React.lazy(() => import('./pages/Notifications.page'))
+const Login = React.lazy(() => import('./pages/Login.page'))
+const Signup = React.lazy(() => import('./pages/Signup.page'))
+const VerifyEmail = React.lazy(() => import('./pages/VerifyEmail.page'))
+
+const RequestPasswordReset = React.lazy(() =>
+  import('./pages/RequestPasswordReset.page'),
+)
+
+const ResetPassword = React.lazy(() => import('./pages/ResetPassword.page'))
+const VerifyCheck = React.lazy(() => import('./pages/VerifyCheck.page'))
+const Discover = React.lazy(() => import('./pages/Discover.page'))
+const Question = React.lazy(() => import('./pages/Question.page'))
+const ManageUsers = React.lazy(() => import('./pages/ManageUsers.page'))
+const TeamManager = React.lazy(() => import('./pages/TeamManager.page'))
+const UserProfile = React.lazy(() => import('./pages/UserProfile.page'))
+const DeactivatedUser = React.lazy(() => import('./pages/DeactivatedUser.page'))
+const Lists = React.lazy(() => import('./pages/Lists.page'))
+const ListContent = React.lazy(() => import('./pages/ListContent.page'))
+
+const BioInteractiveOauth = React.lazy(() =>
+  import('./pages/BioInteractiveOauth.page'),
+)
+
+const External = React.lazy(() => import('./pages/External.page'))
+const PageNotFound = React.lazy(() => import('./pages/PageNotFound.page'))
+const ComplexItemSet = React.lazy(() => import('./pages/ComplexItemSet.page'))
+
+const ComplexItemSetsList = React.lazy(() =>
+  import('./pages/ComplexItemSetsList.page'),
+)
 
 const LayoutWrapper = styled.div`
   display: flex;
@@ -440,227 +449,232 @@ const routes = (
           <FiltersProvider>
             <StyledPage fadeInPages={false} padPages={false}>
               <StyledMain id="main-content" tabIndex="-1">
-                <Switch>
-                  <Route
-                    exact
-                    path="/signup-profile"
-                    render={() => (
-                      <Authenticated>
-                        <UserProfile signup />
-                      </Authenticated>
-                    )}
-                  />
+                <Suspense fallback={Loader}>
+                  <Switch>
+                    <Route
+                      exact
+                      path="/signup-profile"
+                      render={() => (
+                        <Authenticated>
+                          <UserProfile signup />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/dashboard"
-                    render={() => (
-                      <Authenticated>
-                        <Dashboard />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/dashboard"
+                      render={() => (
+                        <Authenticated>
+                          <Dashboard />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/discover"
-                    render={() => (
-                      <Authenticated>
-                        <Discover />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/discover"
+                      render={() => (
+                        <Authenticated>
+                          <Discover />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/lists"
-                    render={() => (
-                      <Authenticated>
-                        <Lists />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/lists"
+                      render={() => (
+                        <Authenticated>
+                          <Lists />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/list/:id"
-                    render={() => (
-                      <Authenticated>
-                        <ListContent />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/list/:id"
+                      render={() => (
+                        <Authenticated>
+                          <ListContent />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/question/:id/test"
-                    render={() => (
-                      <Authenticated>
-                        <Question testMode />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/question/:id/test"
+                      render={() => (
+                        <Authenticated>
+                          <Question testMode />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/question/:id"
-                    render={() => (
-                      <Authenticated>
-                        <Question />
-                      </Authenticated>
-                    )}
-                  />
-                  <Route
-                    exact
-                    path="/manage-users"
-                    render={() => (
-                      <Authenticated>
-                        <ManageUsers />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/question/:id"
+                      render={() => (
+                        <Authenticated>
+                          <Question />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/manage-users"
+                      render={() => (
+                        <Authenticated>
+                          <ManageUsers />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/manage-teams"
-                    render={() => (
-                      <Authenticated>
-                        <TeamManager />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/manage-teams"
+                      render={() => (
+                        <Authenticated>
+                          <TeamManager />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/manage-resources"
-                    render={() => (
-                      <Authenticated>
-                        <ManageResources />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/manage-resources"
+                      render={() => (
+                        <Authenticated>
+                          <ManageResources />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/manage-metadata"
-                    render={() => (
-                      <Authenticated>
-                        <ManageMetadata />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/manage-metadata"
+                      render={() => (
+                        <Authenticated>
+                          <ManageMetadata />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route
-                    exact
-                    path="/profile"
-                    render={() => (
-                      <Authenticated>
-                        <UserProfile />
-                      </Authenticated>
-                    )}
-                  />
-                  <Route
-                    exact
-                    path="/profile/:id"
-                    render={() => (
-                      <Authenticated>
-                        <UserProfile />
-                      </Authenticated>
-                    )}
-                  />
+                    <Route
+                      exact
+                      path="/profile"
+                      render={() => (
+                        <Authenticated>
+                          <UserProfile />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/profile/:id"
+                      render={() => (
+                        <Authenticated>
+                          <UserProfile />
+                        </Authenticated>
+                      )}
+                    />
 
-                  <Route component={Login} exact path="/login" />
-                  <Route component={Signup} exact path="/signup" />
-                  <Route
-                    component={VerifyEmail}
-                    exact
-                    path="/email-verification/:token"
-                  />
-                  <Route
-                    component={RequestPasswordReset}
-                    exact
-                    path="/request-password-reset"
-                  />
-                  <Route
-                    component={ResetPassword}
-                    exact
-                    path="/password-reset/:token"
-                  />
-                  <Route
-                    component={VerifyCheck}
-                    exact
-                    path="/ensure-verified-login"
-                  />
-                  <Route
-                    component={BioInteractiveOauth}
-                    exact
-                    path="/biointeractive-oauth"
-                  />
-                  <Route
-                    exact
-                    path="/sets"
-                    render={() => (
-                      <Authenticated>
-                        <ComplexItemSetsList />
-                      </Authenticated>
-                    )}
-                  />
-                  <Route
-                    path="/notifications/"
-                    render={() => (
-                      <Authenticated>
-                        <Notifications />
-                      </Authenticated>
-                    )}
-                  />
-                  <Route
-                    exact
-                    path="/set/new"
-                    render={() => (
-                      <Authenticated>
-                        <ComplexItemSet />
-                      </Authenticated>
-                    )}
-                  />
-                  {/* individual sets and their questions can be viewed by all visitors */}
-                  <Route
-                    exact
-                    path="/set/:id"
-                    render={() => (
-                      <Authenticated>
-                        <ComplexItemSet />
-                      </Authenticated>
-                    )}
-                  />
-                  <Route component={DeactivatedUser} path="/deactivated-user" />
-                  {/* Static pages hosted elsewhere */}
-                  <Route
-                    component={() => (
-                      <External ariaLabel="Home page" src="/drupal/" />
-                    )}
-                    exact
-                    path="/"
-                  />
-                  <Route
-                    component={() => (
-                      <External ariaLabel="About page" src="/drupal/about" />
-                    )}
-                    exact
-                    path="/about"
-                  />
-                  <Route
-                    component={() => (
-                      <External
-                        ariaLabel="Proffessional learning page"
-                        src="/drupal/professional-learning"
-                      />
-                    )}
-                    exact
-                    path="/learning"
-                  />
-                  <Route component={PageNotFound} path="/404" />
-                  <Route component={PageNotFound} path="*" />
-                </Switch>
+                    <Route component={Login} exact path="/login" />
+                    <Route component={Signup} exact path="/signup" />
+                    <Route
+                      component={VerifyEmail}
+                      exact
+                      path="/email-verification/:token"
+                    />
+                    <Route
+                      component={RequestPasswordReset}
+                      exact
+                      path="/request-password-reset"
+                    />
+                    <Route
+                      component={ResetPassword}
+                      exact
+                      path="/password-reset/:token"
+                    />
+                    <Route
+                      component={VerifyCheck}
+                      exact
+                      path="/ensure-verified-login"
+                    />
+                    <Route
+                      component={BioInteractiveOauth}
+                      exact
+                      path="/biointeractive-oauth"
+                    />
+                    <Route
+                      exact
+                      path="/sets"
+                      render={() => (
+                        <Authenticated>
+                          <ComplexItemSetsList />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      path="/notifications/"
+                      render={() => (
+                        <Authenticated>
+                          <Notifications />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      exact
+                      path="/set/new"
+                      render={() => (
+                        <Authenticated>
+                          <ComplexItemSet />
+                        </Authenticated>
+                      )}
+                    />
+                    {/* individual sets and their questions can be viewed by all visitors */}
+                    <Route
+                      exact
+                      path="/set/:id"
+                      render={() => (
+                        <Authenticated>
+                          <ComplexItemSet />
+                        </Authenticated>
+                      )}
+                    />
+                    <Route
+                      component={DeactivatedUser}
+                      path="/deactivated-user"
+                    />
+                    {/* Static pages hosted elsewhere */}
+                    <Route
+                      component={() => (
+                        <External ariaLabel="Home page" src="/drupal/" />
+                      )}
+                      exact
+                      path="/"
+                    />
+                    <Route
+                      component={() => (
+                        <External ariaLabel="About page" src="/drupal/about" />
+                      )}
+                      exact
+                      path="/about"
+                    />
+                    <Route
+                      component={() => (
+                        <External
+                          ariaLabel="Proffessional learning page"
+                          src="/drupal/professional-learning"
+                        />
+                      )}
+                      exact
+                      path="/learning"
+                    />
+                    <Route component={PageNotFound} path="/404" />
+                    <Route component={PageNotFound} path="*" />
+                  </Switch>
+                </Suspense>
               </StyledMain>
               <ToastNotifications />
             </StyledPage>
