@@ -1,6 +1,9 @@
 services:
   client:
-    image: cokoapps/hhmi-client-ci-production:$CI_COMMIT_SHA
+    # image: cokoapps/hhmi-client-ci-production:$CI_COMMIT_SHA
+    build:
+      context: ./packages/client
+      dockerfile: Dockerfile-client-deploy
     ports:
       - ${CLIENT_PORT:-4000}:8080
     environment:
@@ -11,7 +14,10 @@ services:
       - CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI=${CLIENT_BIOINTERACTIVE_OAUTH_REDIRECT_URI:-""}
 
   server:
-    image: cokoapps/hhmi-server-ci-production:$CI_COMMIT_SHA
+    # image: cokoapps/hhmi-server-ci-production:$CI_COMMIT_SHA
+    build:
+      context: ./packages/server
+      dockerfile: Dockerfile-server-deploy
     depends_on:
       - db
       - createbucket

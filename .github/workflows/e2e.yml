@@ -14,11 +14,6 @@ jobs:
 
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
 
-    services:
-      docker:
-        image: docker:26-dind
-        options: --privileged
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,39 +21,19 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build server production image
+      - name: Start services with Docker Compose
         run: |
-          cd ./packages/server
-          docker build \
-            --tag server-prod:${{ github.sha }} \
-            --file Dockerfile-server-deploy \
-            .
+          # Build and start all services
+          GITHUB_SHA=${{ github.sha }} docker compose -f docker-compose.cypress-ci.yml up -d --build
 
-      - name: Build client production image
-        run: |
-          cd ./packages/client
-          docker build \
-            --tag client-prod:${{ github.sha }} \
-            --file Dockerfile-client-deploy \
-            .
-
-      - name: Set up Docker Compose
-        run: |
-          docker compose version
-
-      - name: Start services with Cypress Compose
-        run: |
-          # Update docker-compose.cypress-ci.yml to use local images
-          sed -i "s|\$IMAGE_ORG/\$IMAGE_NAME_SERVER_PREPRODUCTION:\$CI_COMMIT_SHA|server-prod:${{ github.sha }}|g" docker-compose.cypress-ci.yml
-          sed -i "s|\$IMAGE_ORG/\$IMAGE_NAME_CLIENT_PREPRODUCTION:\$CI_COMMIT_SHA|client-prod:${{ github.sha }}|g" docker-compose.cypress-ci.yml
-
-          # Start services
-          docker compose -f docker-compose.cypress-ci.yml up -d
+          # Show running containers (useful for debugging)
+          docker compose -f docker-compose.cypress-ci.yml ps
 
       - name: Wait for services to be ready
         run: |
-          echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -s --head --request GET "http://localhost:3000/healthcheck" | grep "200 OK" > /dev/null; do echo "Waiting for server..."; sleep 5; done'
-
-          echo "Waiting for client to be ready..."
-          timeout 60 bash -c 'until curl -s --head --request GET "http://localhost:4000" | grep "200 OK" > /dev/null; do echo "Waiting for client..."; sleep 5; done'
+          # Using docker compose health checks
+          echo "Waiting for all services to be healthy..."
+          for service in server client db; do
+            echo "Checking $service..."
+            timeout 60 bash -c "until docker compose -f docker-compose.cypress-ci.yml ps $service | grep 'healthy' > /dev/null; do echo 'Waiting for $service...'; sleep 5; done"
+          done
