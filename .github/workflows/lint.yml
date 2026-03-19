@@ -21,4 +21,8 @@ jobs:
           yarn install
 
       - name: Lint
-        run: yarn coko-lint run
+        run: |
+          cd ./packages/client
+          yarn coko-lint run
+          cd ../server
+          yarn coko-lint run --skip-stylelint
