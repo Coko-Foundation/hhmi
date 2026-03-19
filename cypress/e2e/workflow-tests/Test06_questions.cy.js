@@ -176,11 +176,14 @@ describe('Question Workflows', () => {
         cy.wait(500)
         cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
         cy.get(listItemWrapper).eq(0).contains('p', 'By 2040').click()
-        cy.contains(basicButton, 'Unpublish').should('not.exist')
+        cy.contains(basicButton, 'Unpublish').should('exist')
         cy.contains(anchorTags.discover, 'Browse Items').click({ force: true })
         // Somehow Cypress is switching places for this two items once the first item is opened
-        cy.get(listItemWrapper).eq(0).contains('p', 'What substance from')
-        cy.contains(basicButton, 'Unpublish').should('not.exist')
+        cy.get(listItemWrapper)
+          .eq(0)
+          .contains('p', 'What substance from')
+          .click()
+        cy.contains(basicButton, 'Unpublish').should('exist')
       })
 
       context('Assign handling editor', () => {
@@ -548,9 +551,11 @@ describe('Question Workflows', () => {
       // Production team cannot see submitted date
       cy.contains('submitted on').should('not.exist')
       cy.get(listItemWrapper).eq(0).contains(ProseMirror, 'By 2040').click()
-      cy.get('[data-testid="topic-select"]').scrollIntoView().click()
+      cy.get('[data-testid="topic-select"]').scrollIntoView()
+      cy.get('[data-testid="topic-select"]').click()
       cy.contains('Ecology').click({ force: true })
-      cy.get('[data-testid="subtopic-select"]').scrollIntoView().click()
+      cy.get('[data-testid="subtopic-select"]').scrollIntoView()
+      cy.get('[data-testid="subtopic-select"]').click()
       cy.contains('Matter & Energy').click({ force: true })
 
       cy.log(
