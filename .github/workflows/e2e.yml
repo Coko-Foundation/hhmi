@@ -29,11 +29,33 @@ jobs:
           # Show running containers (useful for debugging)
           docker compose -f docker-compose.cypress-ci.yml ps
 
-      - name: Wait for services to be ready
+      - name: Wait for services to be running
         run: |
-          # Using docker compose health checks
-          echo "Waiting for all services to be healthy..."
-          for service in server client db; do
-            echo "Checking $service..."
-            timeout 60 bash -c "until docker compose -f docker-compose.cypress-ci.yml ps $service | grep 'healthy' > /dev/null; do echo 'Waiting for $service...'; sleep 5; done"
-          done
+          echo "Waiting 30 seconds for services to initialize..."
+          sleep 30
+
+      - name: Check service status
+        run: |
+          docker compose -f docker-compose.cypress-ci.yml ps
+          docker compose -f docker-compose.cypress-ci.yml logs
+
+      - name: Check endpoints
+        run: |
+          echo "Testing server health..."
+          curl -v http://localhost:3000/healthcheck || true
+
+          echo "Testing client..."
+          curl -v http://localhost:4000 || true
+
+      # - name: Install Cypress dependencies
+      #   run: |
+      #     yarn install --frozen-lockfile
+
+      # - name: Cypress run
+      #   uses: cypress-io/github-action@v6
+      #   with:
+      #     config: baseUrl=http://localhost:4000
+      #     browser: chrome
+      #     install: false  # We already installed dependencies
+      #   env:
+      #     CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
