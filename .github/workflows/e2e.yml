@@ -52,6 +52,20 @@ jobs:
           corepack enable
           yarn install --immutable
 
+      - name: Setup test database
+        run: |
+          # List containers to see actual names
+          docker compose -f docker-compose.cypress-ci.yml ps
+
+          # Try both possible naming patterns
+          CONTAINER=$(docker compose -f docker-compose.cypress-ci.yml ps -q server)
+          if [ -z "$CONTAINER" ]; then
+            CONTAINER="hhmi-server-1"
+          fi
+
+          echo "Using container: $CONTAINER"
+          docker exec $CONTAINER node ./scripts/truncateDB.js || echo "Truncate script failed, continuing anyway"
+
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
