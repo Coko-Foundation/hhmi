@@ -47,15 +47,19 @@ jobs:
           echo "Testing client..."
           curl -v http://localhost:4000 || true
 
-      # - name: Install Cypress dependencies
-      #   run: |
-      #     yarn install --frozen-lockfile
+      - name: Install Cypress dependencies
+        run: |
+          yarn install --frozen-lockfile
 
-      # - name: Cypress run
-      #   uses: cypress-io/github-action@v6
-      #   with:
-      #     config: baseUrl=http://localhost:4000
-      #     browser: chrome
-      #     install: false  # We already installed dependencies
-      #   env:
-      #     CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+      - name: Run Cypress tests
+        uses: cypress-io/github-action@v6
+        with:
+          config: baseUrl=http://localhost:4000
+          browser: chrome
+          install: false # We already installed dependencies
+          spec: cypress/e2e/**/*.cy.js # Adjust path to your test files
+        env:
+          CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+          # Add any other environment variables your tests need
+          # For example:
+          # CYPRESS_API_URL: http://localhost:3000
