@@ -49,7 +49,8 @@ jobs:
 
       - name: Install Cypress dependencies
         run: |
-          yarn install --frozen-lockfile
+          corepack enable
+          yarn install --immutable
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
