@@ -13,7 +13,7 @@ services:
   server:
     build:
       context: ./packages/server
-      dockerfile: ./Dockerfile-client-deploy
+      dockerfile: ./Dockerfile-server-deploy
     depends_on:
       - db
       - createbucket
