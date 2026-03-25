@@ -14,6 +14,11 @@ jobs:
 
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
 
+    services:
+      docker:
+        image: docker:26-dind
+        options: --privileged
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,47 +39,66 @@ jobs:
           echo "Waiting 30 seconds for services to initialize..."
           sleep 30
 
-      - name: Check service status
+      # - name: Check service status
+      #   run: |
+      #     docker compose -f docker-compose.cypress-ci.yml ps
+      #     docker compose -f docker-compose.cypress-ci.yml logs
+
+      # - name: Check endpoints
+      #   run: |
+      #     echo "Testing server health..."
+      #     curl -v http://docker:3000/healthcheck || true
+
+      #     echo "Testing client..."
+      #     curl -v http://docker:4000 || true
+
+      - name: Wait for services to be ready
         run: |
-          docker compose -f docker-compose.cypress-ci.yml ps
-          docker compose -f docker-compose.cypress-ci.yml logs
+          # Use 'docker' hostname to connect to services via Docker-in-Docker
+          echo "Waiting for server to be ready..."
+          timeout 60 bash -c 'until curl -s --head --request GET "http://docker:3000/healthcheck" | grep "200 OK" > /dev/null; do echo "Waiting for server..."; sleep 5; done'
 
-      - name: Check endpoints
-        run: |
-          echo "Testing server health..."
-          curl -v http://localhost:3000/healthcheck || true
+          echo "Waiting for client to be ready..."
+          timeout 60 bash -c 'until curl -s --head --request GET "http://docker:4000" | grep "200 OK" > /dev/null; do echo "Waiting for client..."; sleep 5; done'
 
-          echo "Testing client..."
-          curl -v http://localhost:4000 || true
+      # - name: Install Cypress dependencies
+      #   run: |
+      #     corepack enable
+      #     yarn install --immutable
 
-      - name: Install Cypress dependencies
-        run: |
-          corepack enable
-          yarn install --immutable
+      # - name: Setup test database
+      #   run: |
+      #     # List containers to see actual names
+      #     docker compose -f docker-compose.cypress-ci.yml ps
 
-      - name: Setup test database
-        run: |
-          # List containers to see actual names
-          docker compose -f docker-compose.cypress-ci.yml ps
+      #     # Try both possible naming patterns
+      #     CONTAINER=$(docker compose -f docker-compose.cypress-ci.yml ps -q server)
+      #     if [ -z "$CONTAINER" ]; then
+      #       CONTAINER="hhmi-server-1"
+      #     fi
 
-          # Try both possible naming patterns
-          CONTAINER=$(docker compose -f docker-compose.cypress-ci.yml ps -q server)
-          if [ -z "$CONTAINER" ]; then
-            CONTAINER="hhmi-server-1"
-          fi
+      #     echo "Using container: $CONTAINER"
+      #     docker exec $CONTAINER node ./scripts/truncateDB.js || echo "Truncate script failed, continuing anyway"
 
-          echo "Using container: $CONTAINER"
-          docker exec $CONTAINER node ./scripts/truncateDB.js || echo "Truncate script failed, continuing anyway"
-
+      # - name: Run Cypress tests
+      #   uses: cypress-io/github-action@v6
+      #   with:
+      #     config: baseUrl=http://localhost:4000
+      #     browser: chrome
+      #     install: false # We already installed dependencies
+      #     spec: cypress/e2e/**/*.cy.js # Adjust path to your test files
+      #   env:
+      #     CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
+      #     # Add any other environment variables your tests need
+      #     # For example:
+      #     # CYPRESS_API_URL: http://localhost:3000
       - name: Run Cypress tests
-        uses: cypress-io/github-action@v6
-        with:
-          config: baseUrl=http://localhost:4000
-          browser: chrome
-          install: false # We already installed dependencies
-          spec: cypress/e2e/**/*.cy.js # Adjust path to your test files
-        env:
-          CYPRESS_CACHE_FOLDER: ~/.cache/Cypress
-          # Add any other environment variables your tests need
-          # For example:
-          # CYPRESS_API_URL: http://localhost:3000
+        run: |
+          # Run Cypress in a Docker container that shares the network
+          docker run --rm \
+            --network container:docker \
+            -v ${{ github.workspace }}:/e2e \
+            -w /e2e \
+            -e CYPRESS_baseUrl=http://docker:4000 \
+            cokoapps/cypress:18 \
+            cypress run --browser chrome
