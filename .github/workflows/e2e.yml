@@ -14,18 +14,21 @@ jobs:
 
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
 
-    # This replicates GitLab's 'image: cokoapps/cypress:18'
     container:
       image: cokoapps/cypress:18
       env:
-        DOCKER_HOST: tcp://docker:2375
+        DOCKER_HOST: tcp://localhost:2375
         DOCKER_TLS_CERTDIR: ''
+      # Connect to the same network as the docker service
+      options: --network container:docker
 
     # This replicates GitLab's 'services: - docker:dind'
     services:
       docker:
         image: docker:dind
         options: --privileged
+        ports:
+          - 2375:2375
 
     steps:
       - name: Checkout code
