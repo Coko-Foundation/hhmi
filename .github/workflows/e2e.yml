@@ -14,8 +14,11 @@ jobs:
 
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
 
-    # container:
-    #   image: cokoapps/cypress:18
+    container:
+      image: cokoapps/cypress:18
+      env:
+        DOCKER_HOST: tcp://localhost:2375
+        DOCKER_TLS_CERTDIR: ''
 
     services:
       docker:
@@ -23,12 +26,10 @@ jobs:
         options: --privileged
         ports:
           - 2375:2375
-        env:
-          DOCKER_TLS_CERTDIR: ''
 
-    env:
-      DOCKER_HOST: tcp://localhost:2375
-      DOCKER_TLS_CERTDIR: ''
+    # env:
+    #   DOCKER_HOST: tcp://localhost:2375
+    #   DOCKER_TLS_CERTDIR: ''
 
     steps:
       - name: Checkout code
@@ -83,3 +84,5 @@ jobs:
         run: |
           yarn install --frozen-lockfile
           cypress run --config baseUrl=http://docker:4000 --browser chrome
+        env:
+          DOCKER_HOST: tcp://localhost:2375
