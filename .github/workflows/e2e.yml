@@ -16,6 +16,7 @@ jobs:
 
     container:
       image: cokoapps/cypress:18
+      options: --privileged
       env:
         DOCKER_HOST: tcp://docker:2375
         DOCKER_TLS_CERTDIR: ''
@@ -26,6 +27,8 @@ jobs:
         options: --privileged
         ports:
           - 2375:2375
+        env:
+          DOCKER_TLS_CERTDIR: ''
 
     # env:
     #   DOCKER_HOST: tcp://localhost:2375
@@ -36,7 +39,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Wait for Docker daemon
-        run: timeout 30 bash -c 'until docker info > /dev/null 2>&1; do sleep 1; done'
+        run: |
+          timeout 60 bash -c 'until docker info > /dev/null 2>&1; do echo "Waiting for Docker..."; sleep 2; done'
+          docker info
 
       # - name: Set up Docker Buildx
       #   uses: docker/setup-buildx-action@v3
