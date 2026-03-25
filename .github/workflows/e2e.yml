@@ -14,45 +14,69 @@ jobs:
 
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
 
+    # This replicates GitLab's 'image: cokoapps/cypress:18'
+    container:
+      image: cokoapps/cypress:18
+      env:
+        DOCKER_HOST: tcp://docker:2375
+        DOCKER_TLS_CERTDIR: ''
+
+    # This replicates GitLab's 'services: - docker:dind'
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
-      - name: Start Docker-in-Docker
-        run: |
-          # Start Docker-in-Docker container manually
-          docker run --name dind --privileged -d --network bridge -p 2375:2375 docker:dind
+      # - name: Start Docker-in-Docker
+      #   run: |
+      #     # Start Docker-in-Docker container manually
+      #     docker run --name dind --privileged -d --network bridge -p 2375:2375 docker:dind
 
-          # Wait for Docker daemon to be ready
-          timeout 30 bash -c 'until docker -H tcp://localhost:2375 info > /dev/null 2>&1; do echo "Waiting for Docker daemon..."; sleep 2; done'
+      #     # Wait for Docker daemon to be ready
+      #     timeout 30 bash -c 'until docker -H tcp://localhost:2375 info > /dev/null 2>&1; do echo "Waiting for Docker daemon..."; sleep 2; done'
 
-          echo "Docker daemon is ready"
+      #     echo "Docker daemon is ready"
 
       - name: Start services with Docker Compose
-        run: |
-          # Use the DinD daemon to run docker-compose
-          docker -H tcp://localhost:2375 compose -f docker-compose.cypress-ci.yml up -d --build
-          docker -H tcp://localhost:2375 compose -f docker-compose.cypress-ci.yml ps
+        run: docker compose -f docker-compose.cypress-ci.yml up -d --build
 
-      - name: Wait for services to be ready
-        run: |
-          # Use the DinD daemon's network
-          echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until docker run --rm --network container:dind appropriate/curl curl -s --head --request GET "http://localhost:3000/healthcheck" | grep "200 OK" > /dev/null; do echo "Waiting for server..."; sleep 5; done'
+      # - name: Wait for services to be ready
+      #   run: |
+      #     # Use the DinD daemon's network
+      #     echo "Waiting for server to be ready..."
+      #     timeout 60 bash -c 'until docker run --rm --network container:dind appropriate/curl curl -s --head --request GET "http://localhost:3000/healthcheck" | grep "200 OK" > /dev/null; do echo "Waiting for server..."; sleep 5; done'
 
-          echo "Waiting for client to be ready..."
-          timeout 60 bash -c 'until docker run --rm --network container:dind appropriate/curl curl -s --head --request GET "http://localhost:4000" | grep "200 OK" > /dev/null; do echo "Waiting for client..."; sleep 5; done'
+      #     echo "Waiting for client to be ready..."
+      #     timeout 60 bash -c 'until docker run --rm --network container:dind appropriate/curl curl -s --head --request GET "http://localhost:4000" | grep "200 OK" > /dev/null; do echo "Waiting for client..."; sleep 5; done'
 
+      # - name: Wait for services
+      #   run: |
+      #     sleep 10
+      #     docker compose -f docker-compose.cypress-ci.yml ps
+      - name: Wait for server
+        run: timeout 30 bash -c 'until curl -s --head --request GET "http://docker:3000/healthcheck" | grep "200 OK" > /dev/null; do sleep 5; done'
+
+      - name: Wait for client
+        run: timeout 30 bash -c 'until curl -s --head --request GET "http://docker:4000" | grep "200 OK" > /dev/null; do sleep 5; done'
+
+      # - name: Run Cypress tests
+      #   run: |
+      #     # Run Cypress in a container that shares the network with the DinD container
+      #     docker run --rm \
+      #       --network container:dind \
+      #       -v ${{ github.workspace }}:/e2e \
+      #       -w /e2e \
+      #       -e CYPRESS_baseUrl=http://localhost:4000 \
+      #       cokoapps/cypress:18 \
+      #       bash -c "yarn install --frozen-lockfile && cypress run --browser chrome"
       - name: Run Cypress tests
         run: |
-          # Run Cypress in a container that shares the network with the DinD container
-          docker run --rm \
-            --network container:dind \
-            -v ${{ github.workspace }}:/e2e \
-            -w /e2e \
-            -e CYPRESS_baseUrl=http://localhost:4000 \
-            cokoapps/cypress:18 \
-            bash -c "yarn install --frozen-lockfile && cypress run --browser chrome"
+          yarn install --frozen-lockfile
+          cypress run --config baseUrl=http://docker:4000 --browser chrome
