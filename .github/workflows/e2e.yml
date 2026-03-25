@@ -14,10 +14,18 @@ jobs:
 
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
 
+    container:
+      image: cokoapps/cypress:18
+      options: --privileged
+      env:
+        DOCKER_HOST: tcp://docker:2375
+
     services:
       docker:
         image: docker:26-dind
         options: --privileged
+        ports:
+          - 2375:2375
 
     steps:
       - name: Checkout code
@@ -28,10 +36,8 @@ jobs:
 
       - name: Start services with Docker Compose
         run: |
-          # Build and start all services
-          GITHUB_SHA=${{ github.sha }} docker compose -f docker-compose.cypress-ci.yml up -d --build
-
-          # Show running containers (useful for debugging)
+          # Start all services (server, client, db)
+          docker compose -f docker-compose.cypress-ci.yml up -d --build
           docker compose -f docker-compose.cypress-ci.yml ps
 
       - name: Wait for services to be running
@@ -60,7 +66,6 @@ jobs:
 
           echo "Waiting for client to be ready..."
           timeout 60 bash -c 'until curl -s --head --request GET "http://docker:4000" | grep "200 OK" > /dev/null; do echo "Waiting for client..."; sleep 5; done'
-
       # - name: Install Cypress dependencies
       #   run: |
       #     corepack enable
@@ -94,11 +99,6 @@ jobs:
       #     # CYPRESS_API_URL: http://localhost:3000
       - name: Run Cypress tests
         run: |
-          # Run Cypress in a Docker container that shares the network
-          docker run --rm \
-            --network container:docker \
-            -v ${{ github.workspace }}:/e2e \
-            -w /e2e \
-            -e CYPRESS_baseUrl=http://docker:4000 \
-            cokoapps/cypress:18 \
-            cypress run --browser chrome
+          # We're already in the cokoapps/cypress:18 container, so just run Cypress
+          yarn install --immutable
+          cypress run --config baseUrl=http://docker:4000 --browser chrome
