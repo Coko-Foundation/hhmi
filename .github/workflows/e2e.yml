@@ -14,13 +14,15 @@ jobs:
 
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
 
-    container:
-      image: cokoapps/cypress:18
+    # container:
+    #   image: cokoapps/cypress:18
 
     services:
       docker:
         image: docker:dind
         options: --privileged
+        ports:
+          - 2375:2375
         env:
           DOCKER_TLS_CERTDIR: ''
 
