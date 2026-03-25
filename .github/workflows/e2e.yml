@@ -14,21 +14,21 @@ jobs:
 
     if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/master'
 
-    container:
-      image: cokoapps/cypress:18
-      options: --privileged
-      env:
-        DOCKER_HOST: tcp://docker:2375
-        DOCKER_TLS_CERTDIR: ''
+    # container:
+    #   image: cokoapps/cypress:18
+    #   options: --privileged
+    #   env:
+    #     DOCKER_HOST: tcp://docker:2375
+    #     DOCKER_TLS_CERTDIR: ''
 
-    services:
-      docker:
-        image: docker:dind
-        options: --privileged
-        ports:
-          - 2375:2375
-        env:
-          DOCKER_TLS_CERTDIR: ''
+    # services:
+    #   docker:
+    #     image: docker:dind
+    #     options: --privileged
+    #     ports:
+    #       - 2375:2375
+    #     env:
+    #       DOCKER_TLS_CERTDIR: ''
 
     # env:
     #   DOCKER_HOST: tcp://localhost:2375
@@ -72,11 +72,11 @@ jobs:
       #   run: |
       #     sleep 10
       #     docker compose -f docker-compose.cypress-ci.yml ps
-      - name: Wait for server
-        run: timeout 30 bash -c 'until curl -s --head --request GET "http://docker:3000/healthcheck" | grep "200 OK" > /dev/null; do sleep 5; done'
+      - name: Wait for server healthcheck
+        run: timeout 120 bash -c 'until curl -s --head --request GET "http://localhost:3000/healthcheck" | grep "200 OK" > /dev/null; do echo "Waiting for server..."; sleep 5; done'
 
       - name: Wait for client
-        run: timeout 30 bash -c 'until curl -s --head --request GET "http://docker:4000" | grep "200 OK" > /dev/null; do sleep 5; done'
+        run: timeout 120 bash -c 'until curl -s --head --request GET "http://localhost:4000" | grep "200 OK" > /dev/null; do echo "Waiting for client..."; sleep 5; done'
 
       # - name: Run Cypress tests
       #   run: |
