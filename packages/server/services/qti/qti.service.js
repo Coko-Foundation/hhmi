@@ -332,7 +332,10 @@ class WaxToQTIConverter {
 
     this.#correctAnswers.trueFalseSolutions[responseIdentifier] = []
 
-    return {
+    const result = []
+    // put the prompt (question stem) outside the matchInteraction object
+    result.push({ div: [...this.#contentParser([content.content[0]])] })
+    result.push({
       matchInteraction: [
         {
           _attr: {
@@ -342,8 +345,6 @@ class WaxToQTIConverter {
             shuffle: 'false',
           },
         },
-        // the prompt
-        ...this.#contentParser([content.content[0]]),
         // the set of options to be marked as true or false
         {
           simpleMatchSet: [
@@ -380,13 +381,13 @@ class WaxToQTIConverter {
           ],
         },
       ],
-    }
+    })
+
+    return result
   }
 
   #trueFalseQuestionHandler = (content, options) => {
-    return {
-      prompt: this.#contentParser(content.content, options),
-    }
+    return this.#contentParser(content.content, options)
   }
 
   #trueFalseOptionHandler = (content, options) => {
