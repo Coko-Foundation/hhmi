@@ -82,8 +82,8 @@ describe('Context-dependent item set workflows', () => {
     cy.contains('h2', complexItemSet1.title).should('be.visible')
     cy.get(antTabs).contains('Edit').should('exist')
   })
-  it('Sets with submitted questions shouldnt be editable', () => {
-    cy.seedQuestion(disableScripts, admin.username, -1, 'anatomy', 'submitted')
+  it('Sets with accepted questions shouldnt be editable', () => {
+    cy.seedQuestion(disableScripts, admin.username, -1, 'anatomy', 'accepted')
 
     cy.login({ ...admin, visit: dashboardRoute })
     cy.get(listItemWrapper).eq(0).get(ProseMirror).click()

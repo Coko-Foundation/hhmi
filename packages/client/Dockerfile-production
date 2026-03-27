@@ -34,12 +34,14 @@ RUN yarn coko-client-build-js
 ######################################################################
 
 # IMAGE FOR RUNNING
-FROM cokoapps/base:20 AS client-serve
+# FROM cokoapps/base:20 AS client-serve
 
-RUN apt-get update && apt-get install -y
-RUN npm install --global serve
+# RUN apt-get update && apt-get install -y
+# RUN npm install --global serve
 
-USER node
+# WORKDIR /home/node/app
+# USER node
 
-RUN mkdir client
-RUN cp -rf . client
+# COPY . /client/
+# RUN mkdir client
+# RUN cp -rf . client
