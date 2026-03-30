@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import PropTypes from 'prop-types'
 import { useHistory, useParams, Link, useLocation } from 'react-router-dom'
 import {
@@ -233,6 +233,7 @@ const QuestionPage = props => {
   const { id: rawId } = useParams()
   const hasIndex = rawId.indexOf('#')
   const id = hasIndex > -1 ? rawId.substring(0, hasIndex) : rawId
+  const firstRender = useRef(true)
 
   const history = useHistory()
   const { metadata } = useMetadata()
@@ -1661,6 +1662,68 @@ const QuestionPage = props => {
     )
   }
 
+  const parseContent = content => {
+    if (
+      selectedQuestionType?.metadataValue === 'multipleChoiceSingleCorrect' &&
+      firstRender.current
+    ) {
+      const waitForTextareaAndSetValue = (
+        selector,
+        newValue,
+        maxAttempts = 50,
+        intervalMs = 500,
+      ) => {
+        let attempts = 0
+
+        const intervalId = setInterval(() => {
+          const textarea = document.querySelector(selector)
+
+          if (textarea) {
+            clearInterval(intervalId)
+
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+              window.HTMLTextAreaElement.prototype,
+              'value',
+            ).set
+
+            nativeInputValueSetter.call(textarea, newValue)
+
+            // Dispatch events
+            textarea.dispatchEvent(new Event('input', { bubbles: true }))
+            textarea.dispatchEvent(new Event('change', { bubbles: true }))
+          }
+
+          attempts += 1
+
+          if (attempts >= maxAttempts) {
+            clearInterval(intervalId)
+          }
+        }, intervalMs)
+      }
+
+      setTimeout(() => {
+        firstRender.current = false
+      }, 3000)
+
+      // return modified data
+      const modified = JSON.parse(content)
+      modified.content[1].content.forEach((el, i) => {
+        if (i > 0) {
+          waitForTextareaAndSetValue(
+            `[data-textarea-id="feedback-${el.attrs.id}"]`,
+            el.attrs.feedback,
+          )
+          // eslint-disable-next-line no-param-reassign
+          el.attrs.feedback = ''
+        }
+      })
+
+      return modified
+    }
+
+    return JSON.parse(content)
+  }
+
   if (
     question &&
     (!question.versions[0]?.submitted || question.versions[0]?.editing) &&
@@ -1706,7 +1769,7 @@ const QuestionPage = props => {
         dependencyOptions={setQuestions
           ?.filter(q => q.id !== id)
           .map(q => ({ value: q.id, label: q.versions[0]?.contentText }))}
-        editorContent={version && JSON.parse(version.content)}
+        editorContent={version && parseContent(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
         editorView={
           (isEditor && !isAuthor) ||
