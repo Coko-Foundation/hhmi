@@ -1708,6 +1708,40 @@ const mapMetadataToSelectOptions = (metadata, showDisabled) => {
   )
 }
 
+const waitForTextareaAndSetValue = (
+  selector,
+  newValue,
+  maxAttempts = 50,
+  intervalMs = 500,
+) => {
+  let attempts = 0
+
+  const intervalId = setInterval(() => {
+    const textarea = document.querySelector(selector)
+
+    if (textarea) {
+      clearInterval(intervalId)
+
+      const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
+        window.HTMLTextAreaElement.prototype,
+        'value',
+      ).set
+
+      nativeInputValueSetter.call(textarea, newValue)
+
+      // Dispatch events
+      textarea.dispatchEvent(new Event('input', { bubbles: true }))
+      textarea.dispatchEvent(new Event('change', { bubbles: true }))
+    }
+
+    attempts += 1
+
+    if (attempts >= maxAttempts) {
+      clearInterval(intervalId)
+    }
+  }, intervalMs)
+}
+
 export {
   extractDocumentText,
   extractTopicsAndSubtopics,
@@ -1743,4 +1777,5 @@ export {
   flattenReviewerSearchResults,
   mapMetadataToSelectOptions,
   notificationsMapper,
+  waitForTextareaAndSetValue,
 }
