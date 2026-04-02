@@ -8,7 +8,6 @@ import {
   useSubscription,
 } from '@apollo/client'
 import debounce from 'lodash/debounce'
-// import { questionDataTransformer, questionDataMapper } from '../utilities'
 
 import { serverUrl, uuid } from '@coko/client'
 import { Question, Result, VisuallyHiddenElement } from 'ui'
@@ -72,7 +71,9 @@ import {
   flattenReviewerSearchResults,
   useNotifications,
   notificationsMapper,
+  waitForTextareaAndSetValue,
 } from '../utilities'
+import useBreakpoint from '../ui/_helpers/useBreakpoint'
 
 const AUTOSAVE_DELAY = 500
 const REVIEWER_SEARCH_DELAY = 500
@@ -233,7 +234,7 @@ const QuestionPage = props => {
   const { id: rawId } = useParams()
   const hasIndex = rawId.indexOf('#')
   const id = hasIndex > -1 ? rawId.substring(0, hasIndex) : rawId
-
+  const [firstRender, setFirstRender] = useState(true)
   const history = useHistory()
   const { metadata } = useMetadata()
   const { unreadMentions, markAsRead } = useNotifications()
@@ -242,6 +243,7 @@ const QuestionPage = props => {
   const requestedTab = window.location.hash.substring(1)
   const [selectedReviewerId, setSelectedReviewerId] = useState(uuid())
   const [reviewerChatThread, setReviewerChatThread] = useState()
+  const isMobile = useBreakpoint('(max-width: 900px)')
 
   const {
     data: { question } = {},
@@ -1626,6 +1628,11 @@ const QuestionPage = props => {
     }
   }, [isReviewer, isUnderReview, question, version?.reviewerStatus])
 
+  useEffect(async () => {
+    setFirstRender(true)
+    refetchQuestion()
+  }, [isMobile])
+
   if (error) {
     return (
       <Result
@@ -1659,6 +1666,38 @@ const QuestionPage = props => {
         title="Question Not Ready"
       />
     )
+  }
+
+  const parseContent = content => {
+    if (
+      selectedQuestionType?.metadataValue === 'multipleChoiceSingleCorrect' &&
+      firstRender
+    ) {
+      setTimeout(() => {
+        setFirstRender(false)
+      }, 3000)
+
+      // return modified data
+      const modified = JSON.parse(content)
+
+      modified.content
+        .find(c => c.type === 'multiple_choice_single_correct_container')
+        .content.forEach((el, i) => {
+          // get feedback for all answers
+          if (i > 0) {
+            waitForTextareaAndSetValue(
+              `[data-textarea-id="feedback-${el.attrs.id}"]`,
+              el.attrs.feedback,
+            )
+            // eslint-disable-next-line no-param-reassign
+            el.attrs.feedback = '' // set initial feedbacks to empty string
+          }
+        })
+
+      return modified
+    }
+
+    return JSON.parse(content)
   }
 
   if (
@@ -1706,7 +1745,7 @@ const QuestionPage = props => {
         dependencyOptions={setQuestions
           ?.filter(q => q.id !== id)
           .map(q => ({ value: q.id, label: q.versions[0]?.contentText }))}
-        editorContent={version && JSON.parse(version.content)}
+        editorContent={version && parseContent(version.content)}
         // admins have editorial rights (publishing rights) on their own questions
         editorView={
           (isEditor && !isAuthor) ||
@@ -1734,6 +1773,7 @@ const QuestionPage = props => {
           isInProduction ||
           (isAdmin && isAuthor && !version?.published && !version?.unpublished)
         }
+        isMobile={isMobile}
         isPublished={isPublished}
         // admins have editorial rights (publishing rights) on their own questions
         isRejected={question?.rejected}

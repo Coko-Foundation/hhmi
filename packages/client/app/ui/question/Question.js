@@ -9,7 +9,6 @@ import {
 } from '@ant-design/icons'
 
 import { grid, th } from '@coko/client'
-import useBreakpoint from '../_helpers/useBreakpoint'
 import { HhmiLayout, TestModeLayout } from '../wax/layout'
 
 import Metadata from './Metadata'
@@ -323,10 +322,7 @@ const StyledCollapse = styled(Collapse)`
   }
 `
 
-const PanelWrapper = ({ editor, metadata, showMetadata }) => {
-  const isMobile = useBreakpoint('(max-width: 900px)')
-  // const [activePanel, setActivePanel] = useState('editor')
-
+const PanelWrapper = ({ editor, metadata, showMetadata, isMobile }) => {
   // if it's desktop or mobile without metadata (student view) no need for collapsable panels
   if (!isMobile || !showMetadata) {
     return (
@@ -336,14 +332,6 @@ const PanelWrapper = ({ editor, metadata, showMetadata }) => {
       </QuestionWrapper>
     )
   }
-
-  // const handlePanelChange = e => {
-  // if (e !== undefined) {
-  //   setActivePanel(e)
-  // }
-  // else if (activePanel === 'editor') setActivePanel('metadata')
-  // else if (activePanel === 'metadata') setActivePanel('editor')
-  // }
 
   return (
     <StyledCollapse accordion defaultActiveKey="editor">
@@ -371,6 +359,7 @@ PanelWrapper.propTypes = {
   editor: PropTypes.shape().isRequired,
   metadata: PropTypes.shape().isRequired,
   showMetadata: PropTypes.bool.isRequired,
+  isMobile: PropTypes.bool.isRequired,
 }
 // #endregion Question Panel
 
@@ -491,6 +480,7 @@ const Question = props => {
     dependencyOptions,
     unreadMentions,
     onMarkAsRead,
+    isMobile,
   } = props
 
   const [modal, contextHolder] = Modal.useModal()
@@ -1138,8 +1128,6 @@ const Question = props => {
     </StyledPrevNextButton>
   )
 
-  const isMobile = useBreakpoint('(max-width: 900px)')
-
   const RightAreaAuthor =
     // eslint-disable-next-line no-nested-ternary
     isSubmitted ? (
@@ -1767,6 +1755,7 @@ const Question = props => {
                 }
               />
             }
+            isMobile={isMobile}
             metadata={
               <>
                 <StyledMetadata
@@ -2370,6 +2359,7 @@ Question.propTypes = {
   ),
   unreadMentions: PropTypes.arrayOf(PropTypes.shape()),
   onMarkAsRead: PropTypes.func,
+  isMobile: PropTypes.bool,
 }
 
 Question.defaultProps = {
@@ -2485,6 +2475,7 @@ Question.defaultProps = {
   dependencyOptions: [],
   unreadMentions: [],
   onMarkAsRead: null,
+  isMobile: false,
 }
 
 export default Question
