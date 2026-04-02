@@ -45,10 +45,16 @@ jobs:
             ./packages/server \
             -f packages/server/Dockerfile-development
 
+      - name: Get Docker Compose network name
+        id: get-network
+        run: |
+          NETWORK_NAME=$(docker network ls --filter "name=.*default" --format "{{.Name}}" | head -1)
+          echo "network_name=$NETWORK_NAME" >> $GITHUB_OUTPUT
+
       - name: Run tests on built image
         run: |
           docker run \
-            --network hhmi_default \
+            --network ${{ steps.get-network.outputs.network_name }} \
             -e POSTGRES_HOST=db \
             -e POSTGRES_PORT=5432 \
             -e POSTGRES_DB=hhmi_dev \
