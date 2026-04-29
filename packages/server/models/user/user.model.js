@@ -87,9 +87,9 @@ class User extends UserModel {
                     JOIN teams ON teams.id = team_members.team_id 
                     WHERE team_members.user_id = users.id 
                     AND teams.role = 'reviewer'
-                  ) THEN 'reviewer'
-                  ELSE 'not reviewer'
-                END as role
+                  ) THEN true
+                  ELSE false
+                END as "isReviewer"
               `,
               ),
             )

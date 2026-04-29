@@ -34,6 +34,7 @@ extend type User {
   profileSubmitted: Boolean!
   role: String
   reviewerStats: String
+  isReviewer: Boolean
 }
 
 input UserProfileInput {

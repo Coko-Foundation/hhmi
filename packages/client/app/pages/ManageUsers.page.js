@@ -20,22 +20,16 @@ const usersApiToUi = users => {
   if (!users) return []
 
   return users.map(user => {
-    const isReviewer = user.role === 'reviewer'
-
-    // if (user.teams && user.teams.length) {
-    //   user.teams.forEach(team => {
-    //     if (team.role === 'reviewer') isReviewer = true
-    //   })
-    // }
+    const { id, isReviewer, displayName, reviewerStats } = user
 
     return {
-      id: user.id,
-      displayName: user.displayName,
+      id,
+      displayName,
       email: user.defaultIdentity.email,
       expertise: isReviewer ? user.topicsReviewing : user.coursesTeaching,
       isReviewer,
       signUpDate: user.created,
-      reviewerStats: user.reviewerStats,
+      reviewerStats,
     }
   })
 }
