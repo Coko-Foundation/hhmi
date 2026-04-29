@@ -97,11 +97,10 @@ export const FILTER_USERS = gql`
         topicsReviewing
         created
         isActive
-
-        teams {
-          role
-        }
-
+        role
+        # teams {
+        #   role
+        # }
         reviewerStats
       }
       totalCount

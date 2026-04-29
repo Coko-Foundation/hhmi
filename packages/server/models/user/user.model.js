@@ -8,6 +8,7 @@ const {
   },
   useTransaction,
   User: UserModel,
+  db,
 } = require('@coko/server')
 
 const { applyListQueryOptions } = require('../helpers')
@@ -73,7 +74,25 @@ class User extends UserModel {
 
       return useTransaction(
         async tr => {
-          let queryBuilder = this.query(tr).withGraphJoined('defaultIdentity')
+          let queryBuilder = this.query(tr)
+            .withGraphJoined('defaultIdentity')
+            // calculate value of role as "reviewer" or "not reviewer", relevant only to this query
+            .select(
+              'users.*',
+              db.raw(
+                `
+                CASE 
+                  WHEN EXISTS (
+                    SELECT 1 FROM team_members 
+                    JOIN teams ON teams.id = team_members.team_id 
+                    WHERE team_members.user_id = users.id 
+                    AND teams.role = 'reviewer'
+                  ) THEN 'reviewer'
+                  ELSE 'not reviewer'
+                END as role
+              `,
+              ),
+            )
 
           if (role) {
             queryBuilder = queryBuilder
