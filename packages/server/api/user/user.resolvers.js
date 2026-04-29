@@ -1,4 +1,4 @@
-const { logger, subscriptionManager } = require('@coko/server')
+const { logger, subscriptionManager, Identity } = require('@coko/server')
 
 const {
   updateUserProfile,
@@ -133,6 +133,21 @@ const reviewerStatsResolver = async user => {
   return reviewerStats(user)
 }
 
+const defaultIdentityResolver = async user => {
+  try {
+    if (user.defaultIdentity) return user.defaultIdentity
+
+    return Identity.findOne({
+      userId: user.id,
+      isDefault: true,
+    })
+  } catch (e) {
+    throw new Error(e)
+  }
+  // return getDefaultIdentity(user.id)
+  // return ctx.loaders.Identity.defaultIdentityBasedOnUserIdsLoader.load(user.id)
+}
+
 module.exports = {
   Mutation: {
     updateUserProfile: updateUserProfileResolver,
@@ -152,6 +167,7 @@ module.exports = {
     displayName: displayNameResolver,
     teams: teamsResolver,
     reviewerStats: reviewerStatsResolver,
+    defaultIdentity: defaultIdentityResolver,
   },
   Subscription: {
     userDeleted: {

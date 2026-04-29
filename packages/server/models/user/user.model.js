@@ -73,7 +73,7 @@ class User extends UserModel {
 
       return useTransaction(
         async tr => {
-          let queryBuilder = this.query(tr)
+          let queryBuilder = this.query(tr).withGraphJoined('defaultIdentity')
 
           if (role) {
             queryBuilder = queryBuilder
@@ -88,7 +88,7 @@ class User extends UserModel {
 
           if (search) {
             queryBuilder = queryBuilder
-              .withGraphJoined('defaultIdentity')
+              // .withGraphJoined('defaultIdentity')
               .where(builder =>
                 builder
                   .where('defaultIdentity.email', 'ilike', `%${search}%`)
