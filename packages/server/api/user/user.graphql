@@ -78,6 +78,7 @@ extend input UserFilter {
   search: String
   role: String
   expertise: String
+  reviewerRecord: String
 }
 
 type UsersQuestionsResult {

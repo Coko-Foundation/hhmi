@@ -70,7 +70,7 @@ class User extends UserModel {
   static async filter(data = {}, options = {}) {
     try {
       const { trx, ...otherOptions } = options
-      const { search = '', role, expertise, ...params } = data
+      const { search = '', role, expertise, reviewerRecord, ...params } = data
 
       return useTransaction(
         async tr => {
