@@ -42,15 +42,20 @@ const seedUser = async (email, username, givenNames, surname, role) => {
 }
 
 // eslint-disable-next-line import/newline-after-import
-module.exports = async (numberOfUsers = 100) => {
+module.exports = async (
+  numberOfUsers = 100,
+  givenNames = 'Test',
+  surname = 'User',
+  username = 'testUser',
+) => {
   try {
     await useTransaction(async trx => {
       const exists = await User.findOne({
-        username: 'testUser0',
+        username: `${username}0`,
       })
 
       if (exists) {
-        logger.info('[seed1000users]: `testUser0` already exists')
+        logger.info(`[seedUsers]: ${username}0 already exists`)
         return
       }
 
@@ -60,10 +65,10 @@ module.exports = async (numberOfUsers = 100) => {
       for (const key of Array.from(Array(numberOfUsers).keys())) {
         // eslint-disable-next-line no-await-in-loop
         await seedUser(
-          `testUser${key}@email.com`,
-          `testUser${key}`,
-          'Test',
-          `User ${key}`,
+          `${username}${key}@email.com`,
+          `${username}${key}`,
+          givenNames,
+          `${surname} ${key}`,
           ['admin', 'reviewer', 'editor', 'handlingEditor', 'production'][
             Math.floor(Math.random() * 5)
           ],
@@ -71,9 +76,7 @@ module.exports = async (numberOfUsers = 100) => {
         )
       }
 
-      //   await addToTeams('admin0@hhmi.org', 'admin')
-
-      logger.info('[seed1000Users]: 1000 users created!!')
+      logger.info(`[seedUsers]: ${numberOfUsers} users created!!`)
     })
   } catch (error) {
     throw new Error(error)
