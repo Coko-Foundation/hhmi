@@ -218,15 +218,18 @@ const ManageUsers = () => {
       key: { label: 'Expertise', value: 'expertise' },
       values: expertiseOptions,
     },
-    {
+  ]
+
+  if (searchParams.role === 'reviewer') {
+    filters.push({
       key: { label: 'Reviewer record', value: 'reviewerRecord' },
       values: [
         { label: 'Submitted', value: 'submitted' },
         { label: 'Invited but not submitted', value: 'invited' },
-        { label: 'Not invited', value: 'not invited' },
+        { label: 'Not invited', value: 'notInvited' },
       ],
-    },
-  ]
+    })
+  }
 
   return (
     <UserList

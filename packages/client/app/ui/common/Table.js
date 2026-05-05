@@ -52,6 +52,7 @@ const Table = props => {
     searchLoading,
     onSearch,
     searchPlaceholder,
+    searchOnChange,
     /* eslint-disable react/prop-types */
     dataSource,
     pagination,
@@ -106,6 +107,7 @@ const Table = props => {
             loading={searchLoading}
             onSearch={onSearch}
             placeholder={searchPlaceholder}
+            searchOnChange={searchOnChange}
             withFilters={withFilters}
           />
         </SearchWrapper>
@@ -135,6 +137,7 @@ Table.propTypes = {
   searchPlaceholder: PropTypes.string,
   filters: PropTypes.arrayOf(PropTypes.shape()),
   withFilters: PropTypes.bool,
+  searchOnChange: PropTypes.bool,
 }
 
 Table.defaultProps = {
@@ -145,6 +148,7 @@ Table.defaultProps = {
   searchPlaceholder: null,
   filters: [],
   withFilters: false,
+  searchOnChange: false,
 }
 
 export default Table

@@ -451,6 +451,7 @@ const UserList = ({
             pagination={pagination}
             rowSelection={rowSelection}
             searchLoading={searchLoading}
+            searchOnChange
             searchPlaceholder="Search for users"
             showSearch
             showSorterTooltip

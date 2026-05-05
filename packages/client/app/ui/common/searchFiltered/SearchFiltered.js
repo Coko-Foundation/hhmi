@@ -98,6 +98,18 @@ const SearchFiltered = ({
   const [activeFilters, setActiveFilters] = useState([]) // each item: {[filterKey = {}, filterValue?? = {}, readyState = bool]}
   const [unreadyFilters, setUnreadyFilters] = useState([])
 
+  useEffect(() => {
+    setUpdatedFilters(filters)
+  }, [filters])
+
+  useEffect(() => {
+    if (searchOnChange === true) {
+      if (activeFilters.every(f => f[2])) {
+        searchSubmit()
+      }
+    }
+  }, [JSON.stringify(activeFilters)])
+
   const [isReady, ready, notReady] = useBoolState(false, {
     onTrue: () => showPopup && !unreadyFilters?.length > 0 && closePopup(),
   }) // boolean state, actions and effect, true when the filter is ready to be submited
@@ -335,7 +347,7 @@ const SearchFiltered = ({
     !visualfocus && visualFocusOn()
     setInputValue(target.value)
     !filterResolvedOnInput() && closePopup()
-    if (searchOnChange === true) searchSubmit()
+    // if (searchOnChange === true) searchSubmit()
   }
 
   const handleFocus = e => {
