@@ -418,8 +418,8 @@ const downloadUsersCSV = async userIds => {
       const globalRoles = `"${globalTeams.map(t => t.displayName).join(', ')}"`
 
       const expertiseSelection = globalRoles.includes('Reviewer')
-        ? user.topicsReviewing
-        : user.coursesTeaching
+        ? user.topicsReviewing || []
+        : user.coursesTeaching || []
 
       const expertise = `"${expertiseSelection
         .map(course => expertiseOptions.find(c => c.value === course)?.label)
@@ -428,7 +428,8 @@ const downloadUsersCSV = async userIds => {
       let reviewerRecord = 'N/A'
 
       if (globalRoles.includes('Reviewer')) {
-        reviewerRecord = await reviewerStats(user)
+        // attach isReviewer to user object to emulate response from filterUsers
+        reviewerRecord = await reviewerStats({ ...user, isReviewer: true })
       }
 
       return {
@@ -436,7 +437,7 @@ const downloadUsersCSV = async userIds => {
         email: defaultIdentity?.email,
         roles: globalRoles,
         expertise,
-        reviewerRecord,
+        reviewerRecord: `"${reviewerRecord}"`, // avoid split cells cause by comma in "invited, not submitted"
       }
     }),
   )
