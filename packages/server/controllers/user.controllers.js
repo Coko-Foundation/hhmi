@@ -467,33 +467,40 @@ const downloadUsersCSV = async userIds => {
 
 const reviewerStats = async user => {
   return useTransaction(async tr => {
-    const reviewTeams = await Team.query(tr).where({
-      role: REVIEWER_TEAM.role,
-      global: false,
-    })
+    if (user.isReviewer) {
+      const reviewTeams = await Team.query(tr).where({
+        role: REVIEWER_TEAM.role,
+        global: false,
+      })
 
-    const userTeams = await TeamMember.query(tr)
-      .whereIn(
-        'teamId',
-        reviewTeams.map(({ id }) => id),
+      const userTeams = await TeamMember.query(tr)
+        .whereIn(
+          'teamId',
+          reviewTeams.map(({ id }) => id),
+        )
+        .where('userId', user.id)
+
+      const hasBeenInvited = userTeams
+        .map(({ status }) => status)
+        .some(t =>
+          ['invited', 'acceptedInvitation', 'rejectedInvitation'].includes(t),
+        )
+
+      const submittedReviews = await Review.query(tr).where(
+        'reviewerId',
+        user.id,
       )
-      .where('userId', user.id)
 
-    const hasBeenInvited = userTeams
-      .map(({ status }) => status)
-      .some(t =>
-        ['invited', 'acceptedInvitation', 'rejectedInvitation'].includes(t),
+      const hasSubmitted = submittedReviews.some(
+        ({ status }) => status.submitted === true,
       )
 
-    const submittedReviews = await Review.query(tr).where('reviewerId', user.id)
+      if (hasSubmitted) return 'Submitted'
+      if (hasBeenInvited) return 'Invited, not submitted'
+      return 'Not invited'
+    }
 
-    const hasSubmitted = submittedReviews.some(
-      ({ status }) => status.submitted === true,
-    )
-
-    if (hasSubmitted) return 'Submitted'
-    if (hasBeenInvited) return 'Invited, not submitted'
-    return 'Not invited'
+    return ''
   })
 }
 
