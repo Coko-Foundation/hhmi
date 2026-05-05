@@ -67,6 +67,7 @@ const ManageUsers = () => {
         ...sortOptions,
       },
     },
+    fetchPolicy: 'network-only',
     onCompleted: () => {
       setSelectedRows([])
     },
