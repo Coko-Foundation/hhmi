@@ -11,7 +11,10 @@ const {
   db,
 } = require('@coko/server')
 
+const config = require('config')
 const { applyListQueryOptions } = require('../helpers')
+
+const REVIEWER_TEAM = config.teams.nonGlobal.find(t => t.role === 'reviewer')
 
 class User extends UserModel {
   static get schema() {
@@ -103,6 +106,62 @@ class User extends UserModel {
                 role,
                 'teams.global': true,
               })
+          }
+
+          if (reviewerRecord) {
+            switch (reviewerRecord) {
+              case 'submitted':
+                queryBuilder.whereExists(
+                  db('reviews')
+                    .whereRaw('reviews.reviewer_id = users.id')
+                    .whereRaw("reviews.status->>'submitted' = 'true'"),
+                )
+                break
+
+              case 'invited':
+                queryBuilder
+                  .whereExists(
+                    db('team_members as tm')
+                      .join('teams as t', 't.id', 'tm.team_id')
+                      .whereRaw('tm.user_id = users.id')
+                      .where('t.role', REVIEWER_TEAM.role)
+                      .where('t.global', false)
+                      .whereIn('tm.status', [
+                        'invited',
+                        'acceptedInvitation',
+                        'rejectedInvitation',
+                      ]),
+                  )
+                  .whereNotExists(
+                    db('reviews')
+                      .whereRaw('reviews.reviewer_id = users.id')
+                      .whereRaw("reviews.status->>'submitted' = 'true'"),
+                  )
+                break
+
+              case 'notInvited':
+                queryBuilder
+                  .whereNotExists(
+                    db('team_members as tm')
+                      .join('teams as t', 't.id', 'tm.team_id')
+                      .whereRaw('tm.user_id = users.id')
+                      .where('t.role', REVIEWER_TEAM.role)
+                      .where('t.global', false)
+                      .whereIn('tm.status', [
+                        'invited',
+                        'acceptedInvitation',
+                        'rejectedInvitation',
+                      ]),
+                  )
+                  .whereNotExists(
+                    db('reviews')
+                      .whereRaw('reviews.reviewer_id = users.id')
+                      .whereRaw("reviews.status->>'submitted' = 'true'"),
+                  )
+                break
+              default:
+                break
+            }
           }
 
           if (search) {
